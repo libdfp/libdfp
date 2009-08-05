@@ -1,0 +1,44 @@
+#if !defined(DECSINGLESYMBOLS)
+#define DECSINGLESYMBOLS
+
+#ifdef IN_LIBGCC2
+#define decSingleFromBCD __decSingleFromBCD
+#define decSingleFromPacked __decSingleFromPacked
+#define decSingleFromString __decSingleFromString
+#define decSingleFromWider __decSingleFromWider
+#define decSingleGetCoefficient __decSingleGetCoefficient
+#define decSingleGetExponent __decSingleGetExponent
+#define decSingleRadix __decSingleRadix
+#define decSingleSetCoefficient __decSingleSetCoefficient
+#define decSingleSetExponent __decSingleSetExponent
+#define decSingleShow __decSingleShow
+#define decSingleToBCD __decSingleToBCD
+#define decSingleToEngString __decSingleToEngString
+#define decSingleToPacked __decSingleToPacked
+#define decSingleToString __decSingleToString
+#define decSingleToWider __decSingleToWider
+#define decSingleVersion __decSingleVersion
+#define decSingleZero __decSingleZero
+#endif
+
+#ifdef __STDC_DEC_FP__
+#define decSingleFromBCD ___decSingleFromBCD
+#define decSingleFromPacked ___decSingleFromPacked
+#define decSingleFromString ___decSingleFromString
+#define decSingleFromWider ___decSingleFromWider
+#define decSingleGetCoefficient ___decSingleGetCoefficient
+#define decSingleGetExponent ___decSingleGetExponent
+#define decSingleRadix ___decSingleRadix
+#define decSingleSetCoefficient ___decSingleSetCoefficient
+#define decSingleSetExponent ___decSingleSetExponent
+#define decSingleShow ___decSingleShow
+#define decSingleToBCD ___decSingleToBCD
+#define decSingleToEngString ___decSingleToEngString
+#define decSingleToPacked ___decSingleToPacked
+#define decSingleToString ___decSingleToString
+#define decSingleToWider ___decSingleToWider
+#define decSingleVersion ___decSingleVersion
+#define decSingleZero ___decSingleZero
+#endif
+
+#endif

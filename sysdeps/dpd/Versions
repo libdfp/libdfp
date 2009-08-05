@@ -1,0 +1,24 @@
+# These are added in this sysdeps/dpd/Versions file because the
+# C source files don't indicate "__dpd" in the filename and they
+# live in the common base-math/ directory.
+libdfp {
+  LIBDFP_0.0.1 {
+    __dpd_addsd3; __dpd_adddd3; __dpd_addtd3;
+    __dpd_subsd3; __dpd_subdd3; __dpd_subtd3;
+    __dpd_mulsd3; __dpd_muldd3; __dpd_multd3;
+    __dpd_divsd3; __dpd_divdd3; __dpd_divtd3;
+    __dpd_extendsddd2; __dpd_extendsdtd2; __dpd_extendddtd2;
+    __dpd_trunctdsd2; __dpd_truncddsd2; __dpd_trunctddd2;
+    __dpd_unordsd2; __dpd_unorddd2; __dpd_unordtd2;
+    __dpd_eqsd2; __dpd_eqdd2; __dpd_eqtd2; __dpd_nesd2; __dpd_nedd2; __dpd_netd2;
+    __dpd_gesd2; __dpd_gedd2; __dpd_getd2; __dpd_gtsd2; __dpd_gtdd2; __dpd_gttd2;
+    __dpd_ltsd2; __dpd_ltdd2; __dpd_lttd2; __dpd_lesd2; __dpd_ledd2; __dpd_letd2;
+    __dpd_fixsdsi; __dpd_fixddsi; __dpd_fixtdsi; __dpd_fixsddi; __dpd_fixdddi; __dpd_fixtddi;
+    __dpd_fixunssdsi; __dpd_fixunsddsi; __dpd_fixunstdsi;
+    __dpd_fixunssddi; __dpd_fixunsdddi; __dpd_fixunstddi;
+    __dpd_floatsisd; __dpd_floatsidd; __dpd_floatsitd;
+    __dpd_floatdisd; __dpd_floatdidd; __dpd_floatditd;
+    __dpd_floatunssisd; __dpd_floatunssidd; __dpd_floatunssitd;
+    __dpd_floatunsdisd; __dpd_floatunsdidd; __dpd_floatunsditd;
+  }
+}

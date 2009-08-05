@@ -1,0 +1,24 @@
+# These are added in this sysdeps/bid/Versions file because the
+# C source files don't indicate "__bid" in the filename and they
+# live in the common base-math/ directory.
+libdfp {
+  LIBDFP_0.0.1 {
+    __bid_addsd3; __bid_adddd3; __bid_addtd3;
+    __bid_subsd3; __bid_subdd3; __bid_subtd3;
+    __bid_mulsd3; __bid_muldd3; __bid_multd3;
+    __bid_divsd3; __bid_divdd3; __bid_divtd3;
+    __bid_extendsddd2; __bid_extendsdtd2; __bid_extendddtd2;
+    __bid_trunctdsd2; __bid_truncddsd2; __bid_trunctddd2;
+    __bid_unordsd2; __bid_unorddd2; __bid_unordtd2;
+    __bid_eqsd2; __bid_eqdd2; __bid_eqtd2; __bid_nesd2; __bid_nedd2; __bid_netd2;
+    __bid_gesd2; __bid_gedd2; __bid_getd2; __bid_gtsd2; __bid_gtdd2; __bid_gttd2;
+    __bid_ltsd2; __bid_ltdd2; __bid_lttd2; __bid_lesd2; __bid_ledd2; __bid_letd2;
+    __bid_fixsdsi; __bid_fixddsi; __bid_fixtdsi; __bid_fixsddi; __bid_fixdddi; __bid_fixtddi;
+    __bid_fixunssdsi; __bid_fixunsddsi; __bid_fixunstdsi;
+    __bid_fixunssddi; __bid_fixunsdddi; __bid_fixunstddi;
+    __bid_floatsisd; __bid_floatsidd; __bid_floatsitd;
+    __bid_floatdisd; __bid_floatdidd; __bid_floatditd;
+    __bid_floatunssisd; __bid_floatunssidd; __bid_floatunssitd;
+    __bid_floatunsdisd; __bid_floatunsdidd; __bid_floatunsditd;
+  }
+}

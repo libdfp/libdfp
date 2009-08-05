@@ -1,0 +1,24 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* "Define to the name of the assembler's directive for declaring a symbol
+   global (default `.globl')." */
+#undef ASM_GLOBAL_DIRECTIVE
+
+/* "Define to the prefix before `object' or `function' in the assembler's
+   `.type' directive */
+#undef ASM_TYPE_DIRECTIVE_PREFIX
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION

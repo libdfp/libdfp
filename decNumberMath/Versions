@@ -1,0 +1,13 @@
+libdfp {
+  LIBDFP_PRIVATE {
+    ___decNumberPow;
+    ___decNumberSinh;
+    ___decNumberCosh;
+    ___decNumberTanh;
+    ___decNumberSin;
+    ___decNumberCos;
+    ___decNumberTan;
+    ___decNumberAtan;
+  }
+}
+

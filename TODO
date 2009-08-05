@@ -1,0 +1,3 @@
+Configure test for NEEDED glibc 2.10
+libdecnumber.so phantom library for compat issues
+libdfp version issues with older apps.

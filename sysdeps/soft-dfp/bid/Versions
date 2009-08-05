@@ -1,0 +1,10 @@
+libdfp {
+  LIBDFP_0.0.1 {
+    __bid_extendsfsd; __bid_extendsddf; __bid_extendsdtf;
+    __bid_extendsfdd; __bid_extenddfdd; __bid_extendddtf;
+    __bid_extendsftd; __bid_extenddftd; __bid_extendtftd;
+    __bid_truncsdsf; __bid_truncdfsd; __bid_trunctfsd;
+    __bid_truncddsf; __bid_truncdddf; __bid_trunctfdd;
+    __bid_trunctdsf; __bid_trunctddf; __bid_trunctdtf;
+  }
+}

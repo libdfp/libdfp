@@ -1,0 +1,301 @@
+ifneq (,)
+This Makefile requires GNU Make.
+endif
+
+top_srcdir := @top_srcdir@
+top_builddir = .
+
+dfp_name = @PACKAGE_NAME@
+dfp_version = @PACKAGE_VERSION@
+
+STATIC_LIBRARY = @PACKAGE_NAME@.a
+
+# e.g. libdfp-0.0.1.so
+SHARED_VERSION_LIBRARY = @PACKAGE_NAME@-@PACKAGE_VERSION@.so
+
+# e.g. libdfp.so.1
+SHARED_LIBRARY = @PACKAGE_NAME@.so.1
+
+CC = @CC@
+RANLIB = @RANLIB@
+AWK = @AWK@
+
+# libdecnumber or libbid
+dfp_backend = @dfp_backend@
+dfp_backend_lib = @dfp_backend@.a
+
+# dpd or bid
+dfp_encoding = @enable_decimal_float@
+
+# e.g. powerpc
+base_machine = @base_machine@
+# e.g. powerpc32
+machine = @machine@
+# e.g. power6
+submachine = @submachine@
+# e.g. -mcpu=power6
+submachine_opt = @submachine_opt@
+
+ifdef submachine_opt
+cflags-cpu = $(submachine_opt)
+asflags-cpu = $(submachine_opt)
+endif
+
+cc_msize = @cc_msize@
+
+default_cflags := -g -O2
+
+ifndef	+cflags
+# If `CFLAGS' was defined by configure, use that.
+ifdef		CFLAGS
++cflags	:= $(filter-out -I%,$(CFLAGS))
+endif
+endif
+
+# If none of the above worked, default to "-g -O2"
+ifeq	"$(strip $(+cflags))" ""
++cflags	:= $(default_cflags)
+endif	# $(+cflags) == ""
+
++cflags	+= $(cflags-cpu)
+
+# Don't duplicate options if we inherited variables from the parent.
++cflags>:= $(sort $(+cflags))
+
+#override CFLAGS = -std=gnu99 $(gnu-inline-CFLAGS) $(+cflags)
+override CFLAGS = $(gnu-inline-CFLAGS) $(+cflags)
+
+# These are the flags given to the compiler to tell it what sort of
+# optimization and/or debugging output to do for .S files.
+ifndef +asflags
+# If `ASFLAGS' was defined, use that.
+ifdef		ASFLAGS
++asflags := $(ASFLAGS)
+endif		#ASFLAGS
+endif	# +asflags
+
+# This makes sure -mcpu=CPU gets used when gcc is invoked against .S files.
++asflags +=  $(asflags-cpu)
+
+override ASFLAGS = $(+asflags)
+
+sysdep_dirs = @sysdep_dirs@
+
+# Strip of the trailing slashes on these
+glibc_headers = $(patsubst %/,%,@glibc_headers@)
+glibc_builddir = $(patsubst %/,%,@glibc_build@)
+
+ifneq ( ,$(glibc_headers))
+glibc_headers_dir = -isystem $(glibc_headers)
+endif
+
+# This is the precedence ordered list of subdirectories that configure
+# selected for searching based upon submachine, machine, base_machine,
+# dfp_encoding, and dfp_backend.  Add the ieee754r and decNumberMath
+# convenience directories to the list.
+
+# Find each sysdep directory or convenience directory with a Makefile in it.
+makefile_dirs := $(foreach odir,$(sysdep_dirs), $(dir $(wildcard $(top_srcdir)/$(odir)/Makefile))) $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math
+
+# Like $makefile_dirs but add the $(top_srcdir) reference and strip out the redundant spaces.
+# This has to be = assigned.
+all_srcdirs = $(strip $(foreach dir,$(sysdep_dirs), $(top_srcdir)/$(dir))) $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/ $(top_srcdir)/tests
+
+# We need to add the $(dfp_backend) directories to the search path in order to
+# pick up header files in those directories.
+ifeq ($(dfp_backend),libdecnumber)
+	# libdecnumber/bid or libdecnumber/dpd holds header files.
+	backend_headers := $(dfp_backend)/$(dfp_encoding) $(dfp_backend)
+else # libbid
+	# TODO implement
+	backend_headers :=
+endif
+
+# For header files we want to search every directory that is relevant.  We
+# have to include $(top_builddir) in order to pick up the configure generated
+# config.h.
+header_dirs := $(strip include $(backend_headers) $(sysdep_dirs) dfp/ decNumberMath/ ieee754/ base-math/)
+
+header_search_dirs := $(header_dirs:%=$(top_srcdir)/%) $(top_srcdir) $(top_builddir)
+
+# GNU Make hack to reference a ' ' (space) character as the `from' function parameter in $(subst from,to,...).
+sp :=
+sp +=
+
+# VPATH only needs to know the directory that source files are in.  Headers
+# are searched based on -I precedence during the compilation invocation.
+VPATH := $(subst $(sp),:,$(all_srcdirs))
+# Files common to the $(top_srcdir).  These may be overriden in the sysdep
+# directories and this list may have additional files added by sysdeps
+# directory Makefiles which are included (not recursively invoked).
+libdfp_files := dfptypeconv mapround decode fmt_d32 fmt_d64 fmt_d128 fe_decround \
+		strtod32 strtod64 strtod128 wcstod32 wcstod64 wcstod128 \
+	        printf_dfp
+
+# The sysdeps subdirs aren't recursively invoked, they're included so that
+# they can add files to the libdfp_files list.
+include $(foreach dir,$(makefile_dirs), $(dir)/Makefile )
+
+#.PHONY: all
+
+# Libdfp has a dependency on the backend so build that first.
+all: first backend libdfp
+
+# Fake rule to output the VPATH before we build anything.
+first:
+	@echo VPATH=$(VPATH)
+	@echo Processing Makefiles: $(makefile_dirs)
+
+# The backends are standalone projects so they need their Makefiles executed
+# recursively.
+.PHONY: backend $(top_builddir)/$(dfp_backend)
+backend: $(top_builddir)/$(dfp_backend)
+
+# Configure will have generated the Makefile for the selected backend.
+# Let's add it to the subdir list so it gets recursively invoked by Make.
+$(top_builddir)/$(dfp_backend):
+	@echo +Building the DFP backend library.
+	DEFS="-D__STDC_DEC_FP__=200704L" $(MAKE) -eC $@
+	@echo
+
+libdfp: @enable_static@ @enable_shared@
+
+static: $(top_builddir)/$(STATIC_LIBRARY)
+
+shared: $(top_builddir)/$(SHARED_VERSION_LIBRARY)
+
+#WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wcast-qual -pedantic -Wno-long-long
+
+WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
+C_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_POSIX_C_SOURCE=200809L -std=gnu99 -D_SVID_SOURCE
+ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1
+
+# Build the static object files.
+.c.o:
+	$(CC) $(CFLAGS) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	@echo
+.S.o:
+	$(CC) $(ASFLAGS) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	@echo
+
+# Build the shared object files.
+.c.os:
+	$(CC) $(CFLAGS) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	@echo
+.S.os:
+	$(CC) $(ASFLAGS) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	@echo
+
+
+# Archive the static library.
+$(top_builddir)/$(STATIC_LIBRARY): $(top_builddir)/$(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,$(libdfp_files))
+	@echo +Creating static library $@
+	$(AR) rc $@ $(wordlist 2,$(words $?),$?) $(dfp_backend)/*.o
+	@ranlibpath=`which $(RANLIB)`; \
+	if test -x "$$ranlibpath"; \
+	then $(RANLIB) $@; fi;
+	@echo
+
+# Build the version tagged shared object and set the symlink.  This requires
+# that the $(dfp_name).map file be composed out of individual Versions files.
+# -bsymbolic makes the library avoid using the PLT for library internal calls.
+$(top_builddir)/$(SHARED_VERSION_LIBRARY): $(top_builddir)/$(dfp_name).map $(addsuffix .os,$(libdfp_files))
+	@echo +Linking shared object files into $@ and creating version symlink $(SHARED_LIBRARY).
+	$(CC) -shared -Wl,-soname,$(SHARED_LIBRARY) -Bsymbolic -nodefaultlibs -nostdlib -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--version-script,$(dfp_name).map $(wordlist 2,$(words $?),$?) -o $@; \
+	ln -s $(top_builddir)/$@ $(SHARED_LIBRARY)
+	@echo
+
+# The LIBDFP version script support is strongly based upon the GLIBC version
+# script Makefile foo.  Thanks Roland and Uli!
+
+# Versions.def defines the package versions.
+$(top_builddir)/Versions.all: $(..)scripts/firstversions.awk \
+			      $(top_srcdir)/Versions.def
+	@echo +Creating $@ by running $(word 1,$?) against $(word 2,$?).
+	{ cat $(word 2,$^); } | LC_ALL=C $(AWK) -f $< > $@T
+	mv -f $@T $@
+	@echo
+
+# Versions.sysdeps is a concatenation of all of the sysdep directory Versions
+# files (that accompany a Makefile) and run through sed to strip comments.  We
+# use the wildcard function to verify that there actually is a Versions file
+# accompanying a Makefile before we set it as a dependency.  Some sysdeps dirs
+# only add internal interfaces.
+$(top_builddir)/Versions.sysdeps: $(top_srcdir)/Versions $(wildcard $(makefile_dirs:%=%Versions))
+	@echo +Scrubbing the following Versions files for comments and concatenating into a single $@ file.
+	sed '/^[        ]*%/!s/#.*$$//;/^[      ]*$$/d;s/^[     ]*%/#/' $? > $@T
+	mv -f $@T $@
+	@echo
+
+move-if-change = $(SHELL) $(top_srcdir)/scripts/move-if-change
+
+# This runs versions.awk and generates libdfp.map from the Versions.all and
+# Versions.sysdeps files.
+$(top_builddir)/sysd-versions: $(top_builddir)/Versions.all \
+			    $(top_builddir)/Versions.sysdeps \
+			    $(..)scripts/versions.awk
+	@echo +The following invocation of $(word 3,$^) outputs $(dfp_name).map automagically.
+	( echo 'sysd-versions-subdirs = $(strip $(top_srcdir)/ $(makefile_dirs))'; \
+	  cat $(top_builddir)/$(word 2,$^) \
+	  | LC_ALL=C $(AWK) -v buildroot="$(top_builddir)/" -v defsfile=$< \
+			    -v move_if_change='$(move-if-change)' \
+			    -f $(word 3,$^) \
+	) > $@T
+	mv $@T $@
+	@echo
+
+# This rule causes sysd-versions to be generated, which in turn invokes
+# versions.awk which generates libdfp.map implicitly.
+$(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
+
+GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so $(glibc_builddir)/nptl/libpthread.so
+
+libdfp_tests = test-printf
+
+# Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
+# built.
+$(libdfp_tests): %:%.o
+	$(CC) $(CFLAGS) $(GLIBC_LIBS) $(top_builddir)/$(SHARED_LIBRARY) $(top_builddir)/$(addsuffix .o,$@) -o $@
+	@echo
+
+LIBRARY_PATH = $(glibc_builddir)/:$(glibc_builddir)/math:$(glibc_builddir)/elf:$(glibc_builddir)/nptl
+#$(glibc_builddir)/dlfcn:\
+#	$(glibc_builddir)/nss:$(glibc_builddir)/nis:\
+#	$(glibc_builddir)/rt:$(glibc_builddir)/resolv:\
+#	$(glibc_builddir)/crypt:
+
+# Invoke the GLIBC loader and tell it to run the application.  Also make sure
+# the .gdb files are generated before the tests are run so that they get
+# generated even if the tests fail.
+$(addsuffix .out,$(libdfp_tests)): $(libdfp_tests) $(addsuffix .gdb,$(libdfp_tests))
+	ulimit -c unlimited; GCONV_PATH=$(glibc_builddir)/iconvdata LC_ALL=C \
+	$(glibc_builddir)/elf/ld.so --library-path \
+	$(LIBRARY_PATH):$(top_builddir) $(top_builddir)/$(patsubst %.out,%,$@) \
+	2>&1> $(top_builddir)/$@
+	@echo
+
+DISTCLEANFILES = $(top_builddir)/test-debug.conf
+
+# Pick up the following rules from Makefile.debug:
+#	$(top_builddir)/test-debug.conf:
+#	$(addsuffix .conf,$(libdfp_tests)):
+#	$(addsuffix .gdb,$(libdfp_tests)):
+include $(top_srcdir)/Makefile.gdb
+
+# We use test-debug.conf as an input file for some debuggin utilities.
+check: $(top_builddir)/test-debug.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests))
+
+#	@echo Running make check against tests: $(libdfp_tests)
+
+.PHONY: check
+
+clean:
+	rm *.o *.os $(STATIC_LIBRARY) $(SHARED_LIBRARY) $(SHARED_VERSION_LIBRARY) Versions.all Versions.sysdeps libdfp.map Versions.tmp sysd-versions $(top_builddir)/$(dfp_backend)/*.o $(top_builddir)/$(dfp_backend)/*.a _make* test-debug.conf $(addsuffix .out,$(libdfp_tests)) $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests)) $(libdfp_tests) _check
+
+.PHONY: clean
+
+# Clean out the existing .SUFFIXES setting.
+.SUFFIXES:
+# Prioritize .S over .c when searching for target files.  The .os suffix
+# is used for shared object file and the .o suffix is for static object files.
+.SUFFIXES: .S .c .o .os

@@ -1,0 +1,2 @@
+The contents of this directory are synced from the GCC source directory since
+libdecnumber comes from GCC and override.m4 is required.

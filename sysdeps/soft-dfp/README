@@ -1,0 +1,13 @@
+This directory is for anything that is soft-dfp specific, like rounding mode.
+
+This directory also contains software emulated implementations of the
+arithmetic, conversion, and classification routines.  These are normally
+provided by libgcc but that library lacks floating point exception and
+rounding mode support so we provide an override here.
+
+The __dpd_ and __bid_ prefixed symbols are added to the 'Versions' scripts in
+the dpd/ and bid/ directories respectively.
+
+The Makefile only contains the files which aren't part of the base-math/
+emulation, i.e. the binary->decimal and decimal->binary 'extend' and 'trunc'
+functions.  Everything else is an override.

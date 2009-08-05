@@ -1,0 +1,37 @@
+libdfp {
+  LIBDFP_0.0.1 {
+    decoded32;
+    decoded64;
+    decoded128;
+    # These are the old callbacks.  They don't work anymore.
+    # fmt_d32;
+    # fmt_d64;
+    # fmt_d128;
+    fe_dec_getround;
+    fe_dec_setround;
+    register_printf_dfp;
+    printf_dfp;
+    strtod32;
+    strtod64;
+    strtod128;
+    wcstod32;
+    wcstod64;
+    wcstod128;
+  }
+  LIBDFP_PRIVATE {
+    __decoded32;
+    __decoded64;
+    __decoded128;
+    __fmt_d32;
+    __fmt_d64;
+    __fmt_d128;
+    __host_to_ieee_32;
+    __ieee_32_to_host;
+    __host_to_ieee_64;
+    __ieee_64_to_host;
+    __host_to_ieee_128;
+    __ieee_128_to_host;
+    __fe_dec_getround;
+    __fe_dec_setround;
+  }
+}

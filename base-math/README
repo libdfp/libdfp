@@ -1,0 +1,4 @@
+These functions match what is implemented as part of libgcc for DFP.  They are
+intended to be compiled with DFP hardware support in order to override the
+software DFP libgcc.a symbols.  This set doesn't provide overrides for
+binary->decimal and decimal->binary trunc and extend functions.

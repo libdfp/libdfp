@@ -1,0 +1,3 @@
+# We need a copy of fenvinline.h in here in case we're building sorta-cross, 
+# i.e. if we're building on a system with nofpu for a target with fpu then
+# we need to make sure we have an fpu set of 'fe*except' macros.

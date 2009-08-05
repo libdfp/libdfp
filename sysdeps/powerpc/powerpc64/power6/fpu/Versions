@@ -1,0 +1,2 @@
+# The __dpd_ prefixed symbols are already added in sysdeps/dpd/Versions.  The
+# implementations in this directory are simply overrides.

@@ -1,0 +1,8 @@
+2009-07-22  Ryan S. Arnold  <rsa@us.ibm.com>
+
+This commit adds the top-level sub-directories for the stand-alone libdfp
+project.  It adds the top-level directory libdfp/ per Mark Mitchell's
+direction on patches@eglibc.org on Mon, 29 Jun 2009.
+
+	* libdfp: New.
+	* libdfp/trunk: New.

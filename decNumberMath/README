@@ -1,0 +1,2 @@
+# This is simply a convenience directory which uses libdecnumber internals to
+# perform its operations.

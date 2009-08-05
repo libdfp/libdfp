@@ -1,0 +1,3 @@
+# Since the symbols in base-math are prefixed with either __dpd_ or __bid_ the
+# Versions files in sysdeps/dpd/ and sysdeps/bid are used for the functions
+# defined in this directory.  So don't define any symbols in this file.

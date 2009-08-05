@@ -1,0 +1,486 @@
+===========================================================================
+
+				  Libdfp
+	 The "Decimal Floating Point C Library" Developer's Guide
+		    for the GNU/Linux OS and GLIBC 2.10
+		      Contributed by IBM Corporation
+		Copyright (C) 2009 Free Software Foundation
+
+===========================================================================
+NOTE:Eight space tabs are the optimum editor setting for reading this file.
+===========================================================================
+
+	       Author(s) :  Ryan S. Arnold <rsa@us.ibm.com>
+		       Date Created: July, 14, 2009
+		       Last Changed: July, 16, 2009
+
+---------------------------------------------------------------------------
+Table of Contents:
+
+	1.  Introduction
+	  1.1. ISO/IEC TR 24732
+	  1.2. IEEE 754-2008 (DPD & BID Encodings)
+	  1.3. Backends (libdecnumber & libbid)
+	2.  Availability
+	3.  Compliance With ISO/IEC TR 24732
+	  3.1 __STDC_WANT_DEC_FP__
+	  3.2 scanf
+	4.  Dependencies
+	  4.1  GNU/Linux OS
+	  4.2  GLIBC Minimum Version
+	  4.3  GLIBC Headers
+	  4.4  libdecnumber
+	  4.5  GCC With --enable-decimal-float Support
+	  4.6  Autoconf & GNU Make
+	5.  Configuration
+	  5.1  Configure Switches
+	6.  Source Tree Layout
+
+	A.  History
+	B.  Acknowledgements
+---------------------------------------------------------------------------
+1.  Introduction
+
+The "Decimal Floating Point C Library" is an implementation of ISO/IEC
+Technical report  "ISO/IEC TR 24732" which describes the C-Language library
+routines necessary to support the decimal floating point data types
+introduced in IEEE 754-2008, namely _Decimal32, _Decimal64, and
+_Decimal128.
+
+---------------------------------------------------------------------------
+1.1. ISO/IEC TR 24732
+
+The latest description of ISO/IEC TR 24732 at the time of this writing can
+be found here:
+
+	http://www.open-std.org/JTC1/SC22/wg14/www/docs/n1312.pdf
+
+A rationale can be found here:
+
+	http://www.open-std.org/JTC1/SC22/wg14/www/docs/n1242.pdf
+
+---------------------------------------------------------------------------
+1.2. IEEE754-2008 (DPD & BID Encodings)
+
+IEEE 754-2008 defines two different encodings for the decimal floating
+point data types.  These are DPD and BID.
+
+	DPD (Densely Packed Decimal) - IBM sponsored encoding (implemented
+				       in hardware).
+
+	BID (Binary Integer Decimal) - Intel sponsored encoding.
+
+Both encodings can be investigated in the draft IEEE754r:
+
+	http://754r.ucbtest.org/drafts/archive/2006-10-04.pdf
+
+---------------------------------------------------------------------------
+1.3. Backends (libdecnumber & libbid)
+
+Libdfp can make use of two backend libraries for software emulation.  These
+are "libdecnumber" and "libbid".
+
+Libdecnumber was written by Mike Cowlishaw (IBM) and a form of the library
+was donated to the FSF where it was subsumed into GCC.  The Free Software
+Foundation assigned GCC as the owner of libdecnumber and now any project that
+needs to include libdecnumber statically needs to pull it from the GCC source
+trees.  All patches to libdecnumber should be sent to GCC.
+
+This library's copy of libdecnumber should be periodically synced with
+upstream GCC's version.
+
+Libbid was written by <TODO> (Intel).
+
+---------------------------------------------------------------------------
+2. Availability
+
+Libdfp attempts to provide an encoding agnostic API to users based
+upon the _Decimal32, _Decimal64, and _Decimal128 data-types.  
+
+Libdfp is available to be configured in the following combinations:
+
+Arch	HW|SW	Backend		Encoding
+-------------------------------------------------
+ppc960  SW	libdecnumber	DPD
+POWER4	SW	libdecnumber	DPD
+POWER	SW	libdecnumber	DPD
+POWER6	HW	libdecnumber	DPD
+POWER7	HW	libdecnumber	DPD
+s390	HW	libdecnumber	DPD
+s390	SW	libdecnumber	DPD
+x86	SW	libdecnumber	DPD | BID
+x86_64	SW	libbid		BID
+
+The selection of a backend and/or an encoding is made at configuration time
+by the distro maintainer or person building libdfp using configuration
+flags described in the section entitled "Configuration".
+
+---------------------------------------------------------------------------
+3. Compliance With ISO/IEC TR 24732
+
+This section covers issues related to compliance with ISO/IEC TR 24732.
+
+---------------------------------------------------------------------------
+3.1 __STDC_WANT_DEC_FP__
+
+The standard ISO/IEC TR 24732 indicates that programs that wish to use
+Decimal Floating Point should define the following macro:
+
+	__STDC_WANT_DEC_FP__
+
+There is no set value for this macro.
+
+Simply passing -D__STDC_WANT_DEC_FP__ on compilation, or defining it in your
+program should suffice:
+
+#define __STDC_WANT_DEC_FP__
+
+This macro is REQUIRED when including dfp/math.h dfp/fenv.h, etc to pick
+up the DFP function prototypes and data types defined in these headers.
+
+---------------------------------------------------------------------------
+3.2 scanf
+
+Libdfp does not, and will not comply with the TR 24732 requirement for the
+addition of scanf in support of decimal floating point data types.  The
+strtod[32|64|128] functions can be used for the same purpose without the
+implications of scanf.
+
+---------------------------------------------------------------------------
+3.3 printf
+
+Libdfp supports the addition of the printf format codes indicated by TR
+24732.  GLIBC proper owns the printf implementation.  Libdfp utilizes the
+printf-hooks mechanism provided by GLIBC to register support of the DFP
+format codes.
+
+The fully functional printf-hooks mechanism was debuted in GLIBC 2.10.
+
+---------------------------------------------------------------------------
+4. Dependencies
+
+---------------------------------------------------------------------------
+4.1 GNU/Linux OS
+
+Libdfp is only enabled to work on the GNU/Linux OS.
+
+---------------------------------------------------------------------------
+4.2 GLIBC Minimum Version
+
+Libdfp version 1.0.0.0 relies upon a minimum GLIBC 2.10 for printf-hooks
+support.
+
+---------------------------------------------------------------------------
+4.3 GLIBC Headers
+
+Libdfp must be built against the GLIBC 2.10 headers due to the printf-hooks
+mechanism being described there.  Due to a problem with GLIBC's "make
+install-headers" not installing all of the necessary headers (such as
+feature.h) the developer building libdfp must:
+
+	- `configure' GLIBC for the target
+	- `make'
+	- `make install_root="<some-path>" install'.
+	- tar the headers out of "<some-path>/include".
+	- unpack the archive close to the libdfp sources, e.g.
+		/home/$USER/stage_libdfp/glibc-2.10-includes/
+
+The resultant headers should be pointed to when Libdfp `configure' is run
+(as described in the section on Configuration.
+
+---------------------------------------------------------------------------
+4.4 libdecnumber
+
+The libdecnumber library has it's own configure and Makefile fragments.
+This is so that it can be built from within any source tree simply by
+passing the necessary configure flags.
+
+In reality it's a bit more complicated.
+
+The libdecnumber library requires the --enable-decimal-float flag when
+being configured.
+
+This pushes this requirement upon the top level Libdfp 'configure'.   Sadly this
+is necessary because Autoconf doesn't allow passing flags to
+AC_CONFIG_SUBDIRS.  It only passes the --with and --enable flags of the
+parent configure fragment to the child, therefore the parent needs to have
+all the flags used by the child.
+
+We used the --enable-decimal-float flag to indicate which encoding to use,
+DPD or BID.  The following are valid:
+
+--enable-decimal-float=dpd
+--enable-decimal-float=bid
+--enable-decimal-float=yes {uses the host default encoding}
+
+Specifying --enable-decimal-float=no simply defaults to the host default
+encoding as well.
+
+Some of the files in the Libdfp top directory are symlinked to the actual
+files in the ./scripts directory.  This is because libdecnumber lives in
+the GCC source tree and GCC doesn't use AC_CONFIG_AUX_DIR([scripts]) but
+Libdfp DOES.  This is required so that libdecnumber/configure.ac ->
+configure works properly.
+
+---------------------------------------------------------------------------
+4.5 GCC With --enable-decimal-float Support
+
+There's a dependency on a version of GCC which supports Decimal Floating
+Point.  Use the following to determine if your compiler supports it:
+
+	gcc -v 2>&1 | grep "\-\-enable\-decimal\-float"
+
+If decimal floating point support is not available in your compiler the
+libdfp configure stage will fail with a warning.
+
+---------------------------------------------------------------------------
+4.6 Autoconf & GNU Make
+
+This Library uses Autoconf to generate GNU Makefiles from Makefile.in
+templates and NOT Automake because Automake is incapable of selecting .S or
+.c source files from an override directory.  Automake is poorly suited for
+system libraries which require flexibility based on assembler code
+overrides and submachine architecture overrides.  Automake demands that the
+target file list be statically defined.
+
+If you need to re-run autoreconf -i you need to use Autoconf version 2.59
+because libdecnumber explicitly requires it.  Here's a hint on how to use a
+particular autoconf version:
+
+PATH=/usr/local/autoconf-2.59/bin/:$PATH autoreconf -i
+
+This of course requires that you've installed Autoconf version 2.59 with
+--prefix=/usr/local/autoconf-2.59/
+
+Some of the Makefile machinery was inspired by the GLIBC Makefiles,
+beautifully written by Roland McGrath since this library was originally a
+GLIBC add-on.
+
+---------------------------------------------------------------------------
+5. Configuration
+
+Standalone libdfp requires that your build directory be separate from
+the source directory.  Invoke the source directorie's 'configure' script
+from within the build directory, e.g.
+
+/home/$USER/stage_libdfp/build/$ ../libdfp/configure
+
+---------------------------------------------------------------------------
+5.1 Configure Switches
+
+Libdfp's default configure should be 64-bit.  In order to build 32-bit you can
+pass the following switches:
+
+	--build=powerpc-linux-gnu --host=powerpc-linux-gnu
+
+The following switches define the DFP backend.
+
+--with-backend={libdecnumber|libbid}
+
+	[OPTIONAL]
+
+	Defaults to host default.  Libbid is not valid on PowerPC or s390
+	hardware.
+
+--enable-decimal-float={yes|dpd|bid}
+
+	[REQUIRED if --with-backend=libdecnumber]
+
+	If --with-backend=libbid then anything other than 'bid' or 'yes'
+	is invalid.
+
+	'bid' is not valid on PowerPC or s390 hardware.
+
+Valid Combinations:
+
+	--with-backend=libdecnumber --enable-decimal-float=dpd
+	--with-backend=libdecnumber --enable-decimal-float=bid
+	--with-backend=libbid --enable-decimal-float=bid
+
+--with-glibc-headers=/home/$USER/stage_libdfp/glibc-2.10-headers
+
+	[REQUIRED if your toolchain has GLIBC version less than 2.10]
+
+--with-glibc-build=/home/$USER/stage_glibc/build/glibc64_power6/
+
+	[OPTIONAL]
+
+	If you want to run make check but your system GLIBC isn't version 2.10
+	you need to pass the location of a temporary GLIBC build-dir (not
+	install dir).  Not passing this switch tells the make check system to
+	simply use the system GLIBC.
+
+--with-cpu={power5|power6|<etc>}
+
+	[OPTIONAL]
+
+	Use this if you want the compiler to optimize the generated code
+	for a particular processor.  This also causes the libdfp build
+	infrastructure to choose architecture specific overrides from the
+	sysdeps tree.
+
+Here are some valid configurations of Libdfp:
+
+General PowerPC (soft-dfp) using the libdecnumber backend and dpd encoding:
+
+CC=/opt/at05/bin/gcc \
+/home/ryanarn/ppc64-tc-utils/trunk/libdfp/src/configure \
+	--with-backend=libdecnumber --enable-decimal-float=dpd \
+	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+	 2>&1 | tee _configure64_power5
+
+PowerPC POWER6 (hard-dfp) using libdecnumber backend and dpd encoding:
+We only need the --with-cpu=power6 flag for power6 support and
+hardware-dfp:
+
+CC=/opt/at05/bin/gcc \
+/home/ryanarn/ppc64-tc-utils/trunk/libdfp/src/configure \
+	--with-backend=libdecnumber --enable-decimal-float=dpd \
+	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+	--with-cpu=power6 2>&1 | tee _configure64_power6
+
+To build 32-bit use the following:
+
+CC=/opt/at05/bin/gcc \
+/home/ryanarn/ppc64-tc-utils/trunk/libdfp/src/configure \
+        --with-backend=libdecnumber --enable-decimal-float=dpd \
+        --with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+	--build=powerpc-linux-gnu --host=powerpc-linux-gnu \
+         2>&1 | tee _configure64_power5
+
+Or 32-bit POWER6:
+
+CC=/opt/at05/bin/gcc \
+/home/ryanarn/ppc64-tc-utils/trunk/libdfp/src/configure \
+        --with-backend=libdecnumber --enable-decimal-float=dpd \
+        --with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+	--build=powerpc-linux-gnu --host=powerpc-linux-gnu \
+         2>&1 | tee _configure64_power5
+
+---------------------------------------------------------------------------
+6. Source Tree Layout
+
+The Libdfp configure script is responsible for building the search order that
+is used by the Make system for selecting files out of the source tree.
+
+The configure script automatically knows how to search for
+	base_machine,
+	machine,
+	submachine
+
+It also recognizes the following special directories when they show up
+following any of the previous *machine directories:
+	fpu,
+	nofpu,
+	dfpu,
+	bits
+
+It hard-searches for the following sysdep directories based upon configuration
+settings:
+	bid,
+	dpd,
+	soft-dfp,
+
+And it knows how to find the common files stored in the convenience
+directories:
+
+	ieee754r,
+	base-math.
+
+The top of the search list is the header files.  Anything in these directories
+should be ABSOLUTELY COMMON since you can't get a header earlier than
+
+	${srcdir}/include.
+
+If you need to override something in ${srcdir}/include then you may need to
+move the headers out of this directory and into the sysdeps tree.
+
+Following this the sysdeps tree is searched and relevant directory depth takes
+precedence.
+
+${srcdir}/include [internal libdfp headers]
+${srcdir}/libdecnumber/dpd [libdecnumber headers]
+${srcdir}/libdecnumber/bid [libdecnumber headers]
+${srcdir}/libbid/? [libbid headers]
+[MACHINE/SUBMACHINE]
+  ${srcdir}/sysdeps/powerpc/powerpc64/power6/fpu [platform directories]
+  ${srcdir}/sysdeps/powerpc/powerpc64/power6/
+  ${srcdir}/sysdeps/powerpc/powerpc64/
+  ${srcdir}/sysdeps/powerpc/powerpc32/power6/fpu [platform directories]
+  ${srcdir}/sysdeps/powerpc/powerpc32/power6/
+  ${srcdir}/sysdeps/powerpc/powerpc32/
+[BASE_MACHINE/[FPU|NOFPU|BITS]]
+  ${srcdir}/sysdeps/powerpc/fpu
+  ${srcdir}/sysdeps/powerpc/fpu/bits
+  ${srcdir}/sysdeps/powerpc/nofpu
+  ${srcdir}/sysdeps/powerpc/nofpu/bits
+[BASE_MACHINE]
+  ${srcdir}/sysdeps/powerpc/
+  ${srcdir}/sysdeps/i386/
+[ENCODING]
+  ${srcdir}/sysdeps/dpd [dpd specific implementations]
+  ${srcdir}/sysdeps/bid [bid specific implementations]
+[SOFT-DFP ENCODING OVERRIDES[DPD|BID]]
+  ${srcdir}/sysdeps/soft-dfp/dpd [soft-dfp dpd arithmetic, conversion, and comparison fns]
+  ${srcdir}/sysdeps/soft-dfp/bid [soft-dfp bid arithmetic, conversion, and comparison fns]
+${srcdir}/sysdeps/soft-dfp [soft-dfp arithmetic, conversion, and comparison fns]
+${srcdir}/dfp [headers files that will be installed.  These follow the
+      	 sysdep overrides so that sysdeps override directories show up
+      	 before the install headers in #include_next <header>.
+${srcdir}/ieee754r [ISO C Draft TR functions]
+${srcdir}/base-math [Arithmetic, Conversion, and Comparison Routines.]
+${srcdir}/[common libdfp framework code & common headers for the backends.]
+
+Out of Tree Sources
+${srcdir}/libdecnumber [third-party GCC sources]
+${srcdir}/libbid       [third-party libBID sources]
+
+---------------------------------------------------------------------------
+Appendices
+---------------------------------------------------------------------------
+A. History
+
+Libdfp was designed by Ryan S. Arnold (IBM), Janis Johnson (IBM), and Steven
+J. Munroe (IBM) in 2006.
+
+Libdfp was originally written as a GLIBC add-on by Ryan S. Arnold
+<rsa@us.ibm.com> and Joseph Kerian <jkerian@us.ibm.com> in 2006 and
+contributed to the Free Software Foundation by IBM in 2007.
+
+Janis Johnson <janis187@us.ibm.com> provided the initial versions of the
+arithmetic, conversion, and comparison routines.
+
+The libdecnumber library was originaly contributed to GCC by IBM and written
+by Mike Cowlishaw.  It's inclusion into GCC was negotiated in 2005/2006 and it
+was pulled into Libdfp as a utility library shortly thereafter.
+
+GLIBC proper declined to include Libdfp upstream on the grounds that
+ratification of the DFP technical report had not taken place so...
+
+Libdfp was ported to EGLIBC by Pete Eberlein <eberlein@us.ibm.com> in 2007.
+
+System 390 support was added by Andreas Krebbel <krebbel@de.ibm.com>
+starting in 2008.
+
+Ryan S. Arnold (with the help of Andreas Krebbel) ported Libdfp into a
+stand-alone library in 2009.
+
+---------------------------------------------------------------------------
+B.  Acknowledgements
+
+Thanks to Ulrich Drepper and the GLIBC folks since we used much of the GLIBC
+macro black magic, math routines, string-to-float conversions, and printf_fp
+code as a basis for the corresponding decimal floating point forms.
+
+Thanks to Roland McGrath for his wild Makefile foo in GLIBC.  Ryan used a lot
+of that as inspiration for Libdfp's Makefiles.
+
+Thanks to everyone at IBM (past and present) who worked on Libdfp.
+
+Thanks to Jeff Bailey for helping Ryan grok Autoconf and GNU Make.  His
+examples on SUFFIXES rules were invaluable in getting the stand-alone Libdfp
+make files into a functional form.
+
+Thanks to EGLIBC (eglibc.org) for hosting Libdfp when it was a GLIBC add-on
+and for hosting the stand alone version as well.
+
