@@ -1,5 +1,12 @@
 2009-08-05  Ryan S. Arnold  <rsa@us.ibm.com>
 
+General non-functiopnal maintenance.
+
+	* Makefile.in: Cleanup comments.
+	* README: Fix typo, spacings, and text.
+
+2009-08-05  Ryan S. Arnold  <rsa@us.ibm.com>
+
 This commit adds the port of libdfp from a GLIBC add-on to a standalone
 library.  This library was written by Ryan S. Arnold <rsa@us.ibm.com>, Joseph
 Kerian <kerian@us.ibm.com>, Pete Eberlein <eberlein@us.ibm.com>, Steve Munroe
