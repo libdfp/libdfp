@@ -11,8 +11,8 @@ NOTE:Eight space tabs are the optimum editor setting for reading this file.
 ===========================================================================
 
 	       Author(s) :  Ryan S. Arnold <rsa@us.ibm.com>
-		       Date Created: July, 14, 2009
-		       Last Changed: July, 16, 2009
+		       Date Created: July 14, 2009
+		       Last Changed: August 5, 2009
 
 ---------------------------------------------------------------------------
 Table of Contents:
@@ -38,6 +38,7 @@ Table of Contents:
 
 	A.  History
 	B.  Acknowledgements
+
 ---------------------------------------------------------------------------
 1.  Introduction
 
@@ -101,7 +102,7 @@ Libdfp is available to be configured in the following combinations:
 
 Arch	HW|SW	Backend		Encoding
 -------------------------------------------------
-ppc960  SW	libdecnumber	DPD
+ppc970  SW	libdecnumber	DPD
 POWER4	SW	libdecnumber	DPD
 POWER	SW	libdecnumber	DPD
 POWER6	HW	libdecnumber	DPD
@@ -186,7 +187,7 @@ feature.h) the developer building libdfp must:
 		/home/$USER/stage_libdfp/glibc-2.10-includes/
 
 The resultant headers should be pointed to when Libdfp `configure' is run
-(as described in the section on Configuration.
+(as described in the section on Configuration).
 
 ---------------------------------------------------------------------------
 4.4 libdecnumber
@@ -364,38 +365,44 @@ The Libdfp configure script is responsible for building the search order that
 is used by the Make system for selecting files out of the source tree.
 
 The configure script automatically knows how to search for
-	base_machine,
-	machine,
-	submachine
+	base_machine (e.g. powerpc)
+	machine (e.g. powerpc32)
+	submachine (e.g. power6)
 
 It also recognizes the following special directories when they show up
 following any of the previous *machine directories:
-	fpu,
-	nofpu,
-	dfpu,
+	fpu
+	nofpu
+	dfpu
 	bits
 
 It hard-searches for the following sysdep directories based upon configuration
 settings:
-	bid,
-	dpd,
-	soft-dfp,
+	bid
+	dpd
+	soft-dfp
 
 And it knows how to find the common files stored in the convenience
 directories:
 
-	ieee754r,
-	base-math.
+	ieee754r
+	base-math
 
-The top of the search list is the header files.  Anything in these directories
-should be ABSOLUTELY COMMON since you can't get a header earlier than
+The top of the search list is the commond libdfp internal header files:
 
 	${srcdir}/include.
 
-If you need to override something in ${srcdir}/include then you may need to
-move the headers out of this directory and into the sysdeps tree.
+Anything in these directories should be ABSOLUTELY COMMON since you can't get
+a header earlier than in the ${srcdir}/include directory.  If you need to
+override something in ${srcdir}/include then you may need to move the headers
+out of this directory and into the sysdeps tree.
 
-Following this the sysdeps tree is searched and relevant directory depth takes
+Header files that are used when building libdfp, but also provided by libdfp
+and installed in the prefix directory are in the following directory:
+
+	${srcdir}/dfp
+
+The sysdeps tree is searched and relevant directory depth takes
 precedence.
 
 ${srcdir}/include [internal libdfp headers]

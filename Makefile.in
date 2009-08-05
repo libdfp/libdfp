@@ -125,6 +125,7 @@ sp +=
 # VPATH only needs to know the directory that source files are in.  Headers
 # are searched based on -I precedence during the compilation invocation.
 VPATH := $(subst $(sp),:,$(all_srcdirs))
+
 # Files common to the $(top_srcdir).  These may be overriden in the sysdep
 # directories and this list may have additional files added by sysdeps
 # directory Makefiles which are included (not recursively invoked).
@@ -135,8 +136,6 @@ libdfp_files := dfptypeconv mapround decode fmt_d32 fmt_d64 fmt_d128 fe_decround
 # The sysdeps subdirs aren't recursively invoked, they're included so that
 # they can add files to the libdfp_files list.
 include $(foreach dir,$(makefile_dirs), $(dir)/Makefile )
-
-#.PHONY: all
 
 # Libdfp has a dependency on the backend so build that first.
 all: first backend libdfp
