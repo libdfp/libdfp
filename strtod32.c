@@ -44,14 +44,15 @@
 #include <wchar.h>
 #include <stdlib.h> /* Pick up the strtod* prototypes.  */
 
-# include <dfpwchar_private.h> /* wcstod* internal interfaces */
-# include <dfpstdlib_private.h> /* strtod* internal interfaces.  */
-
 #include <stdio.h>
 #include <locale.h> /* For newlocale prototype.  */
 #include <langinfo.h> /* For nl_langinfo prototype.  */
 #include <ctype.h> /* isspace_l et. al.  */
 #include <string.h> /* strncasecmp_l  */
+
+#include <dfpwchar_private.h> /* wcstod* internal interfaces */
+#include <dfpstdlib_private.h> /* strtod* internal interfaces.  */
+
 
 //#include <wctype.h>
 
@@ -129,9 +130,14 @@ extern unsigned long long int ____wcstoull_l_internal (const wchar_t *, wchar_t 
 #define FUNCTION_L_INTERNAL	PASTE(__FUNCTION_NAME,_l_internal)
 
 /* Extra macros required to get FLT expanded before the pasting.  */
-//#define PASTE(a,b)	PASTE1(a,b)
-//#define PASTE1(a,b)	a##b
+#ifndef PASTE
+# define PASTE(a,b)             PASTE1(a,b)
+# define PASTE1(a,b)            a##b
+#endif
 
+#ifndef FUNC_D
+# define FUNC_D(x)              PASTE(x,PASTE(d,_DECIMAL_SIZE))
+#endif
 
 #define RETURN(val,end)							      \
     do { if (endptr != NULL) *endptr = (STRING_TYPE *) (end);		      \
@@ -970,7 +976,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   while(++exponent < 0)
     d32 /= 10;
 #else
-  d32 = FUNC_D(setexp) (d32, getexp(d32) + exponent);
+  d32 = FUNC_D(setexp) (d32, FUNC_D (getexp) (d32) + exponent);
 #endif
 
   return negative? -d32:d32;

@@ -32,6 +32,8 @@
 #define DFP_FLAG_DECIMAL_64	(1<<17)
 #define DFP_FLAG_DECIMAL_128	(1<<18)
 
+#include <stdarg.h>
+
 /* Internal entry point for formatting DFP.  */
 extern int __printf_dfp (FILE *, const struct printf_info *,
 			 const void *const *);
