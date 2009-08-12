@@ -142,6 +142,10 @@ static int pa_d128;
 static int pa_d64;
 static int pa_d32;
 
+static int mod_H;
+static int mod_D;
+static int mod_DD;
+
 void
 __d128_va (void *mem, va_list *ap)
 {
@@ -170,40 +174,30 @@ strong_alias(__d32_va, d32_va)
 hidden_def(__d32_va)
 
 int
-__d128_ais (const struct printf_info *info __attribute__ ((unused)), size_t n __attribute__ ((unused)), int *argtype, int *size)
+__dfp_ais (const struct printf_info *info, size_t n __attribute__ ((unused)), int *argtype, int *size)
 {
-  argtype[0] = pa_d128;
-  size[0] = sizeof (_Decimal128);
-  /* Isn't this going to say it always handles this type?  */
-  return 1;
+  if ((info->user & mod_H) == mod_H)
+    {
+      argtype[0] = pa_d32;
+      size[0] = sizeof (_Decimal32);
+      return 1;
+    }
+  else if ((info->user & mod_D) == mod_D)
+    {
+      argtype[0] = pa_d64;
+      size[0] = sizeof (_Decimal64);
+      return 1;
+    }
+  else if ((info->user & mod_DD) == mod_DD)
+    {
+      argtype[0] = pa_d128;
+      size[0] = sizeof (_Decimal128);
+      return 1;
+    }
+  return 0;
 }
-strong_alias(__d128_ais, d128_ais)
-hidden_def(__d128_ais)
-
-int
-__d64_ais (const struct printf_info *info __attribute__ ((unused)), size_t n __attribute__ ((unused)), int *argtype, int *size)
-{
-  argtype[0] = pa_d64;
-  size[0] = sizeof (_Decimal64);
-  return 1;
-}
-strong_alias(__d64_ais, d64_ais)
-hidden_def(__d64_ais)
-
-int
-__d32_ais (const struct printf_info *info __attribute__ ((unused)), size_t n __attribute__ ((unused)), int *argtype, int *size)
-{
-  argtype[0] = pa_d32;
-  size[0] = sizeof (_Decimal32);
-  return 1;
-}
-strong_alias(__d32_ais, d32_ais)
-hidden_def(__d32_ais)
-
-static int mod_H;
-static int mod_D;
-static int mod_DD;
-
+strong_alias(__dfp_ais, dfp_ais)
+hidden_def(__dfp_ais)
 
 
 #define DECIMAL_PRINTF_BUF_SIZE 65 /* ((DECIMAL128_PMAX + 14) * 2) + 1  */
@@ -357,7 +351,7 @@ __printf_dfp (FILE *fp,
      n;      /* current digit offset into digits[] */
 
      //width,  /* width of the field */
-    unsigned int width;  /* width of the field */
+    int width; /* width of the field */
     digits[0] = '0'; /* need an extra digit for rounding up */
 
 //    __get_dpd_digits (
@@ -644,34 +638,14 @@ int __register_printf_dfp (void)
   mod_H = register_printf_modifier (L"H");
   mod_D = register_printf_modifier (L"D");
 
-  register_printf_specifier ('f', printf_dfp, d128_ais);
-  register_printf_specifier ('F', printf_dfp, d128_ais);
-  register_printf_specifier ('e', printf_dfp, d128_ais);
-  register_printf_specifier ('E', printf_dfp, d128_ais);
-  register_printf_specifier ('g', printf_dfp, d128_ais);
-  register_printf_specifier ('G', printf_dfp, d128_ais);
-  register_printf_specifier ('a', printf_dfp, d128_ais);
-  register_printf_specifier ('A', printf_dfp, d128_ais);
-
-  register_printf_specifier ('f', printf_dfp, d32_ais);
-  register_printf_specifier ('F', printf_dfp, d32_ais);
-  register_printf_specifier ('e', printf_dfp, d32_ais);
-  register_printf_specifier ('E', printf_dfp, d32_ais);
-  register_printf_specifier ('g', printf_dfp, d32_ais);
-  register_printf_specifier ('G', printf_dfp, d32_ais);
-  register_printf_specifier ('a', printf_dfp, d32_ais);
-  register_printf_specifier ('A', printf_dfp, d32_ais);
-
-  /* Currently GLIBC's printf hooks only support one override so we make it
-   * _Decimal64 by registering last.  */
-  register_printf_specifier ('f', printf_dfp, d64_ais);
-  register_printf_specifier ('F', printf_dfp, d64_ais);
-  register_printf_specifier ('e', printf_dfp, d64_ais);
-  register_printf_specifier ('E', printf_dfp, d64_ais);
-  register_printf_specifier ('g', printf_dfp, d64_ais);
-  register_printf_specifier ('G', printf_dfp, d64_ais);
-  register_printf_specifier ('a', printf_dfp, d64_ais);
-  register_printf_specifier ('A', printf_dfp, d64_ais);
+  register_printf_specifier ('f', printf_dfp, dfp_ais);
+  register_printf_specifier ('F', printf_dfp, dfp_ais);
+  register_printf_specifier ('e', printf_dfp, dfp_ais);
+  register_printf_specifier ('E', printf_dfp, dfp_ais);
+  register_printf_specifier ('g', printf_dfp, dfp_ais);
+  register_printf_specifier ('G', printf_dfp, dfp_ais);
+  register_printf_specifier ('a', printf_dfp, dfp_ais);
+  register_printf_specifier ('A', printf_dfp, dfp_ais);
 
   return 0;
 }

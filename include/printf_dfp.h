@@ -47,12 +47,8 @@ hidden_proto (__d64_va)
 extern void __d32_va (void *mem, va_list *ap);
 hidden_proto (__d32_va)
 
-extern int __d128_ais (const struct printf_info *info, size_t n, int *argtype, int *size);
-hidden_proto (__d128_ais)
-extern int __d64_ais (const struct printf_info *info, size_t n, int *argtype, int *size);
-hidden_proto (__d64_ais)
-extern int __d32_ais (const struct printf_info *info, size_t n, int *argtype, int *size);
-hidden_proto (__d32_ais)
+extern int __dfp_ais (const struct printf_info *info, size_t n, int *argtype, int *size);
+hidden_proto (__dfp_ais)
 
 extern int __register_printf_dfp (void);
 hidden_proto(__register_printf_dfp)
