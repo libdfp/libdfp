@@ -49,9 +49,17 @@
 #  define DECIMAL_BIAS 6176
 #endif
 
+#ifndef PASTE
+# define PASTE(x,y) PASTE2(x,y)
+# define PASTE2(x,y) x##y
+#endif
+
+#ifndef FUNC_D
+# define FUNC_D(x)		PASTE(x,PASTE(d,_DECIMAL_SIZE))
+#endif
 
 static inline int
-getexp (DEC_TYPE x)
+FUNC_D (getexp) (DEC_TYPE x)
 {
   union {
     double f;
@@ -116,7 +124,7 @@ SETEXP (DEC_TYPE x, int exp)
 
 
 static inline int
-numdigits (DEC_TYPE x)
+FUNC_D (numdigits) (DEC_TYPE x)
 {
 #if _DECIMAL_SIZE == 128
   register DEC_TYPE tmp asm ("fr0") = x;

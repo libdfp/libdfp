@@ -9,15 +9,17 @@
 
 int main ()
 {
-	//_Decimal32 d32 = 1.11111111111DF;
-	//_Decimal128 d128 = 0.000033333DL;
+	_Decimal32 d32 = 1.11111111111DF;
+	_Decimal128 d128 = 0.000033333DL;
 	_Decimal64 d64 = 2.22222222222DD;
 
 	double d = 1.234567;
 	printf("%e.\n",d);
 
 	register_printf_dfp();
+	printf("%Hf.\n",d32);
 	printf("%Df.\n",d64);
+	printf("%DDf.\n",d128);
 
 	d = 3.1415962;
 	printf("%e.\n",d);
