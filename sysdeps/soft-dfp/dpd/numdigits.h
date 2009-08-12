@@ -51,7 +51,7 @@
 #endif
 
 static inline int
-getexp (DEC_TYPE x)
+FUNC_D (getexp) (DEC_TYPE x)
 {
   int exp;
   struct ieee754r_c_field c_f;
@@ -184,7 +184,7 @@ setdigits (DEC_TYPE x, char *str)
 }
 
 static inline int
-numdigits (DEC_TYPE x)
+FUNC_D (numdigits) (DEC_TYPE x)
 {
   int firstdigit = 0;
 #if _DECIMAL_SIZE == 32
@@ -223,7 +223,7 @@ left_justify (DEC_TYPE x)
       /* pad the significant digits with enough trailing zeroes */
       memset(digits + firstdigit + len, '0', firstdigit);
       x = setdigits(x, digits + firstdigit);
-      x = FUNC_D(setexp) (x, getexp(x) - firstdigit);
+      x = FUNC_D(setexp) (x, FUNC_D (getexp(x)) - firstdigit);
     }
 
   return x;

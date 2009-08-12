@@ -50,8 +50,8 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, int *y)
   if (isinf(x) || isnan(x))
     return x+x;
 
-  digits = numdigits(x);
-  exponent = getexp(x);
+  digits = FUNC_D (numdigits) (x);
+  exponent = FUNC_D (getexp) (x);
   *y = digits + exponent;
 
   /* I think this was an error.  */

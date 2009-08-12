@@ -46,7 +46,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, int y)
   long newexp;
 
 #if NUMDIGITS_SUPPORT==1
-  newexp = getexp(x) + y + 1;
+  newexp = FUNC_D (getexp) (x) + y + 1;
   if (newexp > PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Emax)))
     {
     result = DFP_HUGE_VAL;
