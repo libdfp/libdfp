@@ -5,6 +5,9 @@ endif
 top_srcdir := @top_srcdir@
 top_builddir = .
 
+libdir := @exec_prefix@/lib
+includedir := @prefix@/include
+
 dfp_name = @PACKAGE_NAME@
 dfp_version = @PACKAGE_VERSION@
 
@@ -19,6 +22,7 @@ SHARED_LIBRARY = @PACKAGE_NAME@.so.1
 CC = @CC@
 RANLIB = @RANLIB@
 AWK = @AWK@
+INSTALL := install
 
 # libdecnumber or libbid
 dfp_backend = @dfp_backend@
@@ -292,6 +296,16 @@ clean:
 	rm *.o *.os $(STATIC_LIBRARY) $(SHARED_LIBRARY) $(SHARED_VERSION_LIBRARY) Versions.all Versions.sysdeps libdfp.map Versions.tmp sysd-versions $(top_builddir)/$(dfp_backend)/*.o $(top_builddir)/$(dfp_backend)/*.a _make* test-debug.conf $(addsuffix .out,$(libdfp_tests)) $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests)) $(libdfp_tests) _check
 
 .PHONY: clean
+
+install: all
+	$(INSTALL) -d $(install_root)/$(libdir)
+	$(INSTALL) -t $(install_root)/$(libdir) $(top_builddir)/$(STATIC_LIBRARY)
+	$(INSTALL) -t $(install_root)/$(libdir) $(top_builddir)/$(SHARED_LIBRARY)
+	$(INSTALL) -t $(install_root)/$(libdir) $(top_builddir)/$(SHARED_VERSION_LIBRARY)
+	$(INSTALL) -d $(install_root)/$(includedir)
+	$(INSTALL) -d $(install_root)/$(includedir)/dfp
+	$(INSTALL) -t $(install_root)/$(includedir)/dfp '$(top_srcdir)'/dfp/*
+.PHONY: install
 
 # Clean out the existing .SUFFIXES setting.
 .SUFFIXES:
