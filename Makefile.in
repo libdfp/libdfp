@@ -307,6 +307,12 @@ install: all
 	$(INSTALL) -t $(install_root)/$(includedir)/dfp '$(top_srcdir)'/dfp/*
 .PHONY: install
 
+install-headers:
+	$(INSTALL) -d $(install_root)/$(includedir)
+	$(INSTALL) -d $(install_root)/$(includedir)/dfp
+	$(INSTALL) -t $(install_root)/$(includedir)/dfp '$(top_srcdir)'/dfp/*
+.PHONY: install-headers
+
 # Clean out the existing .SUFFIXES setting.
 .SUFFIXES:
 # Prioritize .S over .c when searching for target files.  The .os suffix

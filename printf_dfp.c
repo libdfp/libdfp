@@ -61,11 +61,11 @@
    the GNU I/O library.	 */
 //#define PUT(f, s, n) _IO_sputn (f, s, n)
 
-static size_t
-wpadn (FILE *fp, wint_t pad, size_t count)
+static int
+wpadn (FILE *fp, wint_t pad, int count)
 {
-  unsigned int i;
-  size_t written = 0;
+  int i;
+  int written = 0;
 
   for (i=0;i<count;i++)
       if(putwc(pad,fp) != WEOF)
@@ -74,11 +74,11 @@ wpadn (FILE *fp, wint_t pad, size_t count)
   return written;
 }
 
-static size_t
-padn (FILE *fp, int pad, size_t count)
+static int
+padn (FILE *fp, int pad, int count)
 {
-  unsigned int i;
-  size_t written = 0;
+  int i;
+  int written = 0;
 
   for (i=0;i<count;i++)
       if(putc(pad,fp) != EOF)
@@ -130,7 +130,7 @@ padn (FILE *fp, int pad, size_t count)
 #define PADN(ch, len)							      \
   do									      \
     {									      \
-      if (PAD (fp, ch, len) != len)					      \
+      if ((PAD (fp, ch, len)) != len)					      \
 	{								      \
 	  return -1;							      \
 	}								      \
