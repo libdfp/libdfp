@@ -1,5 +1,30 @@
 2009-08-13  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* tests/scaffold.c: New file which holds _C, _C_P, _PC, and _PC_P
+	macros used for printing debugging messages in the event of test case
+	failures.
+
+2009-08-13  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: For .out rules send stdout to /dev/null and stderr to
+	the .out file.
+	* tests/test-printf.c: Added framework for generically adding printf tests.
+	* Makefile.gdb: Squelch echos of .conf and .gdb file creation.
+
+2009-08-13  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Change test-debug to > debug-test.
+	* tests/debug-test.sh: Change test-debug.conf -> debug-test.conf.
+	* Makefile.gdb: Change test-debug to debug-test.
+
+
+2009-09-13  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* tests/test-debug.sh: Removed and renamed to ...
+	* tests/debug-test.sh: New.
+
+2009-08-13  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* CONTRIBUTORS: Added Carlos Eduardo Seo for contribution of
 	Makefile.in make install and make install-headers feature.
 	* README: Added section on Make Rules.
