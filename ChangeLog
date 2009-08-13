@@ -1,3 +1,59 @@
+2009-08-13  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* CONTRIBUTORS: Added Carlos Eduardo Seo for contribution of
+	Makefile.in make install and make install-headers feature.
+	* README: Added section on Make Rules.
+	* TODO: Added additional todo items.
+
+2009-08-12  Carlos Eduardo Seo  <cseo@linux.vnet.ibm.com>
+
+	* Makefile.in: Added 'make install0headers' feature.
+
+2009-08-12  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* printf_dfp.c: (padn, wpadn): Changed usage of size_t to 'int' to
+	avoid compiler warnings about unsigned to signed comparisons.
+
+2009-08-12  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* tests/test-printf.c: Added print statements for _Decimal32 and
+	_Decimal128.
+	* sysdeps/powerpc/dfpu/numdigits.h (numdigits getexp): Use FUNC_D
+	wrapper.
+	(FUNC_D PASTE): Conditionally define these macros.
+
+2009-08-11  Andreas Krebbel  <krebbel@linux.vnet.ibm.com>
+
+	* include/printf_dfp.h (__d32_ais, __d64_ais, __d128_ais): Removed
+	* printf_dfp.c (__printf_dfp): Changed width from unsigned into to
+	int in order to prevent negative default.
+	(__register_printf_dfp): Replaced individual decimal sized
+	specifier registrations with a unified registrations.
+	(__d32_ais, __d64_ais, __d128_ais): Removed and replaced with unified
+	__dfp_ais().
+
+
+2009-08-11  Andreas Krebbel  <krebbel@linux.vnet.ibm.com>
+
+	* ieee754r/ldexpd32.c (ldexpd32): Use FUNC_D wrapper around getexp.
+	* ieee754r/frexpd32.c (frexpd32): Use FUNC_D wrapper around numdigits
+	and getexp.
+	* sysdeps/soft-dfp/dpd/numdigits.h (numdigits getexp): Use FUNC_D
+	wrapper.
+
+2009-08-11  Carlos Eduardo Seo  <cseo@linux.vnet.ibm.com>
+
+	* Makefile.in: Added 'make install' feature.
+
+2009-08-04  Andreas Krebbel  <krebbel@linux.vnet.ibm.com>
+
+	* include/printf_dfp.h: Add #include <stdardg.h>.
+	* sysdeps/s390/dfpu/numdigits.h: Wrap function definitions in FUNC_D
+	macro. Add PASTE and FUNC_D macro definitions.
+	* strtod32.c (setexp): Refer to 'getexp' using FUNC_D() macro. Add
+	PASTE and FUNC_D macro definitions.  Reposition dfp*_private.h header
+	inclusions.
+
 2009-08-05  Ryan S. Arnold  <rsa@us.ibm.com>
 
 General non-functiopnal maintenance.
