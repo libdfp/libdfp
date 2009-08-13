@@ -12,7 +12,7 @@ NOTE:Eight space tabs are the optimum editor setting for reading this file.
 
 	       Author(s) :  Ryan S. Arnold <rsa@us.ibm.com>
 		       Date Created: July 14, 2009
-		       Last Changed: August 5, 2009
+		       Last Changed: August 13, 2009
 
 ---------------------------------------------------------------------------
 Table of Contents:
@@ -35,6 +35,7 @@ Table of Contents:
 	5.  Configuration
 	  5.1  Configure Switches
 	6.  Source Tree Layout
+	7.  Make Rules
 
 	A.  History
 	B.  Acknowledgements
@@ -441,6 +442,47 @@ ${srcdir}/[common libdfp framework code & common headers for the backends.]
 Out of Tree Sources
 ${srcdir}/libdecnumber [third-party GCC sources]
 ${srcdir}/libbid       [third-party libBID sources]
+
+---------------------------------------------------------------------------
+7. Make Rules
+
+make [all (default)]
+
+	DEPENDENCIES:
+
+		GLIBC headers: The location of the companion GLIBC 2.10 (or
+		greater) headers as passed to configure using the
+		--with-glibc-headers switch.
+
+make check
+
+	DEPENDENCIES:
+
+		GLIBC build: The location of a companion GLIBC 2.10 (or
+		greater) build (prior to make install) that is to be linked
+		against during the make check run.  This is required because
+		the printf-hooks feature that is necessary for printing
+		_Decimal[32|64|128] numbers is only in GLIBC 2.10 and later.
+		This isn't necessary if the system GLIBC is version 2.10 or
+		later.  The path to the build was passed to configure using
+		the --with-glibc-build switch.
+
+make install [install_root=<path>]
+
+	[install_root] (Optional) : Install to <path>/$prefix.  This is used
+	by libdfp developers and distro builders so that they can build libdfp
+	and install it to an alternate location in preparation for packaging.
+
+make install-headers [install_root=<path>]
+
+	[install_root] (Optional) : Install libdfp headers into
+	<path>/$prefix/include/dfp.  This is used by application or library
+	developers whose projects depend on libdfp who don't want to install
+	libdfp proper or may not have permission to do so.
+
+make clean
+
+[TODO] make distclean
 
 ---------------------------------------------------------------------------
 Appendices

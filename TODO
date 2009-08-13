@@ -1,3 +1,22 @@
 Configure test for NEEDED glibc 2.10
+
 libdecnumber.so phantom library for compat issues
+
 libdfp version issues with older apps.
+
+If system glibc is 2.10 then make check shouldn't need all the GLIBC build
+scaffolding.
+
+Clear up make clean and make distclean
+
+Clear up dependency issue so that libdfp.so.1 is rebuilt when a .c file
+changes.
+
+Finish make check test suite.
+
+Clear up symbols and hidden symbol usage and export and make sure we aren't
+using the PLT from within libdfp.
+
+Optimize the math routines for hardware dfp support.
+
+Implement libbid backend.
