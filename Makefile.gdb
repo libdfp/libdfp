@@ -1,7 +1,7 @@
 # These are all used for debugging testcases.  This is sufficiently hackish so
 # it's going into it's own Makefile.
 
-$(top_builddir)/test-debug.conf: Makefile
+$(top_builddir)/debug-test.conf: Makefile
 	echo 'CC="$(CC)"' > $@
 	echo 'DBG=$(dir $(firstword $(CC)))gdb$(cc_msize)' >> $@
 	echo 'OBJDUMP=$(dir $(firstword $(CC)))objdump' >> $@
@@ -10,7 +10,7 @@ $(top_builddir)/test-debug.conf: Makefile
 	echo 'LIBDFP_BUILD=$(top_builddir)/' >> $@
 	echo 'LIBDFP_HEADERS=$(top_srcdir)/dfp' >> $@
 	echo 'LIBDFP_SRC=$(top_srcdir)' >> $@
-	cp $(top_srcdir)/tests/test-debug.sh $(top_builddir)/
+	cp $(top_srcdir)/tests/debug-test.sh $(top_builddir)/
 	@echo
 
 $(addsuffix .conf,$(libdfp_tests)):

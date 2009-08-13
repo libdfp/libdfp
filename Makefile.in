@@ -277,23 +277,23 @@ $(addsuffix .out,$(libdfp_tests)): $(libdfp_tests) $(addsuffix .gdb,$(libdfp_tes
 	2>&1> $(top_builddir)/$@
 	@echo
 
-DISTCLEANFILES = $(top_builddir)/test-debug.conf
+DISTCLEANFILES = $(top_builddir)/debug-test.conf
 
 # Pick up the following rules from Makefile.debug:
-#	$(top_builddir)/test-debug.conf:
+#	$(top_builddir)/debug-test.conf:
 #	$(addsuffix .conf,$(libdfp_tests)):
 #	$(addsuffix .gdb,$(libdfp_tests)):
 include $(top_srcdir)/Makefile.gdb
 
-# We use test-debug.conf as an input file for some debuggin utilities.
-check: $(top_builddir)/test-debug.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests))
+# We use debug-test.conf as an input file for some debuggin utilities.
+check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests))
 
 #	@echo Running make check against tests: $(libdfp_tests)
 
 .PHONY: check
 
 clean:
-	rm *.o *.os $(STATIC_LIBRARY) $(SHARED_LIBRARY) $(SHARED_VERSION_LIBRARY) Versions.all Versions.sysdeps libdfp.map Versions.tmp sysd-versions $(top_builddir)/$(dfp_backend)/*.o $(top_builddir)/$(dfp_backend)/*.a _make* test-debug.conf $(addsuffix .out,$(libdfp_tests)) $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests)) $(libdfp_tests) _check
+	rm *.o *.os $(STATIC_LIBRARY) $(SHARED_LIBRARY) $(SHARED_VERSION_LIBRARY) Versions.all Versions.sysdeps libdfp.map Versions.tmp sysd-versions $(top_builddir)/$(dfp_backend)/*.o $(top_builddir)/$(dfp_backend)/*.a _make* debug-test.conf $(addsuffix .out,$(libdfp_tests)) $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests)) $(libdfp_tests) _check
 
 .PHONY: clean
 
