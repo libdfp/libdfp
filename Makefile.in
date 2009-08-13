@@ -269,12 +269,13 @@ LIBRARY_PATH = $(glibc_builddir)/:$(glibc_builddir)/math:$(glibc_builddir)/elf:$
 
 # Invoke the GLIBC loader and tell it to run the application.  Also make sure
 # the .gdb files are generated before the tests are run so that they get
-# generated even if the tests fail.
+# generated even if the tests fail.  Stderr is piped to the .out file while
+# stdout is dumped to /dev/null.
 $(addsuffix .out,$(libdfp_tests)): $(libdfp_tests) $(addsuffix .gdb,$(libdfp_tests))
 	ulimit -c unlimited; GCONV_PATH=$(glibc_builddir)/iconvdata LC_ALL=C \
 	$(glibc_builddir)/elf/ld.so --library-path \
 	$(LIBRARY_PATH):$(top_builddir) $(top_builddir)/$(patsubst %.out,%,$@) \
-	2>&1> $(top_builddir)/$@
+	2> $(top_builddir)/$@ 1> /dev/null
 	@echo
 
 DISTCLEANFILES = $(top_builddir)/debug-test.conf
@@ -285,7 +286,7 @@ DISTCLEANFILES = $(top_builddir)/debug-test.conf
 #	$(addsuffix .gdb,$(libdfp_tests)):
 include $(top_srcdir)/Makefile.gdb
 
-# We use debug-test.conf as an input file for some debuggin utilities.
+# We use debug-test.conf as an input file for some debugging utilities.
 check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests))
 
 #	@echo Running make check against tests: $(libdfp_tests)
