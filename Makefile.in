@@ -253,7 +253,7 @@ $(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
 
 GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so $(glibc_builddir)/nptl/libpthread.so
 
-libdfp_tests = test-printf
+libdfp_tests = test-printf test-param
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.

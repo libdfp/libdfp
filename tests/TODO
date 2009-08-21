@@ -1,0 +1,4 @@
+
+
+test-param.c: Have it automate checking the return values and use scaffold.c
+for outputting failure cases.
