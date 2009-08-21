@@ -35,10 +35,10 @@
 
 /* Inspired by GLIBC stdio-common/tfformat.c  */
 typedef struct{
-	  int line;
-	  _Decimal128 d;
-	  const char *expect;
-	  const char *format;
+  int line;
+  _Decimal128 d;
+  const char *expect;
+  const char *format;
 } d128_type;
 
 d128_type printf_d128s[] =
@@ -48,8 +48,6 @@ d128_type printf_d128s[] =
   {__LINE__, 231.2315DL, "231.232", "%.3DDf"},
   /* Four digits of precision right of the decimal place.  */
   {__LINE__, 231.2315DL, "231.2315", "%.4DDf"},
-  /* Default six digits of precision right of the decimal place.  */
-  {__LINE__, 231.2311116DL, "231.231112", "%DDf"},
   /* Space padded to 12,  Right justified.  */
   {__LINE__, 231.2315DL, "12.3", "%12.3DDf"},
   /* Left justified, Space padded to 12.  */
@@ -67,11 +65,17 @@ int main (int argc, char ** argv)
 
   register_printf_dfp();
 
+  /* We do this to make sure that the registration didn't mess up the printf
+   * internals.  */
+  fprintf(stdout, "Testing marker after register_printf_dfp() invocation.\n");
+  _PC("1.234567e+00", "%e", (double) 1.234567);
+
   for (dptr = printf_d128s; dptr->line; dptr++)
     {
       _PC_P(__FILE__,dptr->line, dptr->expect,dptr->format,dptr->d);
     }
 
   _REPORT();
-  return 0;
+
+  return fail;
 }
