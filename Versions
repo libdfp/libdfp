@@ -1,5 +1,5 @@
 libdfp {
-  LIBDFP_0.0.1 {
+  LIBDFP_0.9 {
     decoded32;
     decoded64;
     decoded128;

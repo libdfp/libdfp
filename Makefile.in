@@ -13,7 +13,7 @@ dfp_version = @PACKAGE_VERSION@
 
 STATIC_LIBRARY = @PACKAGE_NAME@.a
 
-# e.g. libdfp-0.0.1.so
+# e.g. libdfp-0.0.9.so
 SHARED_VERSION_LIBRARY = @PACKAGE_NAME@-@PACKAGE_VERSION@.so
 
 # e.g. libdfp.so.1

@@ -5,7 +5,7 @@
 # has a hard-coded 2.59 requirement and Libdfp doesn't really care, but can't
 # control libdecnumber.
 AC_PREREQ(2.59) 
-AC_INIT(libdfp, 0.0.1, rsa@us.ibm.com)
+AC_INIT(libdfp, 0.0.9, rsa@us.ibm.com)
 AC_CONFIG_SRCDIR([printf_dfp.c])
 
 # We don't use Automake so this is necessary.

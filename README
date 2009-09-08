@@ -36,6 +36,8 @@ Table of Contents:
 	  5.1  Configure Switches
 	6.  Source Tree Layout
 	7.  Make Rules
+	8.  Precision (TODO)
+	9.  Testing (make check) (TODO)
 
 	A.  History
 	B.  Acknowledgements
@@ -45,9 +47,9 @@ Table of Contents:
 
 The "Decimal Floating Point C Library" is an implementation of ISO/IEC
 Technical report  "ISO/IEC TR 24732" which describes the C-Language library
-routines necessary to support the decimal floating point data types
-introduced in IEEE 754-2008, namely _Decimal32, _Decimal64, and
-_Decimal128.
+routines necessary to provide the C library runtime support for decimal
+floating point data types introduced in IEEE 754-2008, namely _Decimal32,
+_Decimal64, and _Decimal128.
 
 ---------------------------------------------------------------------------
 1.1. ISO/IEC TR 24732
@@ -89,7 +91,8 @@ needs to include libdecnumber statically needs to pull it from the GCC source
 trees.  All patches to libdecnumber should be sent to GCC.
 
 This library's copy of libdecnumber should be periodically synced with
-upstream GCC's version.
+upstream GCC's version.  This syncing is the responsibility of the Libdfp
+maintainer.
 
 Libbid was written by <TODO> (Intel).
 
@@ -97,7 +100,7 @@ Libbid was written by <TODO> (Intel).
 2. Availability
 
 Libdfp attempts to provide an encoding agnostic API to users based
-upon the _Decimal32, _Decimal64, and _Decimal128 data-types.  
+upon the _Decimal32, _Decimal64, and _Decimal128 data-types.
 
 Libdfp is available to be configured in the following combinations:
 
