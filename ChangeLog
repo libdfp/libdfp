@@ -1,3 +1,28 @@
+2009-09-08  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* README: Updated the S/390 availability section.
+
+2009-09-08  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Updated comment to reflect update from 0.0.1 to 0.0.9.
+	* configure.ac (AC_INIT): Updated version from 0.0.1 to 0.0.9.
+	* README: Added two TODO chapters and clarified the intro paragraphs.
+	* Versions.def: Update package versions for symbols.
+	* Versions: Update package versions for symbols.
+
+2009-08-21  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Added test-param to libdfp_tests.
+	* tests/TODO: New file.
+	* tests/README: N/A.
+	* tests/test-param.c: New test to verify integrity of parameters that
+	are spilled to the stack on being passed to a new function.
+
+2009-08-21  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* tests/test-printf.c: Added mechanism to easily add new printf test
+	cases based upon GLIBC's stdio-common/tfformat.c testcase.
+
 2009-08-13  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* tests/scaffold.c: New file which holds _C, _C_P, _PC, and _PC_P
