@@ -104,17 +104,18 @@ upon the _Decimal32, _Decimal64, and _Decimal128 data-types.
 
 Libdfp is available to be configured in the following combinations:
 
-Arch	HW|SW	Backend		Encoding
+Arch		HW|SW	Backend		Encoding
 -------------------------------------------------
-ppc970  SW	libdecnumber	DPD
-POWER4	SW	libdecnumber	DPD
-POWER	SW	libdecnumber	DPD
-POWER6	HW	libdecnumber	DPD
-POWER7	HW	libdecnumber	DPD
-s390	HW	libdecnumber	DPD
-s390	SW	libdecnumber	DPD
-x86	SW	libdecnumber	DPD | BID
-x86_64	SW	libbid		BID
+ppc970  	SW	libdecnumber	DPD
+POWER4		SW	libdecnumber	DPD
+POWER		SW	libdecnumber	DPD
+POWER6		HW	libdecnumber	DPD
+POWER7		HW	libdecnumber	DPD
+S/390 z9-109	SW	libdecnumber	DPD
+S/390 z9-ec	HW	libdecnumber	DPD
+S/390 z10	HW	libdecnumber	DPD
+x86		SW	libdecnumber	DPD | BID
+x86_64		SW	libbid		BID
 
 The selection of a backend and/or an encoding is made at configuration time
 by the distro maintainer or person building libdfp using configuration
