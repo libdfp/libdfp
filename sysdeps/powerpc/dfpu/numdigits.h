@@ -133,7 +133,11 @@ FUNC_D (numdigits) (DEC_TYPE x)
 #endif
   union {
     int i[2];
-    double f;
+#if _DECIMAL_SIZE == 128
+    _Decimal128 f;
+#else
+    _Decimal64 f; /* promote _Decimal32 -> _Decimal64  */
+#endif
   } a, b, one;
   
   one.i[0] = 0;
@@ -141,18 +145,18 @@ FUNC_D (numdigits) (DEC_TYPE x)
   
   asm (
 #if _DECIMAL_SIZE == 32
-    "dctdp %0,%0\n\t"
+    "dctdp %2,%2\n\t"
 #endif
 #if _DECIMAL_SIZE != 128
-    "dxex %1,%0\n\t"
-    "drrnd %0,%4,%0,1\n\t"
-    "dxex %2,%0\n\t"
+    "dxex %0,%2\n\t"
+    "drrnd %1,%3,%2,1\n\t"
+    "dxex %1,%1\n\t"
 #else /* _DECIMAL_SIZE == 128 */
-    "dxexq %1,%0\n\t"
-    "drrndq %0,%4,%0,1\n\t"
-    "dxexq %2,%0\n\t"
+    "dxexq %0,%2\n\t"
+    "drrndq %1,%3,%2,1\n\t"
+    "dxexq %1,%1\n\t"
 #endif
-   : "=f"(tmp), "=f"(a.f), "=f"(b.f) : "0"(tmp), "f"(one.f));
+   : "+f"(a.f), "+f"(b.f) : "f"(tmp), "f"(one.f));
 //  printf("a: %lld  b: %lld\n", a.i, b.i);
   return b.i[1] - a.i[1] + 1;
 }
@@ -170,6 +174,12 @@ left_justify (DEC_TYPE x)
     int i[2];
     double f;
   } d;
+/* Should double f; be replaced with the following for left_justify as well?  */
+//#if _DECIMAL_SIZE == 128
+//    _Decimal128 f;
+//#else
+//    _Decimal64 f; /* promote _Decimal32 -> _Decimal64  */
+//#endif
 
   d.i[0] = 0;
   d.i[1] = 1;

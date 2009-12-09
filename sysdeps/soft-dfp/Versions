@@ -2,6 +2,6 @@ libdfp {
   LIBDFP_PRIVATE {
     __decrm_location;
   }
-  LIBDFP_0.0.1 {
+  LIBDFP_1.0.0 {
   }
 }

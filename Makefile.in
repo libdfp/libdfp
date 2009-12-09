@@ -5,6 +5,7 @@ endif
 top_srcdir := @top_srcdir@
 top_builddir = .
 
+prefix = @prefix@
 libdir := @exec_prefix@/lib
 includedir := @prefix@/include
 
@@ -13,10 +14,11 @@ dfp_version = @PACKAGE_VERSION@
 
 STATIC_LIBRARY = @PACKAGE_NAME@.a
 
-# e.g. libdfp-0.0.9.so
+# e.g. libdfp-1.0.0.so
 SHARED_VERSION_LIBRARY = @PACKAGE_NAME@-@PACKAGE_VERSION@.so
 
-# e.g. libdfp.so.1
+# e.g. libdfp.so.1.  Since this library intends to use symbol versioning there
+# probably isn't ever a reason to move to .so.2 or later.
 SHARED_LIBRARY = @PACKAGE_NAME@.so.1
 
 CC = @CC@
@@ -64,7 +66,7 @@ endif	# $(+cflags) == ""
 +cflags	+= $(cflags-cpu)
 
 # Don't duplicate options if we inherited variables from the parent.
-+cflags>:= $(sort $(+cflags))
++cflags	:= $(sort $(+cflags))
 
 #override CFLAGS = -std=gnu99 $(gnu-inline-CFLAGS) $(+cflags)
 override CFLAGS = $(gnu-inline-CFLAGS) $(+cflags)
@@ -167,15 +169,13 @@ static: $(top_builddir)/$(STATIC_LIBRARY)
 
 shared: $(top_builddir)/$(SHARED_VERSION_LIBRARY)
 
-#WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wcast-qual -pedantic -Wno-long-long
-
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
 C_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_POSIX_C_SOURCE=200809L -std=gnu99 -D_SVID_SOURCE
 ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1
 
 # Build the static object files.
 .c.o:
-	$(CC) $(CFLAGS) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 .S.o:
 	$(CC) $(ASFLAGS) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
@@ -183,17 +183,18 @@ ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -
 
 # Build the shared object files.
 .c.os:
-	$(CC) $(CFLAGS) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 .S.os:
 	$(CC) $(ASFLAGS) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
-
-# Archive the static library.
+# Archive the static library and include all of the .o files from the backend
+# archive.  IF the backend has more than the base directory the .o detection
+# mechanism will need to be more robust than this.
 $(top_builddir)/$(STATIC_LIBRARY): $(top_builddir)/$(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,$(libdfp_files))
 	@echo +Creating static library $@
-	$(AR) rc $@ $(wordlist 2,$(words $?),$?) $(dfp_backend)/*.o
+	$(AR) rc $@ $(wordlist 2,$(words $?),$?) $(top_builddir)/$(dfp_backend)/*.o
 	@ranlibpath=`which $(RANLIB)`; \
 	if test -x "$$ranlibpath"; \
 	then $(RANLIB) $@; fi;
@@ -204,7 +205,7 @@ $(top_builddir)/$(STATIC_LIBRARY): $(top_builddir)/$(dfp_backend)/$(dfp_backend_
 # -bsymbolic makes the library avoid using the PLT for library internal calls.
 $(top_builddir)/$(SHARED_VERSION_LIBRARY): $(top_builddir)/$(dfp_name).map $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@ and creating version symlink $(SHARED_LIBRARY).
-	$(CC) -shared -Wl,-soname,$(SHARED_LIBRARY) -Bsymbolic -nodefaultlibs -nostdlib -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--version-script,$(dfp_name).map $(wordlist 2,$(words $?),$?) -o $@; \
+	$(CC) -shared -Wl,-soname,$(SHARED_LIBRARY) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 2,$(words $?),$?) -o $@ -lm; \
 	ln -s $(top_builddir)/$@ $(SHARED_LIBRARY)
 	@echo
 
@@ -262,10 +263,6 @@ $(libdfp_tests): %:%.o
 	@echo
 
 LIBRARY_PATH = $(glibc_builddir)/:$(glibc_builddir)/math:$(glibc_builddir)/elf:$(glibc_builddir)/nptl
-#$(glibc_builddir)/dlfcn:\
-#	$(glibc_builddir)/nss:$(glibc_builddir)/nis:\
-#	$(glibc_builddir)/rt:$(glibc_builddir)/resolv:\
-#	$(glibc_builddir)/crypt:
 
 # Invoke the GLIBC loader and tell it to run the application.  Also make sure
 # the .gdb files are generated before the tests are run so that they get
@@ -280,7 +277,7 @@ $(addsuffix .out,$(libdfp_tests)): $(libdfp_tests) $(addsuffix .gdb,$(libdfp_tes
 
 DISTCLEANFILES = $(top_builddir)/debug-test.conf
 
-# Pick up the following rules from Makefile.debug:
+# The following rules are defined in Makefile.gdb:
 #	$(top_builddir)/debug-test.conf:
 #	$(addsuffix .conf,$(libdfp_tests)):
 #	$(addsuffix .gdb,$(libdfp_tests)):
@@ -289,12 +286,10 @@ include $(top_srcdir)/Makefile.gdb
 # We use debug-test.conf as an input file for some debugging utilities.
 check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests))
 
-#	@echo Running make check against tests: $(libdfp_tests)
-
 .PHONY: check
 
 clean:
-	rm *.o *.os $(STATIC_LIBRARY) $(SHARED_LIBRARY) $(SHARED_VERSION_LIBRARY) Versions.all Versions.sysdeps libdfp.map Versions.tmp sysd-versions $(top_builddir)/$(dfp_backend)/*.o $(top_builddir)/$(dfp_backend)/*.a _make* debug-test.conf $(addsuffix .out,$(libdfp_tests)) $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests)) $(libdfp_tests) _check
+	rm *.o *.os $(STATIC_LIBRARY) $(SHARED_LIBRARY) $(SHARED_VERSION_LIBRARY) Versions.all Versions.sysdeps libdfp.map Versions.tmp sysd-versions $(top_builddir)/$(dfp_backend)/*.o $(top_builddir)/$(dfp_backend)/*.a debug-test.conf $(addsuffix .out,$(libdfp_tests)) $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests)) $(libdfp_tests)
 
 .PHONY: clean
 

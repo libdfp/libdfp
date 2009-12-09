@@ -2,7 +2,7 @@
 # C source files don't indicate "__bid" in the filename and they
 # live in the common base-math/ directory.
 libdfp {
-  LIBDFP_0.0.1 {
+  LIBDFP_1.0.0 {
     __bid_addsd3; __bid_adddd3; __bid_addtd3;
     __bid_subsd3; __bid_subdd3; __bid_subtd3;
     __bid_mulsd3; __bid_muldd3; __bid_multd3;

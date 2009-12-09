@@ -1,5 +1,5 @@
 libdfp {
-  LIBDFP_0.0.1 {
+  LIBDFP_1.0.0 {
     __bid_extendsfsd; __bid_extendsddf; __bid_extendsdtf;
     __bid_extendsfdd; __bid_extenddfdd; __bid_extendddtf;
     __bid_extendsftd; __bid_extenddftd; __bid_extendtftd;

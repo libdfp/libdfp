@@ -20,3 +20,5 @@ using the PLT from within libdfp.
 Optimize the math routines for hardware dfp support.
 
 Implement libbid backend.
+
+configure runtime test for decimal floating point support in compiler.

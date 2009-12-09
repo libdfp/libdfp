@@ -161,7 +161,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
       DFP_ERRNO (ERANGE);
   if (!FUNC_D(__finite) (z) && FUNC_D(__finite) (x) && FUNC_D(__finite) (y))
     {
-      if (__isnan(z)) /*  Domain error was triggered, x < 0 and y was not an
+      if (FUNC_D(__isnan) (z)) /*  Domain error was triggered, x < 0 and y was not an
 			odd int */
 	DFP_ERRNO (EDOM);
       else	/*  Overflow */

@@ -49,14 +49,13 @@ d128_type printf_d128s[] =
   /* Four digits of precision right of the decimal place.  */
   {__LINE__, 231.2315DL, "231.2315", "%.4DDf"},
   /* Space padded to 12,  Right justified.  */
-  {__LINE__, 231.2315DL, "12.3", "%12.3DDf"},
+  {__LINE__, 231.2315DL, "     231.232", "%12.3DDf"},
   /* Left justified, Space padded to 12.  */
-  {__LINE__, 231.2315DL, "12.3", "%-12.3DDf"},
-
+  {__LINE__, 231.2315DL, "231.232     ", "%-12.3DDf"},
   {0,0,0,0 }
 };
 
-int main (int argc, char ** argv)
+int main (void)
 {
   d128_type *dptr;
 
@@ -77,5 +76,6 @@ int main (int argc, char ** argv)
 
   _REPORT();
 
+  /* fail comes from scaffold.c  */
   return fail;
 }

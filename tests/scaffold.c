@@ -48,9 +48,8 @@ static int fail = 0;
 
 #endif /* _C  */
 
-#ifndef _PC
-
 static char buf[CHAR_MAX];
+#ifndef _PC
 
 /* _PC == Printf_dfp Compare with Position  */
 #define _PC_P(f,l,x,y,args...) do { \
@@ -77,6 +76,43 @@ static char buf[CHAR_MAX];
  */
 #define _PC(x,y,...) _PC_P (__FILE__,__LINE__,x,y,__VA_ARGS__)
 #endif /* _PC  */
+
+
+#ifndef _DC
+
+/* Pick up the decoded[32|64|128] prototypes.  */
+#include "decode.h"
+
+/* _DC == decoded[32|64|128] Compare with Position.  Use this if the position is
+ * pre-determined.  Don't call this on Non-_Decimal values.  The outcome is
+ * undefined.  */
+#define _DC_P(f,l,x,y) do { \
+  memset(buf,'\0',CHAR_MAX); \
+  /* Invoke the correct decoded{32|64|128]() based on arg size.  */ \
+  (sizeof (y) == sizeof (_Decimal128)? decoded128(y,&buf[0]): \
+    (sizeof (y) == sizeof (_Decimal64)? decoded64(y,&buf[0]): \
+       decoded32(y,&buf[0]))); \
+  _C_P(f,l,x,buf); \
+} while (0)
+
+/* _DC == decoded[32|64|128] Compare
+ *
+ * Variadic macro used to compare a decoded[32|64|128]() invocation with an
+ * expected result.
+ *
+ * X: Expected decoded[32|64|128] Output String
+ * Y: _Decimal[32|64|128] Argument
+ *
+ * It is like decoded[32|64|128], except you include an 'expected
+ * result' string to precede everything and you don't need to define a buffer.
+ *
+ * e.g.
+ *   _DC("0.000033333", (_Decimal128) 0.00033333DL);
+ *
+ */
+#define _DC(x,y) _DC_P (__FILE__,__LINE__,x,y)
+#endif /* _DC  */
+
 
 #ifndef _REPORT
 /* Don't print anything if there are no failures.  */

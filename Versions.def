@@ -1,4 +1,4 @@
 libdfp {
-  LIBDFP_0.9
+  LIBDFP_1.0.0
   LIBDFP_PRIVATE
 }

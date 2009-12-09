@@ -4,8 +4,8 @@
 # Autoconf 2.59 required because recursively configured 'libdecnumber' library
 # has a hard-coded 2.59 requirement and Libdfp doesn't really care, but can't
 # control libdecnumber.
-AC_PREREQ(2.59) 
-AC_INIT(libdfp, 0.0.9, rsa@us.ibm.com)
+AC_PREREQ(2.59)
+AC_INIT(libdfp, 1.0.0, rsa@us.ibm.com)
 AC_CONFIG_SRCDIR([printf_dfp.c])
 
 # We don't use Automake so this is necessary.
@@ -82,8 +82,19 @@ AC_ARG_ENABLE([decimal-float],
   esac],
   [enable_decimal_float="$default_encoding"])
 AC_SUBST(enable_decimal_float)
-
 AC_MSG_NOTICE(Using $enable_decimal_float decimal floating point encoding)
+
+# Some code may need to have conditional guards based on the backend.  Give the
+# developers _DPD_BACKEND or _BID_BACKEND.  Try avoiding this as much as
+# possible and use sysdep file overrides.  A good place to use it is in the
+# tests/ directory.
+if test $enable_decimal_float = dpd; then
+  AC_DEFINE_UNQUOTED(_DPD_BACKEND,1
+		     ,"Defined if DPD is the backend designated by configure.")
+else
+  AC_DEFINE_UNQUOTED(_BID_BACKEND,1
+		     ,"Defined if BID is the backend designated by configure.")
+fi
 
 # Now we know how to chose the desired backend directory, e.g.
 # src/backend/libdecnumber or src/backend/libbid when we build our search
@@ -152,31 +163,41 @@ AC_ARG_WITH([cpu],
     ;;
   power6)
     submachine="$withval"
-    submachine_opt="-mcpu=$withval"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   power6x)
     submachine="$withval"
-    submachine_opt="-mcpu=$withval"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   z9-ec)
     submachine="$withval"
-    submachine_opt="-march=$withval"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   z10)
     submachine="$withval"
-    submachine_opt="-march=$withval"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   *)
     submachine="$withval"
-    submachine_opt="-mcpu=$withval"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=no ;;
   esac
 ],[with_dfp=no])
+
+if test -n "$submachine"; then
+  AC_CACHE_CHECK([for compiler option for CPU variant],
+                submachine_opt, [dnl
+  submachine_opt=no
+  for opt in "-march=$submachine" "-mcpu=$submachine"; do
+    if AC_TRY_COMMAND([${CC-cc} $opt -xc /dev/null -S -o /dev/null]); then
+      submachine_opt="$opt"
+      break
+    fi
+  done])
+  if test "x$submachine_opt" = xno; then
+    AC_MSG_ERROR([${CC-cc} does not support $submachine])
+  fi
+fi
 
 # This tells us whether we know we have a hardware decimal floating point
 # unit.  We know this based upon the submachine.
@@ -198,7 +219,7 @@ cc_msize=
 case "$machine" in
 	powerpc) base_machine=powerpc machine=powerpc/powerpc32 cc_msize=32 ;;
 	powerpc64) base_machine=powerpc machine=powerpc/powerpc64 cc_msize=64;;
-	s390) base_machine=s390 machine=s390/s390-32 cc_msize=32;;
+	s390) base_machine=s390 machine=s390/s390-32 cc_msize=31;;
 	s390x) base_machine=s390 machine=s390/s390-64 cc_msize=64;;
 	i[34567]86) base_machine=i386 machine=i386/$machine ;;
 	*) base_machine=$machine ;;
@@ -217,30 +238,34 @@ CC="${CC} -m${cc_msize}"
 AC_SUBST(CC)
 AC_SUBST(cc_msize)
 
+AC_SUBST(CFLAGS)
+AC_SUBST(ASFLAGS)
+
+# TODO replace this with a compiler type check.
 # Don't even bother configuring if the compiler doesn't support Decimal
 # Floating Point.
-AC_CACHE_CHECK(for decimal-float-support in compiler,
-	       libdfp_cv_cc_with_decimal_float, [
-		cat > conftest.c <<EOF
-int main (void) { _Decimal64 d64; d64 = 1.0DD; return 0; }
-EOF
-  if ${CC} ${CFLAGS} ${CPPFLAGS} $LDFLAGS -static -o conftest \
-       conftest.c -v 2>&1 >/dev/null | grep -q " --enable-decimal-float ";
-  then
-    libdfp_cv_cc_with_decimal_float=yes
-  else
-    libdfp_cv_cc_with_decimal_float=no
-    AC_MSG_WARN([CC is ${CC}])
-    AC_MSG_ERROR([${PACKAGE_NAME} requires a compiler configured and built
-		  with --enable-decimal-float.])
-  fi
-  rm -f conftest*])
-AC_SUBST(libdfp_cv_cc_with_decimal_float)
-if test $libdfp_cv_cc_with_decimal_float = yes; then
-  cat >> confdefs.h <<\EOF
-#define __STDC_DEC_FP__ 200704L
-EOF
-fi
+#AC_CACHE_CHECK(for decimal-float-support in compiler,
+#	       libdfp_cv_cc_with_decimal_float, [
+#		cat > conftest.c <<EOF
+#int main (void) { _Decimal64 d64; d64 = 1.0DD; return 0; }
+#EOF
+#  if ${CC} ${CFLAGS} ${CPPFLAGS} $LDFLAGS -static -o conftest \
+#       conftest.c -v 2>&1 >/dev/null | grep -q " --enable-decimal-float ";
+#  then
+#    libdfp_cv_cc_with_decimal_float=yes
+#  else
+#    libdfp_cv_cc_with_decimal_float=no
+#    AC_MSG_WARN([CC is ${CC}])
+#    AC_MSG_ERROR([${PACKAGE_NAME} requires a compiler configured and built
+#		  with --enable-decimal-float.])
+#  fi
+#  rm -f conftest*])
+#AC_SUBST(libdfp_cv_cc_with_decimal_float)
+#if test $libdfp_cv_cc_with_decimal_float = yes; then
+#  cat >> confdefs.h <<\EOF
+##define __STDC_DEC_FP__ 200704L
+#EOF
+#fi
 
 glibc_headers=
 AC_ARG_WITH([glibc-headers],

@@ -2,7 +2,7 @@
 # C source files don't indicate "__dpd" in the filename and they
 # live in the common base-math/ directory.
 libdfp {
-  LIBDFP_0.0.1 {
+  LIBDFP_1.0.0 {
     __dpd_addsd3; __dpd_adddd3; __dpd_addtd3;
     __dpd_subsd3; __dpd_subdd3; __dpd_subtd3;
     __dpd_mulsd3; __dpd_muldd3; __dpd_multd3;

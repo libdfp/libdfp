@@ -1,3 +1,80 @@
+2009-12-09  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* Makefile.in (.c.o, .c.os): Added -include $(top_builddir)/config.h to
+	pick up _BACKEND_DPD or _BACKEND_BID.
+	($(top_builddir)/$(STATIC_LIBRARY)): Add $(top_builddir) to
+	dfp_backend path.
+	* README: Added WARNING about making sure to link to a glibc that's
+	the same bitness (32|64) and the same optimization as the libdfp
+	that's being configure.  Added --with-glibc-build= examples.
+	* Versions (libdfp): LIBDFP_1.0.0 tagged.
+	* Versions.def (libdfp): LIBDFP_1.0.0 tagged.
+	* ieee754r/Versions.def (libdfp): LIBDFP_1.0.0 tagged.
+	* config.h.in: Regenerated.
+	* configure.ac: (AC_INIT): Tagged version 1.0.0.
+	(_DPD_BACKEND): AC_DEFINE_UNQUOTED; Set based on backend.
+	(_BID_BACKEND): AC_DEFINE_UNQUOTED; Set based on backend.
+	(--with-cpu): Removed submachine_opt="-mcpu=$withval".
+	($machine): On s390 cc_msize=31 NOT 32.
+	(AC_SUBST): CFLAGS and ASFLAGS.
+	(AC_CACHE_CHECK): Removed check for compiler feature
+	decimal-float-support.
+	* ieee754r/frexpd32.c (INTERNAL_FUNCTION_NAME): Initialize 'result' to
+	DEC_NAN because compiler can't see that it's set in a macro and
+	generates warnings.
+	* sysdeps/bid/Versions (libdfp): LIBDFP_1.0.0 tagged
+	* sysdeps/dpd/Versions (libdfp): LIBDFP_1.0.0 tagged
+	* sysdeps/dpd/dpd-private.c (__get_digits_d32, __get_digits_d64,
+	__get_digits_d128): initialize exp = 0;
+	* sysdeps/powerpc/dfpu/numdigits.h (numdigits): Conditionally define
+	'f' based on _Decimal size to prevent the compiler from messing up the
+	register order requirements.
+	* sysdeps/soft-dfp/Versions (libdfp): LIBDFP_1.0.0 tagged
+	* sysdeps/soft-dfp/bid/Versions (libdfp): LIBDFP_1.0.0 tagged
+	* sysdeps/soft-dfp/dpd/Versions (libdfp): LIBDFP_1.0.0 tagged
+	* tests/decode.h: New file providing non-exported decoded[32|64|128]
+	prototypes used in tests and debugging.
+	* tests/scaffold.c (_DC, _DC_P): Added macros for testing against
+	decoded[32|64|128] output.
+	* tests/test-param.c (main): Updated to use scaffold.c and test the
+	values against the decoded[32|64|128] values that're expected.
+
+2009-12-11  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* ieee754r/powd32.c (INTERNAL_FUNCTION_NAME): Set __isnan ->
+	FUNC_D(__isnan).  Not strictly necessary since __isnan is a
+	polymorphic classification function, but this was we avoid the extra
+	steps of detecting the type/size of the input parameter and call the
+	appropriate __isnand[32|64|128] directly.
+
+2009-12-04  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* ieee754r/powd32.c: Add dfp prefix to __isnan invocation.
+
+2009-12-04  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/s390/dfpu/fenv_libdfp.h: Move file to ...
+	* sysdeps/s390/fpu/fenv_libdfp.h: ... here.
+
+2009-11-24  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* configure.ac: Add a march vs mcpu gcc option check.
+
+2009-11-20  Michael Matz  <matz@suse.de>
+
+	* Makefile.in (prefix): Set based on @prefix@ to prevent missing
+	--exec-prefix from setting @exec_prefix@ to the string '$(prefix)',
+	i.e. not the context of $prefix.
+	($(top_builddir)/$(SHARED_VERSION_LIBRARY)): Added -W,no-whole-archive
+	to close -W,whole-archive to SHARED_VERSION_LIBRARY rule.  Removed
+	-nodefaultlibs -nostdlib which prevented linking against libc and libm
+	which libdfp relies upon.
+	* tests/test-printf.c (printf_d128s): Added correct "expected"
+	strings.
+	* sysdeps/soft-dfp/dpd/numdigits.h (left_justify): Changed erroneous
+	FUNC_D (getexp(x)) to FUNC_D (getexp) (x) to correct macro invocation.
+
 2009-09-08  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
 
 	* README: Updated the S/390 availability section.

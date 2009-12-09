@@ -313,8 +313,14 @@ Valid Combinations:
 
 	If you want to run make check but your system GLIBC isn't version 2.10
 	you need to pass the location of a temporary GLIBC build-dir (not
-	install dir).  Not passing this switch tells the make check system to
-	simply use the system GLIBC.
+	install dir) where that GLIBC meets or exceeds version 2.10.  Not
+	passing this switch tells the make check system to simply use the
+	system GLIBC.
+
+	WARNING: Make sure you link to a GLIBC build that supports the same
+	configure options as how you're configuring libdfp, e.g. if you're
+	configuring for 'power6' 64-bit, make sure that the GLIBC build you
+	link against is a 64-bit, power6 tuned build.
 
 --with-cpu={power5|power6|<etc>}
 
@@ -330,38 +336,42 @@ Here are some valid configurations of Libdfp:
 General PowerPC (soft-dfp) using the libdecnumber backend and dpd encoding:
 
 CC=/opt/at05/bin/gcc \
-/home/ryanarn/ppc64-tc-utils/trunk/libdfp/src/configure \
+/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	 2>&1 | tee _configure64_power5
+	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power5 \
+	2>&1 | tee _configure64_power5
 
 PowerPC POWER6 (hard-dfp) using libdecnumber backend and dpd encoding:
 We only need the --with-cpu=power6 flag for power6 support and
 hardware-dfp:
 
 CC=/opt/at05/bin/gcc \
-/home/ryanarn/ppc64-tc-utils/trunk/libdfp/src/configure \
+/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power6 \
 	--with-cpu=power6 2>&1 | tee _configure64_power6
 
 To build 32-bit use the following:
 
 CC=/opt/at05/bin/gcc \
-/home/ryanarn/ppc64-tc-utils/trunk/libdfp/src/configure \
-        --with-backend=libdecnumber --enable-decimal-float=dpd \
-        --with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
+	--with-backend=libdecnumber --enable-decimal-float=dpd \
+	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
 	--build=powerpc-linux-gnu --host=powerpc-linux-gnu \
-         2>&1 | tee _configure64_power5
+	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power5 \
+	2>&1 | tee _configure32_power5
 
 Or 32-bit POWER6:
 
 CC=/opt/at05/bin/gcc \
-/home/ryanarn/ppc64-tc-utils/trunk/libdfp/src/configure \
-        --with-backend=libdecnumber --enable-decimal-float=dpd \
-        --with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
+	--with-backend=libdecnumber --enable-decimal-float=dpd \
+	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
 	--build=powerpc-linux-gnu --host=powerpc-linux-gnu \
-         2>&1 | tee _configure64_power5
+	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power6 \
+	--with-cpu=power6 2>&1 | tee _configure32_power6
 
 ---------------------------------------------------------------------------
 6. Source Tree Layout

@@ -928,7 +928,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
     {
       /* Read the decimal part as a FLOAT.  */
       int digcnt = dig_no - int_no;
-//      FLOAT frac = FLOAT_ZERO;
       
   /* There might be radix characters in
 	    the string.  But these all can be ignored because we know the

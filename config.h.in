@@ -22,3 +22,9 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* "Defined if BID is the backend designated by configure." */
+#undef _BID_BACKEND
+
+/* "Defined if DPD is the backend designated by configure." */
+#undef _DPD_BACKEND

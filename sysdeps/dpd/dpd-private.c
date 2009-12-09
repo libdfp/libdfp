@@ -744,7 +744,7 @@ void
 __get_digits_d32 (_Decimal32 x, char *str, int *exp_p, int *sign_p, 
 		  int *nan_p, int *inf_p)
 {
-  int exp;
+  int exp = 0;
   struct ieee754r_c_field c_f;
   union ieee754r_Decimal32 d;
   d.sd = x;
@@ -768,7 +768,7 @@ void
 __get_digits_d64 (_Decimal64 x, char *str, int *exp_p, int *sign_p, 
 		  int *nan_p, int *inf_p)
 {
-  int exp;
+  int exp = 0;
   struct ieee754r_c_field c_f;
   union ieee754r_Decimal64 d;
   d.dd = x;
@@ -796,7 +796,7 @@ void
 __get_digits_d128 (_Decimal128 x, char *str, int *exp_p, int *sign_p, 
 		   int *nan_p, int *inf_p)
 {
-  int exp;
+  int exp = 0;
   struct ieee754r_c_field c_f;
   union ieee754r_Decimal128 d;
   d.td = x;

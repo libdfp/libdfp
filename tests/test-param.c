@@ -26,22 +26,38 @@
 #define __STDC_WANT_DEC_FP__
 #endif
 
-#include <stdio.h>
-#include <float.h>
-
 /* This testcase is designed to test that the compiler is satisfying the
  * conditions of the ABI with regard to spilling of _Decimal* type parameters
  * to the stack.  In other words, we verify the integrity of the data after a
  * function call where parameters are spilled.  This should be tested for both
- * hard and soft dfp.  */
+ * hard-dfp and soft-dfp.  */
 
-/* char * should ref a 14 byte char array, +0,000,000E+0\0  */
-extern char * decoded32 (_Decimal32, char*);
-/* char * should ref a 26 byte char array, +0,000,000,000,000,000E+0\0  */
-extern char * decoded64 (_Decimal64, char*);
-/* char * should ref a 50 byte char array, *
- * +0,000,000,000,000,000,000,000,000,000,000,000E+0\0  */
-extern char * decoded128 (_Decimal128, char*);
+#include <stdio.h>
+#include <float.h>
+
+/* Pick up the decoded* headers.  */
+#include "decode.h"
+
+#include "scaffold.c" /* Pick up the _PC(x,y,...) macro.  */
+
+/* Inspired by GLIBC stdio-common/tfformat.c  */
+typedef struct{
+  int line;
+  _Decimal128 d;
+  const char *expect;
+} d128_type;
+
+typedef struct{
+  int line;
+  _Decimal64 d;
+  const char *expect;
+} d64_type;
+
+typedef struct{
+  int line;
+  _Decimal32 d;
+  const char *expect;
+} d32_type;
 
 typedef struct sparm {
   _Decimal32 df;
@@ -49,9 +65,19 @@ typedef struct sparm {
   _Decimal128 dl;
 } sparm_t;
 
-/* Test parameter spilling.  */
-int func(_Decimal128 d128, _Decimal64 d64, _Decimal32 d32, struct sparm *s,
-struct sparm *t, _Decimal32 e32, _Decimal64 e64, _Decimal64 z64, _Decimal128 e128, _Decimal64 f64, _Decimal128 f128)
+/* Test parameter spilling.  Use __attribute__ ((unused)) to silence compiler
+ * warnings.  */
+static int param_test(_Decimal128 d128 __attribute__ ((unused)),
+	       _Decimal64 d64 __attribute__ ((unused)),
+	       _Decimal32 d32 __attribute__ ((unused)),
+	       struct sparm *s __attribute__ ((unused)),
+	       struct sparm *t __attribute__ ((unused)),
+	       _Decimal32 e32 __attribute__ ((unused)),
+	       _Decimal64 e64 __attribute__ ((unused)),
+	       _Decimal64 z64 __attribute__ ((unused)),
+	       _Decimal128 e128,
+	       _Decimal64 f64 __attribute__ ((unused)),
+	       _Decimal128 f128)
 {
   volatile _Decimal128 z;
   volatile _Decimal128 y;
@@ -60,17 +86,88 @@ struct sparm *t, _Decimal32 e32, _Decimal64 e64, _Decimal64 z64, _Decimal128 e12
   return 0;
 }
 
-int main() {
+int main(void) {
   int x;
   struct sparm s, t;
-  char buf[256];
-  _Decimal32 d32,e32 = 4.44444DF;
-  _Decimal64 d64,e64,f64 = 9.99999DD;
-  _Decimal128 d128,e128 = 1.0DL;
-  _Decimal128 f128 = 2.0DL;
 
-  x = func(d128,d64,d32,&s,&t,e32,e64,e64,e128,f64,f128);
-  decoded128(e128,&buf[0]);
-  printf("%s\n",buf);
-  return 0;
+  d32_type d32types[] =
+  {
+#ifdef _DPD_BACKEND
+    {__LINE__,4.44444DF, "+0,444,444E-5"},
+    {__LINE__,1.22222DF, "+0,122,222E-5"},
+#else
+    {__LINE__,4.44444DF, "BID not supported."},
+    {__LINE__,1.22222DF, "BID not supported."},
+#endif
+    {0,0,0 }
+  };
+
+  d64_type d64types[] =
+  {
+#ifdef _DPD_BACKEND
+    {__LINE__,1.99999DD, "+0,000,000,000,199,999E-5"},
+    {__LINE__,2.88888DD, "+0,000,000,000,288,888E-5"},
+    {__LINE__,3.77777DD, "+0,000,000,000,377,777E-5"},
+    {__LINE__,4.66666DD, "+0,000,000,000,466,666E-5"},
+#else
+    {__LINE__,1.99999DD, "BID not supported."},
+    {__LINE__,2.88888DD, "BID not supported."},
+    {__LINE__,3.77777DD, "BID not supported."},
+    {__LINE__,4.66666DD, "BID not supported."},
+#endif
+    {0,0,0 }
+  };
+
+  d128_type d128types[] =
+  {
+#ifdef _DPD_BACKEND
+    {__LINE__,7.0DL, "+0,000,000,000,000,000,000,000,000,000,000,070E-1"},
+    {__LINE__,6.0DL, "+0,000,000,000,000,000,000,000,000,000,000,060E-1"},
+    {__LINE__,5.0DL, "+0,000,000,000,000,000,000,000,000,000,000,050E-1"},
+#else
+    {__LINE__,7.0DL, "BID not supported."},
+    {__LINE__,6.0DL, "BID not supported."},
+    {__LINE__,5.0DL, "BID not supported."},
+#endif
+    {0,0,0 }
+  };
+
+  /* We're not going to check these.  They're simply filler.  */
+  s.df = 1.22222DF;
+  s.dd = 2.33333DD;
+  s.dl = 3.44444DL;
+
+  t.df = 4.55555DF;
+  t.dd = 5.66666DD;
+  t.dl = 6.77777DL;
+
+  /* This may seem like a trivial test but the compiler screwed this up at one
+   * point and it'd be nice to not have this ever regress without us knowing it.
+   */
+  x = param_test(d128types[0].d,d64types[0].d,d32types[0].d,&s,&t,d32types[1].d,d64types[1].d,d64types[2].d,d128types[1].d,d64types[3].d,d128types[2].d);
+
+  /* Make sure the compiler hasn't screwed up the save/restore of these
+   * _Decimal types.  */
+  d32_type *d32p;
+  for (d32p = d32types; d32p->line; d32p++)
+    {
+      _DC_P(__FILE__,d32p->line, d32p->expect,d32p->d);
+    }
+
+  d64_type *d64p;
+  for (d64p = d64types; d64p->line; d64p++)
+    {
+      _DC_P(__FILE__,d64p->line, d64p->expect,d64p->d);
+    }
+
+  d128_type *d128p;
+  for (d128p = d128types; d128p->line; d128p++)
+    {
+      _DC_P(__FILE__,d128p->line, d128p->expect,d128p->d);
+    }
+
+  _REPORT();
+
+  /* fail comes from scaffold.c  */
+  return fail;
 }

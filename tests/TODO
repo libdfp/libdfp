@@ -1,4 +1,6 @@
 
-
 test-param.c: Have it automate checking the return values and use scaffold.c
 for outputting failure cases.
+
+use genddtbls.c to output a table and compare the results to `ddlogtbls.c'.
+This is a good exercise of the frexp and num-digits code.

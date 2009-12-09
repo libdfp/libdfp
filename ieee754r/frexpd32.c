@@ -42,7 +42,10 @@
 DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x, int *y)
 {
-  DEC_TYPE result;
+  /* GCC isn't smart enough to realize that the else block sets this in the
+   * FUNC_CONVERT_FROM_DN macro so simply initialize it to NaN to silence the
+   * warnings.  */
+  DEC_TYPE result = DEC_NAN;
 
 #if NUMDIGITS_SUPPORT==1
   int digits, exponent;
@@ -50,14 +53,32 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, int *y)
   if (isinf(x) || isnan(x))
     return x+x;
 
+  // Given 3.1e0 is encoded as 31e-1 and we want .31e1
+  // We have 2 'digits'.
+
+  // Given 30.0e0 is encoded as 300e-1 and we want .300e2
+  // We have 3 'digits'.
+
+  // Given .003e0 is encoded as 3e3 and we want .3e-2
+  // We have 1 'digits'.
+
   digits = FUNC_D (numdigits) (x);
+
+  // We have -1 exponent.
+
+  // We have -1 exponent.
+
+  // We have -3 exponent.
+
   exponent = FUNC_D (getexp) (x);
   *y = digits + exponent;
 
-  /* I think this was an error.  */
-  /*result = FUNC_D(setexp) (result, -digits); */
-
   result = FUNC_D(setexp) (x, -digits);
+  //2 + (-1) = 1   0
+
+  //3 + (-1) = 2   0
+
+  //1 + (-3) = -2
 
 #else
   decNumber dn_x;

@@ -223,7 +223,7 @@ left_justify (DEC_TYPE x)
       /* pad the significant digits with enough trailing zeroes */
       memset(digits + firstdigit + len, '0', firstdigit);
       x = setdigits(x, digits + firstdigit);
-      x = FUNC_D(setexp) (x, FUNC_D (getexp(x)) - firstdigit);
+      x = FUNC_D(setexp) (x, FUNC_D (getexp) (x) - firstdigit);
     }
 
   return x;
