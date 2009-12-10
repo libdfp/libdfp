@@ -49,39 +49,38 @@ endif
 
 cc_msize = @cc_msize@
 
-default_cflags := -g -O2
+# Not used on non-Z systems, i.e. empty
+cc_mzarch = @cc_mzarch@
+
+default_cflags := @CFLAGS@ -m$(cc_msize) $(cc_mzarch)
+default_asflags := @ASFLAGS@ -m$(cc_msize) $(cc_mzarch)
 
 ifndef	+cflags
-# If `CFLAGS' was defined by configure, use that.
-ifdef		CFLAGS
-+cflags	:= $(filter-out -I%,$(CFLAGS))
-endif
+# Remove -I stuff from CFLAGS.
++cflags	:= $(filter-out -I%,$(default_cflags))
 endif
 
-# If none of the above worked, default to "-g -O2"
-ifeq	"$(strip $(+cflags))" ""
-+cflags	:= $(default_cflags)
-endif	# $(+cflags) == ""
-
+# Add -mcpu=<CPU> targets.
 +cflags	+= $(cflags-cpu)
 
-# Don't duplicate options if we inherited variables from the parent.
+# Don't duplicate options.
 +cflags	:= $(sort $(+cflags))
 
-#override CFLAGS = -std=gnu99 $(gnu-inline-CFLAGS) $(+cflags)
 override CFLAGS = $(gnu-inline-CFLAGS) $(+cflags)
 
 # These are the flags given to the compiler to tell it what sort of
 # optimization and/or debugging output to do for .S files.
-ifndef +asflags
-# If `ASFLAGS' was defined, use that.
-ifdef		ASFLAGS
-+asflags := $(ASFLAGS)
-endif		#ASFLAGS
-endif	# +asflags
+
+ifndef	+asflags
+# Remove -I stuff from ASFLAGS.
++asflags	:= $(filter-out -I%,$(default_asflags))
+endif
 
 # This makes sure -mcpu=CPU gets used when gcc is invoked against .S files.
-+asflags +=  $(asflags-cpu)
++asflags	+=  $(asflags-cpu)
+
+# Don't duplicate options.
++asflags	:= $(sort $(+asflags))
 
 override ASFLAGS = $(+asflags)
 
@@ -157,10 +156,12 @@ first:
 backend: $(top_builddir)/$(dfp_backend)
 
 # Configure will have generated the Makefile for the selected backend.
-# Let's add it to the subdir list so it gets recursively invoked by Make.
+# Let's add it to the subdir list so it gets recursively invoked by Make.  We
+# have to pass CFLAGS here because configure's CFLAGS doesn't have -mcpu,
+# -m[31|32|64] or -mzarch.
 $(top_builddir)/$(dfp_backend):
 	@echo +Building the DFP backend library.
-	DEFS="-D__STDC_DEC_FP__=200704L" $(MAKE) -eC $@
+	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -eC $@
 	@echo
 
 libdfp: @enable_static@ @enable_shared@
@@ -205,7 +206,7 @@ $(top_builddir)/$(STATIC_LIBRARY): $(top_builddir)/$(dfp_backend)/$(dfp_backend_
 # -bsymbolic makes the library avoid using the PLT for library internal calls.
 $(top_builddir)/$(SHARED_VERSION_LIBRARY): $(top_builddir)/$(dfp_name).map $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@ and creating version symlink $(SHARED_LIBRARY).
-	$(CC) -shared -Wl,-soname,$(SHARED_LIBRARY) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 2,$(words $?),$?) -o $@ -lm; \
+	$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_LIBRARY) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 2,$(words $?),$?) -o $@ -lm; \
 	ln -s $(top_builddir)/$@ $(SHARED_LIBRARY)
 	@echo
 

@@ -150,10 +150,10 @@ esac],
 AC_SUBST(dfp_backend)
 
 # This will invoke the sysdeps/$machine/<processor>/ machinery as well as
-# the -mcpu=<processor> machinery.
+# the -mcpu=<processor> machinery and -mzarch for s390 (and friends).
 submachine=
 with_dfp=
-dfp_opts=
+cc_mzarch=
 AC_ARG_WITH([cpu],
 	    AS_HELP_STRING([--with-cpu=CPU], [select code for CPU variant]),
 	    [dnl
@@ -172,12 +172,12 @@ AC_ARG_WITH([cpu],
     with_dfp=yes ;;
   z9-ec)
     submachine="$withval"
-    dfp_opts=-mzarch
+    cc_mzarch=-mzarch
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   z10)
     submachine="$withval"
-    dfp_opts=-mzarch
+    cc_mzarch=-mzarch
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   *)
@@ -231,14 +231,19 @@ changequote([,])dnl
 AC_SUBST(base_machine)
 AC_SUBST(machine)
 
-# Checks for programs.
-dnl AC_PROG_CC(gcc) # Don't use AC_PROG_CC because it restricts CC and won't
-dnl                 # allow updates to it to add the -m${cc_msize} flag.
-if test -z ${CC}; then
-     CC=`which gcc`
-fi
-CC="${CC} -m${cc_msize} ${dfp_opts}"
-AC_SUBST(CC)
+# The implication of using AC_PROG_CC is that on a biarch POWER system where
+# the toolchain defaults to 32-bit and the kernel reports a 64-bit environment
+# there is a screwy disconnect between the two.
+AC_PROG_CC(gcc)
+
+# Automatically exported by AC_PROG_CC
+#AC_SUBST(CC)
+#AC_SUBST(CFLAGS)
+
+# It was considered to add this to CFLAGS before AC_PROG_CC was declared to
+# make sure that libdecnumber got all of the flags but it was decided to
+# simply invoke decnumber's `make' with an overridden CFLAGS.
+AC_SUBST(cc_mzarch)
 AC_SUBST(cc_msize)
 
 AC_SUBST(CFLAGS)

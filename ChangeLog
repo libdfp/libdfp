@@ -1,6 +1,30 @@
 2009-12-10  Ryan S. Arnold  <rsa@us.ibm.com>
 
-	* configure: Regenrated.
+	* configure: Regenerated.
+	* configure.ac (AC_PROG_CC): Re-added AC_PROG_CC and removed custom
+	$(CC).  Removed -m flags from CC and pushed this responsibility onto
+	Makefile.in to put into CFLAGS.  These changes allow a user to prepend
+	some custom flags onto CFLAGS at configure time.
+	(dfp_opts): Changed to $(cc_mzarch).  No need to be obscure until we
+	have to.
+	* Makefile.in (cc_mzarch): New variable used on s390 only, otherwise
+	empty.
+	(default_cflags): Inherit defaults from configure.  Add
+	-m$(cc_msize) and $(cc_mzarch).
+	(default_asflags): Inherit defaults from configure.  Add
+	-m$(cc_msize) and $(cc_mzarch).
+	(+cflags): Simplified CFLAGS override mechanism.
+	(+asflags): Simplified ASFLAGS override mechanism.
+	($(top_builddir)/$(dfp_backend)): Manually pass overridden CFLAGS to
+	backend 'make' since the -m flags aren't passed in the top level
+	configure's CFLAGS.
+	($(top_builddir)/$(SHARED_VERSION_LIBRARY)): Added $(CFLAGS) since
+	it's no longer part of $(CC).
+	($(libdfp_tests)): Added $(CFLAGS) since it's no longer part of $(CC).
+
+2009-12-10  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
 
 2009-12-10  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
 
