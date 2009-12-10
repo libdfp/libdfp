@@ -233,7 +233,8 @@ AC_SUBST(machine)
 
 # The implication of using AC_PROG_CC is that on a biarch POWER system where
 # the toolchain defaults to 32-bit and the kernel reports a 64-bit environment
-# there is a screwy disconnect between the two.
+# there is a screwy disconnect between the two.  This is OK as long as we
+# export the computed default cc_msize to the Makefile.in.
 AC_PROG_CC(gcc)
 
 # Automatically exported by AC_PROG_CC
@@ -249,31 +250,30 @@ AC_SUBST(cc_msize)
 AC_SUBST(CFLAGS)
 AC_SUBST(ASFLAGS)
 
-# TODO replace this with a compiler type check.
-# Don't even bother configuring if the compiler doesn't support Decimal
-# Floating Point.
-#AC_CACHE_CHECK(for decimal-float-support in compiler,
-#	       libdfp_cv_cc_with_decimal_float, [
-#		cat > conftest.c <<EOF
-#int main (void) { _Decimal64 d64; d64 = 1.0DD; return 0; }
-#EOF
-#  if ${CC} ${CFLAGS} ${CPPFLAGS} $LDFLAGS -static -o conftest \
-#       conftest.c -v 2>&1 >/dev/null | grep -q " --enable-decimal-float ";
-#  then
-#    libdfp_cv_cc_with_decimal_float=yes
-#  else
-#    libdfp_cv_cc_with_decimal_float=no
-#    AC_MSG_WARN([CC is ${CC}])
-#    AC_MSG_ERROR([${PACKAGE_NAME} requires a compiler configured and built
-#		  with --enable-decimal-float.])
-#  fi
-#  rm -f conftest*])
-#AC_SUBST(libdfp_cv_cc_with_decimal_float)
-#if test $libdfp_cv_cc_with_decimal_float = yes; then
-#  cat >> confdefs.h <<\EOF
-##define __STDC_DEC_FP__ 200704L
-#EOF
-#fi
+# Don't even bother configuring if the compiler can't handle Decimal
+# Floating Point data types.
+AC_CACHE_CHECK(for decimal-float-support in compiler,
+	       libdfp_cv_cc_with_decimal_float, [
+		cat > conftest.c <<EOF
+int main (void) { _Decimal64 d64; d64 = 1.0DD; return 0; }
+EOF
+  if ${CC} ${CFLAGS} ${CPPFLAGS} $LDFLAGS -static -o conftest \
+       conftest.c 2>&1 >/dev/null | grep -q " '_Decimal64' undeclared ";
+  then
+    libdfp_cv_cc_with_decimal_float=no
+    AC_MSG_WARN([CC is ${CC}])
+    AC_MSG_ERROR([${PACKAGE_NAME} requires a compiler configured and built
+		  with --enable-decimal-float.])
+  else
+    libdfp_cv_cc_with_decimal_float=yes
+  fi
+  rm -f conftest*])
+AC_SUBST(libdfp_cv_cc_with_decimal_float)
+if test $libdfp_cv_cc_with_decimal_float = yes; then
+  cat >> confdefs.h <<\EOF
+#define __STDC_DEC_FP__ 200704L
+EOF
+fi
 
 glibc_headers=
 AC_ARG_WITH([glibc-headers],
@@ -537,10 +537,6 @@ if test "x$libc_cv_asm_type_prefix" != xno; then
   AC_DEFINE_UNQUOTED(ASM_TYPE_DIRECTIVE_PREFIX, ${libc_cv_asm_type_prefix}, "Define to the prefix before `object' or `function' in the assembler's `.type' directive, if it has one.")
 fi
 
-#AC_PROG_CC_C_O
-# Default -m[32|64] to align $machine to the default -m[32|64] for the
-# compiler on biarch systems.
-
 AC_PROG_RANLIB # Required for static archives.
 AC_PROG_AWK
 
@@ -556,7 +552,9 @@ dnl AC_CHECK_HEADERS([stdlib.h])
 
 
 # Wherever there's a standalone configure fragment we need to tell the top
-# level configure to recurse into it.
+# level configure to recurse into it.  This doesn't pass the full complement
+# of CFLAGS necessary so Makefile.in will need to manually pass the CFLAGS to
+# the backend `make' invocation.
 if test "$dfp_backend" = libdecnumber; then
 	AC_CONFIG_SUBDIRS(libdecnumber)
 else

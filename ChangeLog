@@ -1,6 +1,14 @@
 2009-12-10  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
+	* configure.ac (AC_CACHE_CHECK): Re-added check for
+	decimal-float-support in the compiler by checking whether the compiler
+	can handle the _Decimal64 data type rather than checking whether the
+	compiler -v output had a particular flag set.
+
+2009-12-10  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
 	* configure.ac (AC_PROG_CC): Re-added AC_PROG_CC and removed custom
 	$(CC).  Removed -m flags from CC and pushed this responsibility onto
 	Makefile.in to put into CFLAGS.  These changes allow a user to prepend
