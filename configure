@@ -1501,6 +1501,7 @@ fi;
 # the -mcpu=<processor> machinery.
 submachine=
 with_dfp=
+dfp_opts=
 
 # Check whether --with-cpu or --without-cpu was given.
 if test "${with_cpu+set}" = set; then
@@ -1524,11 +1525,13 @@ echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
   z9-ec)
     submachine="$withval"
+    dfp_opts=-mzarch
     { echo "$as_me:$LINENO: configuring for the $submachine processor" >&5
 echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
   z10)
     submachine="$withval"
+    dfp_opts=-mzarch
     { echo "$as_me:$LINENO: configuring for the $submachine processor" >&5
 echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
@@ -1604,7 +1607,7 @@ esac
 if test -z ${CC}; then
      CC=`which gcc`
 fi
-CC="${CC} -m${cc_msize}"
+CC="${CC} -m${cc_msize} ${dfp_opts}"
 
 
 

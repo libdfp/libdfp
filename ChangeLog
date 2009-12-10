@@ -1,3 +1,13 @@
+2009-12-10  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenrated.
+
+2009-12-10  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* configure.ac: Add -mzarch when building hw dfp on S/390.
+	This is needed for 31 bit which would otherwise default to
+	-mesa.
+
 2009-12-09  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.

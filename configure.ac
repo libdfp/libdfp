@@ -153,6 +153,7 @@ AC_SUBST(dfp_backend)
 # the -mcpu=<processor> machinery.
 submachine=
 with_dfp=
+dfp_opts=
 AC_ARG_WITH([cpu],
 	    AS_HELP_STRING([--with-cpu=CPU], [select code for CPU variant]),
 	    [dnl
@@ -171,10 +172,12 @@ AC_ARG_WITH([cpu],
     with_dfp=yes ;;
   z9-ec)
     submachine="$withval"
+    dfp_opts=-mzarch
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   z10)
     submachine="$withval"
+    dfp_opts=-mzarch
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   *)
@@ -234,7 +237,7 @@ dnl                 # allow updates to it to add the -m${cc_msize} flag.
 if test -z ${CC}; then
      CC=`which gcc`
 fi
-CC="${CC} -m${cc_msize}"
+CC="${CC} -m${cc_msize} ${dfp_opts}"
 AC_SUBST(CC)
 AC_SUBST(cc_msize)
 
