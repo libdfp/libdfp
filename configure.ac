@@ -162,6 +162,10 @@ AC_ARG_WITH([cpu],
   no)
     with_dfp=no
     ;;
+  power7)
+    submachine="$withval"
+    AC_MSG_NOTICE(configuring for the $submachine processor)
+    with_dfp=yes ;;
   power6)
     submachine="$withval"
     AC_MSG_NOTICE(configuring for the $submachine processor)
@@ -240,6 +244,11 @@ AC_PROG_CC(gcc)
 # Automatically exported by AC_PROG_CC
 #AC_SUBST(CC)
 #AC_SUBST(CFLAGS)
+
+OBJDUMP="$OBJDUMP"
+AS="$AS"
+AC_SUBST(OBJDUMP)
+AC_SUBST(AS)
 
 # It was considered to add this to CFLAGS before AC_PROG_CC was declared to
 # make sure that libdecnumber got all of the flags but it was decided to
@@ -346,6 +355,8 @@ AC_MSG_CHECKING(sysdep dirs)
 # ${srcdir}/libdecnumber/bid [libdecnumber headers]
 # ${srcdir}/libbid/? [libbid headers]
 # [MACHINE/SUBMACHINE]
+#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/fpu [platform directories]
+#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/
 #   ${srcdir}/sysdeps/powerpc/powerpc64/power6/fpu [platform directories]
 #   ${srcdir}/sysdeps/powerpc/powerpc64/power6/
 #   ${srcdir}/sysdeps/powerpc/powerpc64/

@@ -353,7 +353,19 @@ CC=/opt/at05/bin/gcc \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power6 \
 	--with-cpu=power6 2>&1 | tee _configure64_power6
 
-To build 32-bit use the following:
+PowerPC POWER7 (hard-dfp) using libdecnumber backend and dpd encoding:
+We only need the --with-cpu=power7 flag for power7 support and
+hardware-dfp:
+
+CC=/opt/at05/bin/gcc \
+/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
+	--with-backend=libdecnumber --enable-decimal-float=dpd \
+	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power7 \
+	--with-cpu=power7 2>&1 | tee _configure64_power7
+
+To build 32-bit use the following (notice the --build=powerpc-linux-gnu
+--host=powerpc-linux-gnu switches):
 
 CC=/opt/at05/bin/gcc \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
@@ -373,6 +385,16 @@ CC=/opt/at05/bin/gcc \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power6 \
 	--with-cpu=power6 2>&1 | tee _configure32_power6
 
+Or 32-bit POWER7:
+
+CC=/opt/at05/bin/gcc \
+/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
+	--with-backend=libdecnumber --enable-decimal-float=dpd \
+	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+	--build=powerpc-linux-gnu --host=powerpc-linux-gnu \
+	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power7 \
+	--with-cpu=power7 2>&1 | tee _configure32_power7
+
 ---------------------------------------------------------------------------
 6. Source Tree Layout
 
@@ -382,7 +404,7 @@ is used by the Make system for selecting files out of the source tree.
 The configure script automatically knows how to search for
 	base_machine (e.g. powerpc)
 	machine (e.g. powerpc32)
-	submachine (e.g. power6)
+	submachine (e.g. power6, power7)
 
 It also recognizes the following special directories when they show up
 following any of the previous *machine directories:
@@ -425,6 +447,8 @@ ${srcdir}/libdecnumber/dpd [libdecnumber headers]
 ${srcdir}/libdecnumber/bid [libdecnumber headers]
 ${srcdir}/libbid/? [libbid headers]
 [MACHINE/SUBMACHINE]
+  ${srcdir}/sysdeps/powerpc/powerpc64/power7/fpu [platform directories]
+  ${srcdir}/sysdeps/powerpc/powerpc64/power7/
   ${srcdir}/sysdeps/powerpc/powerpc64/power6/fpu [platform directories]
   ${srcdir}/sysdeps/powerpc/powerpc64/power6/
   ${srcdir}/sysdeps/powerpc/powerpc64/
@@ -546,4 +570,7 @@ make files into a functional form.
 
 Thanks to EGLIBC (eglibc.org) for hosting Libdfp when it was a GLIBC add-on
 and for hosting the stand alone version as well.
+
+Thanks to Michael Matz (SuSE) for help getting the initial packaging for
+Libdfp straightened out.
 
