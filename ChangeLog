@@ -1,3 +1,30 @@
+2010-01-20  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* configure.ac: Add check for glibc headers that support the
+	printf-hooks.  Add runtime check for printf-hooks in libc specified by
+	--with-glibc-build.
+	* TODO: Updated.
+
+2010-01-20  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* configure.ac:  Updated libdfp to version 1.0.1 to indicate that
+	power7 support has been added.
+
+2010-01-20  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure.ac: Added POWER 7 support.
+	* README: Added notes on POWER 7 support.
+	* sysdeps/powerpc/powerpc32/power7: New directory.
+	* sysdeps/powerpc/powerpc32/power7/Implies: Imply Power6.
+	* sysdeps/powerpc/powerpc32/power7/fpu: New directory.
+	* sysdeps/powerpc/powerpc32/power7/fpu/Implies: Imply Power6.
+	* sysdeps/powerpc/powerpc64/power7: New directory.
+	* sysdeps/powerpc/powerpc64/power7/Implies: Imply Power6.
+	* sysdeps/powerpc/powerpc64/power7/fpu: New directory.
+	* sysdeps/powerpc/powerpc64/power7/fpu/Implies: Imply Power6.
+
 2009-12-10  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
