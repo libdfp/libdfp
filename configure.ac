@@ -284,6 +284,7 @@ if test $libdfp_cv_cc_with_decimal_float = yes; then
 EOF
 fi
 
+user_headers=no
 glibc_headers=
 AC_ARG_WITH([glibc-headers],
             AS_HELP_STRING([--with-glibc-headers=PATH],
@@ -291,21 +292,110 @@ AC_ARG_WITH([glibc-headers],
 			    fenv.h, features.h, et al.
 			    @<:@default=compiler default@:>@]),
 	    [glibc_headers=$withval
+	     user_headers=yes
 	     AC_MSG_NOTICE(Building against GLIBC headers in ${glibc_headers})
 	     ],
 	    [glibc_headers=''])
 AC_SUBST(glibc_headers)
 
+glibc_headers_inc=
+if test "x$glibc_headers" != x; then
+  glibc_headers_inc="-I$glibc_headers"
+fi
+
+# Check for GLIBC 2.10 headers
+have_glibc_2_10_headers=yes
+saved_CFLAGS="$CFLAGS"
+CFLAGS="-m$cc_msize $CFLAGS $glibc_headers_inc"
+
+AC_MSG_CHECKING([for printf-hook register_printf_type() in printf.h to verify GLIBC 2.10])
+AC_TRY_COMPILE([#include "printf.h"],[
+ static int foo;
+ void foo_va (void *mem, va_list *ap)
+ {
+   return;
+ }
+ foo = register_printf_type (foo_va);
+ ], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); have_glibc_2_10_headers=no])
+
+CFLAGS="$saved_CFLAGS"
+
+if test x$have_glibc_2_10_headers != xyes; then
+  if test x$user_headers = xyes; then
+    AC_MSG_ERROR([Building Libdfp requires a GLIBC printf.h header that
+		  provides the register_printf_type() function which is
+		  available in GLIBC Version 2.10 or later.  The headers you
+		  provided in $glibc_headers do not provide this.])
+  else
+    AC_MSG_ERROR([Building Libdfp requires a GLIBC printf.h header that
+		  provides the register_printf_type() function which is
+		  available in GLIBC Version 2.10 or later.  The default
+		  headers that this build is using don't provide this
+		  functionality.])
+  fi
+  exit 1;
+fi
+
+user_glibc=no
 glibc_build=
 AC_ARG_WITH([glibc-build],
             AS_HELP_STRING([--with-glibc-build=PATH],
 			   [Location of a GLIBC 2.10+ build to link against for make check.
 			    @<:@system libdir@:>@]),
 	    [glibc_build=$withval
+	     user_glibc=yes
 	     AC_MSG_NOTICE(Linking against GLIBC build in ${glibc_build})
 	     ],
 	    [glibc_build=''])
 AC_SUBST(glibc_build)
+
+glibc_headers_inc=
+if test "x$glibc_headers" != x; then
+  glibc_headers_inc="-I$glibc_headers"
+fi
+glibc_build_lib=
+if test "x$glibc_build" != x; then
+  # I don't like this but -L <path> -lc wasn't working.
+  glibc_build_lib="$glibc_build/libc.so"
+fi
+
+# Check for GLIBC 2.10 runtime support
+have_glibc_2_10=yes
+saved_CFLAGS="$CFLAGS"
+CFLAGS="-m$cc_msize $CFLAGS $glibc_headers_inc"
+saved_LIBS="$LIBS"
+LIBS="$LIBS $glibc_build_lib"
+
+AC_MSG_CHECKING([for register_printf_type() runtime support])
+AC_TRY_LINK([#include "printf.h"],[
+ static int foo;
+ void foo_va (void *mem, va_list *ap)
+ {
+   return;
+ }
+ foo = register_printf_type (foo_va);
+ ], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); have_glibc_2_10=no])
+
+LIBS="$saved_LIBS"
+CFLAGS="$saved_CFLAGS"
+
+if test x$have_glibc_2_10 != xyes; then
+  if test x$user_glibc = xyes; then
+    AC_MSG_WARN([Executing Libdfp tests requires a GLIBC runtime that
+		 supports the register_printf_type() function which is
+		 available in GLIBC Version 2.10 or later.  The glibc build
+		 you specified with --with-glibc-build=$glibc_build does not
+		 provide this.  You will not be able to successfully execute
+		 the test suite.])
+  else
+    AC_MSG_WARN([Executing Libdfp tests requires a GLIBC runtime that
+		 supports the register_printf_type() function which is
+		 available in GLIBC Version 2.10 or later.  The default libc
+		 that this build is using doesn't provide this functionality.
+		 You will not be able to successfully execute the test
+		 suite.])
+  fi
+fi
 
 AC_ARG_ENABLE([static],
 	      AS_HELP_STRING([--enable-static],

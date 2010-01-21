@@ -90,30 +90,36 @@ m4trace:configure.ac:257: -1- AC_SUBST([cc_msize])
 m4trace:configure.ac:259: -1- AC_SUBST([CFLAGS])
 m4trace:configure.ac:260: -1- AC_SUBST([ASFLAGS])
 m4trace:configure.ac:280: -1- AC_SUBST([libdfp_cv_cc_with_decimal_float])
-m4trace:configure.ac:297: -1- AC_SUBST([glibc_headers])
-m4trace:configure.ac:308: -1- AC_SUBST([glibc_build])
-m4trace:configure.ac:325: -1- AC_SUBST([enable_static])
-m4trace:configure.ac:342: -1- AC_SUBST([enable_shared])
-m4trace:configure.ac:436: -1- AC_SUBST([submachine])
-m4trace:configure.ac:437: -1- AC_SUBST([submachine_opt])
-m4trace:configure.ac:503: -1- AC_SUBST([sysdep_dirs])
-m4trace:configure.ac:525: -1- AC_DEFINE_TRACE_LITERAL([ASM_GLOBAL_DIRECTIVE])
-m4trace:configure.ac:525: -1- AH_OUTPUT([ASM_GLOBAL_DIRECTIVE], [/* "Define to the name of the assembler\'s directive for declaring a symbol
+m4trace:configure.ac:299: -1- AC_SUBST([glibc_headers])
+m4trace:configure.ac:312: -1- _m4_warn([obsolete], [The macro `AC_TRY_COMPILE' is obsolete.
+You should run autoupdate.], [/home/ryanarn/autoconf-2.59/tests/../lib/autoconf/general.m4:2179: AC_TRY_COMPILE is expanded from...
+configure.ac:312: the top level])
+m4trace:configure.ac:350: -1- AC_SUBST([glibc_build])
+m4trace:configure.ac:370: -1- _m4_warn([obsolete], [The macro `AC_TRY_LINK' is obsolete.
+You should run autoupdate.], [/home/ryanarn/autoconf-2.59/tests/../lib/autoconf/general.m4:2222: AC_TRY_LINK is expanded from...
+configure.ac:370: the top level])
+m4trace:configure.ac:415: -1- AC_SUBST([enable_static])
+m4trace:configure.ac:432: -1- AC_SUBST([enable_shared])
+m4trace:configure.ac:526: -1- AC_SUBST([submachine])
+m4trace:configure.ac:527: -1- AC_SUBST([submachine_opt])
+m4trace:configure.ac:593: -1- AC_SUBST([sysdep_dirs])
+m4trace:configure.ac:615: -1- AC_DEFINE_TRACE_LITERAL([ASM_GLOBAL_DIRECTIVE])
+m4trace:configure.ac:615: -1- AH_OUTPUT([ASM_GLOBAL_DIRECTIVE], [/* "Define to the name of the assembler\'s directive for declaring a symbol
    global (default `.globl\')." */
 #undef ASM_GLOBAL_DIRECTIVE])
-m4trace:configure.ac:548: -1- AC_DEFINE_TRACE_LITERAL([ASM_TYPE_DIRECTIVE_PREFIX])
-m4trace:configure.ac:548: -1- AH_OUTPUT([ASM_TYPE_DIRECTIVE_PREFIX], [/* "Define to the prefix before `object\' or `function\' in the assembler\'s
+m4trace:configure.ac:638: -1- AC_DEFINE_TRACE_LITERAL([ASM_TYPE_DIRECTIVE_PREFIX])
+m4trace:configure.ac:638: -1- AH_OUTPUT([ASM_TYPE_DIRECTIVE_PREFIX], [/* "Define to the prefix before `object\' or `function\' in the assembler\'s
    `.type\' directive */
 #undef ASM_TYPE_DIRECTIVE_PREFIX])
-m4trace:configure.ac:551: -1- AC_PROG_RANLIB
-m4trace:configure.ac:551: -1- AC_SUBST([RANLIB])
-m4trace:configure.ac:551: -1- AC_SUBST([ac_ct_RANLIB])
-m4trace:configure.ac:552: -1- AC_PROG_AWK
-m4trace:configure.ac:552: -1- AC_SUBST([AWK])
-m4trace:configure.ac:570: -1- AC_CONFIG_SUBDIRS([libdecnumber])
-m4trace:configure.ac:570: -1- AC_SUBST([subdirs], ["$subdirs libdecnumber"])
-m4trace:configure.ac:572: -1- AC_CONFIG_SUBDIRS([libbid])
-m4trace:configure.ac:572: -1- AC_SUBST([subdirs], ["$subdirs libbid"])
-m4trace:configure.ac:578: -1- AC_CONFIG_FILES([Makefile])
-m4trace:configure.ac:580: -1- AC_SUBST([LIB@&t@OBJS], [$ac_libobjs])
-m4trace:configure.ac:580: -1- AC_SUBST([LTLIBOBJS], [$ac_ltlibobjs])
+m4trace:configure.ac:641: -1- AC_PROG_RANLIB
+m4trace:configure.ac:641: -1- AC_SUBST([RANLIB])
+m4trace:configure.ac:641: -1- AC_SUBST([ac_ct_RANLIB])
+m4trace:configure.ac:642: -1- AC_PROG_AWK
+m4trace:configure.ac:642: -1- AC_SUBST([AWK])
+m4trace:configure.ac:660: -1- AC_CONFIG_SUBDIRS([libdecnumber])
+m4trace:configure.ac:660: -1- AC_SUBST([subdirs], ["$subdirs libdecnumber"])
+m4trace:configure.ac:662: -1- AC_CONFIG_SUBDIRS([libbid])
+m4trace:configure.ac:662: -1- AC_SUBST([subdirs], ["$subdirs libbid"])
+m4trace:configure.ac:668: -1- AC_CONFIG_FILES([Makefile])
+m4trace:configure.ac:670: -1- AC_SUBST([LIB@&t@OBJS], [$ac_libobjs])
+m4trace:configure.ac:670: -1- AC_SUBST([LTLIBOBJS], [$ac_ltlibobjs])

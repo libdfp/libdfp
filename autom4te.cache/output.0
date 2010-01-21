@@ -2407,12 +2407,14 @@ if test $libdfp_cv_cc_with_decimal_float = yes; then
 EOF
 fi
 
+user_headers=no
 glibc_headers=
 
 # Check whether --with-glibc-headers or --without-glibc-headers was given.
 if test "${with_glibc_headers+set}" = set; then
   withval="$with_glibc_headers"
   glibc_headers=$withval
+	     user_headers=yes
 	     { echo "$as_me:$LINENO: Building against GLIBC headers in ${glibc_headers}" >&5
 echo "$as_me: Building against GLIBC headers in ${glibc_headers}" >&6;}
 	     
@@ -2421,12 +2423,111 @@ else
 fi; 
 
 
+glibc_headers_inc=
+if test "x$glibc_headers" != x; then
+  glibc_headers_inc="-I$glibc_headers"
+fi
+
+# Check for GLIBC 2.10 headers
+have_glibc_2_10_headers=yes
+saved_CFLAGS="$CFLAGS"
+CFLAGS="-m$cc_msize $CFLAGS $glibc_headers_inc"
+
+echo "$as_me:$LINENO: checking for printf-hook register_printf_type() in printf.h to verify GLIBC 2.10" >&5
+echo $ECHO_N "checking for printf-hook register_printf_type() in printf.h to verify GLIBC 2.10... $ECHO_C" >&6
+
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include "printf.h"
+int
+main ()
+{
+
+ static int foo;
+ void foo_va (void *mem, va_list *ap)
+ {
+   return;
+ }
+ foo = register_printf_type (foo_va);
+ 
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; have_glibc_2_10_headers=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+
+CFLAGS="$saved_CFLAGS"
+
+if test x$have_glibc_2_10_headers != xyes; then
+  if test x$user_headers = xyes; then
+    { { echo "$as_me:$LINENO: error: Building Libdfp requires a GLIBC printf.h header that
+		  provides the register_printf_type() function which is
+		  available in GLIBC Version 2.10 or later.  The headers you
+		  provided in $glibc_headers do not provide this." >&5
+echo "$as_me: error: Building Libdfp requires a GLIBC printf.h header that
+		  provides the register_printf_type() function which is
+		  available in GLIBC Version 2.10 or later.  The headers you
+		  provided in $glibc_headers do not provide this." >&2;}
+   { (exit 1); exit 1; }; }
+  else
+    { { echo "$as_me:$LINENO: error: Building Libdfp requires a GLIBC printf.h header that
+		  provides the register_printf_type() function which is
+		  available in GLIBC Version 2.10 or later.  The default
+		  headers that this build is using don't provide this
+		  functionality." >&5
+echo "$as_me: error: Building Libdfp requires a GLIBC printf.h header that
+		  provides the register_printf_type() function which is
+		  available in GLIBC Version 2.10 or later.  The default
+		  headers that this build is using don't provide this
+		  functionality." >&2;}
+   { (exit 1); exit 1; }; }
+  fi
+  exit 1;
+fi
+
+user_glibc=no
 glibc_build=
 
 # Check whether --with-glibc-build or --without-glibc-build was given.
 if test "${with_glibc_build+set}" = set; then
   withval="$with_glibc_build"
   glibc_build=$withval
+	     user_glibc=yes
 	     { echo "$as_me:$LINENO: Linking against GLIBC build in ${glibc_build}" >&5
 echo "$as_me: Linking against GLIBC build in ${glibc_build}" >&6;}
 	     
@@ -2434,6 +2535,114 @@ else
   glibc_build=''
 fi; 
 
+
+glibc_headers_inc=
+if test "x$glibc_headers" != x; then
+  glibc_headers_inc="-I$glibc_headers"
+fi
+glibc_build_lib=
+if test "x$glibc_build" != x; then
+  # I don't like this but -L <path> -lc wasn't working.
+  glibc_build_lib="$glibc_build/libc.so"
+fi
+
+# Check for GLIBC 2.10 runtime support
+have_glibc_2_10=yes
+saved_CFLAGS="$CFLAGS"
+CFLAGS="-m$cc_msize $CFLAGS $glibc_headers_inc"
+saved_LIBS="$LIBS"
+LIBS="$LIBS $glibc_build_lib"
+
+echo "$as_me:$LINENO: checking for register_printf_type() runtime support" >&5
+echo $ECHO_N "checking for register_printf_type() runtime support... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include "printf.h"
+int
+main ()
+{
+
+ static int foo;
+ void foo_va (void *mem, va_list *ap)
+ {
+   return;
+ }
+ foo = register_printf_type (foo_va);
+ 
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; have_glibc_2_10=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+
+LIBS="$saved_LIBS"
+CFLAGS="$saved_CFLAGS"
+
+if test x$have_glibc_2_10 != xyes; then
+  if test x$user_glibc = xyes; then
+    { echo "$as_me:$LINENO: WARNING: Executing Libdfp tests requires a GLIBC runtime that
+		 supports the register_printf_type() function which is
+		 available in GLIBC Version 2.10 or later.  The glibc build
+		 you specified with --with-glibc-build=$glibc_build does not
+		 provide this.  You will not be able to successfully execute
+		 the test suite." >&5
+echo "$as_me: WARNING: Executing Libdfp tests requires a GLIBC runtime that
+		 supports the register_printf_type() function which is
+		 available in GLIBC Version 2.10 or later.  The glibc build
+		 you specified with --with-glibc-build=$glibc_build does not
+		 provide this.  You will not be able to successfully execute
+		 the test suite." >&2;}
+  else
+    { echo "$as_me:$LINENO: WARNING: Executing Libdfp tests requires a GLIBC runtime that
+		 supports the register_printf_type() function which is
+		 available in GLIBC Version 2.10 or later.  The default libc
+		 that this build is using doesn't provide this functionality.
+		 You will not be able to successfully execute the test
+		 suite." >&5
+echo "$as_me: WARNING: Executing Libdfp tests requires a GLIBC runtime that
+		 supports the register_printf_type() function which is
+		 available in GLIBC Version 2.10 or later.  The default libc
+		 that this build is using doesn't provide this functionality.
+		 You will not be able to successfully execute the test
+		 suite." >&2;}
+  fi
+fi
 
 # Check whether --enable-static or --disable-static was given.
 if test "${enable_static+set}" = set; then

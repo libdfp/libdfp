@@ -1,13 +1,24 @@
-Configure test for NEEDED glibc 2.10
+[DONE] Configure runtime test for decimal floating point support in compiler.
 
-libdecnumber.so phantom library for compat issues
+[DONE] Configure test for glibc 2.10 headers.
+
+[DONE] Configure runtime test for glibc 2.10 based on register_printf_type()
+function..
+
+Add --with-cross feature to prevent the make check suite from being executed
+on the build machine.
+
+Add --export-test feature to export the test-suite into stand-alone static
+test cases.
+
+libdecnumber.so phantom library for compat issues.
 
 libdfp version issues with older apps.
 
 If system glibc is 2.10 then make check shouldn't need all the GLIBC build
-scaffolding.
+scaffolding for executing and debugging tests.
 
-Clear up make clean and make distclean
+Clear up make clean and make distclean.
 
 Clear up dependency issue so that libdfp.so.1 is rebuilt when a .c file
 changes.
@@ -19,6 +30,8 @@ using the PLT from within libdfp.
 
 Optimize the math routines for hardware dfp support.
 
-Implement libbid backend.
+Implement dpd backend for x86 and x86_64.
 
-configure runtime test for decimal floating point support in compiler.
+Prototype versioned symbols support.
+
+Implement libbid backend.
