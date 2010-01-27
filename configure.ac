@@ -331,7 +331,9 @@ if test x$have_glibc_2_10_headers != xyes; then
 		  provides the register_printf_type() function which is
 		  available in GLIBC Version 2.10 or later.  The default
 		  headers that this build is using don't provide this
-		  functionality.])
+		  functionality.  Use --with-glibc-header=<path>/include to
+		  direct configure to a set of GLIBC Version 2.10 or later
+		  headers. ])
   fi
   exit 1;
 fi

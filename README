@@ -4,15 +4,16 @@
 	 The "Decimal Floating Point C Library" Developer's Guide
 		    for the GNU/Linux OS and GLIBC 2.10
 		      Contributed by IBM Corporation
-		Copyright (C) 2009 Free Software Foundation
+	     Copyright (C) 2009, 2010 Free Software Foundation
 
 ===========================================================================
 NOTE:Eight space tabs are the optimum editor setting for reading this file.
 ===========================================================================
 
-	       Author(s) :  Ryan S. Arnold <rsa@us.ibm.com>
+		Author(s) : Ryan S. Arnold <rsa@us.ibm.com>
+			    Andreas Krebbel <Andreas.Krebbel@de.ibm.com>
 		       Date Created: July 14, 2009
-		       Last Changed: August 13, 2009
+		      Last Changed: January 21, 2010
 
 ---------------------------------------------------------------------------
 Table of Contents:
@@ -173,8 +174,9 @@ Libdfp is only enabled to work on the GNU/Linux OS.
 ---------------------------------------------------------------------------
 4.2 GLIBC Minimum Version
 
-Libdfp version 1.0.0.0 relies upon a minimum GLIBC 2.10 for printf-hooks
-support.
+Libdfp version 1.0.0 relies upon a minimum GLIBC 2.10 for printf-hooks
+support.  The libdfp configure stage will check the libc that it is linked
+against for the printf-hook support and will warn if it is not found.
 
 ---------------------------------------------------------------------------
 4.3 GLIBC Headers
@@ -206,8 +208,8 @@ In reality it's a bit more complicated.
 The libdecnumber library requires the --enable-decimal-float flag when
 being configured.
 
-This pushes this requirement upon the top level Libdfp 'configure'.   Sadly this
-is necessary because Autoconf doesn't allow passing flags to
+This pushes this requirement upon the top level Libdfp 'configure'.   Sadly
+this is necessary because Autoconf doesn't allow passing flags to
 AC_CONFIG_SUBDIRS.  It only passes the --with and --enable flags of the
 parent configure fragment to the child, therefore the parent needs to have
 all the flags used by the child.
@@ -266,7 +268,7 @@ GLIBC add-on.
 5. Configuration
 
 Standalone libdfp requires that your build directory be separate from
-the source directory.  Invoke the source directorie's 'configure' script
+the source directory.  Invoke the source directory's 'configure' script
 from within the build directory, e.g.
 
 /home/$USER/stage_libdfp/build/$ ../libdfp/configure
@@ -320,7 +322,8 @@ Valid Combinations:
 	WARNING: Make sure you link to a GLIBC build that supports the same
 	configure options as how you're configuring libdfp, e.g. if you're
 	configuring for 'power6' 64-bit, make sure that the GLIBC build you
-	link against is a 64-bit, power6 tuned build.
+	link against is a 64-bit.  It doesn't have to be tuned for power6
+	but it should be able to execute properly.
 
 --with-cpu={power5|power6|<etc>}
 

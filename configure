@@ -2509,12 +2509,16 @@ echo "$as_me: error: Building Libdfp requires a GLIBC printf.h header that
 		  provides the register_printf_type() function which is
 		  available in GLIBC Version 2.10 or later.  The default
 		  headers that this build is using don't provide this
-		  functionality." >&5
+		  functionality.  Use --with-glibc-header=<path>/include to
+		  direct configure to a set of GLIBC Version 2.10 or later
+		  headers. " >&5
 echo "$as_me: error: Building Libdfp requires a GLIBC printf.h header that
 		  provides the register_printf_type() function which is
 		  available in GLIBC Version 2.10 or later.  The default
 		  headers that this build is using don't provide this
-		  functionality." >&2;}
+		  functionality.  Use --with-glibc-header=<path>/include to
+		  direct configure to a set of GLIBC Version 2.10 or later
+		  headers. " >&2;}
    { (exit 1); exit 1; }; }
   fi
   exit 1;

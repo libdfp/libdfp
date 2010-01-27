@@ -35,3 +35,9 @@ Implement dpd backend for x86 and x86_64.
 Prototype versioned symbols support.
 
 Implement libbid backend.
+
+Write User's guide
+
+Write Man Page
+
+Write User's guide in docbook format, .i.e. info file.
