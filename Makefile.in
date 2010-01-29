@@ -208,7 +208,7 @@ $(top_builddir)/$(STATIC_LIBRARY): $(top_builddir)/$(dfp_backend)/$(dfp_backend_
 $(top_builddir)/$(SHARED_VERSION_LIBRARY): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@ and creating version symlink $(SHARED_LIBRARY).
 	$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_LIBRARY) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 3,$(words $?),$?) -o $@ -lm; \
-	ln -f -s $(top_builddir)/$@ $(SHARED_LIBRARY)
+	ln -f -s $@ $(top_builddir)/$(SHARED_LIBRARY)
 	@echo
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
@@ -301,11 +301,12 @@ ifeq ("@enable_static@","static")
 	$(INSTALL) -t $(install_root)/$(libdir) $(top_builddir)/$(STATIC_LIBRARY)
 endif
 	$(INSTALL) -t $(install_root)/$(libdir) $(top_builddir)/$(SHARED_VERSION_LIBRARY)
-	(cd $(install_root)/$(libdir);ln -f -s ./$(SHARED_VERSION_LIBRARY) $(SHARED_LIBRARY))
+	ln -f -s $(SHARED_VERSION_LIBRARY) $(install_root)/$(libdir)/$(SHARED_LIBRARY)
 	$(INSTALL) -d $(install_root)/$(includedir)
 	$(INSTALL) -d $(install_root)/$(includedir)/dfp
 	$(INSTALL) -t $(install_root)/$(includedir)/dfp $(top_srcdir)/dfp/*.h
 .PHONY: install
+#	(cd $(install_root)/$(libdir);ln -f -s ./$(SHARED_VERSION_LIBRARY) $(SHARED_LIBRARY))
 
 install-headers:
 	$(INSTALL) -d $(install_root)/$(includedir)
