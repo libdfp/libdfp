@@ -297,7 +297,9 @@ clean:
 
 install: all
 	$(INSTALL) -d $(install_root)/$(libdir)
+ifeq ("@enable_static@","static")
 	$(INSTALL) -t $(install_root)/$(libdir) $(top_builddir)/$(STATIC_LIBRARY)
+endif
 	$(INSTALL) -t $(install_root)/$(libdir) $(top_builddir)/$(SHARED_LIBRARY)
 	$(INSTALL) -t $(install_root)/$(libdir) $(top_builddir)/$(SHARED_VERSION_LIBRARY)
 	$(INSTALL) -d $(install_root)/$(includedir)
