@@ -6,8 +6,8 @@ top_srcdir := @top_srcdir@
 top_builddir = .
 
 prefix = @prefix@
-libdir := @exec_prefix@/lib
-includedir := @prefix@/include
+libdir := @libdir@
+includedir := @includedir@
 
 dfp_name = @PACKAGE_NAME@
 dfp_version = @PACKAGE_VERSION@
@@ -304,13 +304,13 @@ endif
 	(cd $(install_root)/$(libdir);ln -f -s ./$(SHARED_VERSION_LIBRARY) $(SHARED_LIBRARY))
 	$(INSTALL) -d $(install_root)/$(includedir)
 	$(INSTALL) -d $(install_root)/$(includedir)/dfp
-	$(INSTALL) -t $(install_root)/$(includedir)/dfp $(top_srcdir)/dfp/*
+	$(INSTALL) -t $(install_root)/$(includedir)/dfp $(top_srcdir)/dfp/*.h
 .PHONY: install
 
 install-headers:
 	$(INSTALL) -d $(install_root)/$(includedir)
 	$(INSTALL) -d $(install_root)/$(includedir)/dfp
-	$(INSTALL) -t $(install_root)/$(includedir)/dfp $(top_srcdir)/dfp/*
+	$(INSTALL) -t $(install_root)/$(includedir)/dfp $(top_srcdir)/dfp/*.h
 .PHONY: install-headers
 
 # Clean out the existing .SUFFIXES setting.
