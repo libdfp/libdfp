@@ -152,17 +152,18 @@ first:
 
 # The backends are standalone projects so they need their Makefiles executed
 # recursively.
-.PHONY: backend $(top_builddir)/$(dfp_backend)
-backend: $(top_builddir)/$(dfp_backend)
+.PHONY: backend $(top_builddir)/$(dfp_backend_lib)
+backend: $(top_builddir)/$(dfp_backend_lib)
 
 # Configure will have generated the Makefile for the selected backend.
 # Let's add it to the subdir list so it gets recursively invoked by Make.  We
 # have to pass CFLAGS here because configure's CFLAGS doesn't have -mcpu,
 # -m[31|32|64] or -mzarch.
-$(top_builddir)/$(dfp_backend):
+$(top_builddir)/$(dfp_backend_lib):
 	@echo +Building the DFP backend library.
-	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -eC $@
+	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -eC $(dfp_backend)
 	@echo
+#DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -eC $@
 
 libdfp: @enable_static@ @enable_shared@
 
@@ -204,10 +205,10 @@ $(top_builddir)/$(STATIC_LIBRARY): $(top_builddir)/$(dfp_backend)/$(dfp_backend_
 # Build the version tagged shared object and set the symlink.  This requires
 # that the $(dfp_name).map file be composed out of individual Versions files.
 # -bsymbolic makes the library avoid using the PLT for library internal calls.
-$(top_builddir)/$(SHARED_VERSION_LIBRARY): $(top_builddir)/$(dfp_name).map $(addsuffix .os,$(libdfp_files))
+$(top_builddir)/$(SHARED_VERSION_LIBRARY): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@ and creating version symlink $(SHARED_LIBRARY).
-	$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_LIBRARY) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 2,$(words $?),$?) -o $@ -lm; \
-	ln -s $(top_builddir)/$@ $(SHARED_LIBRARY)
+	$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_LIBRARY) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 3,$(words $?),$?) -o $@ -lm; \
+	ln -f -s $(top_builddir)/$@ $(SHARED_LIBRARY)
 	@echo
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
