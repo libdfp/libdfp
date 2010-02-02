@@ -6,24 +6,31 @@ top_srcdir := @top_srcdir@
 top_builddir = .
 
 prefix = @prefix@
-libdir := @libdir@
-includedir := @includedir@
+libdir = @libdir@
+includedir = @includedir@
 
 dfp_name = @PACKAGE_NAME@
 dfp_version = @PACKAGE_VERSION@
 
-STATIC_LIBRARY = @PACKAGE_NAME@.a
+STATIC_LIB = @PACKAGE_NAME@.a
 
-# e.g. libdfp-1.0.0.so
-SHARED_VERSION_LIBRARY = @PACKAGE_NAME@-@PACKAGE_VERSION@.so
+# The real library code: e.g. libdfp-1.0.0.so.
+SHARED_REALNAME_LIB = @PACKAGE_NAME@-@PACKAGE_VERSION@.so
 
-# e.g. libdfp.so.1.  Since this library intends to use symbol versioning there
+# The soname that symlinks to the real library code: e.g. libdfp.so.1.
+# Traditionally the version number on the soname defined the 'interface'
+# version.  Since this library intends to use symbol versioning there
 # probably isn't ever a reason to move to .so.2 or later.
-SHARED_LIBRARY = @PACKAGE_NAME@.so.1
+SHARED_SONAME_LIB = @PACKAGE_NAME@.so.1
+
+# The linkername that symlinks to the soname: e.g. libdfp.so.  The linker looks for this name.
+SHARED_LINKERNAME_LIB = @PACKAGE_NAME@.so
 
 CC = @CC@
 RANLIB = @RANLIB@
 AWK = @AWK@
+LDCONFIG = /sbin/ldconfig
+
 INSTALL := install
 
 # libdecnumber or libbid
@@ -167,9 +174,13 @@ $(top_builddir)/$(dfp_backend_lib):
 
 libdfp: @enable_static@ @enable_shared@
 
-static: $(top_builddir)/$(STATIC_LIBRARY)
+static: $(top_builddir)/$(STATIC_LIB)
 
-shared: $(top_builddir)/$(SHARED_VERSION_LIBRARY)
+# Create the actual file with the version and the .so linker symlink.  The
+# $(SHARED_SONAME_LIB) symlink is created by ldconfig be reading the `soname'
+# from the SHARED_REALNAME_LIB.
+shared: $(top_builddir)/$(SHARED_REALNAME_LIB)  $(top_builddir)/$(SHARED_LINKERNAME_LIB) $(top_builddir)/$(SHARED_SONAME_LIB)
+	@echo Building shared lib and symlinks: $(notdir $?)
 
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
 C_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_POSIX_C_SOURCE=200809L -std=gnu99 -D_SVID_SOURCE
@@ -194,7 +205,7 @@ ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -
 # Archive the static library and include all of the .o files from the backend
 # archive.  IF the backend has more than the base directory the .o detection
 # mechanism will need to be more robust than this.
-$(top_builddir)/$(STATIC_LIBRARY): $(top_builddir)/$(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,$(libdfp_files))
+$(top_builddir)/$(STATIC_LIB): $(top_builddir)/$(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,$(libdfp_files))
 	@echo +Creating static library $@
 	$(AR) rc $@ $(wordlist 2,$(words $?),$?) $(top_builddir)/$(dfp_backend)/*.o
 	@ranlibpath=`which $(RANLIB)`; \
@@ -202,13 +213,27 @@ $(top_builddir)/$(STATIC_LIBRARY): $(top_builddir)/$(dfp_backend)/$(dfp_backend_
 	then $(RANLIB) $@; fi;
 	@echo
 
-# Build the version tagged shared object and set the symlink.  This requires
-# that the $(dfp_name).map file be composed out of individual Versions files.
-# -bsymbolic makes the library avoid using the PLT for library internal calls.
-$(top_builddir)/$(SHARED_VERSION_LIBRARY): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
-	@echo +Linking shared object files into $@ and creating version symlink $(SHARED_LIBRARY).
-	$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_LIBRARY) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 3,$(words $?),$?) -o $@ -lm; \
-	ln -f -s $@ $(top_builddir)/$(SHARED_LIBRARY)
+# Create libdfp.so -> libdfp.so.1 symlink.
+$(top_builddir)/$(SHARED_LINKERNAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
+	@echo "Creating linker .so symlink $(notdir $@) -> $(notdir $?)"
+	ln -f -s $? $@
+	@echo
+
+# Create libdfp.so.1 -> libdfp-1.0.1.so symlink.
+# The $(SHARED_SONAME_LIB) -> $(SHARED_REALNAME_LIB) symlink is supposed to
+# be created by ldconfig be reading the `soname' from the SHARED_REALNAME_LIB.
+$(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
+	@echo "Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $?)"
+	$(LDCONFIG) -l $(notdir $?)
+	@echo
+
+# Build the version tagged 'realname' shared object.  This requires that the
+# $(dfp_name).map file be composed out of individual Versions files.  The
+# -bsymbolic switch makes the library avoid using the PLT for intra-library
+#  calls.
+$(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
+	@echo +Linking shared object files into $@.
+	$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 3,$(words $?),$?) -o $@ -lm
 	@echo
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
@@ -261,7 +286,7 @@ libdfp_tests = test-printf test-param
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
 $(libdfp_tests): %:%.o
-	$(CC) $(CFLAGS) $(GLIBC_LIBS) $(top_builddir)/$(SHARED_LIBRARY) $(top_builddir)/$(addsuffix .o,$@) -o $@
+	$(CC) $(CFLAGS) $(GLIBC_LIBS) $(top_builddir)/$(SHARED_SONAME_LIB) $(top_builddir)/$(addsuffix .o,$@) -o $@
 	@echo
 
 LIBRARY_PATH = $(glibc_builddir)/:$(glibc_builddir)/math:$(glibc_builddir)/elf:$(glibc_builddir)/nptl
@@ -291,27 +316,29 @@ check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(adds
 .PHONY: check
 
 clean:
-	rm *.o *.os $(STATIC_LIBRARY) $(SHARED_LIBRARY) $(SHARED_VERSION_LIBRARY) Versions.all Versions.sysdeps libdfp.map Versions.tmp sysd-versions $(top_builddir)/$(dfp_backend)/*.o $(top_builddir)/$(dfp_backend)/*.a debug-test.conf $(addsuffix .out,$(libdfp_tests)) $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests)) $(libdfp_tests)
+	rm *.o *.os $(STATIC_LIB) $(SHARED_LINKERNAME_LIB) $(SHARED_SONAME_LIB) $(SHARED_REALNAME_LIB) Versions.all Versions.sysdeps libdfp.map Versions.tmp sysd-versions $(top_builddir)/$(dfp_backend)/*.o $(top_builddir)/$(dfp_backend)/*.a debug-test.conf $(addsuffix .out,$(libdfp_tests)) $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests)) $(libdfp_tests)
 
 .PHONY: clean
 
+install_to := $(patsubst %/,%,$(install_root))
+
 install: all
-	$(INSTALL) -d $(install_root)/$(libdir)
+	$(INSTALL) -d $(install_to)$(libdir)
 ifeq ("@enable_static@","static")
-	$(INSTALL) -t $(install_root)/$(libdir) $(top_builddir)/$(STATIC_LIBRARY)
+	$(INSTALL) -t $(install_to)$(libdir) $(top_builddir)/$(STATIC_LIB)
 endif
-	$(INSTALL) -t $(install_root)/$(libdir) $(top_builddir)/$(SHARED_VERSION_LIBRARY)
-	ln -f -s $(SHARED_VERSION_LIBRARY) $(install_root)/$(libdir)/$(SHARED_LIBRARY)
-	$(INSTALL) -d $(install_root)/$(includedir)
-	$(INSTALL) -d $(install_root)/$(includedir)/dfp
-	$(INSTALL) -t $(install_root)/$(includedir)/dfp $(top_srcdir)/dfp/*.h
+	$(INSTALL) -t $(install_to)$(libdir) $(top_builddir)/$(SHARED_REALNAME_LIB)
+	ln -f -s $(SHARED_REALNAME_LIB) $(install_to)$(libdir)/$(SHARED_LINKERNAME_LIB)
+	$(LDCONFIG) -l $(install_to)$(libdir)/$(SHARED_REALNAME_LIB)
+	$(INSTALL) -d $(install_to)$(includedir)
+	$(INSTALL) -d $(install_to)$(includedir)/dfp
+	$(INSTALL) -t $(install_to)$(includedir)/dfp $(top_srcdir)/dfp/*.h
 .PHONY: install
-#	(cd $(install_root)/$(libdir);ln -f -s ./$(SHARED_VERSION_LIBRARY) $(SHARED_LIBRARY))
 
 install-headers:
-	$(INSTALL) -d $(install_root)/$(includedir)
-	$(INSTALL) -d $(install_root)/$(includedir)/dfp
-	$(INSTALL) -t $(install_root)/$(includedir)/dfp $(top_srcdir)/dfp/*.h
+	$(INSTALL) -d $(install_to)$(includedir)
+	$(INSTALL) -d $(install_to)$(includedir)/dfp
+	$(INSTALL) -t $(install_to)$(includedir)/dfp $(top_srcdir)/dfp/*.h
 .PHONY: install-headers
 
 # Clean out the existing .SUFFIXES setting.
