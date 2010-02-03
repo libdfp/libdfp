@@ -153,23 +153,18 @@ include $(foreach dir,$(makefile_dirs), $(dir)/Makefile )
 #all: first backend libdfp
 all: first $(dfp_backend)/$(dfp_backend_lib) libdfp
 
-# Fake rule to output the VPATH before we build anything.
+# Fake rule to output the VPATH before we build anything.  Don't use .PHONY
+# because we want this printed each time.
 first:
 	@echo VPATH=$(VPATH)
 	@echo Processing Makefiles: $(makefile_dirs)
-
-# The backends are standalone projects so they need their Makefiles executed
-# recursively.
-.PHONY: backend
-backend: $(dfp_backend)/$(dfp_backend_lib)
-	@echo +Building the DFP backend library.
 
 # Configure will have generated the Makefile for the selected backend.
 # Let's add it to the subdir list so it gets recursively invoked by Make.  We
 # have to pass CFLAGS here because configure's CFLAGS doesn't have -mcpu,
 # -m[31|32|64] or -mzarch.
 $(dfp_backend)/$(dfp_backend_lib):
-	@echo "+Building $@"
+	@echo "+Building DFP backend $@"
 	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -eC $(dfp_backend)
 	@echo
 
