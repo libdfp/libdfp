@@ -150,7 +150,8 @@ libdfp_files := dfptypeconv mapround decode fmt_d32 fmt_d64 fmt_d128 fe_decround
 include $(foreach dir,$(makefile_dirs), $(dir)/Makefile )
 
 # Libdfp has a dependency on the backend so build that first.
-all: first backend libdfp
+#all: first backend libdfp
+all: first $(dfp_backend)/$(dfp_backend_lib) libdfp
 
 # Fake rule to output the VPATH before we build anything.
 first:
@@ -159,18 +160,18 @@ first:
 
 # The backends are standalone projects so they need their Makefiles executed
 # recursively.
-.PHONY: backend $(top_builddir)/$(dfp_backend_lib)
-backend: $(top_builddir)/$(dfp_backend_lib)
+.PHONY: backend
+backend: $(dfp_backend)/$(dfp_backend_lib)
+	@echo +Building the DFP backend library.
 
 # Configure will have generated the Makefile for the selected backend.
 # Let's add it to the subdir list so it gets recursively invoked by Make.  We
 # have to pass CFLAGS here because configure's CFLAGS doesn't have -mcpu,
 # -m[31|32|64] or -mzarch.
-$(top_builddir)/$(dfp_backend_lib):
-	@echo +Building the DFP backend library.
+$(dfp_backend)/$(dfp_backend_lib):
+	@echo "+Building $@"
 	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -eC $(dfp_backend)
 	@echo
-#DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -eC $@
 
 libdfp: @enable_static@ @enable_shared@
 
@@ -205,7 +206,7 @@ ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -
 # Archive the static library and include all of the .o files from the backend
 # archive.  IF the backend has more than the base directory the .o detection
 # mechanism will need to be more robust than this.
-$(top_builddir)/$(STATIC_LIB): $(top_builddir)/$(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,$(libdfp_files))
+$(top_builddir)/$(STATIC_LIB): $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,$(libdfp_files))
 	@echo +Creating static library $@
 	$(AR) rc $@ $(wordlist 2,$(words $?),$?) $(top_builddir)/$(dfp_backend)/*.o
 	@ranlibpath=`which $(RANLIB)`; \
