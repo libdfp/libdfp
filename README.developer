@@ -275,11 +275,41 @@ from within the build directory, e.g.
 
 ---------------------------------------------------------------------------
 5.1 Configure Switches
+Environment Variables
 
-Libdfp's default configure should be 64-bit.  In order to build 32-bit you can
-pass the following switches:
+CC
+	Select your compiler.
+
+CFLAGS="-m64 -O2 -g"
+	Since the default bitness of the compiler's generated binaries varies
+	between Linux distros, and on some architectures the Kernel has a
+	different bitness than the default user env it is recommended that the
+	-m[31|32|64] flags be passed.
+
+	Some System Z machines require the -mzarch flag, e.g.
+	CFLAGS="-m31 -mzarch -O2 -g"
+
+	These should accompany sympathetic --build and --host switches
+	described below, e.g.
+
+		powerpc-linux-gnu for -m32
+		powerpc64-linux-gnu for -m64
+
+ASFLAGS
+	Libdfp's Makefile.in will pull -g or -m[31|32|64] into ASFLAGS if it is
+	specified in CFLAGS.  If you need anything else, pass it in here and
+	it'll be added.
+
+Libdfp's default configure  will be based on whatever bitness the user
+environment is.
+
+In order to build 32-bit libdfp you can pass the following switches:
 
 	--build=powerpc-linux-gnu --host=powerpc-linux-gnu
+
+In order to build 64-bit libdfp you can pass the following switches:
+
+	--build=powerpc64-linux-gnu --host=powerpc64-linux-gnu
 
 The following switches define the DFP backend.
 
@@ -305,6 +335,27 @@ Valid Combinations:
 	--with-backend=libdecnumber --enable-decimal-float=bid
 	--with-backend=libbid --enable-decimal-float=bid
 
+--prefix=/opt/foo
+	[OPTIONAL]
+
+	Override the default system prefix, e.g. if you want to install into
+	/opt/ for some reason specify: --prefix=/opt/libdfp/.
+
+--libdir=/usr/lib64
+
+	[REQUIRED if you want to install 64-bit libs into lib64/]
+
+	[OPTIONAL]
+	Override the default '<foo>/lib' library path on installation.
+
+	If you've already used --prefix=/opt/foo and you need t install a
+	64-bit libdfp into lib64/ then you need:
+
+	--prefix=/opt/foo --libdir=/opt/foo/lib64/
+
+	In otherwords, libdir REPLACES the path "<prefix>/lib" on installation
+	it doesn't concatenate onto "<prefix>"
+
 --with-glibc-headers=/home/$USER/stage_libdfp/glibc-2.10-headers
 
 	[REQUIRED if your toolchain has GLIBC version less than 2.10]
@@ -325,7 +376,7 @@ Valid Combinations:
 	link against is a 64-bit.  It doesn't have to be tuned for power6
 	but it should be able to execute properly.
 
---with-cpu={power5|power6|<etc>}
+--with-cpu={power5|power6|power7|<etc>}
 
 	[OPTIONAL]
 
@@ -336,41 +387,44 @@ Valid Combinations:
 
 Here are some valid configurations of Libdfp:
 
-General PowerPC (soft-dfp) using the libdecnumber backend and dpd encoding:
+64-bit PowerPC (soft-dfp) using the libdecnumber backend and dpd encoding:
 
-CC=/opt/at05/bin/gcc \
+CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
+	--libdir=/usr/lib64/ \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+	--build=powerpc64-linux-gnu --host=powerpc64-linux-gnu \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power5 \
 	2>&1 | tee _configure64_power5
 
-PowerPC POWER6 (hard-dfp) using libdecnumber backend and dpd encoding:
-We only need the --with-cpu=power6 flag for power6 support and
-hardware-dfp:
+64-bit PowerPC POWER6 (hard-dfp) using libdecnumber backend and dpd encoding: We only
+need the --with-cpu=power6 flag for power6 support and hardware-dfp:
 
-CC=/opt/at05/bin/gcc \
+CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
+	--libdir=/usr/lib64/ \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+	--build=powerpc64-linux-gnu --host=powerpc64-linux-gnu \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power6 \
 	--with-cpu=power6 2>&1 | tee _configure64_power6
 
-PowerPC POWER7 (hard-dfp) using libdecnumber backend and dpd encoding:
-We only need the --with-cpu=power7 flag for power7 support and
-hardware-dfp:
+64-bit PowerPC POWER7 (hard-dfp) using libdecnumber backend and dpd encoding: We only
+need the --with-cpu=power7 flag for power7 support and hardware-dfp:
 
-CC=/opt/at05/bin/gcc \
+CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
+	--libdir=/usr/lib64/ \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+	--build=powerpc64-linux-gnu --host=powerpc64-linux-gnu \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power7 \
 	--with-cpu=power7 2>&1 | tee _configure64_power7
 
-To build 32-bit use the following (notice the --build=powerpc-linux-gnu
---host=powerpc-linux-gnu switches):
+32-bit PowerPC (soft-dfp) using the libdecnumber backend and dpd encoding:
 
-CC=/opt/at05/bin/gcc \
+CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
@@ -378,9 +432,9 @@ CC=/opt/at05/bin/gcc \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power5 \
 	2>&1 | tee _configure32_power5
 
-Or 32-bit POWER6:
+Or 32-bit POWER6 (hard-dfp):
 
-CC=/opt/at05/bin/gcc \
+CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
@@ -388,9 +442,9 @@ CC=/opt/at05/bin/gcc \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power6 \
 	--with-cpu=power6 2>&1 | tee _configure32_power6
 
-Or 32-bit POWER7:
+Or 32-bit POWER7 (hard-dfp):
 
-CC=/opt/at05/bin/gcc \
+CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
@@ -576,4 +630,3 @@ and for hosting the stand alone version as well.
 
 Thanks to Michael Matz (SuSE) for help getting the initial packaging for
 Libdfp straightened out.
-

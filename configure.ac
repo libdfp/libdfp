@@ -222,12 +222,17 @@ changequote(,)dnl
 
 # Expand the configuration machine name into a subdirectory by architecture
 # type and particular chip.
-cc_msize=
+#cc_msize=
+#	powerpc) base_machine=powerpc machine=powerpc/powerpc32 cc_msize=32 ;;
+#	powerpc64) base_machine=powerpc machine=powerpc/powerpc64 cc_msize=64;;
+#	s390) base_machine=s390 machine=s390/s390-32 cc_msize=31;;
+#	s390x) base_machine=s390 machine=s390/s390-64 cc_msize=64;;
+
 case "$machine" in
-	powerpc) base_machine=powerpc machine=powerpc/powerpc32 cc_msize=32 ;;
-	powerpc64) base_machine=powerpc machine=powerpc/powerpc64 cc_msize=64;;
-	s390) base_machine=s390 machine=s390/s390-32 cc_msize=31;;
-	s390x) base_machine=s390 machine=s390/s390-64 cc_msize=64;;
+	powerpc) base_machine=powerpc machine=powerpc/powerpc32 ;;
+	powerpc64) base_machine=powerpc machine=powerpc/powerpc64 ;;
+	s390) base_machine=s390 machine=s390/s390-32 ;;
+	s390x) base_machine=s390 machine=s390/s390-64 ;;
 	i[34567]86) base_machine=i386 machine=i386/$machine ;;
 	*) base_machine=$machine ;;
 esac
@@ -252,9 +257,9 @@ AC_SUBST(AS)
 
 # It was considered to add this to CFLAGS before AC_PROG_CC was declared to
 # make sure that libdecnumber got all of the flags but it was decided to
-# simply invoke decnumber's `make' with an overridden CFLAGS.
-AC_SUBST(cc_mzarch)
-AC_SUBST(cc_msize)
+# simply invoke decnumber's `make' with an exported and overridden CFLAGS.
+#AC_SUBST(cc_mzarch)
+#AC_SUBST(cc_msize)
 
 AC_SUBST(CFLAGS)
 AC_SUBST(ASFLAGS)
@@ -306,7 +311,8 @@ fi
 # Check for GLIBC 2.10 headers
 have_glibc_2_10_headers=yes
 saved_CFLAGS="$CFLAGS"
-CFLAGS="-m$cc_msize $CFLAGS $glibc_headers_inc"
+#CFLAGS="-m$cc_msize $CFLAGS $glibc_headers_inc"
+CFLAGS="$CFLAGS $glibc_headers_inc"
 
 AC_MSG_CHECKING([for printf-hook register_printf_type() in printf.h to verify GLIBC 2.10])
 AC_TRY_COMPILE([#include "printf.h"],[
@@ -364,7 +370,8 @@ fi
 # Check for GLIBC 2.10 runtime support
 have_glibc_2_10=yes
 saved_CFLAGS="$CFLAGS"
-CFLAGS="-m$cc_msize $CFLAGS $glibc_headers_inc"
+#CFLAGS="-m$cc_msize $CFLAGS $glibc_headers_inc"
+CFLAGS="$CFLAGS $glibc_headers_inc"
 saved_LIBS="$LIBS"
 LIBS="$LIBS $glibc_build_lib"
 

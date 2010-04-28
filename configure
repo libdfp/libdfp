@@ -2364,7 +2364,7 @@ AS="$AS"
 
 # It was considered to add this to CFLAGS before AC_PROG_CC was declared to
 # make sure that libdecnumber got all of the flags but it was decided to
-# simply invoke decnumber's `make' with an overridden CFLAGS.
+# simply invoke decnumber's `make' with an exported and overridden CFLAGS.
 
 
 

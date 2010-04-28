@@ -6,8 +6,26 @@ top_srcdir := @top_srcdir@
 top_builddir = .
 
 prefix = @prefix@
+exec_prefix = @exec_prefix@
 libdir = @libdir@
 includedir = @includedir@
+
+#cc_msize = @cc_msize@
+
+# Not used on non-Z systems, i.e. empty
+#cc_mzarch = @cc_mzarch@
+
+# Where to install the library and object files.
+ifndef libdir
+libdir = $(exec_prefix)/lib
+endif
+inst_libdir = $(install_root)$(libdir)
+
+# Where to install the header files.
+ifndef includedir
+includedir = $(prefix)/include
+endif
+inst_includedir = $(install_root)$(includedir)
 
 dfp_name = @PACKAGE_NAME@
 dfp_version = @PACKAGE_VERSION@
@@ -20,7 +38,8 @@ SHARED_REALNAME_LIB = @PACKAGE_NAME@-@PACKAGE_VERSION@.so
 # The soname that symlinks to the real library code: e.g. libdfp.so.1.
 # Traditionally the version number on the soname defined the 'interface'
 # version.  Since this library intends to use symbol versioning there
-# probably isn't ever a reason to move to .so.2 or later.
+# probably isn't ever a reason to move to .so.2 or later but we'll follow the
+# precedent.
 SHARED_SONAME_LIB = @PACKAGE_NAME@.so.1
 
 # The linkername that symlinks to the soname: e.g. libdfp.so.  The linker looks for this name.
@@ -54,13 +73,11 @@ cflags-cpu = $(submachine_opt)
 asflags-cpu = $(submachine_opt)
 endif
 
-cc_msize = @cc_msize@
+#default_cflags := @CFLAGS@ -m$(cc_msize) $(cc_mzarch)
+#default_asflags := @ASFLAGS@ -m$(cc_msize) $(cc_mzarch)
 
-# Not used on non-Z systems, i.e. empty
-cc_mzarch = @cc_mzarch@
-
-default_cflags := @CFLAGS@ -m$(cc_msize) $(cc_mzarch)
-default_asflags := @ASFLAGS@ -m$(cc_msize) $(cc_mzarch)
+default_cflags := @CFLAGS@
+default_asflags := @ASFLAGS@
 
 ifndef	+cflags
 # Remove -I stuff from CFLAGS.
@@ -74,6 +91,9 @@ endif
 +cflags	:= $(sort $(+cflags))
 
 override CFLAGS = $(gnu-inline-CFLAGS) $(+cflags)
+# Necessary so that the submake invocation of libdecnumber/Makefile actually
+# picks up the CFLAGS.
+export CFLAGS
 
 # These are the flags given to the compiler to tell it what sort of
 # optimization and/or debugging output to do for .S files.
@@ -84,7 +104,8 @@ ifndef	+asflags
 endif
 
 # This makes sure -mcpu=CPU gets used when gcc is invoked against .S files.
-+asflags	+=  $(asflags-cpu)
+# Also pull in CFLAGS so we get -m<size> options set by the configuration.
++asflags	+=  $(asflags-cpu) $(filter -g%,$(CFLAGS)) $(filter -m%,$(CFLAGS))
 
 # Don't duplicate options.
 +asflags	:= $(sort $(+asflags))
@@ -162,10 +183,11 @@ first:
 # Configure will have generated the Makefile for the selected backend.
 # Let's add it to the subdir list so it gets recursively invoked by Make.  We
 # have to pass CFLAGS here because configure's CFLAGS doesn't have -mcpu,
-# -m[31|32|64] or -mzarch.
+# -m[31|32|64] or -mzarch.  Don't pass -e to make or it could pull unwanted
+#  variables from the environment.
 $(dfp_backend)/$(dfp_backend_lib):
 	@echo "+Building DFP backend $@"
-	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -eC $(dfp_backend)
+	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -C $(dfp_backend)
 	@echo
 
 libdfp: @enable_static@ @enable_shared@
@@ -316,25 +338,25 @@ clean:
 
 .PHONY: clean
 
-install_to := $(patsubst %/,%,$(install_root))
+#install_to := $(patsubst %/,%,$(install_root))
 
 install: all
-	$(INSTALL) -d $(install_to)$(libdir)
+	$(INSTALL) -d $(inst_libdir)
 ifeq ("@enable_static@","static")
-	$(INSTALL) -t $(install_to)$(libdir) $(top_builddir)/$(STATIC_LIB)
+	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(STATIC_LIB)
 endif
-	$(INSTALL) -t $(install_to)$(libdir) $(top_builddir)/$(SHARED_REALNAME_LIB)
-	ln -f -s $(SHARED_REALNAME_LIB) $(install_to)$(libdir)/$(SHARED_LINKERNAME_LIB)
-	$(LDCONFIG) -l $(install_to)$(libdir)/$(SHARED_REALNAME_LIB)
-	$(INSTALL) -d $(install_to)$(includedir)
-	$(INSTALL) -d $(install_to)$(includedir)/dfp
-	$(INSTALL) -t $(install_to)$(includedir)/dfp $(top_srcdir)/dfp/*.h
+	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(SHARED_REALNAME_LIB)
+	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_LINKERNAME_LIB)
+	$(LDCONFIG) -l $(inst_libdir)/$(SHARED_REALNAME_LIB)
+	$(INSTALL) -d $(inst_includedir)
+	$(INSTALL) -d $(inst_includedir)/dfp
+	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
 .PHONY: install
 
 install-headers:
-	$(INSTALL) -d $(install_to)$(includedir)
-	$(INSTALL) -d $(install_to)$(includedir)/dfp
-	$(INSTALL) -t $(install_to)$(includedir)/dfp $(top_srcdir)/dfp/*.h
+	$(INSTALL) -d $(inst_includedir)
+	$(INSTALL) -d $(inst_includedir)/dfp
+	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
 .PHONY: install-headers
 
 # Clean out the existing .SUFFIXES setting.
