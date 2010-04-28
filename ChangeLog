@@ -1,3 +1,78 @@
+2010-04-28  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* Makefile.in: Remove appending of cc_msize to CFLAGS.  Remove -e from
+	submake which builds libdecnumber.
+	* configure.ac: Remove cc_msize and cc_mzarch and accompanying
+	AC_SUBST.  The preferred method is to require the user to pass
+	-m[31|32|64] in CFLAGS as an env variable when configure is invoked.
+	* README.user: New file.
+	* README.developer: Updated to direct user to pass -m[31|32|64] in
+	CFLAGS and to always use --build and --host values that align with the
+	-m values.
+
+2010-02-03  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Removed unneccesary rule -- backend:
+	$(dfp_backend)/$(dfp_backend_lib).
+
+2010-02-03  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Fixed rule $(top_builddir)/$(dfp_backend_lib): to
+	$(dfp_backend)/$(dfp_backend_lib) to correct problem with make -j*
+
+2010-02-02  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Replaced libdfp.so.1 generation using `ln -s' to using
+	`ldconfig -l' in both $(top_builddir)/ and $(install_root)$(libdir)/.
+	Added creation of linkname symlink libdfp.so.
+	Strip trailing / from any install_root=<foo> paths.
+
+2010-01-29  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Fixed `ln -s' to not have the goofy '(cd..)', e.g. (cd
+	$(libdir) ln -s <foo>) when making the .so.1 -> -1.0.1.so symlinks.
+
+2010-01-29  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Fixed libdir=@prefix@/lib to libdir=@libdir@ and
+	includedir=@prefix@/include to includedir=@includedir@.  This will
+	allow configure override with --libdir= and --includedir=
+	respectively.  This was preventing installation into /<foo>/lib64.
+	Fix header install so that dfp/README isn't installed with the header
+	files.
+
+2010-01-29  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: `install' doesn't handle symlinks so we've done another
+	'ln -s' in the install stage to set $(SHARED_LIBRARY) ->
+	./$(SHARED_VERSIONED_LIBRARY) in the $(install_root)/$(libdir)/
+	directory.
+
+2010-01-29  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Fixed erroneous attempt to install libdfp.a even if
+	--enable-static=no was configured.
+
+2010-01-29  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Fixed missing libdecnumber.a rule dependency by
+	changing the backend rule to be `libdecnumber.a' rather than
+	`libdecnumber'.  Fixed `ln -s' error when rebuilding without a make
+	clean by adding `-f' to always force overwrite the previous versioned
+	library symlink.
+	* README: Renamed to README.developer
+	* README.developer: New file.
+
+2010-01-27  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* configure.ac: Added additional help text when warning about the
+	glibc headers lacking the printf-hooks support.
+	* README: Clarified version number.
+	* TODO: Updated.
+
+
 2010-01-20  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
