@@ -1,3 +1,22 @@
+2010-05-20  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Allow make check to work without --with-glibc-build.
+	* tests/test-printf.c: Removed register_printf_dfp() invocation.
+	* tests/test-amort.c: New file which is an amortiation benchmark.
+	* tests/scaffold.c: Changed <decode.h> to "decode.h".
+	* tests/decode.h (_DFP_DECODE_H): Added _DFP onto guard.
+	* tests/debug-test.sh: Allow make check to work without
+	--with-glibc-build by either debugging the app or the loader.
+	* configure.ac: Incrememented the library version from 1.0.1 to 1.0.2
+	due to the addition of the libdfp constructor which no longer requires
+	register_printf_dfp().
+	* README.user: More todos.
+	* include/init_dfp.h (__libdfp_init): New file to add constructor
+	prototype.
+	* Makefile.gdb: Allow make check to work without --with-glibc-build.
+	* init_dfp.c (__libdfp_init): New file.  Add a constructor to call
+	register_printf_dfp().
+
 2010-04-28  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
