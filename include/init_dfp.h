@@ -1,6 +1,6 @@
-/* Prototypes for decode functions, which output the DPD declets.
+/* Libdfp constructor prototype.
 
-   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -20,17 +20,12 @@
    if not, write to the Free Software Foundation, Inc., 59 Temple Place,
    Suite 330, Boston, MA 02111-1307 USA.
 
-   Please see libdfp/COPYING.txt for more information.  */
+   Please see dfp/COPYING.txt for more information.  */
 
-#ifndef _DFP_DECODE_H
-#define _DFP_DECODE_H
+#ifndef	_INIT_DFP_H
 
-/* char * should ref a 14 byte char array, +0,000,000E+0\0  */
-extern char * decoded32 (_Decimal32, char*);
-/* char * should ref a 26 byte char array, +0,000,000,000,000,000E+0\0  */
-extern char * decoded64 (_Decimal64, char*);
-/* char * should ref a 50 byte char array, *
- * +0,000,000,000,000,000,000,000,000,000,000,000E+0\0  */
-extern char * decoded128 (_Decimal128, char*);
+#define	_INIT_DFP_H	1
 
-#endif /* _DFP_DECODE_H  */
+extern void __libdfp_init (void);
+
+#endif

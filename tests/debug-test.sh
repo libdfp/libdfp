@@ -6,4 +6,6 @@ fi
 	source debug-test.conf
 	source $1
 
-$DBG -x ${GDB_SCRIPT} -d ${LIBDFP_SRC} ${GLIBC_BUILD}/elf/ld.so
+# Depending on whether a [system|standalone] loader or a non-installed glibc
+# build's loader this will be invoked differently.
+$DBG -x ${GDB_SCRIPT} -d ${LIBDFP_SRC} ${APP_OR_LOADER}

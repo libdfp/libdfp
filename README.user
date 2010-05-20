@@ -156,9 +156,8 @@ ask Libdfp to do so if he/she wishes to use any printf variants with
 Decimal Floating Point types by executing the following function prior to
 execution of printf with DFP types:
 
-	#include <dfp.h>
+	#include <dfp/dfp.h>
 	register_printf_dfp();
-	printf
 
 After registration of the DFP printf-hooks printf will recognize the following
 length modifiers:

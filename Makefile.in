@@ -164,14 +164,13 @@ VPATH := $(subst $(sp),:,$(all_srcdirs))
 # directory Makefiles which are included (not recursively invoked).
 libdfp_files := dfptypeconv mapround decode fmt_d32 fmt_d64 fmt_d128 fe_decround \
 		strtod32 strtod64 strtod128 wcstod32 wcstod64 wcstod128 \
-	        printf_dfp
+		printf_dfp init_dfp
 
 # The sysdeps subdirs aren't recursively invoked, they're included so that
 # they can add files to the libdfp_files list.
 include $(foreach dir,$(makefile_dirs), $(dir)/Makefile )
 
 # Libdfp has a dependency on the backend so build that first.
-#all: first backend libdfp
 all: first $(dfp_backend)/$(dfp_backend_lib) libdfp
 
 # Fake rule to output the VPATH before we build anything.  Don't use .PHONY
@@ -198,7 +197,7 @@ static: $(top_builddir)/$(STATIC_LIB)
 # $(SHARED_SONAME_LIB) symlink is created by ldconfig be reading the `soname'
 # from the SHARED_REALNAME_LIB.
 shared: $(top_builddir)/$(SHARED_REALNAME_LIB)  $(top_builddir)/$(SHARED_LINKERNAME_LIB) $(top_builddir)/$(SHARED_SONAME_LIB)
-	@echo Building shared lib and symlinks: $(notdir $?)
+	@echo +Building shared lib and symlinks: $(notdir $?)
 
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
 C_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_POSIX_C_SOURCE=200809L -std=gnu99 -D_SVID_SOURCE
@@ -233,7 +232,7 @@ $(top_builddir)/$(STATIC_LIB): $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,
 
 # Create libdfp.so -> libdfp.so.1 symlink.
 $(top_builddir)/$(SHARED_LINKERNAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
-	@echo "Creating linker .so symlink $(notdir $@) -> $(notdir $?)"
+	@echo "+Creating linker .so symlink $(notdir $@) -> $(notdir $?)"
 	ln -f -s $? $@
 	@echo
 
@@ -241,7 +240,7 @@ $(top_builddir)/$(SHARED_LINKERNAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 # The $(SHARED_SONAME_LIB) -> $(SHARED_REALNAME_LIB) symlink is supposed to
 # be created by ldconfig be reading the `soname' from the SHARED_REALNAME_LIB.
 $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
-	@echo "Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $?)"
+	@echo "+Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $?)"
 	$(LDCONFIG) -l $(notdir $?)
 	@echo
 
@@ -297,13 +296,18 @@ $(top_builddir)/sysd-versions: $(top_builddir)/Versions.all \
 # versions.awk which generates libdfp.map implicitly.
 $(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
 
-GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so $(glibc_builddir)/nptl/libpthread.so
 
-libdfp_tests = test-printf test-param
+ifeq ($(glibc_builddir),)
+GLIBC_LIBS := -lc -lm -lpthread
+else
+GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so $(glibc_builddir)/nptl/libpthread.so
+endif
+
+libdfp_tests = test-printf test-param test-amort
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
-$(libdfp_tests): %:%.o
+$(libdfp_tests): %:%.o $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CC) $(CFLAGS) $(GLIBC_LIBS) $(top_builddir)/$(SHARED_SONAME_LIB) $(top_builddir)/$(addsuffix .o,$@) -o $@
 	@echo
 
@@ -313,12 +317,20 @@ LIBRARY_PATH = $(glibc_builddir)/:$(glibc_builddir)/math:$(glibc_builddir)/elf:$
 # the .gdb files are generated before the tests are run so that they get
 # generated even if the tests fail.  Stderr is piped to the .out file while
 # stdout is dumped to /dev/null.
+#$(addsuffix .out,$(libdfp_tests)): $(libdfp_tests) $(addsuffix .gdb,$(patsubst %.out,%,$@))
 $(addsuffix .out,$(libdfp_tests)): $(libdfp_tests) $(addsuffix .gdb,$(libdfp_tests))
-	ulimit -c unlimited; GCONV_PATH=$(glibc_builddir)/iconvdata LC_ALL=C \
+ifneq ($(glibc_builddir),)
+	ulimit -c unlimited; \
+	GCONV_PATH=$(glibc_builddir)/iconvdata LC_ALL=C \
 	$(glibc_builddir)/elf/ld.so --library-path \
-	$(LIBRARY_PATH):$(top_builddir) $(top_builddir)/$(patsubst %.out,%,$@) \
+	$(LIBRARY_PATH):$(top_builddir) \
+	$(top_builddir)/$(patsubst %.out,%,$@) \
 	2> $(top_builddir)/$@ 1> /dev/null
 	@echo
+else
+	LD_LIBRARY_PATH=$(top_builddir)/:$$LD_LIBRARY_PATH $(top_builddir)/$(patsubst %.out,%,$@) 2> $(top_builddir)/$@ 1> /dev/null
+	@echo
+endif
 
 DISTCLEANFILES = $(top_builddir)/debug-test.conf
 
@@ -337,8 +349,6 @@ clean:
 	rm *.o *.os $(STATIC_LIB) $(SHARED_LINKERNAME_LIB) $(SHARED_SONAME_LIB) $(SHARED_REALNAME_LIB) Versions.all Versions.sysdeps libdfp.map Versions.tmp sysd-versions $(top_builddir)/$(dfp_backend)/*.o $(top_builddir)/$(dfp_backend)/*.a debug-test.conf $(addsuffix .out,$(libdfp_tests)) $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests)) $(libdfp_tests)
 
 .PHONY: clean
-
-#install_to := $(patsubst %/,%,$(install_root))
 
 install: all
 	$(INSTALL) -d $(inst_libdir)

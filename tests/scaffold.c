@@ -24,6 +24,7 @@
 
 
 #include <stdio.h>
+#include "decode.h"
 
 #ifndef _C
 #include <string.h>

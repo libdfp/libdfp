@@ -59,16 +59,6 @@ int main (void)
 {
   d128_type *dptr;
 
-  fprintf(stdout, "Testing marker prior to register_printf_dfp() invocation.\n");
-  _PC("1.234567e+00", "%e", (double) 1.234567);
-
-  register_printf_dfp();
-
-  /* We do this to make sure that the registration didn't mess up the printf
-   * internals.  */
-  fprintf(stdout, "Testing marker after register_printf_dfp() invocation.\n");
-  _PC("1.234567e+00", "%e", (double) 1.234567);
-
   for (dptr = printf_d128s; dptr->line; dptr++)
     {
       _PC_P(__FILE__,dptr->line, dptr->expect,dptr->format,dptr->d);
