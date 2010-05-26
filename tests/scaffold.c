@@ -26,17 +26,18 @@
 #include <stdio.h>
 #include "decode.h"
 
-#ifndef _C
+static int fail = 0;
+
+/* String compare macros  */
+#ifndef _SC
 #include <string.h>
 #include <stdarg.h>
 #include <limits.h> /* For CHAR_MAX.  */
 
-static int fail = 0;
-
 /* Generally don't invoke this directly unless you already have __LINE__ set in
- * a variable and want _C_P to output it.  The name stands for Compare with
+ * a variable and want _SC_P to output it.  The name stands for Compare with
  * Position.  */
-#define _C_P(f,l,x,y) do { \
+#define _SC_P(f,l,x,y) do { \
   if(strcmp(x,y)) { \
     fprintf(stderr, "Error: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", x,y,f,l); \
     ++fail; \
@@ -45,10 +46,11 @@ static int fail = 0;
   } \
 } while (0)
 
-#define _C(x,y) _C_P (__FILE__,__LINE__,x,y)
+#define _SC(x,y) _SC_P (__FILE__,__LINE__,x,y)
 
-#endif /* _C  */
+#endif /* _SC  */
 
+#ifdef _WANT_PC
 static char buf[CHAR_MAX];
 #ifndef _PC
 
@@ -57,7 +59,7 @@ static char buf[CHAR_MAX];
   memset(buf,'\0',CHAR_MAX); \
   /* Invokes printf dfp.  */  \
   sprintf(buf, y, ##args); \
-  _C_P(f,l,x,buf); \
+  _SC_P(f,l,x,buf); \
 } while (0)
 
 /* _PC == Printf_dfp Compare
@@ -77,28 +79,61 @@ static char buf[CHAR_MAX];
  */
 #define _PC(x,y,...) _PC_P (__FILE__,__LINE__,x,y,__VA_ARGS__)
 #endif /* _PC  */
+#endif /* _WANT_PC  */
 
+#ifdef _WANT_VC
+static char bufx[CHAR_MAX];
+static char bufy[CHAR_MAX];
+#ifndef _VC
+/* _VC_P == Value Compare with Position  */
+#define _VC_P(f,l,x,y,fmt) do { \
+  memset(bufx,'\0',CHAR_MAX); \
+  memset(bufy,'\0',CHAR_MAX); \
+  /* Invokes printf dfp.  */  \
+  sprintf(bufx, fmt, x); \
+  sprintf(bufy, fmt, y); \
+  if(x!=y) { \
+    fprintf(stderr, "Error: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", bufx,bufy,f,l); \
+    ++fail; \
+  } else { \
+    fprintf(stdout, "Success: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", bufx,bufy,f,l); \
+  } \
+} while (0)
 
+/* _VC == Value Compare
+ *
+ * Macro used to compare the result of an operation against an expected result.
+ * X: Expected Value
+ * Y: Actual Value
+ */
+#define _VC(x,y,fmt) _VC_P (__FILE__,__LINE__,x,y,fmt)
+#endif /* _VC  */
+#endif /* _WANT_VC  */
+
+#ifdef _WANT_DC
+static char dbuf[CHAR_MAX];
 #ifndef _DC
+/* _DC == Decoded[32|64|128] Compare
+ */
 
 /* Pick up the decoded[32|64|128] prototypes.  */
 #include "decode.h"
 
-/* _DC == decoded[32|64|128] Compare with Position.  Use this if the position is
- * pre-determined.  Don't call this on Non-_Decimal values.  The outcome is
+/* _DC_P == decoded[32|64|128] Compare with Position.  Use this if the position
+ * is pre-determined.  Don't call this on Non-_Decimal values.  The outcome is
  * undefined.  */
 #define _DC_P(f,l,x,y) do { \
-  memset(buf,'\0',CHAR_MAX); \
+  memset(dbuf,'\0',CHAR_MAX); \
   /* Invoke the correct decoded{32|64|128]() based on arg size.  */ \
-  (sizeof (y) == sizeof (_Decimal128)? decoded128(y,&buf[0]): \
-    (sizeof (y) == sizeof (_Decimal64)? decoded64(y,&buf[0]): \
-       decoded32(y,&buf[0]))); \
-  _C_P(f,l,x,buf); \
+  (sizeof (y) == sizeof (_Decimal128)? decoded128(y,&dbuf[0]): \
+    (sizeof (y) == sizeof (_Decimal64)? decoded64(y,&dbuf[0]): \
+       decoded32(y,&dbuf[0]))); \
+  _SC_P(f,l,x,dbuf); \
 } while (0)
 
 /* _DC == decoded[32|64|128] Compare
  *
- * Variadic macro used to compare a decoded[32|64|128]() invocation with an
+ * Macro used to compare a decoded[32|64|128]() invocation with an
  * expected result.
  *
  * X: Expected decoded[32|64|128] Output String
@@ -108,11 +143,12 @@ static char buf[CHAR_MAX];
  * result' string to precede everything and you don't need to define a buffer.
  *
  * e.g.
- *   _DC("0.000033333", (_Decimal128) 0.00033333DL);
+ *   _DC("+0,000,000,000,000,000,000,000,000,000,000,100E-2", (_Decimal128) 1.00DL);
  *
  */
 #define _DC(x,y) _DC_P (__FILE__,__LINE__,x,y)
 #endif /* _DC  */
+#endif /* _WANT_DC  */
 
 
 #ifndef _REPORT
@@ -124,5 +160,4 @@ static char buf[CHAR_MAX];
 } while (0)
 
 #endif /* _REPORT  */
-
 

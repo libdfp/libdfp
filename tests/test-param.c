@@ -38,7 +38,8 @@
 /* Pick up the decoded* headers.  */
 #include "decode.h"
 
-#include "scaffold.c" /* Pick up the _PC(x,y,...) macro.  */
+#define _WANT_DC 1
+#include "scaffold.c" /* Pick up the _DC_P(x,y) macro.  */
 
 /* Inspired by GLIBC stdio-common/tfformat.c  */
 typedef struct{

@@ -303,14 +303,16 @@ else
 GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so $(glibc_builddir)/nptl/libpthread.so
 endif
 
-libdfp_tests = test-printf test-param test-amort
+libdfp_tests = test-printf test-param test-amort test-decode test-quantize test-isnan test-isinf test-finite test-fpclassify
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
 $(libdfp_tests): %:%.o $(top_builddir)/$(SHARED_SONAME_LIB)
-	$(CC) $(CFLAGS) $(GLIBC_LIBS) $(top_builddir)/$(SHARED_SONAME_LIB) $(top_builddir)/$(addsuffix .o,$@) -o $@
+	$(CC) $(CFLAGS) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .o,$@) -o $@
 	@echo
 
+#	$(CC) $(CFLAGS) $(GLIBC_LIBS) $(top_builddir)/$(SHARED_SONAME_LIB) $(top_builddir)/$(addsuffix .o,$@) -o $@
+#
 LIBRARY_PATH = $(glibc_builddir)/:$(glibc_builddir)/math:$(glibc_builddir)/elf:$(glibc_builddir)/nptl
 
 # Invoke the GLIBC loader and tell it to run the application.  Also make sure
@@ -342,6 +344,7 @@ include $(top_srcdir)/Makefile.gdb
 
 # We use debug-test.conf as an input file for some debugging utilities.
 check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests))
+	@echo +Completed make check
 
 .PHONY: check
 
