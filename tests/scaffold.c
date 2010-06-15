@@ -110,6 +110,55 @@ static char bufy[CHAR_MAX];
 #endif /* _VC  */
 #endif /* _WANT_VC  */
 
+#ifdef _WANT_QC
+#include <math.h> /* To pick up __dfp_compatible().  */
+
+/* Provide a polymorphic quantize() function.  */
+#define quantize(x) \
+  (!__dfp_compatible(x)							      \
+    ? DEC_NAN								      \
+    : (sizeof (x) == sizeof (_Decimal128)				      \
+      ? quantized128(x)							      \
+      : (sizeof (x) == sizeof (_Decimal64)				      \
+	? quantized64(x)						      \
+	: quantized32(x)))						      \
+  )
+
+#define _DECIMAL (type, varname)					      \
+  do {									      \
+       type varname;							      \
+  }while (0)
+
+static char bufx[CHAR_MAX];
+static char bufy[CHAR_MAX];
+#ifndef _QC
+/* _QC_P == Quantize Compare with Position  */
+#define _QC_P(f,l,x,y,fmt,type) do { \
+  memset(bufx,'\0',CHAR_MAX); \
+  memset(bufy,'\0',CHAR_MAX); \
+  /* Invokes printf dfp.  */  \
+  sprintf(bufx, fmt, x); \
+  sprintf(bufy, fmt, y); \
+  if(x!=y) { \
+    fprintf(stderr, "Error: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", bufx,bufy,f,l); \
+    ++fail; \
+  } else { \
+    fprintf(stdout, "Success: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", bufx,bufy,f,l); \
+  } \
+} while (0)
+
+/* _QC == Quantize Compare
+ *
+ * Macro used to compare the result of an operation against an expected result.
+ * X: Expected Value
+ * Y: Actual Value
+ */
+#define _QC(x,y,fmt) _QC_P (__FILE__,__LINE__,x,y,fmt)
+#endif /* _QC  */
+#endif /* _WANT_QC  */
+
+
+
 #ifdef _WANT_DC
 static char dbuf[CHAR_MAX];
 #ifndef _DC

@@ -73,7 +73,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   if (_LIB_VERSION == _IEEE_) return z;
   if (FUNC_D(isinf) (x))
     DFP_ERRNO (EDOM);
-  if (!FUNC_D(__finite) (z) && FUNC_D(__finite) (x))
+  if (!FUNC_D(__isfinite) (z) && FUNC_D(__isfinite) (x))
     DFP_ERRNO (ERANGE);
 #endif
   return z;

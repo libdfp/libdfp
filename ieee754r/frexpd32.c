@@ -1,4 +1,4 @@
-/* Break floating point number into normalized fraction and integral power of two
+/* Break dfp number into normalized fraction and integral power of two
 
    Copyright (C) 2006 IBM Corporation.
    Copyright (C) 2007, 2009 Free Software Foundation, Inc.
@@ -50,7 +50,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, int *y)
 #if NUMDIGITS_SUPPORT==1
   int digits, exponent;
 
-  if (isinf(x) || isnan(x))
+  if (FUNC_D (isinf) (x) || FUNC_D (isnan) (x))
     return x+x;
 
   // Given 3.1e0 is encoded as 31e-1 and we want .31e1

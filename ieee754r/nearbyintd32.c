@@ -69,7 +69,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   DEC_TYPE z = IEEE_FUNCTION_NAME (x);
 #ifndef _IEEE_LIBDFP
   if (_LIB_VERSION == _IEEE_) return z;
-  if (!finited32 (z) && finited32 (x))
+  if (!__isfinited32 (z) && __isfinited32 (x))
     DFP_ERRNO (ERANGE);
 #endif
   return z;

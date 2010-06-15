@@ -87,7 +87,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   int e, rem, sign;
   _Decimal128 z;
 
-  if (! FUNC_D(__finite) (x)) /* cbrt(x:x=inf/nan/-inf) = x+x (for sNaN) */
+  if (! FUNC_D(__isfinite) (x)) /* cbrt(x:x=inf/nan/-inf) = x+x (for sNaN) */
     return x + x;
 
   if (x == DFP_CONSTANT(0.0)) /*  cbrt(0) = 0 */

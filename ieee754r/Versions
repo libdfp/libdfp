@@ -60,12 +60,12 @@ libdfp {
     fdimd32;
     fdimd64;
     fdimd128;
-    finited32;
-    finited64;
-    finited128;
-    __finited32;
-    __finited64;
-    __finited128;
+    isfinited32;
+    isfinited64;
+    isfinited128;
+    __isfinited32;
+    __isfinited64;
+    __isfinited128;
     floord32;
     floord64;
     floord128;

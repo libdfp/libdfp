@@ -1,4 +1,5 @@
-/* Returns non-zero if the _Decimal64 is finite
+/* Returns non-zero if the _Decimal32 is normalized
+
    Copyright (C) 2008 IBM Corporation.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
@@ -17,10 +18,10 @@
    if not, write to the Free Software Foundation, Inc., 59 Temple Place,
    Suite 330, Boston, MA 02111-1307 USA.
 
-   Please see libdfp/COPYING.txt for more information.  */
+   Please see dfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#define FUNCTION_NAME isfinite
-#define TEST_CLASS_MASK 0x38
+#define _DECIMAL_SIZE 32
+#define FUNCTION_NAME isnormal
+#define TEST_CLASS_MASK 0x08
 
 #include "is_template.h"

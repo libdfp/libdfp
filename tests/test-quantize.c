@@ -1,4 +1,4 @@
-/* Test quantize
+/* Test quantized[32|64|128]
 
    Copyright (C) 2010 Free Software Foundation, Inc.
 
@@ -46,6 +46,7 @@ typedef struct{
 d128_type printf_d128s[] =
 {
   {__LINE__, 123.456DL, 0.12DL, 123.46DL, "%DDfDL"},
+  {__LINE__, 123.456DL, 0.00DL, 123.46DL, "%DDfDL"},
   {__LINE__, -1.95DL, -190.55DL, -1.95DL, "%DDfDL"},
   {0,0,0,0,0 }
 };
@@ -61,6 +62,7 @@ typedef struct{
 d64_type printf_d64s[] =
 {
   {__LINE__, 123.456DD, 0.12DD, 123.46DD, "%DfDD"},
+  {__LINE__, 123.456DD, 0.00DD, 123.46DD, "%DfDD"},
   {__LINE__, -1.95DD, -190.55DD, -1.95DD, "%DfDD"},
   {0,0,0,0,0 }
 };
@@ -76,6 +78,7 @@ typedef struct{
 d32_type printf_d32s[] =
 {
   {__LINE__, 123.456DF, 0.12DF, 123.46DF, "%HfDF"},
+  {__LINE__, 123.456DF, 0.00DF, 123.46DF, "%HfDF"},
   {__LINE__, -1.95DF, -190.55DF, -1.95DF, "%HfDF"},
   {0,0,0,0,0 }
 };

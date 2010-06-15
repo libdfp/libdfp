@@ -1082,7 +1082,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   if (_LIB_VERSION == _IEEE_) return z;
   /*  For this particular case, both the Pole and Overflow error make the same
    *  finite x -> infinite z result, and both generate an ERANGE errno */
-  if (!FUNC_D(__finite) (z) && FUNC_D(__finite) (x))
+  if (!FUNC_D(__isfinite) (z) && FUNC_D(__isfinite) (x))
     DFP_ERRNO (ERANGE);
 #endif
   return z;

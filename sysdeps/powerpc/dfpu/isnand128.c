@@ -1,4 +1,4 @@
-/* Returns non-zero if the _Decimal64 is finite
+/* Returns non-zero if the _Decimal128 is NaN
    Copyright (C) 2008 IBM Corporation.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
@@ -19,8 +19,8 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#define FUNCTION_NAME isfinite
-#define TEST_CLASS_MASK 0x38
+#define _DECIMAL_SIZE 128
+#define FUNCTION_NAME isnan
+#define TEST_CLASS_MASK 0x03
 
 #include "is_template.h"

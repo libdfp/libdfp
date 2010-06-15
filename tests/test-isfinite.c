@@ -1,4 +1,4 @@
-/* Test finite[32|64|128] and polymorphic macro finite() in math.h.
+/* Test isfinite[32|64|128] and polymorphic macro isfinite() in math.h.
 
    Copyright (C) 2010 Free Software Foundation, Inc.
 
@@ -94,8 +94,8 @@ int main (void)
 
   for (d128ptr = printf_d128s; d128ptr->line; d128ptr++)
     {
-      int retval = finited128(d128ptr->x);
-      fprintf(stdout,"%d = finited128(%DDfDL) in: %s:%d\n", retval, d128ptr->x,__FILE__,__LINE__-1);
+      int retval = isfinited128(d128ptr->x);
+      fprintf(stdout,"%d = isfinited128(%DDfDL) in: %s:%d\n", retval, d128ptr->x,__FILE__,__LINE__-1);
       _VC_P(__FILE__,d128ptr->line, d128ptr->e,retval,d128ptr->format);
 
       retval = isfinite(d128ptr->x);
@@ -105,8 +105,8 @@ int main (void)
 
   for (d64ptr = printf_d64s; d64ptr->line; d64ptr++)
     {
-      int retval = finited64(d64ptr->x);
-      fprintf(stdout,"%d = finited64(%DfDD) in: %s:%d\n", retval, d64ptr->x,__FILE__,__LINE__-1);
+      int retval = isfinited64(d64ptr->x);
+      fprintf(stdout,"%d = isfinited64(%DfDD) in: %s:%d\n", retval, d64ptr->x,__FILE__,__LINE__-1);
       _VC_P(__FILE__,d64ptr->line, d64ptr->e,retval,d64ptr->format);
 
       retval = isfinite(d64ptr->x);
@@ -116,8 +116,8 @@ int main (void)
 
   for (d32ptr = printf_d32s; d32ptr->line; d32ptr++)
     {
-      int retval = finited32(d32ptr->x);
-      fprintf(stdout,"%d = finited32(%HfDF) in: %s:%d\n", retval, d32ptr->x,__FILE__,__LINE__-1);
+      int retval = isfinited32(d32ptr->x);
+      fprintf(stdout,"%d = isfinited32(%HfDF) in: %s:%d\n", retval, d32ptr->x,__FILE__,__LINE__-1);
       _VC_P(__FILE__,d32ptr->line, d32ptr->e,retval,d32ptr->format);
 
       retval = isfinite(d32ptr->x);

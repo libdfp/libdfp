@@ -173,8 +173,8 @@ extern _Decimal32 __fmodd32 (_Decimal32 __x, _Decimal32 __y) __THROW;
 extern int isinfd32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 extern int __isinfd32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 
-extern int finited32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
-extern int __finited32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
+extern int isfinited32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
+extern int __isfinited32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 
 extern _Decimal32 dremd32 (_Decimal32 __x, _Decimal32 __y) __THROW;
 extern _Decimal32 __dremd32 (_Decimal32 __x, _Decimal32 __y) __THROW;
@@ -190,6 +190,8 @@ extern _Decimal32 __nand32 (__const char *__tagb) __THROW __attribute__ ((__cons
 
 extern int isnand32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 extern int __isnand32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
+
+extern int isnormald32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 
 extern _Decimal32 j0d32 (_Decimal32) __THROW;
 extern _Decimal32 __j0d32 (_Decimal32) __THROW;
@@ -396,8 +398,8 @@ extern _Decimal64 __fmodd64 (_Decimal64 __x, _Decimal64 __y) __THROW;
 extern int isinfd64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
 extern int __isinfd64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
 
-extern int finited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
-extern int __finited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
+extern int isfinited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
+extern int __isfinited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
 
 extern _Decimal64 dremd64 (_Decimal64 __x, _Decimal64 __y) __THROW;
 extern _Decimal64 __dremd64 (_Decimal64 __x, _Decimal64 __y) __THROW;
@@ -413,6 +415,8 @@ extern _Decimal64 __nand64 (__const char *__tagb) __THROW __attribute__ ((__cons
 
 extern int isnand64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
 extern int __isnand64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
+
+extern int isnormald64(_Decimal64 __value) __THROW __attribute__ ((__const__));
 
 extern _Decimal64 j0d64 (_Decimal64) __THROW;
 extern _Decimal64 __j0d64 (_Decimal64) __THROW;
@@ -619,8 +623,8 @@ extern _Decimal128 __fmodd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 extern int isinfd128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
 extern int __isinfd128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
 
-extern int finited128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
-extern int __finited128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
+extern int isfinited128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
+extern int __isfinited128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
 
 extern _Decimal128 dremd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 extern _Decimal128 __dremd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
@@ -636,6 +640,8 @@ extern _Decimal128 __nand128 (__const char *__tagb) __THROW __attribute__ ((__co
 
 extern int isnand128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
 extern int __isnand128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
+
+extern int isnormald128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
 
 extern _Decimal128 j0d128 (_Decimal128) __THROW;
 extern _Decimal128 __j0d128 (_Decimal128) __THROW;
@@ -743,6 +749,27 @@ extern _Decimal128 __quantized128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 extern _Bool samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 extern _Bool __samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 
+extern int isgreaterd32(_Decimal32 x, _Decimal32 y) __THROW;
+extern int isgreaterequald32(_Decimal32 x, _Decimal32 y) __THROW;
+extern int islessd32(_Decimal32 x, _Decimal32 y) __THROW;
+extern int islessequald32(_Decimal32 x, _Decimal32 y) __THROW;
+extern int islessgreaterd32(_Decimal32 x, _Decimal32 y) __THROW;
+extern int isunorderedd32 (_Decimal32 x, _Decimal32 y) __THROW;
+
+extern int isgreaterd64(_Decimal64 x, _Decimal64 y) __THROW;
+extern int isgreaterequald64(_Decimal64 x, _Decimal64 y) __THROW;
+extern int islessd64(_Decimal64 x, _Decimal64 y) __THROW;
+extern int islessequald64(_Decimal64 x, _Decimal64 y) __THROW;
+extern int islessgreaterd64(_Decimal64 x, _Decimal64 y) __THROW;
+extern int isunorderedd64 (_Decimal64 x, _Decimal64 y) __THROW;
+
+extern int isgreaterd128(_Decimal128 x, _Decimal128 y) __THROW;
+extern int isgreaterequald128(_Decimal128 x, _Decimal128 y) __THROW;
+extern int islessd128(_Decimal128 x, _Decimal128 y) __THROW;
+extern int islessequald128(_Decimal128 x, _Decimal128 y) __THROW;
+extern int islessgreaterd128(_Decimal128 x, _Decimal128 y) __THROW;
+extern int isunorderedd128 (_Decimal128 x, _Decimal128 y) __THROW;
+
 /* Classification functions.  We undefine those defined by the system math.h
  * so that we can add the _Decimal[32|64|128] types recognition to the macros.
  */
@@ -821,9 +848,9 @@ extern _Bool __samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 #define isfinite(x)   \
   (									      \
     (!__dfp_compatible(x)? (____isfinite(x)) :				      \
-      (sizeof (x) == sizeof (_Decimal128)? __finited128(x):		      \
-	(sizeof (x) == sizeof (_Decimal64)? __finited64(x):		      \
-	  __finited32(x)						      \
+      (sizeof (x) == sizeof (_Decimal128)? __isfinited128(x):		      \
+	(sizeof (x) == sizeof (_Decimal64)? __isfinited64(x):		      \
+	  __isfinited32(x)						      \
 	)								      \
       )									      \
     )									      \
@@ -892,7 +919,7 @@ extern _Bool __samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
     )									      \
   )
 
-#ifdef fabs /* This is actually new in WG21 N2849.  */
+#ifdef fabs /* This is actually new in ISO/IEC TR 24732.  */
 # undef fabs
 #endif
 #define fabs(x) \

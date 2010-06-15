@@ -1,7 +1,11 @@
-/* Returns non-zero if the _Decimal64 is finite
-   Copyright (C) 2008 IBM Corporation.
+/* Decimal Floating Point 32-bit x^y.  POWER6 PowerPC32 version.
 
-   Author(s): Pete Eberlein <eberlein@us.ibm.com>
+   Copyright (C) 2008 Free Software Foundation, Inc.
+
+   This file is part of the Decimal Floating Point C Library.
+
+   Author(s): Steven Munroe <munroesj@us.ibm.com>
+              Ryan S. Arnold <rsa@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -19,8 +23,13 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#define FUNCTION_NAME isfinite
-#define TEST_CLASS_MASK 0x38
+#include <math.h>
 
-#include "is_template.h"
+extern _Decimal64 __powd64(_Decimal64, _Decimal64);
+
+_Decimal32
+__powd32 (_Decimal32 x, _Decimal32 y)
+{
+  return (_Decimal32) __powd64((_Decimal64) x, (_Decimal64) y);
+}
+weak_alias(__powd32, powd32)

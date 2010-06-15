@@ -1,7 +1,11 @@
-/* Returns non-zero if the _Decimal64 is finite
-   Copyright (C) 2008 IBM Corporation.
+/* Decimal Floating Point 32-bit e^x.  POWER6 PowerPC32 version.
 
-   Author(s): Pete Eberlein <eberlein@us.ibm.com>
+   Copyright (C) 2008, 2010 Free Software Foundation, Inc.
+
+   This file is part of the Decimal Floating Point C Library.
+
+   Author(s): Steven Munroe <munroesj@us.ibm.com>
+              Ryan S. Arnold <rsa@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -19,8 +23,21 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#define FUNCTION_NAME isfinite
-#define TEST_CLASS_MASK 0x38
+extern _Decimal64 __expd64(_Decimal64);
 
-#include "is_template.h"
+#ifndef _DECIMAL_SIZE
+#  define _DECIMAL_SIZE 32
+#endif
+
+#include <math.h>
+
+#define FUNCTION_NAME exp
+
+#include <dfpmacro.h>
+
+_Decimal32
+INTERNAL_FUNCTION_NAME (_Decimal32 a)
+{
+  return (_Decimal32) __expd64((_Decimal64) a);
+}
+weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

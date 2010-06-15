@@ -1,4 +1,4 @@
-/* Test finite[32|64|128] and polymorphic macro finite() in math.h.
+/* Test fpclassifyd[32|64|128] and polymorphic macro fpclassify() in math.h.
 
    Copyright (C) 2010 Free Software Foundation, Inc.
 
