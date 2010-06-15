@@ -176,6 +176,11 @@ extern int __isinfd32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 extern int isfinited32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 extern int __isfinited32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 
+/* Deprecated but older uses of math.h may have invocations of these if they
+ * used the polymorphic finite().  */
+extern int finited32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
+extern int __finited32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
+
 extern _Decimal32 dremd32 (_Decimal32 __x, _Decimal32 __y) __THROW;
 extern _Decimal32 __dremd32 (_Decimal32 __x, _Decimal32 __y) __THROW;
 
@@ -400,6 +405,11 @@ extern int __isinfd64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
 
 extern int isfinited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
 extern int __isfinited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
+
+/* Deprecated but older uses of math.h may have invocations of these if they
+ * used the polymorphic finite().  */
+extern int finited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
+extern int __finited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
 
 extern _Decimal64 dremd64 (_Decimal64 __x, _Decimal64 __y) __THROW;
 extern _Decimal64 __dremd64 (_Decimal64 __x, _Decimal64 __y) __THROW;
@@ -626,6 +636,11 @@ extern int __isinfd128 (_Decimal128 __value) __THROW __attribute__ ((__const__))
 extern int isfinited128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
 extern int __isfinited128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
 
+/* Deprecated but older uses of math.h may have invocations of these if they
+ * used the polymorphic finite().  */
+extern int finited128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
+extern int __finited128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
+
 extern _Decimal128 dremd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 extern _Decimal128 __dremd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 
@@ -750,24 +765,39 @@ extern _Bool samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 extern _Bool __samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 
 extern int isgreaterd32(_Decimal32 x, _Decimal32 y) __THROW;
+
 extern int isgreaterequald32(_Decimal32 x, _Decimal32 y) __THROW;
+
 extern int islessd32(_Decimal32 x, _Decimal32 y) __THROW;
+
 extern int islessequald32(_Decimal32 x, _Decimal32 y) __THROW;
+
 extern int islessgreaterd32(_Decimal32 x, _Decimal32 y) __THROW;
+
 extern int isunorderedd32 (_Decimal32 x, _Decimal32 y) __THROW;
 
 extern int isgreaterd64(_Decimal64 x, _Decimal64 y) __THROW;
+
 extern int isgreaterequald64(_Decimal64 x, _Decimal64 y) __THROW;
+
 extern int islessd64(_Decimal64 x, _Decimal64 y) __THROW;
+
 extern int islessequald64(_Decimal64 x, _Decimal64 y) __THROW;
+
 extern int islessgreaterd64(_Decimal64 x, _Decimal64 y) __THROW;
+
 extern int isunorderedd64 (_Decimal64 x, _Decimal64 y) __THROW;
 
 extern int isgreaterd128(_Decimal128 x, _Decimal128 y) __THROW;
+
 extern int isgreaterequald128(_Decimal128 x, _Decimal128 y) __THROW;
+
 extern int islessd128(_Decimal128 x, _Decimal128 y) __THROW;
+
 extern int islessequald128(_Decimal128 x, _Decimal128 y) __THROW;
+
 extern int islessgreaterd128(_Decimal128 x, _Decimal128 y) __THROW;
+
 extern int isunorderedd128 (_Decimal128 x, _Decimal128 y) __THROW;
 
 /* Classification functions.  We undefine those defined by the system math.h
@@ -930,6 +960,36 @@ extern int isunorderedd128 (_Decimal128 x, _Decimal128 y) __THROW;
        )								      \
     )									      \
   )
+
+/* Comparison Macros  */
+#ifdef isunordered
+# undef isunordered
+#endif
+
+/* Return nonzero value if X is a NaN.  We could use `fpclassify' but
+   we already have this functions `__isnan' and it is faster.  */
+# ifdef __NO_LONG_DOUBLE_MATH
+#  define ____isnan(x) \
+     (sizeof (x) == sizeof (float) ? __isnanf (x) : __isnan (x))
+# else
+#  define ____isnan(x) \
+     (sizeof (x) == sizeof (float)		      \
+      ? __isnanf (x)				      \
+      : sizeof (x) == sizeof (double)		      \
+      ? __isnan (x) : __isnanl (x))
+# endif
+
+
+#define isnan(x) \
+  (!__dfp_compatible(x)						      \
+    ? (____isnan(x))							      \
+    : (sizeof (x) == sizeof (_Decimal128)				      \
+      ? __isnand128(x)							      \
+      : (sizeof (x) == sizeof (_Decimal64)				      \
+	? __isnand64(x)							      \
+	: __isnand32(x)))						      \
+  )
+
 
 __END_DECLS
 

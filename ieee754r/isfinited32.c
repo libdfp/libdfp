@@ -1,11 +1,12 @@
 /* Returns non-zero if the _Decimal32 is non-infinite
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007, 2009, 2010 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
    Author(s): Joseph Kerian <jkerian@us.ibm.com>
+              Ryan S. Arnold <rsa@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -50,3 +51,9 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+
+/* We erroneously published a version of math.h which used 'finite' instead of
+ * 'isfinite' and math.h contained a polymorphic 'isfinite()' function which
+ * inlined calles to 'finited*' so we've created aliases for compatability.  */
+strong_alias (INTERNAL_FUNCTION_NAME,FUNC_D(finite))
+strong_alias (INTERNAL_FUNCTION_NAME,FUNC_D(__finite))

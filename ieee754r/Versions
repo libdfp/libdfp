@@ -66,6 +66,15 @@ libdfp {
     __isfinited32;
     __isfinited64;
     __isfinited128;
+    # finited* and friends is deprecated but we published math.h with
+    # polymorphic isfinite() pointing to them so keep them around.  They just
+    # aliases.
+    finited32;
+    finited64;
+    finited128;
+    __finited32;
+    __finited64;
+    __finited128;
     floord32;
     floord64;
     floord128;

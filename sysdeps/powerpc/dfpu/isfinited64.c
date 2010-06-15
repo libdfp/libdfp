@@ -1,7 +1,8 @@
 /* Returns non-zero if the _Decimal64 is finite
-   Copyright (C) 2008 IBM Corporation.
+   Copyright (C) 2008, 2010 IBM Corporation.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
+              Ryan S. Arnold <rsa@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -24,3 +25,9 @@
 #define TEST_CLASS_MASK 0x38
 
 #include "is_template.h"
+
+/* We erroneously published a version of math.h which used 'finite' instead of
+ * 'isfinite' and math.h contained a polymorphic 'isfinite()' function which
+ * inlined calles to 'finited*' so we've created aliases for compatability.  */
+strong_alias (INTERNAL_FUNCTION_NAME,FUNC_D(finite))
+strong_alias (INTERNAL_FUNCTION_NAME,FUNC_D(__finite))
