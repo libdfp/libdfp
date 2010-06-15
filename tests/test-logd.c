@@ -69,6 +69,12 @@ int main (void)
       fprintf(stdout,"%DfDD = logd64(%DfDD) in: %s:%d\n", retval, d64ptr->x,__FILE__,__LINE__-1);
       if(d64ptr->vorq == 'v')
         _VC_P(__FILE__,d64ptr->line, d64ptr->e,retval,d64ptr->format);
+      if(d64ptr->e != retval)
+        {
+	  static char rbuf[CHAR_MAX];
+	  fprintf(stderr,"decoded64(retval) [%s] != decoded64(expected) [%s]\n", decoded64(retval, &rbuf[0]), decoded64(d64ptr->e, &rbuf[0]));
+	}
+
 //      else
  //       _QC_P(__FILE__,d64ptr->line, d64ptr->e,retval,d64ptr->format);
     }
