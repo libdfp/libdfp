@@ -26,4 +26,4 @@
 #define _DECIMAL_SIZE 64
 #include <decimal64.h>
 
-#include "finited32.c"
+#include "isfinited32.c"

@@ -26,4 +26,4 @@
 #define _DECIMAL_SIZE 128
 #include <decimal128.h>
 
-#include "finited32.c"
+#include "isfinited32.c"

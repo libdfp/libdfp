@@ -32,7 +32,7 @@
 #include <decNumber.h>
 #include <math.h>
 
-#define FUNCTION_NAME finite
+#define FUNCTION_NAME isfinite
 
 #include <dfpmacro.h>
 
