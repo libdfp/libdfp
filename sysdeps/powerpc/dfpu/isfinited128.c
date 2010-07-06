@@ -25,7 +25,6 @@
 #define TEST_CLASS_MASK 0x38
 
 #include "is_template.h"
-#include <dfpmacro.h>
 
 /* We erroneously published a version of math.h which used 'finite' instead of
  * 'isfinite' and math.h contained a polymorphic 'isfinite()' function which

@@ -1,3 +1,134 @@
+2010-07-06  Ryan S. Arnold <rsa@us.ibm.com>
+
+	* Makefile.in: Added test-strtod testcase.
+	* tests/test-logd.c: Cleaned up some comments.
+	* tests/scaffold.c: Cleaned up _QC_P macro.  It is incomplete at this
+	point.
+	* tests/test-strtod.c: New testcase.
+	* sysdeps/powerpc/dfpu/isfinited128.c: Removed spurious <dfpmacro.h>.
+	* sysdeps/powerpc/dfpu/isfinited32.c: Likewise.
+	* sysdeps/powerpc/dfpu/isfinited64.c: Likewise.
+	* sysdeps/powerpc/dfpu/is_template.h: Added <dfpmacro.h> and removed
+	redundant macro definitions.
+	* strtod32.c: Fixed bug when calling newlocale(LC_ALL_MASK,NULL,NULL);
+	Changed it to newlocale(LC_ALL_MASK, setlocale (LC_ALL, NULL),NULL);
+
+2010-06-15  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* tests/test-logd.c: Added more expressive output on failure.
+	* sysdeps/powerpc/dfpu/isfinited128.c: Added #include <dfpmacro.h>.
+	* sysdeps/powerpc/dfpu/isfinited32.c: Likewise.
+	* sysdeps/powerpc/dfpu/isfinited64.c: Likewise.
+
+2010-06-15  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* ieee754r/Versions: Re-added __isfinited* for backward compatability.
+	* configure.ac: Increment library version to 1.0.3 due to interface changes.
+	* README.user: Whitespace.
+	* ieee754r/isfinited32.c: Use 'isfinite' instead of 'finite'.
+	* sysdeps/powerpc/dfpu/isfinited128.c: Use 'isfinite' instead of
+	* 'finite'.
+	* sysdeps/powerpc/dfpu/isfinited32.c: Use 'isfinite' instead of
+	* 'finite'.
+	* sysdeps/powerpc/dfpu/isfinited64.c: Use 'isfinite' instead of
+	* 'finite'.
+	* dfp/math.h: Whitespace.
+
+2010-06-15  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* ieee754r/isfinited128.c: Change finite to isfinite.
+	* ieee754r/isfinited32.c: Likewise.
+	* ieee754r/isfinited64.c: Likewise.
+
+2010-06-15  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Added new test cases.  Changed finited to isfinited.
+	* ieee754r/scalbnd32.c: Changed usage of finited to isfinited.
+	* ieee754r/scalblnd32.c: Likewise.
+	* ieee754r/cbrtd32.c: Likewise.
+	* ieee754r/expd32.c: Likewise.
+	* ieee754r/nextafterd32.c: Likewise.
+	* ieee754r/exp2d32.c: Likewise.
+	* ieee754r/Makefile: Likewise.
+	* ieee754r/expm1d32.c: Likewise.
+	* ieee754r/hypotd32.c: Likewise.
+	* ieee754r/powd32.c: Likewise.
+	* ieee754r/ldexpd32.c: Likewise.
+	* ieee754r/fdimd32.c: Likewise.
+	* ieee754r/nearbyintd32.c: Likewise.
+	* ieee754r/coshd32.c: Likewise.
+	* ieee754r/lgammad32.c: Likewise.
+	* ieee754r/sinhd32.c: Likewise.
+	* ieee754r/tgammad32.c: Likewise.
+	* ieee754r/nexttowardd32.c: Likewise.
+	* ieee754r/Versions: Likewise.
+	* ieee754r/tand32.c: Likewise.
+	* ieee754r/frexpd32.c: Likewise.
+	* ieee754r/isfinited64.c: Renamed to this from...
+	* ieee754r/finited64.c: ...this.
+	* ieee754r/isfinited32.c: Renamed to this from...
+	* ieee754r/finited32.c: ...this.
+	* ieee754r/isfinited128.c: Renamed to this from...
+	* ieee754r/finited128.c: ...this.
+	* tests/test-logd.c: New test.
+	* tests/test-quantize.c: New test.
+	* tests/test-fpclassify.c: New test.
+	* tests/scaffold.c: Started adding _QC and QC_P.
+	* tests/test-isfinite.c: Renamed this...
+	* tests/test-finite.c: ...from this.
+	* sysdeps/powerpc/dfpu/logd64.c: Added hard-dfp optimizations.
+	* sysdeps/powerpc/dfpu/isinfd128.c: Likewise.
+	* sysdeps/powerpc/dfpu/isfinited128.c: Likewise.
+	* sysdeps/powerpc/dfpu/expd64.c: Likewise.
+	* sysdeps/powerpc/dfpu/rintd128.c: Likewise.
+	* sysdeps/powerpc/dfpu/isfinited32.c: Likewise.
+	* sysdeps/powerpc/dfpu/powd64.c: Likewise.
+	* sysdeps/powerpc/dfpu/rintd32.c: Likewise.
+	* sysdeps/powerpc/dfpu/finited32.c: Likewise.
+	* sysdeps/powerpc/dfpu/logd32.c: Likewise.
+	* sysdeps/powerpc/dfpu/isnormald64.c: Likewise.
+	* sysdeps/powerpc/dfpu/fpclassifyd128.c: Likewise.
+	* sysdeps/powerpc/dfpu/expd32.c: Likewise.
+	* sysdeps/powerpc/dfpu/isnand128.c: Likewise.
+	* sysdeps/powerpc/dfpu/is_template.h: Likewise.
+	* sysdeps/powerpc/dfpu/powd32.c: Likewise.
+	* sysdeps/powerpc/dfpu/ddlogtbls.h: Likewise.
+	* sysdeps/powerpc/dfpu/isnormald128.c: Likewise.
+	* sysdeps/powerpc/dfpu/isfinited64.c: Likewise.
+	* sysdeps/powerpc/dfpu/rintd64.c: Likewise.
+	* sysdeps/powerpc/dfpu/finited64.c: Likewise.
+	* sysdeps/powerpc/dfpu/isnormald32.c: Likewise.
+	* dfp/math.h: added islessgreaterd prototypes, etc.  Added isnormald
+	prototypes.
+
+2010-05-26  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Updated version to 1.0.2.
+	* Makefile.in: Added test cases.
+	* ieee754r/Versions: Exported __isnand*, __isinfd*, etc.
+	* tests/test-printf.c: Define _WANT_PC.
+	* tests/test-decode.c: Define _WANT_DC.
+	* tests/scaffold.c: Added _VC_P and _VC as well as _WANT_PC, _WANT_DC,
+	and _WANT_VC.
+	* tests/test-fpclassify.c: New classification function test.
+	* tests/test-isnan.c: Likewise.
+	* tests/test-isinf.c: Likewise.
+	* tests/test-finite.c: Likewise.
+	* tests/test-param.c: Likewise.
+	* tests/test-quantize.c: Likewise.
+	* sysdeps/powerpc/dfpu/quantized64.c: Hard-dfp implementation.
+	* sysdeps/powerpc/dfpu/quantized128.c: Likewise.
+	* sysdeps/powerpc/dfpu/fpclassifyd64.c: Likewise.
+	* sysdeps/powerpc/dfpu/isnand32.c: Likewise.
+	* sysdeps/powerpc/dfpu/isinfd32.c: Likewise.
+	* sysdeps/powerpc/dfpu/isnand64.c: Likewise.
+	* sysdeps/powerpc/dfpu/isinfd64.c: Likewise.
+	* sysdeps/powerpc/dfpu/finited32.c: Likewise.
+	* sysdeps/powerpc/dfpu/quantized32.c: Likewise.
+	* sysdeps/powerpc/dfpu/finited64.c: Likewise.
+	* sysdeps/powerpc/dfpu/fpclassifyd32.c: Likewise.
+
 2010-05-20  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* Makefile.in: Allow make check to work without --with-glibc-build.

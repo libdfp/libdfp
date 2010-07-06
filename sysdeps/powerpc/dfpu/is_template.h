@@ -22,17 +22,13 @@
 #include <math.h>
 #include <ieee754r_private.h>
 
-#define PASTE(a,b) PASTE2(a,b)
-#define PASTE2(a,b) a##b
+#include <dfpmacro.h>
+
 #define STRINGIFY(a) STRINGIFY2(a)
 #define STRINGIFY2(a) #a
 
-#define DECIMAL_TYPE PASTE(_Decimal,_DECIMAL_SIZE)
-#define EXTERNAL_FUNCTION_NAME PASTE(FUNCTION_NAME,PASTE(d,_DECIMAL_SIZE))
-#define INTERNAL_FUNCTION_NAME PASTE(__,EXTERNAL_FUNCTION_NAME)
-
 int
-INTERNAL_FUNCTION_NAME (DECIMAL_TYPE val)
+INTERNAL_FUNCTION_NAME (DEC_TYPE val)
 {
   int result = 0;
 #if _DECIMAL_SIZE == 32

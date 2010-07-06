@@ -367,10 +367,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
      in the format described in <locale.h>.  */
   const char *grouping;
 
-  /* NULL locale implies the "C" locale.  */
-  C_locale = newlocale(LC_ALL_MASK,NULL,NULL);
-
-//  struct locale_data *current = loc->__locales[LC_NUMERIC];
+  C_locale = newlocale(LC_ALL_MASK, setlocale (LC_ALL, NULL),NULL);
 
   if (group)
     {

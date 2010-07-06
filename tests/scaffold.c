@@ -124,11 +124,8 @@ static char bufy[CHAR_MAX];
 	: quantized32(x)))						      \
   )
 
-#define _DECIMAL (type, varname)					      \
-  do {									      \
-       type varname;							      \
-  }while (0)
-
+/* TODO: Finish this.  It doesn't do anything yet.  The purpose is to be able to
+ * get the result in the expected precision.  */
 static char bufx[CHAR_MAX];
 static char bufy[CHAR_MAX];
 #ifndef _QC
