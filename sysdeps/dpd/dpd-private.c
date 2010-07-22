@@ -737,10 +737,10 @@ else if (bits == 128)
   if (exp_p) *exp_p = exp;
   if (nan_p) *nan_p = c_f.is_nan;
   if (inf_p) *inf_p = c_f.is_inf;
-  
+
 }
 
-void 
+void
 __get_digits_d32 (_Decimal32 x, char *str, int *exp_p, int *sign_p, 
 		  int *nan_p, int *inf_p)
 {
@@ -761,7 +761,6 @@ __get_digits_d32 (_Decimal32 x, char *str, int *exp_p, int *sign_p,
   if (exp_p) *exp_p = exp;
   if (nan_p) *nan_p = c_f.is_nan;
   if (inf_p) *inf_p = c_f.is_inf;
-  
 }
 
 void 
@@ -789,7 +788,7 @@ __get_digits_d64 (_Decimal64 x, char *str, int *exp_p, int *sign_p,
   if (exp_p) *exp_p = exp;
   if (nan_p) *nan_p = c_f.is_nan;
   if (inf_p) *inf_p = c_f.is_inf;
-  
+
 }
 
 void 

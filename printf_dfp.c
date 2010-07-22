@@ -1,6 +1,6 @@
 /* Function definition to convert DFP values to strings
 
-   Copyright (C) 2006, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2006, 2009, 2010 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -35,12 +35,9 @@
 #include <stdio.h>
 
 #include <string.h>
-//#include <libioP.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <assert.h>
-
-//#include <fmt_dfp.h>
 
 #include <fenv.h>
 
@@ -49,17 +46,26 @@
 #include <limits.h> /* For CHAR_MAX  */
 #include <stdio.h>
 
-#include "get_digits.h"
-
-//#include "numdigits.h"
-//
-//extern void __get_dpd_digits (int, const void *const *, char*, int*, int*, int*,
-//int*);
-
-
-/* This defines make it possible to use the same code for GNU C library and
-   the GNU I/O library.	 */
-//#define PUT(f, s, n) _IO_sputn (f, s, n)
+#include <get_digits.h>
+#define _DECIMAL_SIZE 128
+#define DEC_TYPE _Decimal128
+#include <numdigits.h>
+#undef _DECIMAL_SIZE
+#undef DEC_TYPE
+#undef ADJUST
+#undef Q
+#undef DECIMAL_BIAS
+#define _DECIMAL_SIZE 64
+#define DEC_TYPE _Decimal64
+#include <numdigits.h>
+#undef _DECIMAL_SIZE
+#undef DEC_TYPE
+#undef ADJUST
+#undef Q
+#undef DECIMAL_BIAS
+#define _DECIMAL_SIZE 32
+#define DEC_TYPE _Decimal32
+#include <numdigits.h>
 
 static int
 wpadn (FILE *fp, wint_t pad, int count)
@@ -138,6 +144,124 @@ padn (FILE *fp, int pad, int count)
     }									      \
   while (0)
 
+#define _OUT(pr) \
+  do \
+    { \
+	int t_pr = 0; \
+    if (pr < 0) \
+      outchar('-');\
+    if (__builtin_abs(pr) > 999)\
+      {\
+        outchar('0' + __builtin_abs(pr) / 1000);\
+	t_pr = (__builtin_abs(pr) % 1000);\
+        outchar('0' + t_pr/100);\
+	t_pr = (__builtin_abs(t_pr) % 100);\
+        outchar('0' + t_pr/10);\
+	t_pr = (__builtin_abs(t_pr) % 10);\
+        outchar('0' + t_pr);\
+      }\
+    else if (__builtin_abs(pr) > 99)\
+      {\
+        outchar('0' + __builtin_abs(pr)/100);\
+	t_pr = (__builtin_abs(pr) % 100);\
+        outchar('0' + t_pr/10);\
+	t_pr = (__builtin_abs(t_pr) % 10);\
+        outchar('0' + t_pr);\
+      }\
+    else if (__builtin_abs(pr) > 9)\
+      {\
+        outchar('0' + __builtin_abs(pr)/10);\
+	t_pr = (__builtin_abs(pr) % 10);\
+        outchar('0' + t_pr);\
+      }\
+    else\
+      {\
+        outchar('0' + __builtin_abs(pr));\
+      }\
+   } while (0)
+
+#define OUT_DIGITS(xp) \
+  do \
+   { \
+      int ia; \
+      outchar('['); \
+      outchar('d'); \
+      outchar('i'); \
+      outchar('g'); \
+      outchar('i'); \
+      outchar('t'); \
+      outchar('s'); \
+      outchar(':'); \
+      for (ia = 0; digits[ia] != '\0'; ia++) \
+	outchar(digits[ia]); \
+      outchar('e'); \
+      _OUT(xp); \
+      outchar(']');\
+   } while (0)
+
+
+#define OUT(pr,val) \
+  do \
+   { \
+      int slen = strlen(pr); \
+      int ia; \
+      outchar('['); \
+      for (ia = 0; ia < slen; ia++) \
+	   outchar(pr[ia]); \
+      outchar(':'); \
+      _OUT(val); \
+      outchar(']');\
+   } while (0)
+
+#define OUT_PREC(pr) \
+  do \
+    { \
+      OUT("prec",pr); \
+    } while (0)
+
+#define OUT_INDEX(idx) \
+  do \
+    { \
+      OUT("index",idx); \
+    } while (0)
+
+#define OUT_DEFAULT_PREC(pr) \
+  do \
+    { \
+      OUT("default_prec",pr); \
+    } while (0)
+
+#define OUT_LEN(ln) \
+  do \
+    { \
+      OUT("len",ln); \
+    } while (0)
+
+#define OUT_SIG(sg) \
+  do \
+    { \
+      OUT("sig",sg); \
+   } while (0)
+
+
+#define OUT_N(na) \
+  do \
+    { \
+      OUT("n",na); \
+   } while (0)
+
+#define OUT_WIDTH(wd) \
+  do \
+    { \
+      OUT("width",wd); \
+   } while (0)
+
+#define OUT_DECPT(dpt) \
+  do \
+    { \
+      OUT("decpt",dpt); \
+   } while (0)
+
 static int pa_d128;
 static int pa_d64;
 static int pa_d32;
@@ -176,13 +300,7 @@ hidden_def(__d32_va)
 int
 __dfp_ais (const struct printf_info *info, size_t n __attribute__ ((unused)), int *argtype, int *size)
 {
-  if ((info->user & mod_H) == mod_H)
-    {
-      argtype[0] = pa_d32;
-      size[0] = sizeof (_Decimal32);
-      return 1;
-    }
-  else if ((info->user & mod_D) == mod_D)
+  if ((info->user & mod_D) == mod_D)
     {
       argtype[0] = pa_d64;
       size[0] = sizeof (_Decimal64);
@@ -194,12 +312,24 @@ __dfp_ais (const struct printf_info *info, size_t n __attribute__ ((unused)), in
       size[0] = sizeof (_Decimal128);
       return 1;
     }
+  else if ((info->user & mod_H) == mod_H)
+    {
+      argtype[0] = pa_d32;
+      size[0] = sizeof (_Decimal32);
+      return 1;
+    }
+
   return 0;
 }
 strong_alias(__dfp_ais, dfp_ais)
 hidden_def(__dfp_ais)
 
+#define EXP_BIAS_D128 -6109
+#define EXP_BIAS_D64  -368
+#define EXP_BIAS_D32  -87
 
+/* this includes the max digits in a _Decimal128, plus a bunch of formatting
+ * characters.  */
 #define DECIMAL_PRINTF_BUF_SIZE 65 /* ((DECIMAL128_PMAX + 14) * 2) + 1  */
 
 /* fe_decround.c will initialize this function pointer to fe_decgetround */
@@ -211,11 +341,8 @@ __printf_dfp (FILE *fp,
 	      const void *const *args)
 {
 	int wide = info->wide;
-//	wchar_t *wbuffer = NULL;
-//	int buffer_malloced = 0;  /* PRINT macro uses this.  */
 	/* Counter for number of written characters.	*/
 	int done = 0;
-	int len = 0;
 
   /* Locale-dependent representation of decimal point.	*/
 
@@ -235,41 +362,24 @@ __printf_dfp (FILE *fp,
 
   const char *grouping;
 
-//  mbstate_t mbstate;
- // memset(&mbstate,0,sizeof(mbstate));
-
 #ifdef OPTION_EGLIBC_LOCALE_CODE
   if (info->extra == 0)
     {
-      //decimal = _NL_CURRENT (LC_NUMERIC, DECIMAL_POINT);
       decimal = nl_langinfo (__DECIMAL_POINT);
-      //decimalwc = _NL_CURRENT_WORD (LC_NUMERIC, _NL_NUMERIC_DECIMAL_POINT_WC);
       decimalwc.mb = nl_langinfo (_NL_NUMERIC_DECIMAL_POINT_WC);
-      //mbrtowc(&decimalwc,decimalmb, CHAR_MAX, NULL);
-      //mbrtowc(&decimalwc,&decimalmb, 1, NULL);
     }
   else
     {
-     // decimal = _NL_CURRENT (LC_MONETARY, MON_DECIMAL_POINT);
       decimal = nl_langinfo (__MON_DECIMAL_POINT);
       if (*decimal == '\0')
-	//decimal = _NL_CURRENT (LC_NUMERIC, DECIMAL_POINT);
 	decimal = nl_langinfo (__DECIMAL_POINT);
-      //decimalwc = _NL_CURRENT_WORD (LC_MONETARY,
-      //			    _NL_MONETARY_DECIMAL_POINT_WC);
+
       decimalwc.mb = nl_langinfo (_NL_MONETARY_DECIMAL_POINT_WC);
-      //mbrtowc(&decimalwc,decimalmb, CHAR_MAX, NULL);
       if (decimalwc.wc == L'\0')
-	{
-	//decimalwc = _NL_CURRENT_WORD (LC_NUMERIC,
-	//			      _NL_NUMERIC_DECIMAL_POINT_WC);
-	  decimalwc.mb = nl_langinfo (_NL_NUMERIC_DECIMAL_POINT_WC);
-	  //mbrtowc(&decimalwc,decimalmb, CHAR_MAX, NULL);
-	}
+	decimalwc.mb = nl_langinfo (_NL_NUMERIC_DECIMAL_POINT_WC);
     }
   /* The decimal point character must not be zero.  */
   assert (*decimal != '\0');
-  //assert (decimalwc != L'\0');
   assert (decimalwc.wc != L'\0');
 #else
   /* Hard-code values from 'C' locale.  */
@@ -283,10 +393,8 @@ __printf_dfp (FILE *fp,
   if (info->group)
     {
       if (info->extra == 0)
-	//grouping = _NL_CURRENT (LC_NUMERIC, GROUPING);
 	grouping = nl_langinfo (__GROUPING);
       else
-	//grouping = _NL_CURRENT (LC_MONETARY, MON_GROUPING);
 	grouping = nl_langinfo (__MON_GROUPING);
 
       if (*grouping <= 0 || *grouping == CHAR_MAX)
@@ -300,24 +408,19 @@ __printf_dfp (FILE *fp,
 		{
 		  thousands_sepmb = nl_langinfo (_NL_NUMERIC_THOUSANDS_SEP_WC);
 		  mbrtowc(&thousands_sepwc,thousands_sepmb, CHAR_MAX, NULL);
-		  //_NL_CURRENT_WORD (LC_NUMERIC, _NL_NUMERIC_THOUSANDS_SEP_WC);
 		}
 	      else
 		{
 		  thousands_sepmb = nl_langinfo (_NL_MONETARY_THOUSANDS_SEP_WC);
 		  mbrtowc(&thousands_sepwc,thousands_sepmb, CHAR_MAX, NULL);
-		  //_NL_CURRENT_WORD (LC_MONETARY,
-		  //		    _NL_MONETARY_THOUSANDS_SEP_WC);
 		}
 	    }
 	  else
 	    {
 	      if (info->extra == 0)
 		thousands_sep = nl_langinfo (__THOUSANDS_SEP);
-		//thousands_sep = _NL_CURRENT (LC_NUMERIC, THOUSANDS_SEP);
 	      else
 		thousands_sep = nl_langinfo (__MON_THOUSANDS_SEP);
-		//thousands_sep = _NL_CURRENT (LC_MONETARY, MON_THOUSANDS_SEP);
 	    }
 
 	  if ((wide && thousands_sepwc == L'\0')
@@ -337,291 +440,439 @@ __printf_dfp (FILE *fp,
   grouping = NULL;
 #endif
 
+  /* Seriously, only touch this code if you MUST.  */
 
 {
-    char digits[DECIMAL_PRINTF_BUF_SIZE];
-    int exp, /* the exponent */
-     is_neg, /* is negative */
-     is_nan, /* is not a number */
-     is_inf, /* is infinite */
-     sig,    /* number of significant digits */
-     decpt,  /* decimal point offset into digits[] */
-     prec,   /* number of digits that follow the decimal point, or number of significant digits for %g */
-     default_prec = 0, /* default precision, if none given */
-     n;      /* current digit offset into digits[] */
+  char digits[DECIMAL_PRINTF_BUF_SIZE];
+  int exp,       /* The exponent. */
+   is_neg,       /* Is negative?  */
+   is_nan,       /* Is not a number?  */
+   is_inf,       /* Is infinite? */
+   decpt = 2,    /* decimal point offset into digits[] */
+   prec,         /* number of digits that follow the decimal point, or number of significant digits for %g */
+   default_prec = 6, /* Default precision, per the C Spec.  */
+   input_prec = 0,   /* Precision of the _Decimal* value.  */
+   mw,           /* Mantissa Width  */
+   n,            /* Current digit offset into digits[] */
+   nd,           /* num_digits before the get_digits call. */
+   width,        /* Width of the field */
+   is_zero = 0;  /* Used in some of the output tests.  */
 
-     //width,  /* width of the field */
-    int width; /* width of the field */
-    digits[0] = '0'; /* need an extra digit for rounding up */
+  digits[0] = '0'; /* need an extra digit for rounding up */
 
-//    __get_dpd_digits (
-//      (info->is_short) ?        32: /* %H */
-//      (info->is_long_double) ? 128: /* %DD */
-//                                64, /* %D */
-//	args, digits+1, &exp, &is_neg, &is_nan, &is_inf);
+  if (info->user & mod_D)
+    {
+      _Decimal64 d64 = **(_Decimal64**)args[0];
+      if (d64 == 0) is_zero = 1;
+      nd = numdigitsd64(d64);
+      __get_digits_d64 (d64, digits+1, &exp, &is_neg, &is_nan, &is_inf);
+      mw = __DEC64_MANT_DIG__ + 1;
+    }
+  else if (info->user & mod_DD)
+    {
+      _Decimal128 d128 = **(_Decimal128**)args[0];
+      if (d128 == 0) is_zero = 1;
+      nd = numdigitsd128(d128);
+      __get_digits_d128 (d128, digits+1, &exp, &is_neg, &is_nan, &is_inf);
+      mw = __DEC128_MANT_DIG__ + 1;
+    }
+  else
+    {
+       _Decimal32 d32 = **(_Decimal32**)args[0];
+       if (d32 == 0) is_zero = 1;
+       nd = numdigitsd32(d32);
+       __get_digits_d32 (d32, digits+1, &exp, &is_neg, &is_nan, &is_inf);
+       mw = __DEC32_MANT_DIG__ + 1;
+    }
 
-    //if (info->is_short)
-    if (info->user & mod_H)
-      __get_digits_d32 (**((_Decimal32**)args[0]), digits+1, &exp, &is_neg,
-			&is_nan, &is_inf);
-    else if (info->user & mod_DD)
-      __get_digits_d128 (**((_Decimal128**)args[0]), digits+1, &exp, &is_neg,
-			 &is_nan, &is_inf);
-    else
-      __get_digits_d64 (**((_Decimal64**)args[0]), digits+1, &exp, &is_neg,
-			&is_nan, &is_inf);
+  /* The first digit is always a zero to allow rounding.  */
+  n = 0;
 
-    width = info->width;
-    prec = info->prec;
-    
-    if (is_nan || is_inf) {
+  /* 'n' = position of first non-zero digit in the right-justified mantissa.  */
+  n = mw - nd;
+
+  /* Width and precision can not both be set or the results are undefined per
+   * the C Spec.  */
+  width = info->width;
+
+  /* The user specified precision overrides the input's inherent precision.
+   * This gets complicated quickly.  */
+  prec = info->prec;
+
+  if (is_nan || is_inf)
+    {
       width -= 3;
       /*if (is_nan) is_neg = 0;*/
       if (is_neg || info->showsign || info->space) width--;
-      
+
       if (!info->left && width > 0)
-        PADN (' ', width);
+	PADN (' ', width);
 
       if (is_neg)
-        outchar ('-');
+	outchar ('-');
       else if (info->showsign)
-        outchar ('+');
+	outchar ('+');
       else if (info->space)
-        outchar (' ');
-      
+	outchar (' ');
+
       if (is_nan)
-        if (isupper(info->spec))
-	  { outchar ('N'); outchar ('A'); outchar ('N'); }
-	else
-	  { outchar ('n'); outchar ('a'); outchar ('n'); }
+	{
+	  if (isupper(info->spec))
+	    { outchar ('N'); outchar ('A'); outchar ('N'); }
+	  else
+	    { outchar ('n'); outchar ('a'); outchar ('n'); }
+	}
       else
-        if (isupper(info->spec))
-	  { outchar ('I'); outchar ('N'); outchar ('F'); }
-	else
-	  { outchar ('i'); outchar ('n'); outchar ('f'); }
-	
+	{
+	  if (isupper(info->spec))
+	    { outchar ('I'); outchar ('N'); outchar ('F'); }
+	  else
+	    { outchar ('i'); outchar ('n'); outchar ('f'); }
+	}
       if (info->left && width > 0)
-        PADN (' ', width);
+	PADN (' ', width);
 
-      return 0;
+	return 0;
     }
-    
-   
-    n = 0;
-    while (digits[n] == '0') n++;
-    sig = strlen(digits+n);
-    if (sig == 0) { sig = 1; n--; } /* coefficient is zero */
-    len = n + sig;
-    
-    switch (spec)
-      {
-        case 'a': /* fall thru */
-	case 'g': default_prec = sig; break;
-	case 'f': default_prec = (exp < 0) ? -exp : 0; break;
-        case 'e': default_prec = sig-1; break;
-      }
-    
-    /* if no precision is specified, use that of the decimal type */
-    if (prec < 0)
-      prec = default_prec;
-    else if (prec < default_prec)
-    /* do rounding if precision is less than the decimal type */
-      {
-        int index, roundmode = 0;
-	//int do_round = 0;
-	char rounddigit = '4';
-	
-        index = n + prec + sig - default_prec;
 
-        /* FIXME: we should check rounding mode for %a */
-	if (__printf_dfp_getround_callback) {
-	  roundmode = (*__printf_dfp_getround_callback)();
-	
-/*	outchar('[');
-	outchar('r');
-	outchar('o');
-	outchar('u');
-	outchar('n');
-	outchar('d');
-	outchar('m');
-	outchar('o');
-	outchar('d');
-	outchar('e');
-	outchar('=');
-	outchar('0'+roundmode);
-	outchar(']');*/
-	
-	switch (roundmode) {
-	  case FE_DEC_TONEAREST: rounddigit = '4'; break;
-	  case FE_DEC_TOWARDZERO: rounddigit = '9'; break;
-	  case FE_DEC_UPWARD: rounddigit = is_neg ? '9' : '0'-1; break;
-	  case FE_DEC_DOWNWARD: rounddigit = is_neg ? '0'-1 : '9'; break;
-	  case FE_DEC_TONEARESTFROMZERO: rounddigit = '4'; break;
-	  case 5: rounddigit = '4'; break; /* nearest, ties toward zero */
-	  case 6: rounddigit = '0'-1; break; /* away from zero */
-	  case 7: rounddigit = '4'; break; /* round for shorter precision */
-	  default: rounddigit = '4'; break;
-	}
-	
-	}
-	
-        if (index < len && digits[index] > rounddigit)
-          do { 
-	    int trailzero = index+1;
-	    if (digits[index] == rounddigit+1)
+  /* The term "precision" refers to the number of significant digits right of
+   * the decimal place.  Determine the implicit precision of the input value.
+   * There are special rules for each of the supported flags.*/
+  switch (spec)
+    {
+      case 'a':
+	  {
+	    /* This is totally bogus but the DFP spec addition for %a refers to
+	     * all of the significant digits in the precision.  */
+	    if (exp < 0)
 	      {
-	        while (trailzero < len)
-	          {
-	            if (digits[trailzero] != '0')
-		      {
-		        trailzero = 0;
-		        break;
-		      }
-		    ++trailzero;
-		  }
-		if (roundmode == FE_DEC_TONEAREST && trailzero &&
-		  (digits[index-1] & 1) == 0) break;
-		if (roundmode == FE_DEC_UPWARD && !trailzero) break;
-		if (roundmode == FE_DEC_DOWNWARD && !trailzero) break;
-		if (roundmode == 5 && trailzero) break;
-		if (roundmode == 6 && trailzero) break;
+		  input_prec = nd;
 	      }
-	  
-            while (digits[--index] == '9') digits[index] = '0';
-            digits[index]++;
-            if (index < n) { n--; sig++; }
-          } while (0);
-      }
-    
-    /* calculate decimal point, adjust prec and exp if necessary */
-    if (spec == 'f')
-      {
-	decpt = n + sig + exp;
-      }
-    else if (spec == 'a' && -(prec+5) <= exp && exp <= 0 && exp+sig <= prec)
-      {
-	spec = 'f';
-	prec -= exp+sig;
-	decpt = n + sig + exp;
-      }
-    else if (spec == 'g' && -4 < exp+sig && exp+sig <= prec)
-      {
-	spec = 'f';
-	prec -= exp+sig;
-	decpt = n + sig + exp;
-      }
-    else
-      {
-        if (spec != 'e') prec--;
-	exp += sig-1;
+	    else
+	      {
+	        input_prec = 1;
+	      }
+
+	    /* This same check is done in two different places but it'll only
+	     * effect a single pass through once.  If prec is not set it'll hit
+	     * this instance.  If prec is set it'll hit the next instance.  This
+	     * is because the DFP spec requires this to be run after rounding
+	     * when prec < input_prec.  */
+	    if (prec < 0 || prec >= input_prec)
+	    {
+	      /* Per the DFP specification (s,c,q), c == digits, q = exp, s ==
+	       * is_neg.  */
+	      if (exp >= -(nd+5) && exp <= 0)
+	        {
+	          prec = -exp;
+	          spec = 'f';
+	        }
+	      else
+	        {
+	          prec = nd - 1;
+	          spec = 'e';
+	          input_prec = nd - 1;
+	        }
+	      }
+	    break;
+	  }
+	case 'g':
+	  {
+	    int P = prec;
+
+	    /* When the C specification refers to X as the exponent it means the
+	     * exponent when the input value encoding is normalized to the form
+	     * d.dddd.  This means we have to do that before we can do the goof
+	     * check.
+	     *
+	     * e.g., 123.456E-5
+	     * right-justified -> 00123456E-9
+	     * normalized -> 1.23456E-4
+	     *
+	     * Normalize X to d.ddd... form by taking (exp) + (nd - 1)
+	     *
+	     * X == -4  */
+	    int X = exp + (nd -1);
+
+	    /* The C Specification also indicates how to compute P. */
+	    if (prec < 0)
+	      P = 6;
+	    else if (prec == 0)
+	      P = 1;
+
+	    /* Straight from the specification which assumes X is exponent normalized to
+	     * d.ddd... form.  */
+	    if (X >= -4 && P > X)
+	      {
+		prec = (P - (X + 1));
+		spec = 'f';
+	      }
+	    else
+	      {
+		prec = P - 1;
+		spec = 'e';
+		input_prec = nd - 1;
+	      }
+	  break;
+	  }
+	case 'e':
+	  input_prec = nd - 1;
+	  break;
+	case 'f':
+	  if(exp < 0 && (-exp) > default_prec)
+	    /*  00123456E-7 has an input_prec of 7. */
+	    input_prec = (-exp);
+	  else
+	    /*  01234567E-6 has an input_prec of 6. */
+	    /*  00000190E6 has an input_prec of 6. */
+	    /*  00000123E1 has an input_prec of 6.  */
+	    /*  00000123E0 has an input_prec of 6.  */
+	    input_prec = default_prec;
+	  break;
+    }
+
+  /* The specs 'g' and 'a' may have already modified prec so this won't happen for
+   * those cases.  */
+  if (prec < 0)
+    prec = default_prec;
+
+  /* do rounding if precision is less than the decimal type */
+  if (prec < input_prec)
+    {
+      int index, roundmode = 0;
+      char rounddigit = '4';
+
+      if (spec == 'f')
+	index = n + nd + exp + prec;
+      /* Goofy special case where we round significant digits which aren't
+       * right of the decimal place.  */
+      else if (tolower(info->spec) == 'a')
+	index = n + prec;
+      else
+	index = n + prec + 1;
+
+      /* FIXME: we should check rounding mode for %a */
+      if (__printf_dfp_getround_callback)
+        {
+          roundmode = (*__printf_dfp_getround_callback)();
+
+	  switch (roundmode)
+	    {
+	      case FE_DEC_TONEAREST: rounddigit = '4'; break;
+	      case FE_DEC_TOWARDZERO: rounddigit = '9'; break;
+	      case FE_DEC_UPWARD: rounddigit = (is_neg ? '9' : '0'-1); break;
+	      case FE_DEC_DOWNWARD: rounddigit = (is_neg ? '0'-1 : '9'); break;
+	      case FE_DEC_TONEARESTFROMZERO: rounddigit = '4'; break;
+	      case 5: rounddigit = '4'; break; /* nearest, ties toward zero */
+	      case 6: rounddigit = '0'-1; break; /* away from zero */
+	      case 7: rounddigit = '4'; break; /* round for shorter precision */
+	      default: rounddigit = '4'; break;
+	    }
+	}
+
+      /* If this is true then the requested precision is smaller than the
+      * default and rounding is required.  */
+      if (index < mw && digits[index] > rounddigit)
+	do {
+	  int trailzero = index+1;
+	  if (digits[index] == rounddigit+1)
+	    {
+	      while (trailzero < mw)
+		{
+		  if (digits[trailzero] != '0')
+		    {
+		      trailzero = 0;
+		      break;
+		    }
+		  ++trailzero;
+		}
+	      if (roundmode == FE_DEC_TONEAREST && trailzero &&
+	        (digits[index-1] & 1) == 0) break;
+	      if (roundmode == FE_DEC_UPWARD && !trailzero) break;
+	      if (roundmode == FE_DEC_DOWNWARD && !trailzero) break;
+	      if (roundmode == 5 && trailzero) break;
+	      if (roundmode == 6 && trailzero) break;
+	  }
+
+	while (digits[--index] == '9') digits[index] = '0';
+	  digits[index]++;
+	if (index < n) { n--; }
+      } while (0);
+    } /* Done rounding.  */
+
+  /* If spec == 'a' at this point it means that prec was set by the user
+   * and rounding had to be considered.  The spec now requires that the
+   * 'a' format presentation algorithm be calculated again.  If prec
+   * wasn't set by the user then this was handled earlier and spec has already
+   * been set to either 'e' or 'f'.  */
+  if (spec == 'a')
+    {
+      int old_exp = exp;
+
+      /* The goofy DFP specification requires that we now assume that after
+       * rounding the digits are right justified and truncated and the
+       * algorithm recomputed using the new values for nd and exp, e.g.,
+       *
+       * 00654300E-2 with %.1Hf -> 00000007E3.  */
+
+       exp = nd + exp - prec;
+       nd = prec;
+
+      /* Per the DFP specification (s,c,q), c == digits, q = exp, s ==
+      * is_neg.  */
+      if (exp >= -(nd+5) && exp <= 0)
+	{
+	  prec = -exp;
+	  spec = 'f';
+	}
+      else
+	{
+	  prec = nd - 1;
+	  if (prec < 0) prec = 0;
+	  spec = 'e';
+	  input_prec = nd - 1;
+	  /* Return exp to the original value because the 'e' case below will
+	   * recompute it.  */
+	  exp = old_exp;
+	}
+	/* spec will have been changed to 'e' or 'f' at this point, so determine
+	* the decimal point now.  */
+    }
+
+  /* Calculate decimal point, adjust prec and exp if necessary.
+   * By this point everything should be represented as either %e or %f.  */
+  if (spec == 'f')
+    {
+      if (exp < 0)
+	decpt = exp + nd + n;
+      else if (is_zero)
 	decpt = n + 1;
-      }
+      else
+	decpt = n + nd + exp;
+    }
+  else if (spec == 'e')
+    {
+      decpt = n + 1;
+      exp = mw + exp - decpt;
+    }
 
-    /* remove trailing zeroes for %g */
-    if (tolower(info->spec) == 'g')
-      {
-        while (prec > 0 && decpt+prec > len) prec--;
-	while (prec > 0 && digits[decpt+prec-1] == '0') prec--;
-      }
+  /* Remove trailing zeroes for %g */
+  if (tolower(info->spec) == 'g' && !info->alt)
+    {
+      while (prec > 0 && decpt+prec > mw) prec--;
+      while (prec > 0 && digits[decpt+prec-1] == '0') prec--;
+    }
 
-    /* remove trailing zeroes for %a, but only if they are not significant */
-    if (tolower(info->spec) == 'a')
-      {
-        while (prec > 0 && decpt+prec > len) prec--;
-	while (prec > 0 && decpt+prec > n+sig && digits[decpt+prec-1] == '0') prec--;
-      }
-      
+  /* Remove trailing zeroes for %a, but only if they are not significant.  */
+  if (tolower(info->spec) == 'a')
+    {
+      while (prec > 0 && decpt+prec > mw) prec--;
+      while (prec > 0 && decpt+prec > n+nd && digits[decpt+prec-1] == '0') prec--;
+    }
 
-    /* digits to the left of the decimal pt. */
-    if (n < decpt)
-      { 
-        width -= decpt - n;
-	if (grouping) width -= (decpt-n)/3;
-      }
-    else width--;  /* zero */
-  
-    /* digits to the right of the decimal pt. */
-    if (prec > 0) width -= 1 + prec;
-    else if (info->alt) width -= 1;
-  
-    if (spec != 'f')
-      {
-        width -= 3;
-	if (0!=(exp/10) || spec!='a') --width;
-	if (0!=(exp/100)) --width;
-	if (0!=(exp/1000)) --width;
-      }
-  
-    if (is_neg || info->showsign || info->space) width--;
+  /* Digits to the left of the decimal pt. */
+  if (n < decpt)
+    {
+      width -= decpt - n;
+      if (grouping) width -= (decpt-n)/3;
+    }
+  else width--;  /* none to the left of the decimal point */
 
-    if (!info->left && info->pad != '0' && width > 0)
-      PADN (info->pad, width);
+  /* Digits to the right of the decimal pt. */
+  if (prec > 0) width -= 1 + prec;
+  else if (info->alt) width -= 1;
 
-    if (is_neg)
-      outchar ('-');
-    else if (info->showsign)
-      outchar ('+');
-    else if (info->space)
-      outchar (' ');
+  if (spec != 'f')
+    {
+      width -= 3;
+      if (0!=(exp/10) || spec!='a') --width;
+      if (0!=(exp/100)) --width;
+      if (0!=(exp/1000)) --width;
+    }
 
-    if (!info->left && info->pad == '0' && width > 0)
-      PADN ('0', width);
+  if (is_neg || info->showsign || info->space) width--;
 
-  /* print zero, decimal point and leading zeroes if needed */
+  if (!info->left && info->pad != '0' && width > 0)
+    PADN (info->pad, width);
+
+  if (is_neg)
+    outchar ('-');
+  else if (info->showsign)
+    outchar ('+');
+  else if (info->space)
+    outchar (' ');
+
+  if (!info->left && info->pad == '0' && width > 0)
+    PADN ('0', width);
+
+  /* Print zero, decimal point and leading zeroes if needed */
   if (decpt <= n)
     {
-      outchar ('0');
       n = decpt;
+      outchar ('0');
       if (n < 0)
-        {
-          outchar (wide ? decimalwc.wc : *decimal);
-          while (n < 0 && n < decpt + prec)
+	{
+	  outchar (wide ? decimalwc.wc : *decimal);
+	  while (n < 0 && n < decpt + prec)
 	    {
-              outchar ('0');
-              n++;
-            }
-        }
+	      outchar ('0');
+	      n++;
+	    }
+	}
     }
-  /* print digits */
-  while (n < len && n < decpt + prec)
+
+  /* Print the digits.  If decpt exceeds mw then we know that
+   * they're simply trailing zeros and we don't need to display them.  */
+  while (n < mw && n < decpt + prec)
     {
-      if (n == decpt) 
-        outchar (wide ? decimalwc.wc : *decimal);
+      if (n == decpt)
+      {
+	outchar (wide ? decimalwc.wc : *decimal);
+      }
       else if (grouping && n < decpt && (decpt-n)%3 == 0)
-        outchar (wide ? thousands_sepwc : *thousands_sep);
+	outchar (wide ? thousands_sepwc : *thousands_sep);
       outchar (digits[n]);
       n++;
     }
+
   /* print trailing zeroes */
   while (n < decpt + prec)
     {
-      if (n == decpt) 
-        outchar (wide ? decimalwc.wc : *decimal);
+      if (n == decpt)
+	outchar (wide ? decimalwc.wc : *decimal);
       else if (grouping && n < decpt && (decpt-n)%3 == 0)
-        outchar (wide ? thousands_sepwc : *thousands_sep);
+	outchar (wide ? thousands_sepwc : *thousands_sep);
       outchar ('0');
       n++;
     }
+
   /* print decimal point, if needed */
   if (n == decpt && info->alt) outchar (wide ? decimalwc.wc : *decimal);
-  
-  
-  if (spec != 'f')
-   {
-     outchar (isupper(info->spec) ? 'E' : 'e');
-     if (exp < 0) 
-       { outchar ('-'); n = -exp; }
-     else
-       { outchar ('+'); n = exp; }
-     if (n >= 1000) outchar ('0'+((n/1000)%10)); 
-     if (n >= 100) outchar ('0'+((n/100)%10));
-     if (n >= 10 || spec!='a') outchar ('0'+((n/10)%10));
-     outchar ('0'+(n%10));
- 
-   }
+
+  /* The C spec says that for %e, if the value is zero the exponent is zero.
+   * This isn't true for the DFP spec for %a so make sure to check info->spec
+   * and not spec since it could have promoted 'a' to 'e'.  */
+  if(spec == 'e' && (tolower(info->spec) != 'a' && is_zero))
+    exp = 0;
+
+  /* Don't display the exponent part for 'f' because it is never used and don't
+   * do it for 'g' if the value is zero.  */
+  if (spec != 'f' && !((tolower(info->spec) == 'g') && is_zero))
+    {
+      outchar (isupper(info->spec) ? 'E' : 'e');
+      if (exp < 0)
+	{ outchar ('-'); n = -exp; }
+      else
+	{ outchar ('+'); n = exp; }
+      if (n >= 1000) outchar ('0'+((n/1000)%10));
+      if (n >= 100) outchar ('0'+((n/100)%10));
+      if (n >= 10 || (tolower(info->spec) != 'a')) outchar ('0'+((n/10)%10));
+      outchar ('0'+(n%10));
+    }
+
   if (info->left && width > 0)
     PADN (info->pad, width);
-} 
+} /* Done output block.  */
 
    return 0;
 }

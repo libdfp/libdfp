@@ -1,11 +1,12 @@
 /* Data types for DPD format output.
 
    Copyright (C) 2006, 2007 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007, 2009, 2010 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
    Author(s): Steve Munroe <sjmunroe@us.ibm.com>
+              Ryan S. Arnold  <rsa@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -305,5 +306,13 @@ extern const unsigned char lm2lmd_to_c[10][3];
 extern const char	dpd_to_char[1024][4];
 extern const const short int	dpd_to_bcd[1024];
 extern const short int	bcd_to_dpd[2464];
+
+static inline unsigned int
+__dfp_declet_to_dpd(char *str)
+{
+  return bcd_to_dpd[(str[0]<<8) + (str[1]<<4) + str[2] - '0'*0x111];
+}
+
+
 
 #endif /* _DPD_PRIVATE */

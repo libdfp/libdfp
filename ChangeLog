@@ -1,3 +1,39 @@
+2010-07-21  Ryan S. Arnold <rsa@us.ibm.com>
+
+	* Makefile.in: Added test-numdigits, test-get_digits, and test-left_justify.
+	* base-math/Makefile: Fixed missing truncd* exports which was exposed
+	by GCC 4.4.
+	* base-math/lttd2.c (lttd3): Renamed lttd3 to lttd2.  Typo.
+	* tests/test-get_digits.c: Added test-cases to show previously failing
+	numdigits for soft-dfp when coefficient was zero.  It was returning
+	'0' intead of '1', which is what hardware DFP returns.
+	* tests/test-printf.c: Added test-cases to show failing tests.
+	* tests/test-fpclassify.c: (printf_d32s): Changed DENORMAL to
+	SUBNORMAL in constant usage.  GCC changed usage.
+	* tests/test-numdigits.c: New test.
+	* tests/scaffold.c: Updated output formatting of macros to make output
+	clearer (columns and test numbering).
+	* tests/test-left_justify.c: New test.
+	* tests/test-strtod.c: Added test-cases to show failing tests.
+	* sysdeps/powerpc/dfpu/numdigits.h (_NUMDIGITS_H): Removed guard to
+	allow multiple #includes with different preconditions.
+	(numdigits): New implementation which avoids clobbers and avoids
+	modifying a parameter.
+	(left_justify): New implementation which avoids clobbers and avoids
+	modifyinig a parameter.
+	(getexp): New implementation which avoids modifying a parameter.
+	* sysdeps/powerpc/dfpu/fe_decround.c (__fe_dec_setround): Fixed
+	errorneous usage of mtfsfi instruction.  Previous usage resulted in
+	the set rounding mode not being permanent.
+	* sysdeps/soft-dfp/dpd/numdigits.h (numdigits): Return '1' if
+	coefficient is zero, which is what hardware DFP does.
+	(__dfp_declet_to_dpd): Moved to ...
+	* sysdeps/dpd/dpd-private.h: ... this file.
+	* sysdeps/dpd/dpd-private.c: Formatting.
+	* printf_dfp.c (printf_dfp): Major fixes to correct a variety of
+	printing errors.  It should now fully support %f, %e, %g, and %a in
+	the myriad of bizarre combinations.
+
 2010-07-06  Ryan S. Arnold <rsa@us.ibm.com>
 
 	* Makefile.in: Added test-strtod testcase.

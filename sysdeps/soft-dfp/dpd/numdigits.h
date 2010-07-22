@@ -1,7 +1,7 @@
 /* Number of digits functions.
 
    Copyright (C) 2006, 2007, 2008 IBM Corporation.
-   Copyright (C) 2007, 2008, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007, 2008, 2009, 2010 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -24,8 +24,8 @@
    Please see dfp/COPYING.txt for more information.  */
 
 
-#ifndef _NUMDIGITS_H
-#define _NUMDIGITS_H 1
+//#ifndef _NUMDIGITS_H
+//#define _NUMDIGITS_H 1
 
 #define NUMDIGITS_SUPPORT 1
 
@@ -39,7 +39,7 @@
 
 #include "dpd-private.h"
 #include <string.h>
-#include "get_digits.h"
+#include <get_digits.h>
 
 #ifndef PASTE
 # define PASTE(x,y) PASTE2(x,y)
@@ -117,14 +117,8 @@ SETEXP_NAME (DEC_TYPE x, int exp)
 
 }
 
-static inline unsigned int
-__dfp_declet_to_dpd(char *str) 
-{
-  return bcd_to_dpd[(str[0]<<8) + (str[1]<<4) + str[2] - '0'*0x111];
-}
-
 static inline DEC_TYPE
-setdigits (DEC_TYPE x, char *str)
+FUNC_D (setdigits) (DEC_TYPE x, char *str)
 {
 #if _DECIMAL_SIZE == 32
   union ieee754r_Decimal32 d;
@@ -187,6 +181,7 @@ static inline int
 FUNC_D (numdigits) (DEC_TYPE x)
 {
   int firstdigit = 0;
+  int len = 0;
 #if _DECIMAL_SIZE == 32
   char digits[8];
   __get_digits_d32(x, digits, NULL, NULL, NULL, NULL);
@@ -199,11 +194,14 @@ FUNC_D (numdigits) (DEC_TYPE x)
 #endif
   while (digits[firstdigit] == '0') firstdigit++;
 
-  return strlen(digits + firstdigit);
+  len = strlen(digits + firstdigit);
+  /* Hardware DFP always returns 1 digit if the mantissa is zero.  We should
+   * do the same.  */
+  return (len == 0 ? 1 : len);
 }
 
 static inline DEC_TYPE
-left_justify (DEC_TYPE x)
+FUNC_D (left_justify) (DEC_TYPE x)
 {
   int firstdigit = 0, len;
 #if _DECIMAL_SIZE == 32
@@ -222,12 +220,11 @@ left_justify (DEC_TYPE x)
     {
       /* pad the significant digits with enough trailing zeroes */
       memset(digits + firstdigit + len, '0', firstdigit);
-      x = setdigits(x, digits + firstdigit);
+      x = FUNC_D (setdigits) (x, digits + firstdigit);
       x = FUNC_D(setexp) (x, FUNC_D (getexp) (x) - firstdigit);
     }
 
   return x;
 }
 
-
-#endif /* _NUMDIGITS_H */
+//#endif /* _NUMDIGITS_H */

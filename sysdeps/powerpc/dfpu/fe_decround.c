@@ -1,7 +1,7 @@
 /* Decimal Float fe_dec_getround and fe_dec_setround definitions.
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007, 2009, 2010 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -26,6 +26,8 @@
 
 #include <fenv.h>
 #include <dfpfenv_private.h>
+
+#include <stdio.h>
 
 int __fe_dec_setround(int rounding_direction)
 {
@@ -72,28 +74,28 @@ int __fe_dec_setround(int rounding_direction)
   switch(rounding_direction)
     {
       case FE_DEC_TONEAREST:
-	asm ("mtfsfi 7, 0, 1\n");
+	asm ("mtfsfi 7, 0\n");
 	break;
       case FE_DEC_TOWARDZERO:
-	asm ("mtfsfi 7, 1, 1\n");
+	asm ("mtfsfi 7, 1\n");
 	break;
       case FE_DEC_UPWARD:
-	asm ("mtfsfi 7, 2, 1\n");
+	asm ("mtfsfi 7, 2\n");
 	break;
       case FE_DEC_DOWNWARD:
-	asm ("mtfsfi 7, 3, 1\n");
+	asm ("mtfsfi 7, 3\n");
 	break;
       case FE_DEC_TONEARESTFROMZERO:
-	asm ("mtfsfi 7, 4, 1\n");
+	asm ("mtfsfi 7, 4\n");
 	break;
       case 5: /* Allow covert setting of this rounding mode.  */
-	asm ("mtfsfi 7, 5, 1\n");
+	asm ("mtfsfi 7, 5\n");
 	break;
       case 6: /* Allow covert setting of this rounding mode.  */
-	asm ("mtfsfi 7, 6, 1\n");
+	asm ("mtfsfi 7, 6\n");
 	break;
       case 7: /* Allow covert setting of this rounding mode.  */
-	asm ("mtfsfi 7, 7, 1\n");
+	asm ("mtfsfi 7, 7\n");
 	break;
       default:
 	return 1;

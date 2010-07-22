@@ -250,7 +250,8 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 #  calls.
 $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@.
-	$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 3,$(words $?),$?) -o $@ -lm
+	$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(addsuffix .os,$(libdfp_files)) -o $@ -lm
+	#$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 3,$(words $?),$?) -o $@ -lm
 	@echo
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
@@ -302,7 +303,7 @@ else
 GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so $(glibc_builddir)/nptl/libpthread.so
 endif
 
-libdfp_tests = test-printf test-param test-amort test-decode test-quantize test-isnan test-isinf test-isfinite test-fpclassify test-logd test-strtod
+libdfp_tests = test-printf test-param test-amort test-decode test-quantize test-isnan test-isinf test-isfinite test-fpclassify test-logd test-strtod test-numdigits test-left_justify test-get_digits
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.

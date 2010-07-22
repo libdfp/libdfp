@@ -17,5 +17,5 @@ libdfp_files += addsd3 adddd3 addtd3 \
 		mulsd3 muldd3 multd3 \
 		nesd2 nedd2 netd2 \
 		subsd3 subdd3 subtd3 \
-		trunctdsd2 truncddsd2 trunctdsd2 \
+		truncddsd2 trunctddd2 trunctdsd2 \
 		unordsd2 unorddd2 unordtd2 \

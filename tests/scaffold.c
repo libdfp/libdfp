@@ -27,6 +27,7 @@
 #include "decode.h"
 
 static int fail = 0;
+static int testnum = 0;
 
 /* String compare macros  */
 #ifndef _SC
@@ -38,11 +39,12 @@ static int fail = 0;
  * a variable and want _SC_P to output it.  The name stands for Compare with
  * Position.  */
 #define _SC_P(f,l,x,y) do { \
+  ++testnum; \
   if(strcmp(x,y)) { \
-    fprintf(stderr, "Error: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", x,y,f,l); \
+    fprintf(stderr, "%-3d Error:   Expected: \"%s\"\n             Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,x,y,f,l); \
     ++fail; \
   } else { \
-    fprintf(stdout, "Success: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", x,y,f,l); \
+    fprintf(stdout, "%-3d Success: Expected: \"%s\"\n             Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,x,y,f,l); \
   } \
 } while (0)
 
@@ -87,16 +89,17 @@ static char bufy[CHAR_MAX];
 #ifndef _VC
 /* _VC_P == Value Compare with Position  */
 #define _VC_P(f,l,x,y,fmt) do { \
+  ++testnum; \
   memset(bufx,'\0',CHAR_MAX); \
   memset(bufy,'\0',CHAR_MAX); \
   /* Invokes printf dfp.  */  \
   sprintf(bufx, fmt, x); \
   sprintf(bufy, fmt, y); \
   if(x!=y) { \
-    fprintf(stderr, "Error: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", bufx,bufy,f,l); \
+    fprintf(stderr, "%-3d Error:   Expected: \"%s\"\n             Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
     ++fail; \
   } else { \
-    fprintf(stdout, "Success: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", bufx,bufy,f,l); \
+    fprintf(stdout, "%-3d Success: Expected: \"%s\"\n             Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
   } \
 } while (0)
 
@@ -131,16 +134,17 @@ static char bufy[CHAR_MAX];
 #ifndef _QC
 /* _QC_P == Quantize Compare with Position  */
 #define _QC_P(f,l,x,y,fmt,type) do { \
+  ++testnum; \
   memset(bufx,'\0',CHAR_MAX); \
   memset(bufy,'\0',CHAR_MAX); \
   /* Invokes printf dfp.  */  \
   sprintf(bufx, fmt, x); \
   sprintf(bufy, fmt, y); \
   if(x!=y) { \
-    fprintf(stderr, "Error: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", bufx,bufy,f,l); \
+    fprintf(stderr, "%-3d Error:   Expected: \"%s\"\n             Result:    \"%s\"\n    in: %s:%d.\n\n", testnum, bufx,bufy,f,l); \
     ++fail; \
   } else { \
-    fprintf(stdout, "Success: Expected: \"%s\" - Result: \"%s\" in: %s:%d.\n", bufx,bufy,f,l); \
+    fprintf(stdout, "%-3d Success: Expected: \"%s\"\n             Result:    \"%s\"\n    in: %s:%d.\n\n", testnum, bufx,bufy,f,l); \
   } \
 } while (0)
 

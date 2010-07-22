@@ -25,7 +25,7 @@
 #include <dfpacc.h>
 
 int
-__BACKEND_(lttd3) (_Decimal128 x, _Decimal128 y)
+__BACKEND_(lttd2) (_Decimal128 x, _Decimal128 y)
 {
   return x < y ? -1 : 1;
 }

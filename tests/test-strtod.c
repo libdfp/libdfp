@@ -31,12 +31,22 @@ d_type strtods[] =
   {__LINE__, "-0.0001", -0.0001DF, -0.0001DD, -0.0001DL },
   {__LINE__, "inf", DEC_INFINITY, DEC_INFINITY, DEC_INFINITY },
   {__LINE__, "INFINITY", DEC_INFINITY, DEC_INFINITY, DEC_INFINITY },
+  {__LINE__, "0.0E+100", DEC_INFINITY, 0.0DD, 0.0DL },
+  {__LINE__, "0.01", 0.01DF, 0.01DD, 0.01DL },
+  {__LINE__, "0.1", 0.1DF, 0.1DD, 0.1DL },
+  {__LINE__, "0.11", 0.11DF, 0.11DD, 0.11DL },
+  {__LINE__, "0.21", 0.21DF, 0.21DD, 0.21DL },
+  {__LINE__, "1.23456789E-7", 0.0DF, 0.0DD, 0.0DL },
   {__LINE__, "19e9", 19000000000.0DF, 19000000000.0DD, 19000000000.0DL },
-  {__LINE__, "1234.5678910111213e-5",0.01234DF ,0.01234DD ,0.01234DL },
+  {__LINE__, "1234.5678910111213e-5", 0.01234DF ,0.01234DD ,0.01234DL },
+  {__LINE__, "3.14", 3.140000DF, 3.140000DD, 3.140000DL },
+  {__LINE__, "3.14e-2", 0.031400DF, 0.031400DD, 0.031400DL },
   {0,0,0,0,0 }
 };
 
-const char DECLET_DEC_NAN[] = "-0,000,000,000,000,010E-1";
+const char DECLET32_NAN[] = "+0,000,000E-101";
+const char DECLET64_NAN[] = "+0,000,000,000,000,000E-398";
+const char DECLET128_NAN[] = "+0,000,000,000,000,000,000,000,000,000,000,000E-6176";
 
 /* Inspired by GLIBC stdio-common/tfformat.c  */
 typedef struct{
@@ -49,18 +59,28 @@ typedef struct{
 
 d_nan_type strtods_nan[] =
 {
-  /* DEC_NAN is +0,000,000,000,000,000E-398 so test against that
+  /* Compare against the decoded declet for each representation of DEC_NAN since
    * since you can't compare DEC_NAN to DEC_NAN.  */
-  {__LINE__, "NaN", DECLET_DEC_NAN, DECLET_DEC_NAN, DECLET_DEC_NAN},
+  {__LINE__, "NaN", DECLET32_NAN, DECLET64_NAN, DECLET128_NAN},
   {0,0,0,0,0 }
 };
 
+#include "decode.h"
+
 int main(void) {
+
   d_type *dptr;
+
   for (dptr = strtods; dptr->line; dptr++)
     {
+
+      fprintf(stderr, "  strtod32(\"%s\",NULL) == %Hf\n  ", dptr->input, strtod32(dptr->input, NULL));
       _VC_P(__FILE__,dptr->line,dptr->d32,strtod32(dptr->input,NULL), "%Hf");
+
+      fprintf(stderr, "  strtod64(\"%s\",NULL) == %Df\n  ", dptr->input, strtod64(dptr->input, NULL));
       _VC_P(__FILE__,dptr->line,dptr->d64, strtod64(dptr->input,NULL), "%Df");
+
+      fprintf(stderr, "  strtod128(\"%s\",NULL) == %DDf\n  ", dptr->input, strtod128(dptr->input, NULL));
       _VC_P(__FILE__,dptr->line,dptr->d128, strtod128(dptr->input,NULL), "%DDf");
     }
 
@@ -76,18 +96,4 @@ int main(void) {
 
   /* fail comes from scaffold.c  */
   return fail;
-/*
-
-	char *testcases[] = { "12.04","1234.5678910111213e-5", "1.0", "1", "19","19E2","-0.0001","-5","NaN", "INF", "0", "0.0"};
-	int i,numCases=12;
-
-	for(i=0; i< numCases; i++) {
-		printf("in: %s\n",testcases[i]);
-		printf("  out32: %Hf\n  out64: %Df\n  out128: %DDf\n",
-				strtod32(testcases[i],NULL),
-				strtod64(testcases[i],NULL),
-				strtod128(testcases[i],NULL)
-				);
-	}
-*/
 }
