@@ -1,5 +1,13 @@
 2010-07-23  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* tests/test-logd.c: Removed unnecessary comments.
+	* tests/test-fpclassify.c: Removed unnecessary comments.
+	* configure.ac: Removed unnecessary comments.
+	* printf_dfp.c: Removed unnecessary comments.
+
+
+2010-07-23  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* Makefile.in: Removed commented out code.
 	* tests/test-logd.c: Corrected expected values for a _Decimal64 NAN
 	declet series.

@@ -74,7 +74,6 @@ d64_decode_type decode_d64s[] =
   /* DEC_NAN is +0,000,000,000,000,000E-398 so test against that
    * since you can't compare DEC_NAN to DEC_NAN.  */
   {__LINE__, -1.0DD, DECLET64_NAN},
-  //{__LINE__, -1.0DD, "-0,000,000,000,000,010E-1"},
 #ifdef _ARCH_PWR6 /* This returns NaN in the hard-DFP case.  */
   {__LINE__, __DEC64_MAX__, DECLET64_NAN},
 #endif

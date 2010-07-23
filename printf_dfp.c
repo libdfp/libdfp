@@ -636,7 +636,9 @@ __printf_dfp (FILE *fp,
   if (prec < 0)
     prec = default_prec;
 
-  /* do rounding if precision is less than the decimal type */
+  /* Do rounding if precision is less than the decimal type.  On hardware DFP
+   * this could probably easily be done with quantize but on soft-dfp the
+   * existing method would be faster.  */
   if (prec < input_prec)
     {
       int index, roundmode = 0;
