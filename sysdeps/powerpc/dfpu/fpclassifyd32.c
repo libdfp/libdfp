@@ -38,17 +38,29 @@ int
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
   int result = 0;
-/* check in order, FP_NORMAL, FP_ZERO, FP_SUBNORMAL, FP_INFINITE,
-   FP_NAN.  The though is the most liky case exits early.  */
+#if _DECIMAL_SIZE == 32
+  /* Since _Decimal32 is promoted to _Decimal64, __DEC32_SUBNORMAL_MIN__ is well
+   * within the bounds of a _Decimal64.  This means that we need to do our range
+   * check for __DEC32_SUBNORMAL_MIN__ before dropping into the asm code.  This
+   * is crude.  The asm code should probably be broken into two parts with this
+   * code in between so the zero, <-1 and > 1 checks aren't redundant.  */
+  if (x != 0 && x > -1 && x < 1 && x <= __DEC32_SUBNORMAL_MIN__)
+    return FP_SUBNORMAL;
+#endif
+
+/* Check in order, FP_NORMAL, FP_ZERO, FP_SUBNORMAL, FP_INFINITE,
+   FP_NAN.  The most likely case exits early.  */
   __asm__(	"dtstdc cr0,%1,0x08;"
 		"li %0,4;"
 		"beq cr0,1f;"
 		"dtstdc cr0,%1,0x20;"
 		"li %0,2;"
 		"beq cr0,1f;"
+#if _DECIMAL_SIZE != 32 /* This was alread done for _Decimal32 earlier.  */
 		"dtstdc cr0,%1,0x10;"
 		"li %0,3;"
 		"beq cr0,1f;"
+#endif
 		"dtstdc cr0,%1,0x04;"
 		"li %0,1;"
 		"beq cr0,1f;"

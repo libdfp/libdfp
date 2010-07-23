@@ -34,54 +34,13 @@
 
 #include <dfpmacro.h>
 
-static _Decimal64
-oldmypowNd64 (_Decimal64 val, int N)
-{
-  _Decimal128 powStack[32];
-  _Decimal128 p = val;
-  _Decimal64 result;
-  long i, j, n;
-  n = N;
-
-/*
-  To minimize the number of multiply operations, first compute the
-  power series where the exponent is a power of 2.
-*/
-  i = 0;
-  powStack[0] = 1.DD;
-  while (n > 0)
-    {
-      if (n & 1)
-	powStack[++i] = p;
-
-      n = n >> 1;
-      if (n > 0)
-	p *= p;
-    }
-/*
-  Then compute the power result from the saved partial powers.
-*/
-  if ( i > 1 )
-    {
-      p = powStack[1];
-      for (j=2; j<=i; j++)
-	p *= powStack[j];
-      result = p;
-    }
-  else
-    result = powStack[i];
-
-  return result;
-}
-
-
 static DEC_TYPE 
 intpow (DEC_TYPE val, int N)
 {
   DEC_TYPE result = 1;
   DEC_TYPE p = val;
   int mask = 1;
-  
+
   while (mask <= N)
     {
       if (mask & N) result *= p;

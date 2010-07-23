@@ -1,3 +1,22 @@
+2010-07-23  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Removed commented out code.
+	* tests/test-logd.c: Corrected expected values for a _Decimal64 NAN
+	declet series.
+	* tests/test-fpclassify.c: Added cases for + and -
+	__DEC[32|64|128]_SUBNORMAL_MIN__.
+	* tests/scaffold.c: Modified spacing in macro output for 'Success'.
+	* tests/test-isfinite.c: Corrected expected values for negative
+	numbers to return -1.  Corrected expected value for DEC_NAN to '0'.
+	* tests/test-strtod.c: Cleaned up.  Still failing.
+	* sysdeps/powerpc/dfpu/fpclassifyd32.c (fpclassifyd32): Since
+	_Decimal32 is promoted to _Decimal64 and __DEC32_SUBNORMAL_MIN__ falls
+	within the bounds of _Decimal64 a special case to range check for
+	_Decimal32 as required.
+	* sysdeps/powerpc/dfpu/powd64.c: Whitespace correction.
+	* strtod32.c: Started to cleanup the code.
+
+
 2010-07-21  Ryan S. Arnold <rsa@us.ibm.com>
 
 	* Makefile.in: Added test-numdigits, test-get_digits, and test-left_justify.
@@ -34,7 +53,7 @@
 	printing errors.  It should now fully support %f, %e, %g, and %a in
 	the myriad of bizarre combinations.
 
-2010-07-06  Ryan S. Arnold <rsa@us.ibm.com>
+2010-07-06  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* Makefile.in: Added test-strtod testcase.
 	* tests/test-logd.c: Cleaned up some comments.

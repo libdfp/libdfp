@@ -420,7 +420,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   cp = nptr - 1;
   /* Ignore leading white space.  */
   do
-    c = *++cp;
+    c = *++cp; /* c is last character read, cp is last character processed.  */
   while (ISSPACE (c));
 
   /* Get sign of the result.  */

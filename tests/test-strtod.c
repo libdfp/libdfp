@@ -74,13 +74,13 @@ int main(void) {
   for (dptr = strtods; dptr->line; dptr++)
     {
 
-      fprintf(stderr, "  strtod32(\"%s\",NULL) == %Hf\n  ", dptr->input, strtod32(dptr->input, NULL));
+      fprintf(stdout, "strtod32(\"%s\",NULL) == %Hf\n  ", dptr->input, strtod32(dptr->input, NULL));
       _VC_P(__FILE__,dptr->line,dptr->d32,strtod32(dptr->input,NULL), "%Hf");
 
-      fprintf(stderr, "  strtod64(\"%s\",NULL) == %Df\n  ", dptr->input, strtod64(dptr->input, NULL));
+      fprintf(stdout, "strtod64(\"%s\",NULL) == %Df\n  ", dptr->input, strtod64(dptr->input, NULL));
       _VC_P(__FILE__,dptr->line,dptr->d64, strtod64(dptr->input,NULL), "%Df");
 
-      fprintf(stderr, "  strtod128(\"%s\",NULL) == %DDf\n  ", dptr->input, strtod128(dptr->input, NULL));
+      fprintf(stdout, "strtod128(\"%s\",NULL) == %DDf\n  ", dptr->input, strtod128(dptr->input, NULL));
       _VC_P(__FILE__,dptr->line,dptr->d128, strtod128(dptr->input,NULL), "%DDf");
     }
 

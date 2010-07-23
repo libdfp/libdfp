@@ -45,10 +45,12 @@ typedef struct{
 d128_type printf_d128s[] =
 {
   {__LINE__, 1.20DL, 1,  "%d"},
-  {__LINE__, DEC_NAN, 1,  "%d"},
+  {__LINE__, DEC_NAN, 0,  "%d"},
   {__LINE__, HUGE_VAL_D128, 0, "%d"},
   {__LINE__, DEC_INFINITY, 0, "%d"},
-  {__LINE__, -1.95DL, 1, "%d"},
+  /* isfinite returns 'nonzero' if the argument is finite.  This could be
+   * anything other than zero.  */
+  {__LINE__, -1.95DL, -1, "%d"},
   {0,0,0,0 }
 };
 
@@ -62,10 +64,10 @@ typedef struct{
 d64_type printf_d64s[] =
 {
   {__LINE__, 1.20DD, 1,  "%d"},
-  {__LINE__, DEC_NAN, 1,  "%d"},
+  {__LINE__, DEC_NAN, 0,  "%d"},
   {__LINE__, HUGE_VAL_D64, 0, "%d"},
   {__LINE__, DEC_INFINITY, 0, "%d"},
-  {__LINE__, -1.95DD, 1, "%d"},
+  {__LINE__, -1.95DD, -1, "%d"},
   {0,0,0,0 }
 };
 
@@ -79,10 +81,10 @@ typedef struct{
 d32_type printf_d32s[] =
 {
   {__LINE__, 1.20DF, 1,  "%d"},
-  {__LINE__, DEC_NAN, 1,  "%d"},
+  {__LINE__, DEC_NAN, 0,  "%d"},
   {__LINE__, HUGE_VAL_D32, 0, "%d"},
   {__LINE__, DEC_INFINITY, 0, "%d"},
-  {__LINE__, -1.95DF, 1, "%d"},
+  {__LINE__, -1.95DF, -1, "%d"},
   {0,0,0,0 }
 };
 

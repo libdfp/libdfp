@@ -99,7 +99,7 @@ static char bufy[CHAR_MAX];
     fprintf(stderr, "%-3d Error:   Expected: \"%s\"\n             Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
     ++fail; \
   } else { \
-    fprintf(stdout, "%-3d Success: Expected: \"%s\"\n             Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
+    fprintf(stdout, "%-3d Success: Expected: \"%s\"\n               Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
   } \
 } while (0)
 

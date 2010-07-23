@@ -10,11 +10,6 @@ exec_prefix = @exec_prefix@
 libdir = @libdir@
 includedir = @includedir@
 
-#cc_msize = @cc_msize@
-
-# Not used on non-Z systems, i.e. empty
-#cc_mzarch = @cc_mzarch@
-
 # Where to install the library and object files.
 ifndef libdir
 libdir = $(exec_prefix)/lib
@@ -72,9 +67,6 @@ ifdef submachine_opt
 cflags-cpu = $(submachine_opt)
 asflags-cpu = $(submachine_opt)
 endif
-
-#default_cflags := @CFLAGS@ -m$(cc_msize) $(cc_mzarch)
-#default_asflags := @ASFLAGS@ -m$(cc_msize) $(cc_mzarch)
 
 default_cflags := @CFLAGS@
 default_asflags := @ASFLAGS@
@@ -251,7 +243,6 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@.
 	$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(addsuffix .os,$(libdfp_files)) -o $@ -lm
-	#$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(wordlist 3,$(words $?),$?) -o $@ -lm
 	@echo
 
 # The LIBDFP version script support is strongly based upon the GLIBC version

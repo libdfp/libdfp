@@ -50,8 +50,10 @@ d128_type printf_d128s[] =
   {__LINE__, 0.0DL, FP_ZERO, "%d"},
   {__LINE__, 2.3DL, FP_NORMAL, "%d"},
   {__LINE__, -2.3DL, FP_NORMAL, "%d"},
+  {__LINE__, -__DEC128_SUBNORMAL_MIN__, FP_SUBNORMAL, "%d"}, /* Subnormal  */
   {__LINE__, __DEC128_SUBNORMAL_MIN__, FP_SUBNORMAL, "%d"}, /* Subnormal  */
   {__LINE__, 0.000000000000000000000000000000001E-6143DL, FP_SUBNORMAL, "%d"},
+  {__LINE__, -0.000000000000000000000000000000001E-6143DL, FP_SUBNORMAL, "%d"},
   {__LINE__, __DEC128_MIN__, FP_NORMAL, "%d"},
   {0,0,0,0 }
 };
@@ -72,7 +74,9 @@ d64_type printf_d64s[] =
   {__LINE__, 2.3DD, FP_NORMAL, "%d"},
   {__LINE__, -2.3DD, FP_NORMAL, "%d"},
   {__LINE__, __DEC64_SUBNORMAL_MIN__, FP_SUBNORMAL, "%d"}, /* Subnormal  */
+  {__LINE__, -__DEC64_SUBNORMAL_MIN__, FP_SUBNORMAL, "%d"}, /* Subnormal  */
   {__LINE__, 0.000000000000001E-383DD, FP_SUBNORMAL, "%d"},
+  {__LINE__, -0.000000000000001E-383DD, FP_SUBNORMAL, "%d"},
   {__LINE__, __DEC64_MIN__, FP_NORMAL, "%d"},
   {0,0,0,0 }
 };
@@ -92,8 +96,14 @@ d32_type printf_d32s[] =
   {__LINE__, 0.0DF, FP_ZERO, "%d"},
   {__LINE__, 2.3DF, FP_NORMAL, "%d"},
   {__LINE__, -2.3DF, FP_NORMAL, "%d"},
+/* Known failure on hard-dfp due to promotion to _Decimal64.  These are well
+ * within the range of NORMAL for _Decimal64.  */
+//#ifndef _ARCH_PWR6 
   {__LINE__, __DEC32_SUBNORMAL_MIN__, FP_SUBNORMAL, "%d"}, /* Subnormal  */
+  {__LINE__, -__DEC32_SUBNORMAL_MIN__, FP_SUBNORMAL, "%d"}, /* Subnormal  */
   {__LINE__, 0.000001E-95DF, FP_SUBNORMAL, "%d"},
+  {__LINE__, -0.000001E-95DF, FP_SUBNORMAL, "%d"},
+//#endif
   {__LINE__, __DEC32_MIN__, FP_NORMAL, "%d"},
   {0,0,0,0 }
 };
