@@ -35,6 +35,30 @@
 
 #include <dfpmacro.h>
 
+#include "../tests/scaffold.c"
+
+
+static void bin_prnt_byte(int x)
+{
+   int n;
+   for(n=0; n<8; n++)
+   {
+      if((x & 0x80) !=0)
+      {
+         printf("1");
+      }
+      else
+      {
+         printf("0");
+      }
+      x = x<<1;
+   }
+}
+
+
+
+#include <stdio.h>
+
 int
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
@@ -43,16 +67,20 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   {
     DEC_TYPE dec;
     uint8_t bytes[_DECIMAL_SIZE/8];
+    uint32_t words[_DECIMAL_SIZE/32];
   } u_conv;
+  static char foo[CHAR_MAX];
 
   u_conv.dec = x;
 #if BYTE_ORDER == BIG_ENDIAN
   top_byte = u_conv.bytes[0];
 #else
-  top_byte = u.conv.bytes[_DECIMAL_SIZE/8 -1];
+  top_byte = u_conv.bytes[_DECIMAL_SIZE/8 -1];
 #endif
 
-  return (top_byte & DECIMAL_Inf) == DECIMAL_Inf;
+  /* a NaN is not Inf, but the bitmasks overlap, so extract everything for NaN
+   * and if there are more bits than DECIMAL_Inf it is a NaN and not an Inf.  */
+  return (top_byte & DECIMAL_NaN) == DECIMAL_Inf;
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
