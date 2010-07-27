@@ -1,5 +1,10 @@
 2010-07-26  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* ieee754r/isinfd32.c: Removed test-code that shouldn't have been
+	checked in.
+
+2010-07-26  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* ieee754r/isinfd32.c (isinf): Changed Infinity check such that
 	DEC_NAN doesn't pass as inf.  There was an incorrect mask check which
 	was true for DEC_NAN as well as Inf.
