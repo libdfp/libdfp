@@ -149,11 +149,9 @@ esac],
 	    [dfp_backend=$default_backend])
 AC_SUBST(dfp_backend)
 
-# This will invoke the sysdeps/$machine/<processor>/ machinery as well as
-# the -mcpu=<processor> machinery and -mzarch for s390 (and friends).
+# This will invoke the sysdeps/$machine/<processor>/ machinery.
 submachine=
 with_dfp=
-cc_mzarch=
 AC_ARG_WITH([cpu],
 	    AS_HELP_STRING([--with-cpu=CPU], [select code for CPU variant]),
 	    [dnl
@@ -176,12 +174,10 @@ AC_ARG_WITH([cpu],
     with_dfp=yes ;;
   z9-ec)
     submachine="$withval"
-    cc_mzarch=-mzarch
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   z10)
     submachine="$withval"
-    cc_mzarch=-mzarch
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   *)

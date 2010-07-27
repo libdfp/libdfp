@@ -171,11 +171,10 @@ first:
 	@echo VPATH=$(VPATH)
 	@echo Processing Makefiles: $(makefile_dirs)
 
-# Configure will have generated the Makefile for the selected backend.
-# Let's add it to the subdir list so it gets recursively invoked by Make.  We
-# have to pass CFLAGS here because configure's CFLAGS doesn't have -mcpu,
-# -m[31|32|64] or -mzarch.  Don't pass -e to make or it could pull unwanted
-#  variables from the environment.
+# Configure will have generated the Makefile for the selected backend.  Let's
+# add it to the subdir list so it gets recursively invoked by Make.  We pass
+# CFLAGS as a precaution.  Don't pass -e to make or it could pull unwanted
+# variables from the environment.
 $(dfp_backend)/$(dfp_backend_lib):
 	@echo "+Building DFP backend $@"
 	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -C $(dfp_backend)

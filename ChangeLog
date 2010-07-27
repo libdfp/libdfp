@@ -1,5 +1,11 @@
 2010-07-26  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* configure: Regenerated file.
+	* Makefile.in: Removed last comments dealing with -mzarch.
+	* configure.ac: Removed last fragments dealing with -mzarch.
+
+2010-07-26  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* ieee754r/isinfd32.c: Removed unnecessary static char buffer used for
 	testing.
 

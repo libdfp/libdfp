@@ -1524,11 +1524,9 @@ else
 fi;
 
 
-# This will invoke the sysdeps/$machine/<processor>/ machinery as well as
-# the -mcpu=<processor> machinery and -mzarch for s390 (and friends).
+# This will invoke the sysdeps/$machine/<processor>/ machinery.
 submachine=
 with_dfp=
-cc_mzarch=
 
 # Check whether --with-cpu or --without-cpu was given.
 if test "${with_cpu+set}" = set; then
@@ -1557,13 +1555,11 @@ echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
   z9-ec)
     submachine="$withval"
-    cc_mzarch=-mzarch
     { echo "$as_me:$LINENO: configuring for the $submachine processor" >&5
 echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
   z10)
     submachine="$withval"
-    cc_mzarch=-mzarch
     { echo "$as_me:$LINENO: configuring for the $submachine processor" >&5
 echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
