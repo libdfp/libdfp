@@ -35,28 +35,6 @@
 
 #include <dfpmacro.h>
 
-#include "../tests/scaffold.c"
-
-
-static void bin_prnt_byte(int x)
-{
-   int n;
-   for(n=0; n<8; n++)
-   {
-      if((x & 0x80) !=0)
-      {
-         printf("1");
-      }
-      else
-      {
-         printf("0");
-      }
-      x = x<<1;
-   }
-}
-
-
-
 #include <stdio.h>
 
 int
