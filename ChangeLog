@@ -1,5 +1,10 @@
 2010-07-26  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* ieee754r/isinfd32.c: Removed unnecessary static char buffer used for
+	testing.
+
+2010-07-26  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* ieee754r/isinfd32.c: Removed test-code that shouldn't have been
 	checked in.
 

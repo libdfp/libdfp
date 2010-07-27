@@ -47,7 +47,6 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
     uint8_t bytes[_DECIMAL_SIZE/8];
     uint32_t words[_DECIMAL_SIZE/32];
   } u_conv;
-  static char foo[CHAR_MAX];
 
   u_conv.dec = x;
 #if BYTE_ORDER == BIG_ENDIAN
