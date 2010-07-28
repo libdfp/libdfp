@@ -289,7 +289,7 @@ CFLAGS="-m64 -O2 -g"
 	Some System Z machines require the -mzarch flag, e.g.
 	CFLAGS="-m31 -mzarch -O2 -g"
 
-	These should accompany sympathetic --build and --host switches
+	These should accompany sympathetic --build or --target switches
 	described below, e.g.
 
 		powerpc-linux-gnu for -m32
@@ -305,11 +305,15 @@ environment is.
 
 In order to build 32-bit libdfp you can pass the following switches:
 
-	--build=powerpc-linux-gnu --host=powerpc-linux-gnu
+	--build=powerpc-linux-gnu
+	  or
+	--target=powerpc-linux-gnu
 
 In order to build 64-bit libdfp you can pass the following switches:
 
-	--build=powerpc64-linux-gnu --host=powerpc64-linux-gnu
+	--build=powerpc64-linux-gnu
+	  or
+	--target=powerpc64-linux-gnu
 
 The following switches define the DFP backend.
 
@@ -394,7 +398,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--libdir=/usr/lib64/ \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc64-linux-gnu --host=powerpc64-linux-gnu \
+	--build=powerpc64-linux-gnu \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power5 \
 	2>&1 | tee _configure64_power5
 
@@ -406,7 +410,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--libdir=/usr/lib64/ \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc64-linux-gnu --host=powerpc64-linux-gnu \
+	--build=powerpc64-linux-gnu \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power6 \
 	--with-cpu=power6 2>&1 | tee _configure64_power6
 
@@ -418,7 +422,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--libdir=/usr/lib64/ \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc64-linux-gnu --host=powerpc64-linux-gnu \
+	--build=powerpc64-linux-gnu \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power7 \
 	--with-cpu=power7 2>&1 | tee _configure64_power7
 
@@ -428,7 +432,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc-linux-gnu --host=powerpc-linux-gnu \
+	--build=powerpc-linux-gnu \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power5 \
 	2>&1 | tee _configure32_power5
 
@@ -438,7 +442,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc-linux-gnu --host=powerpc-linux-gnu \
+	--build=powerpc-linux-gnu \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power6 \
 	--with-cpu=power6 2>&1 | tee _configure32_power6
 
@@ -448,7 +452,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc-linux-gnu --host=powerpc-linux-gnu \
+	--build=powerpc-linux-gnu \
 	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power7 \
 	--with-cpu=power7 2>&1 | tee _configure32_power7
 

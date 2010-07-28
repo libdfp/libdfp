@@ -1,3 +1,12 @@
+2010-07-28  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* config.log: Removed as unnecessary.
+	* configure.ac: --target now works in lieu of --build.  --host is no
+	longer necessary.
+	* README.developer: Removed directive to use --host and replaced with a
+	diective to use --target.
+
 2010-07-26  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated file.

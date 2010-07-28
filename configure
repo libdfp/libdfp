@@ -276,7 +276,7 @@ PACKAGE_BUGREPORT='rsa@us.ibm.com'
 ac_unique_file="printf_dfp.c"
 ac_subdirs_all="$ac_subdirs_all libdecnumber"
 ac_subdirs_all="$ac_subdirs_all libbid"
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os enable_decimal_float dfp_backend with_dfp with_fp base_machine machine CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT OBJDUMP AS ASFLAGS libdfp_cv_cc_with_decimal_float glibc_headers glibc_build enable_static enable_shared submachine submachine_opt sysdep_dirs RANLIB ac_ct_RANLIB AWK subdirs LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os enable_decimal_float dfp_backend with_dfp with_fp base_machine machine CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT OBJDUMP AS ASFLAGS libdfp_cv_cc_with_decimal_float glibc_headers glibc_build enable_static enable_shared submachine submachine_opt sysdep_dirs RANLIB ac_ct_RANLIB AWK subdirs LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -797,6 +797,7 @@ _ACEOF
 System types:
   --build=BUILD     configure for building on BUILD [guessed]
   --host=HOST       cross-compile to build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
 _ACEOF
 fi
 
@@ -1396,20 +1397,60 @@ host_os=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
 
 
-# Do we support `cross' libdfp support?  Probably.  But this may not be necessary.
-# The implication is that we can't actually guess the Decimal Float Type backend based
-# upon the $build_* variables.
+# Do we support `cross' libdfp support?  Probably.  But this may not be
+# necessary.  The implication of building a cross libdfp is that we can't
+# actually guess the Decimal Float Type backend based upon the $build_*
+# variables.  This will be manifest as a --target that differs from --build.
+echo "$as_me:$LINENO: checking target system type" >&5
+echo $ECHO_N "checking target system type... $ECHO_C" >&6
+if test "${ac_cv_target+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_target_alias=$target_alias
+test "x$ac_cv_target_alias" = "x" &&
+  ac_cv_target_alias=$ac_cv_host_alias
+ac_cv_target=`$ac_config_sub $ac_cv_target_alias` ||
+  { { echo "$as_me:$LINENO: error: $ac_config_sub $ac_cv_target_alias failed" >&5
+echo "$as_me: error: $ac_config_sub $ac_cv_target_alias failed" >&2;}
+   { (exit 1); exit 1; }; }
 
-# Copied from GLIBC, but this may be unnecessary.
-config_machine=$host_cpu config_vendor=$host_vendor config_os=$host_os
-machine=$config_machine
+fi
+echo "$as_me:$LINENO: result: $ac_cv_target" >&5
+echo "${ECHO_T}$ac_cv_target" >&6
+target=$ac_cv_target
+target_cpu=`echo $ac_cv_target | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+target_vendor=`echo $ac_cv_target | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+target_os=`echo $ac_cv_target | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
-# Only allow a Linux host OS.
+
+# The aliases save the names the user supplied, while $host etc.
+# will get canonicalized.
+test -n "$target_alias" &&
+  test "$program_prefix$program_suffix$program_transform_name" = \
+    NONENONEs,x,x, &&
+  program_prefix=${target_alias}-
+
+config_os=$host_os
+machine=$host_cpu
+target_machine=$target_cpu
+
+# If the user uses --target instead of --host we can detect it.
+if test "$target_machine" != "$machine"; then
+  machine=$target_machine
+fi
+
+# Only allow a Linux host OS.  We don't support building libdfp on non-Linux
+# systems.
 if test "$config_os" != linux-gnu; then
-  { { echo "$as_me:$LINENO: error: 'linux-gnu' is the only supported host OS" >&5
-echo "$as_me: error: 'linux-gnu' is the only supported host OS" >&2;}
+  { { echo "$as_me:$LINENO: error: 'linux-gnu' is the only allowed host OS" >&5
+echo "$as_me: error: 'linux-gnu' is the only allowed host OS" >&2;}
    { (exit 1); exit 1; }; }
 fi
+
+## This will fail on a pcc64 system where we're configuring for ppc.
+#if test "$host_cpi" != "$target_cpu"; then
+#  AC_MSG_ERROR([${PACKAGE_NAME} does not yet support cross-compliation.])
+#fi
 
 # PowerPC[64] defaults to DPD encoded DFP.  x86[_64] defaults to BID encoded DFP.
 default_encoding=
@@ -3041,9 +3082,7 @@ done
 
 
 # Wherever there's a standalone configure fragment we need to tell the top
-# level configure to recurse into it.  This doesn't pass the full complement
-# of CFLAGS necessary so Makefile.in will need to manually pass the CFLAGS to
-# the backend `make' invocation.
+# level configure to recurse into it.
 if test "$dfp_backend" = libdecnumber; then
 
 
@@ -3680,6 +3719,10 @@ s,@host@,$host,;t t
 s,@host_cpu@,$host_cpu,;t t
 s,@host_vendor@,$host_vendor,;t t
 s,@host_os@,$host_os,;t t
+s,@target@,$target,;t t
+s,@target_cpu@,$target_cpu,;t t
+s,@target_vendor@,$target_vendor,;t t
+s,@target_os@,$target_os,;t t
 s,@enable_decimal_float@,$enable_decimal_float,;t t
 s,@dfp_backend@,$dfp_backend,;t t
 s,@with_dfp@,$with_dfp,;t t

@@ -25,19 +25,31 @@ fi
 # code will run.
 AC_CANONICAL_HOST
 
-# Do we support `cross' libdfp support?  Probably.  But this may not be necessary.
-# The implication is that we can't actually guess the Decimal Float Type backend based
-# upon the $build_* variables.
-dnl AC_CANONICAL_BUILD
+# Do we support `cross' libdfp support?  Probably.  But this may not be
+# necessary.  The implication of building a cross libdfp is that we can't
+# actually guess the Decimal Float Type backend based upon the $build_*
+# variables.  This will be manifest as a --target that differs from --build.
+AC_CANONICAL_SYSTEM
 
-# Copied from GLIBC, but this may be unnecessary.
-config_machine=$host_cpu config_vendor=$host_vendor config_os=$host_os
-machine=$config_machine
+config_os=$host_os
+machine=$host_cpu
+target_machine=$target_cpu
 
-# Only allow a Linux host OS.
-if test "$config_os" != linux-gnu; then
-  AC_MSG_ERROR(['linux-gnu' is the only supported host OS])
+# If the user uses --target instead of --host we can detect it.
+if test "$target_machine" != "$machine"; then
+  machine=$target_machine
 fi
+
+# Only allow a Linux host OS.  We don't support building libdfp on non-Linux
+# systems.
+if test "$config_os" != linux-gnu; then
+  AC_MSG_ERROR(['linux-gnu' is the only allowed host OS])
+fi
+
+## This will fail on a pcc64 system where we're configuring for ppc.
+#if test "$host_cpi" != "$target_cpu"; then
+#  AC_MSG_ERROR([${PACKAGE_NAME} does not yet support cross-compliation.])
+#fi
 
 # PowerPC[64] defaults to DPD encoded DFP.  x86[_64] defaults to BID encoded DFP.
 default_encoding=
@@ -638,13 +650,11 @@ dnl AC_CHECK_HEADERS([stdlib.h])
 
 
 # Wherever there's a standalone configure fragment we need to tell the top
-# level configure to recurse into it.  This doesn't pass the full complement
-# of CFLAGS necessary so Makefile.in will need to manually pass the CFLAGS to
-# the backend `make' invocation.
+# level configure to recurse into it.
 if test "$dfp_backend" = libdecnumber; then
-	AC_CONFIG_SUBDIRS(libdecnumber)
+  AC_CONFIG_SUBDIRS(libdecnumber)
 else
-       AC_CONFIG_SUBDIRS(libbid)
+  AC_CONFIG_SUBDIRS(libbid)
 fi
 
 # This tells autoconf to generate Makefile from the Makefile.in.  This is the
