@@ -27,8 +27,6 @@
 #include <fenv.h>
 #include <dfpfenv_private.h>
 
-#include <stdio.h>
-
 int __fe_dec_setround(int rounding_direction)
 {
   /* The rounding modes are as follows:

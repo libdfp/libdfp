@@ -1,4 +1,8 @@
 2010-07-30  Ryan S. Arnold  <rsa@us.ibm.com>
+	* sysdeps/powerpc/dfpu/fe_decround.c (stdio.h): Removed unnecessary
+	include.
+
+2010-07-30  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* sysdeps/powerpc/dfpu/fe_decround.c (__fe_dec_getround): The
 	structure which defined the DRN was to small and the compiler started
