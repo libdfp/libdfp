@@ -1,3 +1,13 @@
+2010-07-30  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* sysdeps/powerpc/dfpu/fe_decround.c (__fe_dec_getround): The
+	structure which defined the DRN was to small and the compiler started
+	generating code that wasn't properly extracting the DRN field from the
+	structure holding the FPSCR value.  This is fixed.
+	* tests/test-round.c: Testcase to prove fe_dec_getround() and
+	fe_dec_setround().
+	* Makefile.in (libdfp_tests): Added test-round.
+
 2010-07-28  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
