@@ -24,21 +24,9 @@ fi
 # Defines host_cpu, host_vendor, and host_os variables.  This is where the
 # code will run.
 AC_CANONICAL_HOST
-
-# Do we support `cross' libdfp support?  Probably.  But this may not be
-# necessary.  The implication of building a cross libdfp is that we can't
-# actually guess the Decimal Float Type backend based upon the $build_*
-# variables.  This will be manifest as a --target that differs from --build.
-AC_CANONICAL_SYSTEM
-
 config_os=$host_os
-machine=$host_cpu
-target_machine=$target_cpu
-
-# If the user uses --target instead of --host we can detect it.
-if test "$target_machine" != "$machine"; then
-  machine=$target_machine
-fi
+#machine=$host_cpu
+machine=$build_cpu
 
 # Only allow a Linux host OS.  We don't support building libdfp on non-Linux
 # systems.

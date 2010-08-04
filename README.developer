@@ -289,7 +289,7 @@ CFLAGS="-m64 -O2 -g"
 	Some System Z machines require the -mzarch flag, e.g.
 	CFLAGS="-m31 -mzarch -O2 -g"
 
-	These should accompany sympathetic --build or --target switches
+	These should accompany sympathetic --build switch
 	described below, e.g.
 
 		powerpc-linux-gnu for -m32
@@ -303,17 +303,13 @@ ASFLAGS
 Libdfp's default configure  will be based on whatever bitness the user
 environment is.
 
-In order to build 32-bit libdfp you can pass the following switches:
+In order to build 32-bit libdfp you can pass the following switch:
 
 	--build=powerpc-linux-gnu
-	  or
-	--target=powerpc-linux-gnu
 
-In order to build 64-bit libdfp you can pass the following switches:
+In order to build 64-bit libdfp you can pass the following switch:
 
 	--build=powerpc64-linux-gnu
-	  or
-	--target=powerpc64-linux-gnu
 
 The following switches define the DFP backend.
 

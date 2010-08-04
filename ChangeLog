@@ -1,4 +1,13 @@
+2010-08-04  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* configure.ac: Apparently AC_CANONICAL_SYSTEM is only for compilers.
+	I removed it, and support for --target.  Now you must use --build
+	only.
+	* README.developer: Removed directions for using --target.
+
 2010-07-30  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* sysdeps/powerpc/dfpu/fe_decround.c (stdio.h): Removed unnecessary
 	include.
 
