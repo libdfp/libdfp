@@ -60,21 +60,9 @@ libdfp {
     fdimd32;
     fdimd64;
     fdimd128;
-    isfinited32;
-    isfinited64;
-    isfinited128;
-    __isfinited32;
-    __isfinited64;
-    __isfinited128;
-    # finited* and friends is deprecated but we published math.h with
-    # polymorphic isfinite() pointing to them so keep them around.  They just
-    # aliases.
     finited32;
     finited64;
     finited128;
-    __finited32;
-    __finited64;
-    __finited128;
     floord32;
     floord64;
     floord128;
@@ -114,9 +102,6 @@ libdfp {
     isinfd32;
     isinfd64;
     isinfd128;
-    __isinfd32;
-    __isinfd64;
-    __isinfd128;
     islessd32;
     islessd64;
     islessd128;
@@ -129,21 +114,12 @@ libdfp {
     isnand32;
     isnand64;
     isnand128;
-    __isnand32;
-    __isnand64;
-    __isnand128;
     isnormald32;
     isnormald64;
     isnormald128;
-    __isnormald32;
-    __isnormald64;
-    __isnormald128;
     isunorderedd32;
     isunorderedd64;
     isunorderedd128;
-    __isunorderedd32;
-    __isunorderedd64;
-    __isunorderedd128;
     ldexpd32;
     ldexpd64;
     ldexpd128;
@@ -219,9 +195,6 @@ libdfp {
     signbitd32;
     signbitd64;
     signbitd128;
-    __signbitd32;
-    __signbitd64;
-    __signbitd128;
     sind32;
     sind64;
     sind128;
@@ -243,5 +216,31 @@ libdfp {
     truncd32;
     truncd64;
     truncd128;
+  }
+  LIBDFP_1.0.2 {
+    __isnand32;
+    __isnand64;
+    __isnand128;
+    __isinfd32;
+    __isinfd64;
+    __isinfd128;
+  }
+  LIBDFP_1.0.3 {
+    # finited* and friends is deprecated but at some point we published math.h
+    # with polymorphic isfinite() pointing to them so keep them around.  They
+    # are just aliases.
+    __finited32;
+    __finited64;
+    __finited128;
+    isfinited32;
+    isfinited64;
+    isfinited128;
+    __isfinited32;
+    __isfinited64;
+    __isfinited128;
+    # Polymorphic signbit support.
+    __signbitd32;
+    __signbitd64;
+    __signbitd128;
   }
 }

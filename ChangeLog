@@ -1,3 +1,13 @@
+2010-08-04  Ryan S. Arnold  <rsa@us.ibmcom>
+
+	* ieee754r/Versions: Moved some of the __is* functions under LIBDFP_1.0.2
+	and LIBDFP_1.0.3.  Removed unnecessary __is* functions from export
+	that don't have polymorphic versions in math.h
+	* dfp/math.h: Removed accidental undef of isunordered.  This was
+	never implemented as a polymorphic function because it doesn't need to
+	be (per the spec).  Removed redundant polymoprhic isnan().
+	* Versions.def: Added Versions LIBDFP_1.0.2 and LIBDFP_1.0.3 for Libdfp.
+
 2010-08-04  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
@@ -54,14 +64,12 @@
 	* tests/test-isfinite.c: Added Conditional expectations for s390 for
 	isfinite return values from negative number inputs.
 
-
 2010-07-23  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* tests/test-logd.c: Removed unnecessary comments.
 	* tests/test-fpclassify.c: Removed unnecessary comments.
 	* configure.ac: Removed unnecessary comments.
 	* printf_dfp.c: Removed unnecessary comments.
-
 
 2010-07-23  Ryan S. Arnold  <rsa@us.ibm.com>
 

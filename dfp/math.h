@@ -894,34 +894,6 @@ extern int isunorderedd128 (_Decimal128 x, _Decimal128 y) __THROW;
 /* Return nonzero value if X is neither zero, subnormal, Inf, nor NaN.  */
 #define isnormal(x) (fpclassify (x) == FP_NORMAL)
 
-#ifdef isnan
-# undef isnan
-#endif
-
-/* Return nonzero value if X is a NaN.  We could use `fpclassify' but
-   we already have this functions `__isnan' and it is faster.  */
-# ifdef __NO_LONG_DOUBLE_MATH
-#  define ____isnan(x) \
-     (sizeof (x) == sizeof (float) ? __isnanf (x) : __isnan (x))
-# else
-#  define ____isnan(x) \
-     (sizeof (x) == sizeof (float)		      \
-      ? __isnanf (x)				      \
-      : sizeof (x) == sizeof (double)		      \
-      ? __isnan (x) : __isnanl (x))
-# endif
-
-
-#define isnan(x) \
-  (!__dfp_compatible(x)						      \
-    ? (____isnan(x))							      \
-    : (sizeof (x) == sizeof (_Decimal128)				      \
-      ? __isnand128(x)							      \
-      : (sizeof (x) == sizeof (_Decimal64)				      \
-	? __isnand64(x)							      \
-	: __isnand32(x)))						      \
-  )
-
 #ifdef isinf
 # undef isinf
 #endif
@@ -949,7 +921,7 @@ extern int isunorderedd128 (_Decimal128 x, _Decimal128 y) __THROW;
     )									      \
   )
 
-#ifdef fabs /* This is actually new in ISO/IEC TR 24732.  */
+#ifdef fabs
 # undef fabs
 #endif
 #define fabs(x) \
@@ -961,9 +933,8 @@ extern int isunorderedd128 (_Decimal128 x, _Decimal128 y) __THROW;
     )									      \
   )
 
-/* Comparison Macros  */
-#ifdef isunordered
-# undef isunordered
+#ifdef isnan
+# undef isnan
 #endif
 
 /* Return nonzero value if X is a NaN.  We could use `fpclassify' but
