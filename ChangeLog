@@ -1,5 +1,10 @@
 2010-08-05  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* ieee754r/Versions: Added __fabsd* and __fpclassifyd* under the
+	correct libdfp version number 1.0.3.
+
+2010-08-05  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* dfp/math.h: Restructure to cleanup presentation.
 
 2010-08-04  Ryan S. Arnold  <rsa@us.ibmcom>

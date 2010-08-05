@@ -54,9 +54,6 @@ libdfp {
     fabsd32;
     fabsd64;
     fabsd128;
-    __fabsd32;
-    __fabsd64;
-    __fabsd128;
     fdimd32;
     fdimd64;
     fdimd128;
@@ -81,9 +78,6 @@ libdfp {
     fpclassifyd32;
     fpclassifyd64;
     fpclassifyd128;
-    __fpclassifyd32;
-    __fpclassifyd64;
-    __fpclassifyd128;
     frexpd32;
     frexpd64;
     frexpd128;
@@ -242,5 +236,11 @@ libdfp {
     __signbitd32;
     __signbitd64;
     __signbitd128;
+    __fabsd32;
+    __fabsd64;
+    __fabsd128;
+    __fpclassifyd32;
+    __fpclassifyd64;
+    __fpclassifyd128;
   }
 }
