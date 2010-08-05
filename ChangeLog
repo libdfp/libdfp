@@ -1,3 +1,7 @@
+2010-08-05  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* dfp/math.h: Restructure to cleanup presentation.
+
 2010-08-04  Ryan S. Arnold  <rsa@us.ibmcom>
 
 	* ieee754r/Versions: Moved some of the __is* functions under LIBDFP_1.0.2
