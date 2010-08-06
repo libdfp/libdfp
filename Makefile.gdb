@@ -2,7 +2,7 @@
 # it's going into it's own Makefile.
 
 $(top_builddir)/debug-test.conf: Makefile
-	echo "Generating common debug configuration file $@."
+	@echo "Generating common debug configuration file $@."
 	@echo 'CC="$(CC)"' > $@
 	@echo 'DBG=$(dir $(firstword $(CC)))gdb$(cc_msize)' >> $@
 	@echo 'OBJDUMP=$(dir $(firstword $(CC)))objdump' >> $@
@@ -15,7 +15,7 @@ $(top_builddir)/debug-test.conf: Makefile
 	@echo
 
 $(addsuffix .conf,$(libdfp_tests)):
-	echo "Generating $@ configuration file."
+	@echo "Generating $@ configuration file."
 	@echo 'GDB_SCRIPT="$(patsubst %.conf,%,$@).gdb"' > $@
 	@echo 'APP="$(patsubst %.conf,%,$@)"' >> $@
 	@echo 'APP_SRC="$(patsubst %.conf,%,$@).c"' >> $@
@@ -28,7 +28,7 @@ endif
 
 #$(addsuffix .gdb,$(libdfp_tests)): $(top_builddir)/$(patsubst %.gdb,%,$@)
 $(addsuffix .gdb,$(libdfp_tests)): $(libdfp_tests)
-	echo "Generating GDB script $@"
+	@echo "Generating GDB script $@"
 	@echo 'set environment C -E -x c-header' > $@
 	@echo 'set environment LD_LIBRARY_PATH=$(top_builddir)/:$$LD_LIBRARY_PATH' >> $@
 ifneq ($(glibc_builddir),)
@@ -47,7 +47,7 @@ endif
 ifneq ($(glibc_builddir),)
 	@echo `$(dir $(firstword $(CC)))objdump -s --section=".text" $(glibc_builddir)/libc.so | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
 else
-	@$(dir $(firstword $(CC)))objdump -s --section=".text" `ldd $(patsubst %.gdb,%,$@) | grep libc.so | awk -F' ' '{print $$3}'` | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}' >> $@
+	@$(dir $(firstword $(CC)))objdump -s --section=".text" `LD_LIBRARY_PATH=./:$$LD_LIBRARY_PATH ldd $(patsubst %.gdb,%,$@) | grep libc.so | awk -F' ' '{print $$3}'` | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}' >> $@
 	@echo >> $@
 endif
 	@echo 'set $$addr = $$libc + $$start' >> $@
@@ -55,7 +55,7 @@ endif
 ifneq ($(glibc_builddir),)
 	@echo -n '$(glibc_builddir)/libc.so' >> $@
 else
-	@echo -n `ldd $(patsubst %.gdb,%,$@) | grep libc.so | awk -F' ' '{print $$3}'` >> $@
+	@echo -n `LD_LIBRARY_PATH=./:$$LD_LIBRARY_PATH ldd $(patsubst %.gdb,%,$@) | grep libc.so | awk -F' ' '{print $$3}'` >> $@
 endif
 	@echo ' $$addr' >> $@
 	@echo '' >> $@

@@ -1,3 +1,10 @@
+2010-08-06  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.gdb (libdfp_tests.gdb): Add
+	LD_LIBRARY_PATH=./:$LD_LIBRARY_PATH to ldd invocations to make sure
+	it reports ./libdfp.so.1 as a dependency and not the system or
+	toolchain libdfp.so.1.
+
 2010-08-05  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* ieee754r/Versions: Added __fabsd* and __fpclassifyd* under the
