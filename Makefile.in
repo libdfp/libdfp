@@ -83,9 +83,6 @@ endif
 +cflags	:= $(sort $(+cflags))
 
 override CFLAGS = $(gnu-inline-CFLAGS) $(+cflags)
-# Necessary so that the submake invocation of libdecnumber/Makefile actually
-# picks up the CFLAGS.
-export CFLAGS
 
 # These are the flags given to the compiler to tell it what sort of
 # optimization and/or debugging output to do for .S files.
@@ -177,7 +174,14 @@ first:
 # variables from the environment.
 $(dfp_backend)/$(dfp_backend_lib):
 	@echo "+Building DFP backend $@"
-	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE) -C $(dfp_backend)
+	# This is done so that if/when gcc changes libdecnumber/Makefile.in:
+	# CFLAGS = @CFLAGS@ to CFLAGS ?= @CFLAGS@ we don't need to do anything
+	# other than remove this line.  This is better than changing
+	# libdecnumber/Makefile.in and having to redo the Makefile in the
+	# future.
+	sed '/CFLAGS =/s/^CFLAGS \?\= \(.*\)$$/CFLAGS ?= \1/' $(dfp_backend)/Makefile > $(dfp_backend)/Makefile.temp
+	mv $(dfp_backend)/Makefile.temp $(dfp_backend)/Makefile
+	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE)  -C $(dfp_backend)
 	@echo
 
 libdfp: @enable_static@ @enable_shared@

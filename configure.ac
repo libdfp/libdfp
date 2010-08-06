@@ -174,10 +174,14 @@ AC_ARG_WITH([cpu],
     with_dfp=yes ;;
   z9-ec)
     submachine="$withval"
+    # Warning, -mzarch won't get passed to libecnumber/configure
+    CFLAGS="$CFLAGS -mzarch"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   z10)
     submachine="$withval"
+    # Warning, -mzarch won't get passed to libecnumber/configure
+    CFLAGS="$CFLAGS -mzarch"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   *)

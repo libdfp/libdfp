@@ -286,14 +286,15 @@ CFLAGS="-m64 -O2 -g"
 	different bitness than the default user env it is recommended that the
 	-m[31|32|64] flags be passed.
 
-	Some System Z machines require the -mzarch flag, e.g.
-	CFLAGS="-m31 -mzarch -O2 -g"
-
 	These should accompany sympathetic --build switch
 	described below, e.g.
 
 		powerpc-linux-gnu for -m32
 		powerpc64-linux-gnu for -m64
+
+	For System Z (s390), depending on the cpu, Libdfp's configure.ac will
+	append a -mzarch flag onto CFLAGS automatically.  This is a special
+	flag required to enable hardware DFP on some System Z cpus.
 
 ASFLAGS
 	Libdfp's Makefile.in will pull -g or -m[31|32|64] into ASFLAGS if it is

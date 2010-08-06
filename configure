@@ -1556,11 +1556,15 @@ echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
   z9-ec)
     submachine="$withval"
+    # Warning, -mzarch won't get passed to libecnumber/configure
+    CFLAGS="$CFLAGS -mzarch"
     { echo "$as_me:$LINENO: configuring for the $submachine processor" >&5
 echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
   z10)
     submachine="$withval"
+    # Warning, -mzarch won't get passed to libecnumber/configure
+    CFLAGS="$CFLAGS -mzarch"
     { echo "$as_me:$LINENO: configuring for the $submachine processor" >&5
 echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;

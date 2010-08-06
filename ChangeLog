@@ -1,5 +1,19 @@
 2010-08-06  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* configure: Regenerated.
+	* Makefile.in: Added special sed script which changes
+	libdecnumber/Makefile:CFLAGS = foo into CFLAGS ?= foo.  This allows
+	libdfp/Makefile's sub make invocation of libdecnumber/Makefile to
+	accept the updated CFLAGS.  This was necessary to allow configure to
+	update CFLAGS with -mzarch for s390 z9-ec and z10.  GCC should fix
+	this in their version of libdecnumber.
+	* configure.ac: -mzarch added to CFLAGS when s390 system is z9-ec or
+	z10.
+	* README.developer: Added indication that configure.ac sets -mzarch in
+	CFLAGS when appropriate.
+
+2010-08-06  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* Makefile.gdb (libdfp_tests.gdb): Add
 	LD_LIBRARY_PATH=./:$LD_LIBRARY_PATH to ldd invocations to make sure
 	it reports ./libdfp.so.1 as a dependency and not the system or
