@@ -63,6 +63,9 @@ submachine = @submachine@
 # e.g. -mcpu=power6
 submachine_opt = @submachine_opt@
 
+# Necessary for z9-ec and z10 s390 platforms.
+mzarch = @mzarch@
+
 ifdef submachine_opt
 cflags-cpu = $(submachine_opt)
 asflags-cpu = $(submachine_opt)
@@ -174,14 +177,7 @@ first:
 # variables from the environment.
 $(dfp_backend)/$(dfp_backend_lib):
 	@echo "+Building DFP backend $@"
-	# This is done so that if/when gcc changes libdecnumber/Makefile.in:
-	# CFLAGS = @CFLAGS@ to CFLAGS ?= @CFLAGS@ we don't need to do anything
-	# other than remove this line.  This is better than changing
-	# libdecnumber/Makefile.in and having to redo the Makefile in the
-	# future.
-	sed '/CFLAGS =/s/^CFLAGS \?\= \(.*\)$$/CFLAGS ?= \1/' $(dfp_backend)/Makefile > $(dfp_backend)/Makefile.temp
-	mv $(dfp_backend)/Makefile.temp $(dfp_backend)/Makefile
-	DEFS="-D__STDC_DEC_FP__=200704L" CFLAGS="$(CFLAGS)" $(MAKE)  -C $(dfp_backend)
+	DEFS="-D__STDC_DEC_FP__=200704L $(mzarch)" CFLAGS="$(CFLAGS)" $(MAKE)  -C $(dfp_backend)
 	@echo
 
 libdfp: @enable_static@ @enable_shared@
@@ -200,18 +196,18 @@ ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -
 
 # Build the static object files.
 .c.o:
-	$(CC) $(CFLAGS) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 .S.o:
-	$(CC) $(ASFLAGS) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
 # Build the shared object files.
 .c.os:
-	$(CC) $(CFLAGS) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 .S.os:
-	$(CC) $(ASFLAGS) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
 # Archive the static library and include all of the .o files from the backend
@@ -245,7 +241,7 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 #  calls.
 $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@.
-	$(CC) $(CFLAGS) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(addsuffix .os,$(libdfp_files)) -o $@ -lm
+	$(CC) $(CFLAGS) $(mzarch) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(addsuffix .os,$(libdfp_files)) -o $@ -lm
 	@echo
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
@@ -302,7 +298,7 @@ libdfp_tests = test-printf test-param test-amort test-decode test-quantize test-
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
 $(libdfp_tests): %:%.o $(top_builddir)/$(SHARED_SONAME_LIB)
-	$(CC) $(CFLAGS) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .o,$@) -o $@
+	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .o,$@) -o $@
 	@echo
 
 LIBRARY_PATH = $(glibc_builddir)/:$(glibc_builddir)/math:$(glibc_builddir)/elf:$(glibc_builddir)/nptl

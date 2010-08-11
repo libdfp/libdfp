@@ -150,6 +150,7 @@ esac],
 AC_SUBST(dfp_backend)
 
 # This will invoke the sysdeps/$machine/<processor>/ machinery.
+mzarch=
 submachine=
 with_dfp=
 AC_ARG_WITH([cpu],
@@ -175,13 +176,13 @@ AC_ARG_WITH([cpu],
   z9-ec)
     submachine="$withval"
     # Warning, -mzarch won't get passed to libecnumber/configure
-    CFLAGS="$CFLAGS -mzarch"
+    mzarch="-mzarch"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   z10)
     submachine="$withval"
     # Warning, -mzarch won't get passed to libecnumber/configure
-    CFLAGS="$CFLAGS -mzarch"
+    mzarch="-mzarch"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   *)
@@ -205,6 +206,9 @@ if test -n "$submachine"; then
     AC_MSG_ERROR([${CC-cc} does not support $submachine])
   fi
 fi
+
+# Unless the system is a s390 variant this is most likely empty.
+AC_SUBST(mzarch)
 
 # This tells us whether we know we have a hardware decimal floating point
 # unit.  We know this based upon the submachine.

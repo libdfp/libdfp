@@ -276,7 +276,7 @@ PACKAGE_BUGREPORT='rsa@us.ibm.com'
 ac_unique_file="printf_dfp.c"
 ac_subdirs_all="$ac_subdirs_all libdecnumber"
 ac_subdirs_all="$ac_subdirs_all libbid"
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os enable_decimal_float dfp_backend with_dfp with_fp base_machine machine CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT OBJDUMP AS ASFLAGS libdfp_cv_cc_with_decimal_float glibc_headers glibc_build enable_static enable_shared submachine submachine_opt sysdep_dirs RANLIB ac_ct_RANLIB AWK subdirs LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os enable_decimal_float dfp_backend mzarch with_dfp with_fp base_machine machine CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT OBJDUMP AS ASFLAGS libdfp_cv_cc_with_decimal_float glibc_headers glibc_build enable_static enable_shared submachine submachine_opt sysdep_dirs RANLIB ac_ct_RANLIB AWK subdirs LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1526,6 +1526,7 @@ fi;
 
 
 # This will invoke the sysdeps/$machine/<processor>/ machinery.
+mzarch=
 submachine=
 with_dfp=
 
@@ -1557,14 +1558,14 @@ echo "$as_me: configuring for the $submachine processor" >&6;}
   z9-ec)
     submachine="$withval"
     # Warning, -mzarch won't get passed to libecnumber/configure
-    CFLAGS="$CFLAGS -mzarch"
+    mzarch="-mzarch"
     { echo "$as_me:$LINENO: configuring for the $submachine processor" >&5
 echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
   z10)
     submachine="$withval"
     # Warning, -mzarch won't get passed to libecnumber/configure
-    CFLAGS="$CFLAGS -mzarch"
+    mzarch="-mzarch"
     { echo "$as_me:$LINENO: configuring for the $submachine processor" >&5
 echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
@@ -1606,6 +1607,9 @@ echo "$as_me: error: ${CC-cc} does not support $submachine" >&2;}
    { (exit 1); exit 1; }; }
   fi
 fi
+
+# Unless the system is a s390 variant this is most likely empty.
+
 
 # This tells us whether we know we have a hardware decimal floating point
 # unit.  We know this based upon the submachine.
@@ -3685,6 +3689,7 @@ s,@host_vendor@,$host_vendor,;t t
 s,@host_os@,$host_os,;t t
 s,@enable_decimal_float@,$enable_decimal_float,;t t
 s,@dfp_backend@,$dfp_backend,;t t
+s,@mzarch@,$mzarch,;t t
 s,@with_dfp@,$with_dfp,;t t
 s,@with_fp@,$with_fp,;t t
 s,@base_machine@,$base_machine,;t t

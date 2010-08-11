@@ -1,3 +1,10 @@
+2010-08-11  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	 configure: Regenerated.
+	 configure.ac: Added AC_SUBST(mzarch) back.  We shouldn't be editing
+	 CFLAGS.
+	 Makefile.in: Pass $(mzarch) along with CFLAGS if it is defined.
+
 2010-08-06  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
