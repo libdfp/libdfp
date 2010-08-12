@@ -27,7 +27,6 @@
 #endif
 
 #include <float.h> /* DEC_NAN definition.  */
-#include <dfp.h>
 #include <stdio.h>
 #include <math.h>
 

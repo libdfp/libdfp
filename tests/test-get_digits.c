@@ -28,7 +28,6 @@
 
 #include <fenv.h>
 #include <float.h>
-#include <dfp.h>
 #include <stdio.h>
 #include <wchar.h> /* This should pick up the libdfp wchar in dfp/wchar.h.  */
 

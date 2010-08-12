@@ -30,9 +30,7 @@ __BEGIN_DECLS
 
 /* In order to inform libc that a decimal floating point type needs to be
  * printed libdfp needs to inform libc, prior to the first invocation of printf,
- * that it has printf callbacks available for decimal floating point types.  The
- * user should invoke this function to register the libdfp printf callbacks with
- * libc.  */
+ * that it has printf callbacks available for decimal floating point types.  */
 extern int register_printf_dfp (void);
 
 __END_DECLS

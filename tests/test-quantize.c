@@ -27,7 +27,6 @@
 #endif
 
 #include <float.h>
-#include <dfp.h>
 #include <stdio.h>
 #include <math.h>
 

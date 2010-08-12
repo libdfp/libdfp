@@ -12,6 +12,7 @@ NOTE:Eight space tabs are the optimum editor setting for reading this file.
 
 		Author(s) : Ryan S. Arnold <rsa@us.ibm.com>
 		      Date Created: January 27, 2010
+		      Last Changed: August 12, 2010
 
 ---------------------------------------------------------------------------
 Table of Contents:
@@ -31,8 +32,10 @@ Table of Contents:
 	  4.2  GLIBC Minimum Version
 	  4.3  GCC With --enable-decimal-float Support
 	5.  _Decimal* Data Types
-	6.  Compile and Link
-	7.  Unsupported/Non-Standard Additions
+	6.  DFP Headers
+	7.  Compile and Link
+	8.  Unsupported/Non-Standard Additions
+	9.  Known Limitations
 
 ---------------------------------------------------------------------------
 1.  Introduction
@@ -129,7 +132,7 @@ DEFINE __USE_ISOC99!  Additionally, simply using -std=c99 isn't enough!
 NOTE: If you forget to use -std=gnu99 you may notice that you will get very
 screwy results when you call dfp math functions.  If the compiler can't find
 the prototypes (due to missing defines) it will attempt to create a default
-prototype which will have the incorrect return type.
+prototype which will have an incorrect return type.
 
 Compile with -Wall to pick up undefined prototype warnings.
 
@@ -151,20 +154,26 @@ format codes.
 
 The fully functional printf-hooks mechanism was debuted in GLIBC 2.10.
 
-Libdfp handles the registration of printf-hooks with GLIBC but a user must
-ask Libdfp to do so if he/she wishes to use any printf variants with
-Decimal Floating Point types by executing the following function prior to
-execution of printf with DFP types:
+Libdfp has a library constructor which registers the Libdfp printf handlers
+with the libc.  If the version of GLIBC that is loaded when your application
+is executed is too old (pre-2.10) and doesn't have the printf-hooks interface
+you will get an undefined reference error against GLIBC.
 
-	#include <dfp/dfp.h>
-	register_printf_dfp();
-
-After registration of the DFP printf-hooks printf will recognize the following
-length modifiers:
+When libdfp is loaded printf will recognize the following length modifiers:
 
 	%H - for _Decimal32
 	%D - for _Decimal64
 	%DD - for _Decimal128
+
+It will recognize the following spec characters:
+
+	%e
+	%f
+	%g
+	%a  (as debuted in TR 24732)
+
+Therefore, any combination of DFP length modifiers and spec characters is
+supported.
 
 ---------------------------------------------------------------------------
 4. Dependencies
@@ -210,23 +219,51 @@ The floating point suffix for DFP constants follows:
 NOTE: Assigning a naked constant to a DFP variable will actually be
 performing a binary to decimal conversion and, depending on the precision,
 can assign an incorrect number.  Always use the decimal floating point
-suffix!
+suffix, e.g.,
+
+	_Decimal64 d64 = 1.0DD;
+
+The following will result in a binary-float to decimal-float conversion:
+
+	_Decimal64 d64 = 1.0;
 
 ---------------------------------------------------------------------------
-6.  Compile and Link
+6.  DFP Headers
+
+The following Libdfp headers extend the existing system headers.  If the path
+to the Libdfp headers is included in the search path then these will be picked
+up prior to the system headers.
+
+	dfp/fenv.h
+	dfp/math.h
+	dfp/stdlib.h
+	dfp/wchar.h
+
+Each of these headers uses the GCC construct include_next in order to pick up
+the system header as well, e.g.,
+
+	dfp/math.h will include_next <math.h>
+
+This mechanism allows Libdfp to add the Decimal interfaces required by the
+specification to the aforementioned headers.
+
+---------------------------------------------------------------------------
+7.  Compile and Link
 
 A compilation and link for a DFP program will look like the following:
 
-	$(CC) -Wall test_dfp.c -o test_dfp -D__STDC_WANT_DEC_FP__ -std=gnu99 -ldfp
+	$(CC) -Wall test_dfp.c -o test_dfp -D__STDC_WANT_DEC_FP__ \
+	-std=gnu99 -ldfp
 
 ---------------------------------------------------------------------------
-7.  Unsupported/Non-Standard Additions
+8.  Unsupported/Non-Standard Additions
 
 Libdfp provides a non-standard method for output of the decoded Densely
 Packed Decimal representation using the decoded[32|64|128]() functions.  The
 output format is:
 
-  [sign][MSD],[decoded-declet-1],...,[decoded-declet-n][E][+|-][decoded exponent]
+	[sign][MSD],[decoded-declet-1],
+	...,[decoded-declet-n][E][+|-][decoded exponent]
 
 Examples:
 
@@ -242,9 +279,64 @@ A header file providing the prototype for these functions is not provided by
 the Advance Toolchain to discourage you from using them.  If you MUST use them
 define the following prototypes in your program:
 
-  /* char * should ref a 14 byte char array, +0,000,000E+0\0  */
-  extern char * decoded32 (_Decimal32, char*);
-  /* char * should ref a 26 byte char array, +0,000,000,000,000,000E+0\0  */
-  extern char * decoded64 (_Decimal64, char*);
-  /* char * should ref a 50 byte char array, * +0,000,000,000,000,000,000,000,000,000,000,000E+0\0  */
-  extern char * decoded128 (_Decimal128, char*);
+	/* char * should ref a 14 byte char array,
+	 * +0,000,000E+0\0  */
+	extern char * decoded32 (_Decimal32, char*);
+
+	/* char * should ref a 26 byte char array,
+	 * +0,000,000,000,000,000E+0\0  */
+	extern char * decoded64 (_Decimal64, char*);
+
+	/* char * should ref a 50 byte char array,
+	 * +0,000,000,000,000,000,000,000,000,000,000,000E+0\0  */
+	extern char * decoded128 (_Decimal128, char*);
+
+---------------------------------------------------------------------------
+9. Known Limitations
+
+IEEE754r currently has an addendum awaiting vote whereby the default quantum
+for conversions involving zero will go to a zero exponent (e.g.  0 equals
+0.0).  The current IEEE754r specification dictates that the quantum shall go
+to the largest supported by the data type, e.g.  _Decimal32 0.0E191;
+_Decimal64 0.0E767, _Decimal128 0.0E12287.
+
+Observation of the advance toolchain results will show that we don't follow
+any particular convention.  This may change in the future.
+
+For the following examples notice the DPD encoding on both power6[x] and
+non-power6:
+
+	_Decimal32 d32 = 0.0DF;
+	_Decimal64 d64 = 0.0DD;
+	_Decimal128 d128 = 0.0DL;
+	
+	(_Decimal128)0.0DF: [+0,000,000E+0]
+	(_Decimal128)0.0DD: [+0,000,000,000,000,000E+0]
+	(_Decimal128)0.0DL: [+0,000,000,000,000,000,000,000,000,000,000,000E+0]
+
+On power6[x] notice the representation of zero after an [int|long|long long]
+conversion to _Decimal[32|64|128] respectively:
+
+	(_Decimal32)0DF = (int)0: [+0,000,000E+0]
+	(_Decimal32)0.0DF = (float)0.000000: [+0,000,000E+0]
+	(_Decimal64)0DD = (long)0: [+0,000,000,000,000,000E+0]
+	(_Decimal64)0.0DD = (double)0.000000: [+0,000,000,000,000,000E+0]
+	(_Decimal128)0DL = (long long)0:
+	  [+0,000,000,000,000,000,000,000,000,000,000,000E+0]
+	(_Decimal128)0.0DL = (long double)0.000000:
+	  [+0,000,000,000,000,000,000,000,000,000,000,000E+0]
+
+Notice the difference with soft-dfp:
+
+	(_Decimal32)0.0DF = (int)0: [+0,000,000E-1]
+	(_Decimal32)0.0DF = (float)0.000000: [+0,000,000E+0]
+	(_Decimal64)0.0DD = (long)0: [+0,000,000,000,000,000E-1]
+	(_Decimal64)0.0DD = (double)0.000000: [+0,000,000,000,000,000E+0]
+	(_Decimal128)0.0DL = (long long)0:
+	  [+0,000,000,000,000,000,000,000,000,000,000,000E-1]
+	(_Decimal128)0.0DL = (long double)0.000000:
+	  [+0,000,000,000,000,000,000,000,000,000,000,000E+0]
+
+Namely the negative sign of the exponent with soft-dfp for int to _Decimal
+conversions.
+

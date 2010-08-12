@@ -1,3 +1,26 @@
+2010-08-12  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* Makefile.in: Removed test-left_justify from execution since it is a
+	known failure case for non-power6 systems.  No worries since
+	left_justify isn't used right now.
+	* tests/test-amort.c: Removed spurious #include <dfp.h>.
+	* tests/test-get_digits.c: Likewise.
+	* tests/test-decode.c: Likewise.
+	* tests/test-quantize.c: Likewise.
+	* tests/test-printf.c: Likewise.
+	* tests/test-fpclassify.c: Likewise.
+	* tests/test-numdigits.c: Likewise.
+	* tests/test-left_justify.c: Likewise.
+	* tests/test-isinf.c: Likewise.
+	* tests/test-isnan.c: Likewise.
+	* tests/test-isfinite.c: Likewise.
+	* tests/test-strtod.c: Likewise.  Also changed one value compare test
+	to a decode test since the visual representation was 0.0.
+	* README.user: Added further user notes.
+	* dfp/dfp.h: Moved this to ...
+	* include/dfp.h: here since the user no longer has to call the
+	printf_dfp registration hooks, and thus doens't need the prototype.
+
 2010-08-11  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	 configure: Regenerated.

@@ -55,7 +55,6 @@ exit
 #include <float.h>
 #include <math.h>
 #include <sys/time.h>
-#include <dfp/dfp.h>
 
 //extern _Decimal64 powd64 (_Decimal64, _Decimal64);
 //extern _Decimal64 quantized64 (_Decimal64, _Decimal64);

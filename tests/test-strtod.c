@@ -11,6 +11,7 @@
 #define _WANT_DC 1
 
 #include "scaffold.c"
+#include "decode.h"
 
 /* Inspired by GLIBC stdio-common/tfformat.c  */
 typedef struct{
@@ -31,16 +32,15 @@ d_type strtods[] =
   {__LINE__, "-0.0001", -0.0001DF, -0.0001DD, -0.0001DL },
   {__LINE__, "inf", DEC_INFINITY, DEC_INFINITY, DEC_INFINITY },
   {__LINE__, "INFINITY", DEC_INFINITY, DEC_INFINITY, DEC_INFINITY },
-  {__LINE__, "0.0E+100", DEC_INFINITY, 0.0DD, 0.0DL },
+  {__LINE__, "0.0E+100", 0.0DF, 0.0DD, 0.0DL },
   {__LINE__, "0.01", 0.01DF, 0.01DD, 0.01DL },
   {__LINE__, "0.1", 0.1DF, 0.1DD, 0.1DL },
   {__LINE__, "0.11", 0.11DF, 0.11DD, 0.11DL },
   {__LINE__, "0.21", 0.21DF, 0.21DD, 0.21DL },
-  {__LINE__, "1.23456789E-7", 0.0DF, 0.0DD, 0.0DL },
   {__LINE__, "19e9", 19000000000.0DF, 19000000000.0DD, 19000000000.0DL },
-  {__LINE__, "1234.5678910111213e-5", 0.01234DF ,0.01234DD ,0.01234DL },
   {__LINE__, "3.14", 3.140000DF, 3.140000DD, 3.140000DL },
   {__LINE__, "3.14e-2", 0.031400DF, 0.031400DD, 0.031400DL },
+  {__LINE__, "1234.5678910111213e-5", 0.012346DF ,0.012346DD ,0.012346DL },
   {0,0,0,0,0 }
 };
 
@@ -62,6 +62,7 @@ d_nan_type strtods_nan[] =
   /* Compare against the decoded declet for each representation of DEC_NAN since
    * since you can't compare DEC_NAN to DEC_NAN.  */
   {__LINE__, "NaN", DECLET32_NAN, DECLET64_NAN, DECLET128_NAN},
+  {__LINE__, "1.23456789E-7", "+1,234,568E-14", "+0,000,000,123,456,789E-15", "+0,000,000,000,000,000,000,000,000,123,456,789E-15" },
   {0,0,0,0,0 }
 };
 
