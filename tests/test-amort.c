@@ -1,3 +1,29 @@
+/* Amortization Benchmarck
+
+   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+
+   This file is part of the Decimal Floating Point C Library.
+
+   Author(s): Peter Eberlein <eberlein@us.ibm.com>
+              Steven Munroe <munroesj@us.ibm.com>
+              Ryan S. Arnold <rsa@us.ibm.com>
+
+   The Decimal Floating Point C Library is free software; you can
+   redistribute it and/or modify it under the terms of the GNU Lesser
+   General Public License version 2.1.
+
+   The Decimal Floating Point C Library is distributed in the hope that
+   it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+   the GNU Lesser General Public License version 2.1 for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License version 2.1 along with the Decimal Floating Point C Library;
+   if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+   Suite 330, Boston, MA 02111-1307 USA.
+
+   Please see libdfp/COPYING.txt for more information.  */
+
 /*
 set -ex
 
@@ -43,22 +69,12 @@ echo "performance testing"
 exit
 */
 
-
-
-/* File test_amort.c created by sjmunroe on Mon Oct 30 2006. */
-/* -std=gnu99 */
-/* #define __STDC_WANT_DEC_FP__ 1 */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <float.h>
 #include <math.h>
 #include <sys/time.h>
-
-//extern _Decimal64 powd64 (_Decimal64, _Decimal64);
-//extern _Decimal64 quantized64 (_Decimal64, _Decimal64);
-//extern _Decimal64 strtod64 (char *, char *);
 
 typedef struct
 {
@@ -114,7 +130,6 @@ armort_monthly_table (_Decimal64 loan, _Decimal64 yearly_rate,
 {
   _Decimal64 months = years * 12.0DD;
   _Decimal64 monthly_rate = yearly_rate / 12.0DD;
-  //_Decimal64 temp0, temp1, temp2, temp3;
   _Decimal64 temp0;
   _Decimal64 principal, principal_payed, interest_payed;
   _Decimal64 accum_principal, accum_interest;
@@ -207,7 +222,6 @@ armort_monthly_table (_Decimal64 loan, _Decimal64 yearly_rate,
 static void
 armort_verifier (inputtype *inputs, int numinputs)
 {
-//	_Decimal64 payment;
 	int i;
 	
 	for (i = 0; i < numinputs; i++)

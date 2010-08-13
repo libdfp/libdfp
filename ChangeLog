@@ -1,3 +1,11 @@
+2010-08-12  Luis Machado  <luisgpm@us.ibm.com>
+
+	* tests/test-amort.c: Added license and copyright.
+	* tests/test-printf.c: Updated copyright year.
+	* tests/test-strtod.c: Added license and copyright.  Corrected
+	incorrect expected values.
+	* strtod32.c: Fixed several conversion bugs.
+
 2010-08-12  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* Makefile.in: Removed test-left_justify from execution since it is a

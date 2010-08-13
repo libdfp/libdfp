@@ -1,3 +1,27 @@
+/* Test strtod[32|64|128] facility.
+
+   Copyright (C) 2010 Free Software Foundation, Inc.
+
+   This file is part of the Decimal Floating Point C Library.
+
+   Author(s): Ryan S. Arnold <rsa@us.ibm.com>
+
+   The Decimal Floating Point C Library is free software; you can
+   redistribute it and/or modify it under the terms of the GNU Lesser
+   General Public License version 2.1.
+
+   The Decimal Floating Point C Library is distributed in the hope that
+   it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+   the GNU Lesser General Public License version 2.1 for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License version 2.1 along with the Decimal Floating Point C Library;
+   if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+   Suite 330, Boston, MA 02111-1307 USA.
+
+   Please see libdfp/COPYING.txt for more information.  */
+
 #ifndef __STDC_WANT_DEC_FP__
 # define __STDC_WANT_DEC_FP__ 1
 #endif
@@ -40,7 +64,7 @@ d_type strtods[] =
   {__LINE__, "19e9", 19000000000.0DF, 19000000000.0DD, 19000000000.0DL },
   {__LINE__, "3.14", 3.140000DF, 3.140000DD, 3.140000DL },
   {__LINE__, "3.14e-2", 0.031400DF, 0.031400DD, 0.031400DL },
-  {__LINE__, "1234.5678910111213e-5", 0.012346DF ,0.012346DD ,0.012346DL },
+  {__LINE__, "1234.5678910111213e-5", 0.01234568DF ,0.01234567891011121DD ,0.012345678910111213DL },
   {0,0,0,0,0 }
 };
 
@@ -62,7 +86,8 @@ d_nan_type strtods_nan[] =
   /* Compare against the decoded declet for each representation of DEC_NAN since
    * since you can't compare DEC_NAN to DEC_NAN.  */
   {__LINE__, "NaN", DECLET32_NAN, DECLET64_NAN, DECLET128_NAN},
-  {__LINE__, "1.23456789E-7", "+1,234,568E-14", "+0,000,000,123,456,789E-15", "+0,000,000,000,000,000,000,000,000,123,456,789E-15" },
+  {__LINE__, "1.23456789E-7", "+1,234,568E-13",        "+0,000,000,123,456,789E-15", "+0,000,000,000,000,000,000,000,000,123,456,789E-15" },
+  {__LINE__, "1234.5678910111213e-5", "+1,234,568E-8", "+1,234,567,891,011,121E-17", "+0,000,000,000,000,000,012,345,678,910,111,213E-18" },
   {0,0,0,0,0 }
 };
 

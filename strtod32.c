@@ -659,7 +659,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   /* We have the number digits in the integer part.  Whether these are all or
      any is really a fractional digit will be decided later.  */
   int_no = dig_no;
-  lead_zero = int_no == 0 ? 1 : 0;  /* FIXME: Why was this -1 */
+  lead_zero = int_no == 0 ? -1 : 0;  /* FIXME: Why was this -1 */
 
   /* Read the fractional digits.  A special case are the 'american style'
      numbers like `16.' i.e. with decimal but without trailing digits.  */
@@ -844,6 +844,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	  ++startp;
 	}
 #endif
+      lead_zero = (lead_zero < 0? 0 : lead_zero);
       startp += lead_zero + decimal_len;
       exponent -= base == 16 ? 4 * lead_zero : lead_zero;
       dig_no -= lead_zero;
@@ -930,13 +931,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	    the string.  But these all can be ignored because we know the
 	    format of the number is correct and we have an exact number
 	    of characters to read.  */
-#ifdef USE_WIDE_CHAR
-      if (*startp < L_('0') || *startp > L_('9'))
-	++startp;
-#else
-      if (*startp < '0' || *startp > '9')
-	startp += decimal_len;
-#endif
 
       /*do
 	{
@@ -951,19 +945,31 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       frac /= 10;
 
       d32 += frac;*/
-      
+      int_no = 0;
       do
         {
-	  if(base == 10)
-	    d32 = d32*10 + *startp - L_('0');
-	  else
-	    d32 = d32*10 + (*startp >= L_('0') && 
+#ifdef USE_WIDE_CHAR
+      if (*startp < L_('0') || *startp > L_('9'))
+	++startp;
+#else
+      if (*startp < '0' || *startp > '9')
+	startp += decimal_len;
+#endif
+
+	if (int_no <= MANT_DIG)
+	  {
+	    if(base == 10)
+	      d32 = d32*10 + *startp - L_('0');
+	    else
+	      d32 = d32*10 + (*startp >= L_('0') &&
 		*startp <= L_('9') ? -L_('0') : 10-L_('a'))
 		+ *startp;
-	  ++startp;
-	  --exponent;
-        }
-      while (--digcnt > 0);
+	    ++startp;
+	    --exponent;
+	    int_no++;
+	  }
+	}
+    while (--digcnt > 0);
     }
 
 #if NUMDIGITS_SUPPORT==0
