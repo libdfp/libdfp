@@ -1,3 +1,7 @@
+2010-08-23  Carlos Eduardo Seo  <cseo@linux.vnet.ibm.com>
+
+	* init_dfp.c: Changed #include <dfp/dfp.h> to #include <dfp.h>.
+
 2010-08-12  Luis Machado  <luisgpm@us.ibm.com>
 
 	* tests/test-amort.c: Added license and copyright.

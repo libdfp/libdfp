@@ -22,7 +22,7 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#include <dfp/dfp.h>
+#include <dfp.h>
 #include <init_dfp.h>
 
 void __attribute__ ((constructor)) __attribute__((visibility ("hidden")))
