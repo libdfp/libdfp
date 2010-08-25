@@ -48,7 +48,7 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
         context.round = DEC_ROUND_HALF_EVEN;
 
   /* Use a C library function to get a floating point string.  */
-  sprintf (buf, INT_FMT ".0", CAST_FOR_FMT(a));
+  sprintf (buf, INT_FMT "", CAST_FOR_FMT(a));
   /* Convert from the floating point string to a decimal* type.  */
   /* PASTE(___decimal,PASTE(DEST,FromString))(&f, buf, &context);  */
   PASTE(___decimal,PASTE(DEST,FromString))(&e, buf, &context);

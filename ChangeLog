@@ -1,3 +1,13 @@
+2010-08-25  Luis Machado  <luisgpm@br.ibm.com>
+
+	* sysdeps/soft-dfp/floatsisd.c: Don't generate additional decimal
+	digit.
+
+2010-08-24  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* README.developer: Documentation update.
+	* TODO: Mark some items as [DONE].
+
 2010-08-23  Carlos Eduardo Seo  <cseo@linux.vnet.ibm.com>
 
 	* init_dfp.c: Changed #include <dfp/dfp.h> to #include <dfp.h>.

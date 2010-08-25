@@ -596,7 +596,7 @@ Janis Johnson <janis187@us.ibm.com> provided the initial versions of the
 arithmetic, conversion, and comparison routines.
 
 The libdecnumber library was originaly contributed to GCC by IBM and written
-by Mike Cowlishaw.  It's inclusion into GCC was negotiated in 2005/2006 and it
+by Mike Cowlishaw.  Its inclusion into GCC was negotiated in 2005/2006 and it
 was pulled into Libdfp as a utility library shortly thereafter.
 
 GLIBC proper declined to include Libdfp upstream on the grounds that

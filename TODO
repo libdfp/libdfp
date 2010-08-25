@@ -15,7 +15,7 @@ libdecnumber.so phantom library for compat issues.
 
 libdfp version issues with older apps.
 
-If system glibc is 2.10 then make check shouldn't need all the GLIBC build
+[DONE] If system glibc is 2.10 then make check shouldn't need all the GLIBC build
 scaffolding for executing and debugging tests.
 
 Clear up make clean and make distclean.
@@ -36,7 +36,7 @@ Prototype versioned symbols support.
 
 Implement libbid backend.
 
-Write User's guide
+[DONE] Write User's guide
 
 Write Man Page
 
