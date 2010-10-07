@@ -701,6 +701,9 @@ d128_type printf_d128s[] =
 
   {__LINE__, 6543.00DL, " 6543.00", "%8DDa"},
 
+  /* Fixed by Andreas Schwab on 2010-20-04 */
+  {__LINE__, 0.9999999999DL, "1.000000", "%DDf"},
+
   {0,0,0,0 }
 };
 

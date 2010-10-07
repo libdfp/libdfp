@@ -697,8 +697,8 @@ __printf_dfp (FILE *fp,
 	  }
 
 	while (digits[--index] == '9') digits[index] = '0';
-	  digits[index]++;
-	if (index < n) { n--; }
+	digits[index]++;
+	if (index < n) { n--; nd++; }
       } while (0);
     } /* Done rounding.  */
 

@@ -1,3 +1,14 @@
+2010-10-07  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* tests/test-printf.c (printf_d128s): Added 0.9999999999DL which
+	reported 0.100000 rather than 1.000000 and was fixed by Andreas'
+	patch from 2010-10-04.
+
+2010-10-04  Andreas Schwab  <schwab@redhat.com>
+
+	* printf_dfp.c (__printf_dfp): Fix up nd when rounding overflows
+	beyond first digit.
+
 2010-08-25  Luis Machado  <luisgpm@br.ibm.com>
 
 	* sysdeps/soft-dfp/floatsisd.c: Don't generate additional decimal
