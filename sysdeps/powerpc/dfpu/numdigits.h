@@ -25,9 +25,8 @@
 
    Please see dfp/COPYING.txt for more information.  */
 
-/* Allow this to be included more than once so don't guard it. */
-//#ifndef _NUMDIGITS_H
-//#define _NUMDIGITS_H 1
+/* Alow this file to be included more than once, so don't use the usual
+   include guards.  */
 
 #define NUMDIGITS_SUPPORT 1
 
@@ -205,5 +204,3 @@ FUNC_D (left_justify) (DEC_TYPE x)
   * _Decima64 back to _Decimal32 since the calculation is done in _Decimal64.  */
   return (DEC_TYPE)rnd;
 }
-
-//#endif /* _NUMDIGITS_H */

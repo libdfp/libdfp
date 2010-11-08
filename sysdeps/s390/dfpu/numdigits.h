@@ -23,9 +23,8 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _NUMDIGITS_H
-#define _NUMDIGITS_H 1
-
+/* Alow this file to be included more than once, so don't use the usual
+   include guards.  */
 
 #define NUMDIGITS_SUPPORT 1
 
@@ -171,6 +170,3 @@ FUNC_D (left_justify) (DEC_TYPE x)
   return rnd;
 #endif
 }
-
-
-#endif /* _NUMDIGITS_H */
