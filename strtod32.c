@@ -956,7 +956,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	startp += decimal_len;
 #endif
 
-	if (int_no <= MANT_DIG)
+	if (int_no < MANT_DIG)
 	  {
 	    if(base == 10)
 	      d32 = d32*10 + *startp - L_('0');

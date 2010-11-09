@@ -1,3 +1,7 @@
+2010-11-09  Luis Machado  <luisgpm@br.ibm.com>
+
+	* strtod32.c (FUNCTION_L_INTERNAL): Fix comparison operator.
+
 2010-11-08  Luis Machado  <luisgpm@br.ibm.com>
 
 	* sysdeps/s390/dfpu/numdigits.h: Remove include guards.
