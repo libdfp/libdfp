@@ -1,3 +1,7 @@
+2010-11-19  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* CONTRIBUTORS: Added Luis Machado.  Added DCO requirements.
+
 2010-11-09  Luis Machado  <luisgpm@br.ibm.com>
 
 	* strtod32.c (FUNCTION_L_INTERNAL): Fix comparison operator.
