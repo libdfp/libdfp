@@ -1,5 +1,9 @@
 2010-11-29  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* README.user: Added clarification of how to include dfp/math.h.
+
+2010-11-29  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* dfp/math.h: Move #include_next <math.h> so that if the compiler
 	invocation has -I/<path>/include/dfp/ but doesn't define
 	__STDC_WANT_DEC_FP__ that they still get the system math.h.
