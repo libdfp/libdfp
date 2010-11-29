@@ -2,7 +2,7 @@
    system math.h classification macros.
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2009 Free Software Foundation, Inc.
+   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -31,11 +31,14 @@
 # error "dfp/<math.h> should be included before the system math.h."
 #endif
 
-#ifdef __STDC_WANT_DEC_FP__
-
 /* Include the system math.h first so that we can undef and redefine the
  * classification functions to select for _Decimal[32|64|128] types.  */
 #include_next <math.h>
+
+/* Include this after the #include_next <math.h> so that if the user has
+ * -I/<path>/include/dfp/ on their compilation line but doesn't define
+ *  __STDC_WANT_DEC_FPP that they still get the system math.h.  */
+#ifdef __STDC_WANT_DEC_FP__
 
 #include <features.h>
 __BEGIN_DECLS
