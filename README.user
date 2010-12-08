@@ -247,15 +247,18 @@ the system header as well, e.g.,
 This mechanism allows Libdfp to add the Decimal interfaces required by the
 specification to the aforementioned headers.
 
-In order to pick up the Libdfp math.h prototypes and classification macro
+In order to pick up the Libdfp prototypes and classification macro
 overrides compile with the following:
 
 -I/pathto/include/dfp/ -D__STDC_WANT_DEC_FP__
 
 And then in the application source simply using the following include will
-pick up both /pathto/include/dfp/math.h and /usr/include/math.h:
+pick up both /pathto/include/dfp/<foo>.h and /usr/include/<foo>.h:
 
 #include <math.h>
+#include <fenv.h>
+#include <stdlib.h>
+#include <wchar.h>
 
 ---------------------------------------------------------------------------
 7.  Compile and Link
@@ -349,4 +352,6 @@ Notice the difference with soft-dfp:
 
 Namely the negative sign of the exponent with soft-dfp for int to _Decimal
 conversions.
+
+
 

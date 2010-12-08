@@ -1,3 +1,15 @@
+2010-12-03  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* configure.ac: Incremented the version number to 1.0.4
+	* README.user: Marked empty sections with (TODO).
+	* Versions.def: Incremented the version number to 1.0.4
+
+2010-11-29  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* README.user: Added clarification of how to include dfp/stdlib.h,
+	dfp/fenv.h and dfp/wchar.h.
+
 2010-11-29  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* README.user: Added clarification of how to include dfp/math.h.

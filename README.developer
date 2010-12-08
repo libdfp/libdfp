@@ -241,6 +241,13 @@ Point.  Use the following to determine if your compiler supports it:
 If decimal floating point support is not available in your compiler the
 libdfp configure stage will fail with a warning.
 
+Between GCC 4.3 and GCC 4.5 the compiler exported constant
+__DEC32_DENORMAL_MIN__ was changed to __DEC32_SUBNORMAL_MIN__.  Libdfp now
+uses __DEC32_SUBNORMAL_MIN__.  If you see errors like the following then you
+need to upgrade your compiler:
+
+  error: '__DEC32_SUBNORMAL_MIN__' undeclared (first use in this function)
+
 ---------------------------------------------------------------------------
 4.6 Autoconf & GNU Make
 
