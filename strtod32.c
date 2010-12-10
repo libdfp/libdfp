@@ -912,7 +912,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	      }
 #endif
 	  if(base == 10)
-	    d32 = d32 * base + *startp - L_('0');
+	    d32 = d32 * base + (*startp - L_('0'));
 	  else
 	    d32 = d32 * base + (*startp >= L_('0') && *startp <= L_('9') ?
 			-L_('0') : 10-L_('a')) + *startp;
@@ -959,7 +959,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	if (int_no < MANT_DIG)
 	  {
 	    if(base == 10)
-	      d32 = d32*10 + *startp - L_('0');
+	      d32 = d32*10 + (*startp - L_('0'));
 	    else
 	      d32 = d32*10 + (*startp >= L_('0') &&
 		*startp <= L_('9') ? -L_('0') : 10-L_('a'))

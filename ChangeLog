@@ -1,3 +1,8 @@
+2010-12-10  Luis Machado  <luisgpm@br.ibm.com>
+
+	* strtod32.c: Fix precedence of arithmetic operation.
+	* tests/test-strtod.c: Add new testcase and fix wrong tests.
+
 2010-12-03  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
