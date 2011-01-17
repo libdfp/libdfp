@@ -71,6 +71,15 @@ cflags-cpu = $(submachine_opt)
 asflags-cpu = $(submachine_opt)
 endif
 
+picflag = @picflag@
+
+# Yes this is a bit of a hack, but gcc/libdecnumber/Makefile won't allow
+# CFLAGS to be overridden on a submake invocation.
+BACKEND_CFLAGS=
+ifeq (libdecnumber, $(dfp_backend))
+BACKEND_CFLAGS=$(cflags-cpu) $(picflag)
+endif
+
 default_cflags := @CFLAGS@
 default_asflags := @ASFLAGS@
 
@@ -79,8 +88,8 @@ ifndef	+cflags
 +cflags	:= $(filter-out -I%,$(default_cflags))
 endif
 
-# Add -mcpu=<CPU> targets.
-+cflags	+= $(cflags-cpu)
+# Add -mcpu=<CPU> targets and -f[pic|PIC].
++cflags	+= $(cflags-cpu) $(picflag)
 
 # Don't duplicate options.
 +cflags	:= $(sort $(+cflags))
@@ -172,12 +181,14 @@ first:
 	@echo Processing Makefiles: $(makefile_dirs)
 
 # Configure will have generated the Makefile for the selected backend.  Let's
-# add it to the subdir list so it gets recursively invoked by Make.  We pass
-# CFLAGS as a precaution.  Don't pass -e to make or it could pull unwanted
-# variables from the environment.
+# add it to the subdir list so it gets recursively invoked by Make.  Don't pass
+# -e to make or it could pull unwanted variables from the environment.
+# Yes, passing $(BACKEND_CFLAGS) in -DEFS is a hack, but since the
+# libdecnumber maintainers won't allow CFLAGS to be overridden and the libdfp
+# maintainer doesn't want to use libtool this hack will have to stand.
 $(dfp_backend)/$(dfp_backend_lib):
 	@echo "+Building DFP backend $@"
-	DEFS="-D__STDC_DEC_FP__=200704L $(mzarch)" CFLAGS="$(CFLAGS)" $(MAKE)  -C $(dfp_backend)
+	DEFS="-D__STDC_DEC_FP__=200704L $(mzarch) $(BACKEND_CFLAGS)" $(MAKE) -C $(dfp_backend)
 	@echo
 
 libdfp: @enable_static@ @enable_shared@

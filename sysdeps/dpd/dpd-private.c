@@ -669,7 +669,7 @@ const short int	bcd_to_dpd[2464] = {
 extern void __get_dpd_digits (int bits, const void *const *args, char *str,
 			      int *exp_p, int *sign_p, int *nan_p, int *inf_p);
 
-void 
+void
 __get_dpd_digits (int bits, const void *const *args, 
 char *str, int *exp_p, int *sign_p, int *nan_p, int *inf_p)
 {
@@ -708,7 +708,7 @@ else if (bits == 64)
   str[16] = '\0';
   if (sign_p) *sign_p = d.ieee.negative;
 }
-else if (bits == 128) 
+else if (bits == 128)
 {
   union ieee754r_Decimal128 d;
   d.td = *(_Decimal128*)args[0];
@@ -732,6 +732,8 @@ else if (bits == 128)
   str[34] = '\0';
   if (sign_p) *sign_p = d.ieee.negative;
 }
+else
+  return;
 
   str[0] = '0' + c_f.lmd;
   if (exp_p) *exp_p = exp;

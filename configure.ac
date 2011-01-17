@@ -424,10 +424,12 @@ AC_ARG_ENABLE([shared],
 	      enable_shared=shared )
 AC_SUBST(enable_shared)
 
-picflag="-fPIC";
-if test "$enable_shared" = "shared"; then
-	CFLAGS="$CFLAGS $picflag"
-fi
+# Should be ok if we build static with this turned on.  If the linker
+# complains that the GOT is too big this may need to be upgraded to -fPIC so
+# we get full addressibility.
+picflag="-fpic"
+AC_MSG_NOTICE(configuring with "$picflag")
+AC_SUBST(picflag)
 
 # Compute the list of sysdeps directories.
 AC_MSG_CHECKING(sysdep dirs)

@@ -276,7 +276,7 @@ PACKAGE_BUGREPORT='rsa@us.ibm.com'
 ac_unique_file="printf_dfp.c"
 ac_subdirs_all="$ac_subdirs_all libdecnumber"
 ac_subdirs_all="$ac_subdirs_all libbid"
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os enable_decimal_float dfp_backend mzarch with_dfp with_fp base_machine machine CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT OBJDUMP AS ASFLAGS libdfp_cv_cc_with_decimal_float glibc_headers glibc_build enable_static enable_shared submachine submachine_opt sysdep_dirs RANLIB ac_ct_RANLIB AWK subdirs LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os enable_decimal_float dfp_backend mzarch with_dfp with_fp base_machine machine CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT OBJDUMP AS ASFLAGS libdfp_cv_cc_with_decimal_float glibc_headers glibc_build enable_static enable_shared picflag submachine submachine_opt sysdep_dirs RANLIB ac_ct_RANLIB AWK subdirs LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -2684,10 +2684,13 @@ else
 fi;
 
 
-picflag="-fPIC";
-if test "$enable_shared" = "shared"; then
-	CFLAGS="$CFLAGS $picflag"
-fi
+# Should be ok if we build static with this turned on.  If the linker
+# complains that the GOT is too big this may need to be upgraded to -fPIC so
+# we get full addressibility.
+picflag="-fpic"
+{ echo "$as_me:$LINENO: configuring with \"$picflag\"" >&5
+echo "$as_me: configuring with \"$picflag\"" >&6;}
+
 
 # Compute the list of sysdeps directories.
 echo "$as_me:$LINENO: checking sysdep dirs" >&5
@@ -3709,6 +3712,7 @@ s,@glibc_headers@,$glibc_headers,;t t
 s,@glibc_build@,$glibc_build,;t t
 s,@enable_static@,$enable_static,;t t
 s,@enable_shared@,$enable_shared,;t t
+s,@picflag@,$picflag,;t t
 s,@submachine@,$submachine,;t t
 s,@submachine_opt@,$submachine_opt,;t t
 s,@sysdep_dirs@,$sysdep_dirs,;t t
