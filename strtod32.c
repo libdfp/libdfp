@@ -956,7 +956,8 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	startp += decimal_len;
 #endif
 
-	if (int_no < MANT_DIG)
+        /* We need the extra digit to get proper rounding.  */
+	if (int_no < MANT_DIG + 1)
 	  {
 	    if(base == 10)
 	      d32 = d32*10 + (*startp - L_('0'));

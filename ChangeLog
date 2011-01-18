@@ -1,3 +1,13 @@
+2011-1-18  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* tests/test-strtod.c: Adjusted assumptions of tests from truncation
+	on too long of an input to rounding to nearest.
+
+2011-1-18  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* strtod32.c (FUNCTION_L_INTERNAL): Check an extra digit on the input
+	to see if we need to round rather than truncate.
+
 2011-1-17  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
