@@ -200,9 +200,11 @@ const char	dpd_to_char[1024][4] = {
 	"758", "759", "794", "795", "956", "957", "798", "799", /* 3d8-3df */
 	"760", "761", "762", "763", "764", "765", "766", "767", /* 3e0-3e7 */
 	"768", "769", "786", "787", "966", "967", "988", "989", /* 3e8-3ef */
-	"770", "771", "772", "773", "974", "775", "776", "777", /* 3f0-3f7 */
+	"770", "771", "772", "773", "774", "775", "776", "777", /* 3f0-3f7 */
 	"778", "779", "796", "797", "976", "977", "998", "999"  /* 3f8-3ff */
 	};
+
+//	"770", "771", "772", "773", "974", "775", "776", "777", /* 3f0-3f7 */
 
 /* Table to convert 3 Densely Packed Decimal digits (10-bits) into
    3 Binary coded Decimal digits (12-bits).  */
@@ -708,7 +710,8 @@ else if (bits == 64)
   str[16] = '\0';
   if (sign_p) *sign_p = d.ieee.negative;
 }
-else if (bits == 128)
+//else if (bits == 128)
+else
 {
   union ieee754r_Decimal128 d;
   d.td = *(_Decimal128*)args[0];
@@ -732,8 +735,6 @@ else if (bits == 128)
   str[34] = '\0';
   if (sign_p) *sign_p = d.ieee.negative;
 }
-else
-  return;
 
   str[0] = '0' + c_f.lmd;
   if (exp_p) *exp_p = exp;

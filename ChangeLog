@@ -1,5 +1,18 @@
 2011-01-17  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* Makefile.in (libdfp_tests): Added test-log10d.
+	* tests/test-decode.c: Added decode of log10d128(0.0000000011DL) to
+	verify that it prints correctly in declets.
+	* tests/test-logd.c (main): Added pbuf[CHAR_MAX] so that tests work
+	properly.
+	* tests/test-log10d.c: New test-case which verifies that printf now
+	works properly for the result of log10d128(0.0000000011DL).
+	* sysdeps/dpd/dpd-private.c: Fixed dpd_to_char[0x3f4] from "974" to
+	"774" since the previous was a typo which was making values print
+	incorrectly.
+
+2011-01-17  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* configure: Regenerated.
 	* configure.ac: Removed addition of -fPIC to CFLAGS and instead export
 	it to Makefile.in who is now responsible for adding it to CFLAGS.  Set

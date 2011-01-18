@@ -1,4 +1,4 @@
-/* Test islogd[32|64|128].
+/* Test logd[32|64|128].
 
    Copyright (C) 2010 Free Software Foundation, Inc.
 
@@ -80,8 +80,6 @@ d64_decode_type decode_d64s[] =
   {0,0,0 }
 };
 
-
-
 int main (void)
 {
   d64_type *d64ptr;
@@ -96,7 +94,8 @@ int main (void)
       if(d64ptr->e != retval)
         {
 	  static char rbuf[CHAR_MAX];
-	  fprintf(stderr,"decoded64(retval) [%s] != decoded64(expected) [%s]\n", decoded64(retval, &rbuf[0]), decoded64(d64ptr->e, &rbuf[0]));
+	  static char pbuf[CHAR_MAX];
+	  fprintf(stderr,"decoded64(retval) [%s] != decoded64(expected) [%s]\n", decoded64(retval, &rbuf[0]), decoded64(d64ptr->e, &pbuf[0]));
 	}
     }
 
