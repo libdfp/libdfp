@@ -1,3 +1,10 @@
+2011-1-17  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* tests/test-strtod.c: Removed unnecessary test cases.
+	* configure.ac: Incremented the version number to 1.0.5.
+	* Versions.def: Incremented the version number to 1.0.5.
+
 2011-01-17  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* Makefile.in (libdfp_tests): Added test-log10d.

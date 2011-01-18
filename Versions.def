@@ -3,5 +3,6 @@ libdfp {
   LIBDFP_1.0.2
   LIBDFP_1.0.3
   LIBDFP_1.0.4
+  LIBDFP_1.0.5
   LIBDFP_PRIVATE
 }
