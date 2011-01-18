@@ -1,5 +1,30 @@
 2011-1-18  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* configure: Regenerated.
+	* tests/test-isfinite.c: Changed expectation on isfinite() for
+	negative numbers on Power5 to '1'.  Power6 (hardware isfinite) returns
+	'-1' on isfinite.  The spec simply says that non-zero means finite.
+	* tests/test-logd.c: Removed half completed 'quantize compare'
+	functionality which was throwing a false error.
+	* tests/test-decode.c: Removed dangling printf that wasn't useful.
+	* tests/test-printf.c: Added a _Decimal128 test for printing (1.0DL /
+	1.000000e-123DL) which has a sufficiently negative exponent that it
+	forced the 'index' (rounding digit) position to be negative and caused
+	a segv when __printf_dfp() tried to erroneously round the result on
+	s390.  We got lucky up until now on PowerPC due to the kernel
+	reserving space on the top of the stack.
+	* configure.ac: Incremented the version number to 1.0.6.
+	* Versions.def: Incremented the version number to 1.0.6.
+
+2011-1-18  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* printf_dfp.c (__printf_dfp): Fixed segv where, if the exponent is
+	sufficiently negative it pushes 'index' (the digit used to round
+	values to the left) into a negative number.  In that case we simply
+	don't need to round at all.
+
+2011-1-18  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* tests/test-strtod.c: Adjusted assumptions of tests from truncation
 	on too long of an input to rounding to nearest.
 

@@ -99,10 +99,6 @@ int main (void)
       _DC_P(__FILE__,d64ptr->line, d64ptr->expect,d64ptr->d);
     }
 
-  printf("foo: %.8lx%.8lx\n", d64u.i[0],d64u.i[1]);
-  printf("foo: %.8lx%.8lx%.8lx%.8lx\n", d128u.i[0],d128u.i[1],d128u.i[2],d128u.i[3]);
-/*  printf("foo: %lld\n", d128u.lli); */
-
   _REPORT();
 
   /* fail comes from scaffold.c  */

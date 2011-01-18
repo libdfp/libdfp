@@ -50,7 +50,6 @@ d64_type printf_d64s[] =
   {__LINE__, 0.9956440572495333DD, -0.004365457509639973DD,  "%DfDD",'v'},
   {__LINE__, 0.9828009828009828DD, -0.01734863833461300DD, "%DfDD",'v'},
   {__LINE__, 1.0DD, 0.0DD, "%DfDD",'v'},
-  {__LINE__, 1.02DD, 0.019803DD, "%.6DfDD",'q'},
   {__LINE__, 1.02DD, 0.01980262729617971DD, "%DfDD",'v'},
   {__LINE__, 3.14DD, 1.144222799920162DD, "%DfDD",'v'},
 #ifndef _ARCH_PWR6 /* This returns NaN in the hard-DFP case.  */
@@ -89,14 +88,7 @@ int main (void)
     {
       _Decimal64 retval = logd64(d64ptr->x);
       fprintf(stdout,"%DfDD = logd64(%DfDD) in: %s:%d\n", retval, d64ptr->x,__FILE__,__LINE__-1);
-      if(d64ptr->vorq == 'v')
-        _VC_P(__FILE__,d64ptr->line, d64ptr->e,retval,d64ptr->format);
-      if(d64ptr->e != retval)
-        {
-	  static char rbuf[CHAR_MAX];
-	  static char pbuf[CHAR_MAX];
-	  fprintf(stderr,"decoded64(retval) [%s] != decoded64(expected) [%s]\n", decoded64(retval, &rbuf[0]), decoded64(d64ptr->e, &pbuf[0]));
-	}
+      _VC_P(__FILE__,d64ptr->line, d64ptr->e,retval,d64ptr->format);
     }
 
   for (d64dptr = decode_d64s; d64dptr->line; d64dptr++)

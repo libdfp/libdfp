@@ -645,6 +645,8 @@ __printf_dfp (FILE *fp,
       char rounddigit = '4';
 
       if (spec == 'f')
+	/* This may force index to negative, in which case we ignore it at a
+	 * later time.  */
 	index = n + nd + exp + prec;
       /* Goofy special case where we round significant digits which aren't
        * right of the decimal place.  */
@@ -673,8 +675,9 @@ __printf_dfp (FILE *fp,
 	}
 
       /* If this is true then the requested precision is smaller than the
-      * default and rounding is required.  */
-      if (index < mw && digits[index] > rounddigit)
+      * default and rounding is required.  If 'exp' was sufficiently negative
+      * 'index' may be negative, in which case we don't need to round.  */
+      if (index > 0 && index < mw && digits[index] > rounddigit) 
 	do {
 	  int trailzero = index+1;
 	  if (digits[index] == rounddigit+1)
@@ -696,9 +699,14 @@ __printf_dfp (FILE *fp,
 	      if (roundmode == 6 && trailzero) break;
 	  }
 
-	while (digits[--index] == '9') digits[index] = '0';
+	while (digits[--index] == '9')
+	  digits[index] = '0';
 	digits[index]++;
-	if (index < n) { n--; nd++; }
+	if (index < n)
+	  {
+	    n--;
+	    nd++;
+	  }
       } while (0);
     } /* Done rounding.  */
 

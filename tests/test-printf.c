@@ -704,6 +704,10 @@ d128_type printf_d128s[] =
   /* Fixed by Andreas Schwab on 2010-20-04 */
   {__LINE__, 0.9999999999DL, "1.000000", "%DDf"},
 
+  /* Caused a segv due to a the negative exponent generating a negative 'index'.
+   * It was fixed by Andreas Krebbel on 2011-01-18 */
+  {__LINE__, (1.0DL / 1.000000e-123DL), "1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.000000", "%DDf"},
+
   {0,0,0,0 }
 };
 
