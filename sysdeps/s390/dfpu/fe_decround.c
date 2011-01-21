@@ -43,15 +43,17 @@ hidden_def(__fe_dec_getround)
 int
 __fe_dec_setround (int round)
 {
-  if ((round|FPC_DFP_RM_MASK) != FPC_DFP_RM_MASK
-      || (round > FE_DEC_TONEARESTFROMZERO))
+  /* This currently also allows the extended rounding modes (5, 6 and
+     7) which are not covered by the standard.  Please see
+     fe_decround.c in the root dir for more information.  */
+  if (((round << 4) | FPC_DFP_RM_MASK) != FPC_DFP_RM_MASK)
     {
       /* ROUND is not a valid rounding mode.  */
       return 1;
     }
-  __asm__ volatile ("srnmt 0(%0)"
-		 		     :
-		 		     : "a" (round << 4));
+  __asm__ volatile ("llgfr %0,%0  \n\t"
+		    "srnmt 0(%0)"
+		    : "+a" (round));
 
   return 0;
 }

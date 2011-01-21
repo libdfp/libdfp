@@ -1,3 +1,16 @@
+2011-1-21  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* configure: Regenerated.
+	* configure.ac: Incremented the version umber to 1.0.7.
+	* Versions.def: Incremented the version umber to 1.0.7.
+
+2011-1-21  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* sysdeps/s390/dfpu/numdigits.h (setexp): Bias the exponent and return
+	'1' for z zero mantissa, which is what is done for soft-dfp.
+	* sysdeps/s390/dfpu/fe_decround.c (__fe_dec_setround): Enable extended
+	rounding modes (5,6 and 7) which are not covered by the standard.
+
 2011-1-18  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.

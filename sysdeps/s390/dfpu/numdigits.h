@@ -86,6 +86,8 @@ FUNC_D (getexp) (DEC_TYPE x)
 static inline DEC_TYPE
 FUNC_D (setexp) (DEC_TYPE x, int exp)
 {
+  int biased_exp = exp + DECIMAL_BIAS;
+
 #if _DECIMAL_SIZE == 32
   _Decimal64 tmp = (_Decimal64)x;
 #elif _DECIMAL_SIZE == 128
@@ -95,12 +97,13 @@ FUNC_D (setexp) (DEC_TYPE x, int exp)
 #endif
 
   asm (
+    "llgfr %1,%1   \n\t"
 #if _DECIMAL_SIZE == 128
     "iextr %0,%0,%1"
 #else
     "iedtr %0,%0,%1"
 #endif
-    : "+f" (tmp) : "r" (exp + DECIMAL_BIAS));
+    : "+f" (tmp), "+d" (biased_exp));
 
 #if _DECIMAL_SIZE == 32
   return (_Decimal32)tmp;
@@ -131,7 +134,12 @@ FUNC_D (numdigits) (DEC_TYPE x)
 #endif
    : "=d"(result) : "f"(tmp));
 
-  return result;
+  /* The Power hardware implementation returns 1 even for a zero
+     mantissa.  The software implementation in soft-dfp mimics that
+     behaviour.  The S/390 instructions return 0 for zero values.  So
+     we have to adjust this here in order to match the behaviour of
+     the existing functions.  */
+  return (result == 0 ? 1 : result);
 }
 
 static DEC_TYPE
