@@ -1,0 +1,30 @@
+===========================================================================
+
+				    Libdfp
+	  The "Decimal Floating Point C Library" Maintainer's Guide
+		     for the GNU/Linux OS and GLIBC 2.10+
+			Contributed by IBM Corporation
+		 Copyright (C) 2011 Free Software Foundation
+
+===========================================================================
+NOTE:Eight space tabs are the optimum editor setting for reading this file.
+===========================================================================
+
+		 Author(s) : Ryan S. Arnold <rsa@us.ibm.com>
+			Date Created: February 9, 2011
+
+---------------------------------------------------------------------------
+Table of Contents:
+
+	1.  Introduction
+	2.  Specification
+	  2.1  DFP Spec
+	  2.2  Spec Changes
+	3.  DFP ABI Changes
+	4.  Versioning
+	5.  Mailing Lists
+	6.  ChangeLog
+	7.  Backends
+	8.  Bugs
+	9.  Contributions
+
