@@ -1,3 +1,11 @@
+2011-02-08  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* README.maintainer: New file.
+	* README.developer: Added several TODO items.
+	* TODO: Added an item.
+	* CONTRIBUTORS: Moved DCO from here to...
+	* CONTRIBUTING: here.
+
 2011-1-21  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
