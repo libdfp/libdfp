@@ -1,6 +1,6 @@
 /* Support macros for making weak and strong aliases for symbols.
 
-   Copyright (C) 1995-1998, 2000-2006, 2008, 2009
+   Copyright (C) 1995-1998, 2000-2006, 2008, 2009, 2011
    Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
@@ -26,31 +26,10 @@
 #ifndef _LIBDFP_SYMBOLS_H
 #define _LIBDFP_SYMBOLS_H	1
 
-/* Adapted for libdfp from glibc's include/libc-symbols.h in 2009.  */
-
-#ifndef __SYMBOL_PREFIX
-# ifdef NO_UNDERSCORES
-#  define __SYMBOL_PREFIX
-# else
-#  define __SYMBOL_PREFIX "_"
-# endif
-#endif
-
-
-
-#ifndef C_SYMBOL_NAME
-# ifdef NO_UNDERSCORES
-#  define C_SYMBOL_NAME(name) name
-# else
-#  define C_SYMBOL_NAME(name) _##name
-# endif
-#endif
-
-#ifndef ASM_LINE_SEP
-# define ASM_LINE_SEP ;
-#endif
-
-
+/* Define a macro we can use to construct the asm name for a C symbol.  */
+#ifndef LABEL
+# define LABEL(name) name##:
+#endif /* LABEL  */
 
 #define	MIN(a,b) (((a)<(b))?(a):(b))
 

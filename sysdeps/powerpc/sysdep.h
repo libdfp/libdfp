@@ -22,20 +22,6 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-/* Adapted from GLIBC's powerpc/sysdep.h in 2009. */
-
-#ifndef C_LABEL
-/* Define a macro we can use to construct the asm name for a C symbol.  */
-
-#ifdef	__STDC__
-#define C_LABEL(name)		_##name##:
-#else
-#define C_LABEL(name)		_/**/name/**/:
-#endif
-
-#endif /* C_LABEL  */
-
-
 /* 
  * Powerpc Feature masks for the Aux Vector Hardware Capabilities (AT_HWCAP). 
  * This entry is copied to _dl_hwcap or rtld_global._dl_hwcap during startup.

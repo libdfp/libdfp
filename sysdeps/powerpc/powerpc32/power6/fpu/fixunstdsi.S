@@ -1,6 +1,6 @@
 /* Decimal Floating Point convert 128-bit to unsigned int.
 
-   Copyright (C) 2006, 2008, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2006, 2008, 2009, 2011 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -24,7 +24,6 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #include <sysdep.h>
-
 
 	.machine	"power6"
 /* unsigned int __dpd_fixunstdsi (_Decimal128 x)   */
@@ -54,5 +53,4 @@ L(negative):
 L(done):
 	addi	r1,r1,16
 	blr
-	END (__dpd_fixunsddsi)
-
+	END (__dpd_fixunstdsi)

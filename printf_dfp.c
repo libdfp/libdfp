@@ -319,7 +319,7 @@ __dfp_ais (const struct printf_info *info, size_t n __attribute__ ((unused)), in
       return 1;
     }
 
-  return 0;
+  return -1;
 }
 strong_alias(__dfp_ais, dfp_ais)
 hidden_def(__dfp_ais)
@@ -383,8 +383,8 @@ __printf_dfp (FILE *fp,
   assert (decimalwc.wc != L'\0');
 #else
   /* Hard-code values from 'C' locale.  */
-  decimald = ".";
-  decimal = &decimald;
+//  decimald = ".";
+  decimal = ".";
   decimalwc.wc = L'.';
 #endif
 
@@ -476,7 +476,7 @@ __printf_dfp (FILE *fp,
       __get_digits_d128 (d128, digits+1, &exp, &is_neg, &is_nan, &is_inf);
       mw = __DEC128_MANT_DIG__ + 1;
     }
-  else
+  else if (info->user & mod_H)
     {
        _Decimal32 d32 = **(_Decimal32**)args[0];
        if (d32 == 0) is_zero = 1;
@@ -484,6 +484,8 @@ __printf_dfp (FILE *fp,
        __get_digits_d32 (d32, digits+1, &exp, &is_neg, &is_nan, &is_inf);
        mw = __DEC32_MANT_DIG__ + 1;
     }
+  else /* We shouldn't get here, but it is possible.  */
+    return -2;
 
   /* The first digit is always a zero to allow rounding.  */
   n = 0;

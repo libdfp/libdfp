@@ -1,6 +1,6 @@
 /* Assembly macros for 32-bit PowerPC.
 
-   Copyright (C) 1999, 2001, 2002, 2003, 2006, 2009
+   Copyright (C) 1999, 2001, 2002, 2003, 2006, 2009, 2011
    Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
@@ -23,34 +23,18 @@
 
 #include <sysdeps/powerpc/sysdep.h>
 
-/* Taken from GLIBC in 2009.  */
-
+/* Derived from GLIBC  */
 #ifdef __ASSEMBLER__
 
 #ifdef __ELF__
 
-/* If compiled for profiling, call `_mcount' at the start of each
-   function.  */
-#ifdef	PROF
-/* The mcount code relies on a the return address being on the stack
-   to locate our caller and so it can restore it; so store one just
-   for its benefit.  */
-# define CALL_MCOUNT							      \
-  mflr  r0;								      \
-  stw   r0,4(r1);							      \
-  cfi_offset (lr, 4);	       						      \
-  bl    JUMPTARGET(_mcount);
-#else  /* PROF */
-# define CALL_MCOUNT		/* Do nothing.  */
-#endif /* PROF */
-
+#undef ENTRY
 #define	ENTRY(name)							      \
-  ASM_GLOBAL_DIRECTIVE C_SYMBOL_NAME(name);				      \
-  ASM_TYPE_DIRECTIVE (C_SYMBOL_NAME(name),@function)			      \
+  ASM_GLOBAL_DIRECTIVE name;						      \
+  ASM_TYPE_DIRECTIVE (name,@function)					      \
   .align ALIGNARG(2);							      \
-  C_LABEL(name)								      \
-  cfi_startproc;							      \
-  CALL_MCOUNT
+  LABEL(name)								      \
+  cfi_startproc;
 
 #define EALIGN_W_0  /* No words to insert.  */
 #define EALIGN_W_1  nop
@@ -61,37 +45,24 @@
 #define EALIGN_W_6  EALIGN_W_5;nop
 #define EALIGN_W_7  EALIGN_W_6;nop
 
+#undef EALIGN
 /* EALIGN is like ENTRY, but does alignment to 'words'*4 bytes
    past a 2^align boundary.  */
-#ifdef PROF
-# define EALIGN(name, alignt, words)					      \
-  ASM_GLOBAL_DIRECTIVE C_SYMBOL_NAME(name);				      \
-  ASM_TYPE_DIRECTIVE (C_SYMBOL_NAME(name),@function)			      \
-  .align ALIGNARG(2);							      \
-  C_LABEL(name)								      \
-  cfi_startproc;							      \
-  CALL_MCOUNT								      \
-  b 0f;									      \
-  .align ALIGNARG(alignt);						      \
-  EALIGN_W_##words;							      \
-  0:
-#else /* PROF */
-# define EALIGN(name, alignt, words)					      \
-  ASM_GLOBAL_DIRECTIVE C_SYMBOL_NAME(name);				      \
-  ASM_TYPE_DIRECTIVE (C_SYMBOL_NAME(name),@function)			      \
-  .align ALIGNARG(alignt);						      \
-  EALIGN_W_##words;							      \
-  C_LABEL(name)								      \
-  cfi_startproc;
-#endif
+#define EALIGN(name, alignt, words)					      \
+ ASM_GLOBAL_DIRECTIVE name;						      \
+ ASM_TYPE_DIRECTIVE (name,@function)					      \
+ .align ALIGNARG(alignt);						      \
+ EALIGN_W_##words;							      \
+ LABEL(name)								      \
+ cfi_startproc;
 
 #undef	END
 #define END(name)							      \
   cfi_endproc;								      \
   ASM_SIZE_DIRECTIVE(name)
 
-#define DO_CALL(syscall)				      		      \
-    li 0,syscall;						              \
+#define DO_CALL(syscall)						      \
+    li 0,syscall;							      \
     sc
 
 #undef JUMPTARGET
@@ -150,9 +121,6 @@
 /* Local labels stripped out by the linker.  */
 #undef L
 #define L(x) .L##x
-
-/* Label in text section.  */
-#define C_TEXT(name) name
 
 #endif /* __ELF__ */
 
