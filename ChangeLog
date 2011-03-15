@@ -1,3 +1,32 @@
+2011-03-15  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* printf_dfp.c (__printf_dfp): Finished cleaning up 'decimal'.
+	* sysdeps/powerpc/sysdep.h: Updated copyright year.
+
+2011-03-15  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* README.maintainer: Updated.
+	* sysdeps/powerpc/powerpc32/power6/fpu/fixunstdsi.S (END): Fix
+	erroneous __dpd_fixunstssi to __dpd_fixunstdsi.
+	* sysdeps/powerpc/powerpc32/sysdep.h (PROF): Removed PROF macros.
+	(CALL_MCOUNT): Removed CALL_MCOUNT.
+	(ENTRY): Removed CALL_MCOUNT and C_SYMBOL_NAME from macro body.
+	Replaced C_LABEL with LABEL.
+	(C_TEXT): Removed macro as unnecessary.
+	* sysdeps/powerpc/sysdep.h (C_LABEL): Removed macro.
+	* include/libdfp-symbols.h (LABEL): New macro which replaces C_LABEL
+	by removing preceding underscore.
+	* printf_dfp.c (__dfp_ais): Return -1 if info->user doesn't match any of
+	the DFP mod_[H|D|DD] identifiers.
+	(__printf_dfp): Started cleaning up 'decimal' per Jakub Jelinek's
+	suggestion.  Fixed bug found by Jakub Jelinek where random garbage is
+	printed if the modifier is not H/D/DD.  The default was dropping into
+	the _Decimal32 case when it should have been returning -2.
+
+2010-02-08  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* README.maintainer: Added todo for "Commit Access"
+
 2011-02-08  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* README.maintainer: New file.

@@ -1,6 +1,6 @@
 /* Function definition to convert DFP values to strings
 
-   Copyright (C) 2006, 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2006, 2009, 2010, 2011 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -340,15 +340,11 @@ __printf_dfp (FILE *fp,
 	      const struct printf_info *info,
 	      const void *const *args)
 {
-	int wide = info->wide;
-	/* Counter for number of written characters.	*/
-	int done = 0;
+  int wide = info->wide;
+  /* Counter for number of written characters.  */
+  int done = 0;
 
-  /* Locale-dependent representation of decimal point.	*/
-
-#ifndef OPTION_EGLIBC_LOCALE_CODE
-  char decimald;
-#endif
+  /* Locale-dependent representation of decimal point.  */
   const char *decimal;
 
   union { const char *mb; unsigned int wc; } decimalwc;
@@ -383,11 +379,9 @@ __printf_dfp (FILE *fp,
   assert (decimalwc.wc != L'\0');
 #else
   /* Hard-code values from 'C' locale.  */
-//  decimald = ".";
   decimal = ".";
   decimalwc.wc = L'.';
 #endif
-
 
 #ifdef OPTION_EGLIBC_LOCALE_CODE
   if (info->group)
