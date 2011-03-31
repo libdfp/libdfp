@@ -119,6 +119,9 @@ POWER7		HW	libdecnumber	DPD
 S/390 z9-109	SW	libdecnumber	DPD
 S/390 z9-ec	HW	libdecnumber	DPD
 S/390 z10	HW	libdecnumber	DPD
+
+TODO:
+-------------------------------------------------
 x86		SW	libdecnumber	DPD | BID
 x86_64		SW	libbid		BID
 
@@ -401,7 +404,7 @@ Here are some valid configurations of Libdfp:
 
 64-bit PowerPC (soft-dfp) using the libdecnumber backend and dpd encoding:
 
-CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
+CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--libdir=/usr/lib64/ \
@@ -413,7 +416,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
 64-bit PowerPC POWER6 (hard-dfp) using libdecnumber backend and dpd encoding: We only
 need the --with-cpu=power6 flag for power6 support and hardware-dfp:
 
-CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
+CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--libdir=/usr/lib64/ \
@@ -425,7 +428,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
 64-bit PowerPC POWER7 (hard-dfp) using libdecnumber backend and dpd encoding: We only
 need the --with-cpu=power7 flag for power7 support and hardware-dfp:
 
-CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
+CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--libdir=/usr/lib64/ \
@@ -436,7 +439,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m64 -O2 -g" \
 
 32-bit PowerPC (soft-dfp) using the libdecnumber backend and dpd encoding:
 
-CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
+CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
@@ -446,7 +449,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
 
 Or 32-bit POWER6 (hard-dfp):
 
-CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
+CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
@@ -456,7 +459,7 @@ CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
 
 Or 32-bit POWER7 (hard-dfp):
 
-CC=/opt/at05/bin/gcc CFLAGS="-m32 -O2 -g" \
+CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -O2 -g" \
 /home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
 	--with-backend=libdecnumber --enable-decimal-float=dpd \
 	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \

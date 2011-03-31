@@ -1,7 +1,7 @@
 /* Decimal Float fe_dec_getround and fe_dec_setround definitions.
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation.
+   Copyright (C) 2007, 2009, 2011 Free Software Foundation.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -81,10 +81,7 @@ hidden_def(__fe_dec_getround)
 
 extern int (*__printf_dfp_getround_callback)(void);
 
-extern void __init_printf_dfp_getround (void);
-
-void __attribute__ ((constructor))__init_printf_dfp_getround (void)
+static void __attribute__ ((constructor))__init_printf_dfp_getround (void)
 {
   __printf_dfp_getround_callback = &__fe_dec_getround;
 }
-hidden_def (__init_printf_dfp_getround);

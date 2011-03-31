@@ -1,6 +1,6 @@
 /* Return current rounding direction.
 
-   Copyright (C) 2000, 2008, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2000, 2008, 2009, 2011 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -24,6 +24,7 @@
 
 #include <fenv_libdfp.h>
 #include <fpu_control.h>
+#include <dfpfenv_private.h>
 
 /* Based on the binary floating point variants contributed
    by Denis Joseph Barrow (djbarrow@de.ibm.com).  */
@@ -59,3 +60,10 @@ __fe_dec_setround (int round)
 }
 strong_alias(__fe_dec_setround, fe_dec_setround)
 hidden_def(__fe_dec_setround)
+
+extern int (*__printf_dfp_getround_callback)(void);
+
+static void __attribute__ ((constructor))__init_printf_dfp_getround (void)
+{
+  __printf_dfp_getround_callback = &__fe_dec_getround;
+}

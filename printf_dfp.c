@@ -907,3 +907,4 @@ int __register_printf_dfp (void)
   return 0;
 }
 strong_alias (__register_printf_dfp, register_printf_dfp)
+hidden_def (__register_printf_dfp)

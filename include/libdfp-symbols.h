@@ -83,7 +83,9 @@
         __attribute__((alias (__hidden_asmname (#local))))
 #  define hidden_ver(local, name)       __hidden_ver1(local, __GI_##name, name);
 #  define hidden_data_ver(local, name)  hidden_ver(local, name)
-#  define hidden_def(name)              __hidden_ver1(__GI_##name, name, name);
+#  define hidden_def(name)              _hidden_def(name)
+#  define _hidden_def(name)             __hidden_ver1(__GI_##name, name, name);
+
 #  define hidden_data_def(name)         hidden_def(name)
 #  define hidden_weak(name) \
         __hidden_ver1(__GI_##name, name, name) __attribute__((weak));

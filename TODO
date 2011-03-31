@@ -1,3 +1,5 @@
+Add printf_dfp test which change the rounding mode.
+
 [DONE] Configure runtime test for decimal floating point support in compiler.
 
 [DONE] Configure test for glibc 2.10 headers.
@@ -10,10 +12,6 @@ on the build machine.
 
 Add --export-test feature to export the test-suite into stand-alone static
 test cases.
-
-libdecnumber.so phantom library for compat issues.
-
-libdfp version issues with older apps.
 
 [DONE] If system glibc is 2.10 then make check shouldn't need all the GLIBC build
 scaffolding for executing and debugging tests.

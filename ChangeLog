@@ -1,3 +1,24 @@
+2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* sysdeps/s390/dfpu/fe_decround.c (__init_printf_dfp_getround): Added
+	function definition for callback and added callback pointer.  The
+	printf_dfp () function was graciously skipping over the rounding mode
+	modifiers due to this missing definition.
+	* README.developer: Updated compatibility matrix to put x86 and x86_64
+	under TODO.  Changed all instances of at05 to at4.0.
+
+2011-03-30  Andreas Schwab  <schwab@redhat.com>
+
+	* fe_decround.c (__init_printf_dfp_getround): Remove unnecessary
+	prototype and declare constructor 'static.  Remove unnecessary
+	hidden_def(__init_printf_dfp_getround).
+	* sysdeps/powerpc/dfpu/fe_decround.c (__init_printf_dfp_getround):
+	Remove unnecessary prototype and declare constructor 'static.  Remove
+	unnecessary hidden_def(__init_printf_dfp_getround).
+	* sysdeps/s390/dfpu/fe_decround.c: Added <dfpfenv_private.h>
+	* printf_dfp.c: Add hidden_def (__register_printf_dfp).
+	* include/libdfp-symbols.h (hidden_def): Fix macro definition.
+
 2011-03-15  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* printf_dfp.c (__printf_dfp): Finished cleaning up 'decimal'.
