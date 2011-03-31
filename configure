@@ -2687,7 +2687,7 @@ fi;
 # Should be ok if we build static with this turned on.  If the linker
 # complains that the GOT is too big this may need to be upgraded to -fPIC so
 # we get full addressibility.
-picflag="-fpic"
+picflag="-fpic -DSHARED"
 { echo "$as_me:$LINENO: configuring with \"$picflag\"" >&5
 echo "$as_me: configuring with \"$picflag\"" >&6;}
 

@@ -210,7 +210,7 @@ ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -
 	$(CC) $(CFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 .S.o:
-	$(CC) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
 # Build the shared object files.
@@ -218,7 +218,7 @@ ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -
 	$(CC) $(CFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 .S.os:
-	$(CC) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
 # Archive the static library and include all of the .o files from the backend

@@ -427,7 +427,7 @@ AC_SUBST(enable_shared)
 # Should be ok if we build static with this turned on.  If the linker
 # complains that the GOT is too big this may need to be upgraded to -fPIC so
 # we get full addressibility.
-picflag="-fpic"
+picflag="-fpic -DSHARED"
 AC_MSG_NOTICE(configuring with "$picflag")
 AC_SUBST(picflag)
 

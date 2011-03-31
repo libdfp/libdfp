@@ -1,5 +1,18 @@
 2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* configure: Regenerated.
+
+2011-03-30  Andreas Schwab  <schwab@redhat.com>
+
+	* Makefile.in: Added $(CFLAGS) to .S.o: rules.
+	* configure.ac: Added -DSHARED to picflag in order to enforce PIC when
+	compiling hand rolled asm functions.
+	* sysdeps/powerpc/powerpc32/power6/fpu/Makefile: Added
+	-DHAVE_ASM_PPC_REL16 to ASFLAGS in order to enforce secure-plt
+	style GOT access.
+
+2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* sysdeps/s390/dfpu/fe_decround.c (__init_printf_dfp_getround): Added
 	function definition for callback and added callback pointer.  The
 	printf_dfp () function was graciously skipping over the rounding mode
