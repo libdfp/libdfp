@@ -1,5 +1,20 @@
 2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* sysdeps/powerpc/powerpc32/power6/fpu/Makefile (ASFLAGS): Remove
+	HAVE_ASM_PPC_REL16 as it is no longer needed since we no longer
+	support building the power[6|7] optimized libdfp with -mbss-plt.
+	* sysdeps/powerpc/powerpc32/power6/fpu/floatunsdisd.S: Remove
+	HAVE_ASM_PPC_REL16 guard and remove the bss-plt form of GOT access.
+	We no longer support building the power[6|7] optimized libdfp with
+	-mbss-plt.
+	* sysdeps/powerpc/powerpc32/power6/fpu/fixunssddi.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power6/fpu/fixunsdddi.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power6/fpu/fixunstddi.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power6/fpu/floatunsdidd.S: Likewise.
+	* sysdeps/powerpc/powerpc32/power6/fpu/floatunsditd.S: Likewise.
+
+2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* configure: Regenerated.
 
 2011-03-30  Andreas Schwab  <schwab@redhat.com>
