@@ -1,3 +1,12 @@
+2011-04-28  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* tests/gdb_start_address.py: New file which provides the
+	start_address() python convenience function to GDB.
+	* Makefile.gdb (*.gdb): Break on _dl_start_user for powerpc64 and
+	_dl_main_dispatch on powerpc32.  Call new python convenience function
+	start_address() to get the start address of libc and libdfp for the
+	scripts.
+
 2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* sysdeps/powerpc/powerpc32/power6/fpu/Makefile (ASFLAGS): Remove

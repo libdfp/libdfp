@@ -29,10 +29,16 @@ endif
 #$(addsuffix .gdb,$(libdfp_tests)): $(top_builddir)/$(patsubst %.gdb,%,$@)
 $(addsuffix .gdb,$(libdfp_tests)): $(libdfp_tests)
 	@echo "Generating GDB script $@"
-	@echo 'set environment C -E -x c-header' > $@
+	@echo 'source $(top_srcdir)/tests/gdb_start_address.py' > $@
+	@echo 'set environment C -E -x c-header' >> $@
 	@echo 'set environment LD_LIBRARY_PATH=$(top_builddir)/:$$LD_LIBRARY_PATH' >> $@
 ifneq ($(glibc_builddir),)
+ifeq ($(machine),powerpc/powerpc64)
+# powerpc64 doesn't have _dl_main_dispatch exported.
+	@echo 'break _dl_start_user' >> $@
+else
 	@echo 'break _dl_main_dispatch' >> $@
+endif
 	@echo 'run --library-path $(LIBRARY_PATH):$(glibc_builddir)/nptl_db:$(top_builddir)/ $(top_builddir)/$(patsubst %.gdb,%,$@)' >> $@
 else
 	@echo 'break main' >> $@
@@ -42,26 +48,28 @@ endif
 	@echo -n 'add-symbol-file $(top_builddir)/$(patsubst %.gdb,%,$@) 0x' >> $@
 	@echo `$(dir $(firstword $(CC)))objdump -s --section=".text" $(top_builddir)/$(patsubst %.gdb,%,$@) | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
 	@echo '' >> $@
-	@echo 'set $$libc = 0x' >> $@
-	@echo -n 'set $$start = 0x' >> $@
+	@echo 'p/x $$start_address("libc")' >> $@
+	@echo 'set $$libc_start = $$' >> $@
+	@echo -n 'set $$libc_text = 0x' >> $@
 ifneq ($(glibc_builddir),)
 	@echo `$(dir $(firstword $(CC)))objdump -s --section=".text" $(glibc_builddir)/libc.so | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
 else
 	@$(dir $(firstword $(CC)))objdump -s --section=".text" `LD_LIBRARY_PATH=./:$$LD_LIBRARY_PATH ldd $(patsubst %.gdb,%,$@) | grep libc.so | awk -F' ' '{print $$3}'` | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}' >> $@
 	@echo >> $@
 endif
-	@echo 'set $$addr = $$libc + $$start' >> $@
+	@echo 'set $$libc_addr = $$libc_start + $$libc_text' >> $@
 	@echo -n 'add-symbol-file ' >> $@
 ifneq ($(glibc_builddir),)
 	@echo -n '$(glibc_builddir)/libc.so' >> $@
 else
 	@echo -n `LD_LIBRARY_PATH=./:$$LD_LIBRARY_PATH ldd $(patsubst %.gdb,%,$@) | grep libc.so | awk -F' ' '{print $$3}'` >> $@
 endif
-	@echo ' $$addr' >> $@
+	@echo ' $$libc_addr' >> $@
 	@echo '' >> $@
-	@echo 'set $$libdfp = 0x' >> $@
-	@echo -n 'set $$start = 0x' >> $@
+	@echo 'p/x $$start_address("libdfp")' >> $@
+	@echo 'set $$libdfp_start = $$' >> $@
+	@echo -n 'set $$libdfp_text = 0x' >> $@
 	@echo `$(dir $(firstword $(CC)))objdump -s --section=".text" $(top_builddir)/libdfp.so.1 | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
-	@echo 'set $$addr = $$libdfp + $$start' >> $@
-	@echo 'add-symbol-file $(top_builddir)/libdfp.so.1 $$addr' >> $@
+	@echo 'set $$libdfp_addr = $$libdfp_start + $$libdfp_text' >> $@
+	@echo 'add-symbol-file $(top_builddir)/libdfp.so.1 $$libdfp_addr' >> $@
 	@echo
