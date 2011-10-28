@@ -2,6 +2,9 @@ libdfp_files += addsd3 adddd3 addtd3 \
 		divsd3 divdd3 divtd3 \
 		eqsd2 eqdd2 eqtd2 \
 		extendsddd2 extendsdtd2 extendddtd2 \
+		extendsfsd extendsddf extendsdtf \
+		extendsfdd extenddfdd extendddtf \
+		extendsftd extenddftd extendtftd \
 		fixsdsi fixddsi fixtdsi \
 		fixsddi fixdddi fixtddi \
 		fixunssdsi fixunsddsi fixunstdsi \
@@ -18,4 +21,7 @@ libdfp_files += addsd3 adddd3 addtd3 \
 		nesd2 nedd2 netd2 \
 		subsd3 subdd3 subtd3 \
 		truncddsd2 trunctddd2 trunctdsd2 \
+		truncsdsf truncdfsd trunctfsd \
+		truncddsf truncdddf trunctfdd \
+		trunctdsf trunctddf trunctdtf \
 		unordsd2 unorddd2 unordtd2 \

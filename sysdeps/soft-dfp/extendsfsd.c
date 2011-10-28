@@ -1,7 +1,7 @@
 /* Handle conversion from binary float (32) to Decimal32
 
    Copyright (C) 2007, 2008 IBM Corporation.
-   Copyright (C) 2008, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2008, 2009, 2011 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -33,6 +33,7 @@
 #include "fenv_libdfp.h"
 #include "dfpacc.h"
 #include "convert.h"
+#include <float.h> /* To pick up __FLT_MANT_DIG__  */
 
 #if DEST==32
 #define TEMP_TYPE	_Decimal64
@@ -49,7 +50,8 @@ CONVERT_WRAPPER(
 
 	a_norm = FREXPSF (a, &exp);
 	mant = a_norm * 16777216.0;	/* 24 bits of mantissa.  */
-	sexp = exp - 24;		/* Exponent adjusted for mantissa.  */
+	//sexp = exp - 24;		/* Exponent adjusted for mantissa.  */
+	sexp = exp - __FLT_MANT_DIG__;	/* Exponent adjusted for mantissa.  */
 	temp = mant;
 	if (sexp > 0)
 		temp *= DECPOWOF2[sexp];
