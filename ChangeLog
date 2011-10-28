@@ -1,5 +1,13 @@
 2011-10-27  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
+	* configure: Regenerated.
+	* configure.ac: Incremented the version number to 1.0.8.
+	* Versions.def: Incremented the version number to 1.0.8.
+	* tests/test-bfp-conversions.c: Added tests for extendsddf extendsdtf
+	extenddfdd extendddtf extenddftd and extendtftd.
+
+2011-10-27  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
 	* base-math/Makefile: Moved 'classify' from sysdeps/soft-dfp/Makefile.
 	* base-math/classify.c: Moved from sysdeps/soft-dfp/ because it's
 	required for the power6 build as well.
@@ -167,8 +175,8 @@
 2011-1-21  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* configure: Regenerated.
-	* configure.ac: Incremented the version umber to 1.0.7.
-	* Versions.def: Incremented the version umber to 1.0.7.
+	* configure.ac: Incremented the version number to 1.0.7.
+	* Versions.def: Incremented the version number to 1.0.7.
 
 2011-1-21  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
 

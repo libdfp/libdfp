@@ -6,5 +6,6 @@ libdfp {
   LIBDFP_1.0.5
   LIBDFP_1.0.6
   LIBDFP_1.0.7
+  LIBDFP_1.0.8
   LIBDFP_PRIVATE
 }
