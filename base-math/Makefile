@@ -25,3 +25,4 @@ libdfp_files += addsd3 adddd3 addtd3 \
 		truncddsf truncdddf trunctfdd \
 		trunctdsf trunctddf trunctdtf \
 		unordsd2 unorddd2 unordtd2 \
+		classify

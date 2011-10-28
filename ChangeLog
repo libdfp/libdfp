@@ -1,3 +1,74 @@
+2011-10-27  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* base-math/Makefile: Moved 'classify' from sysdeps/soft-dfp/Makefile.
+	* base-math/classify.c: Moved from sysdeps/soft-dfp/ because it's
+	required for the power6 build as well.
+	* base-math/extendsftd.c: Likewise.
+	* base-math/extendsdtf.c: Likewise.
+	* base-math/extenddfdd.c: Likewise.
+	* base-math/trunctdsf.c: Likewise.
+	* base-math/trunctfsd.c: Likewise.
+	* base-math/extendddtf.c: Likewise.
+	* base-math/extenddftd.c: Likewise.
+	* base-math/extendsfsd.c: Likewise.
+	* base-math/extendtftd.c: Likewise.
+	* base-math/truncdddf.c: Likewise.
+	* base-math/trunctfdd.c: Likewise.
+	* base-math/trunctddf.c: Likewise.
+	* base-math/truncsdsf.c: Likewise.
+	* base-math/trunctdtf.c: Likewise.
+	* base-math/extendsddf.c: Likewise.
+	* base-math/extendsfdd.c: Likewise.
+	* base-math/truncddsf.c: Likewise.
+	* base-math/truncdfsd.c: Likewise.
+	* tests/scaffold.c (_VC_P): Updated spacing in "Expected" and "Result"
+	output.
+	* tests/test-bfp-conversions.c: Added float -> _Decimal128 tests.
+	* sysdeps/soft-dfp/Makefile: Moved 'classify' to base-math/Makefile.
+	* sysdeps/soft-dfp/classify.c: Moved to base-math/ because it's
+	required for the power6 build as well.
+	* sysdeps/soft-dfp/extendsftd.c: Likewise.
+	* sysdeps/soft-dfp/extendsdtf.c: Likewise.
+	* sysdeps/soft-dfp/extenddfdd.c: Likewise.
+	* sysdeps/soft-dfp/trunctfsd.c: Likewise.
+	* sysdeps/soft-dfp/trunctdsf.c: Likewise.
+	* sysdeps/soft-dfp/extenddftd.c: Likewise.
+	* sysdeps/soft-dfp/extendddtf.c: Likewise.
+	* sysdeps/soft-dfp/extendsfsd.c: Likewise.
+	* sysdeps/soft-dfp/extendtftd.c: Likewise.
+	* sysdeps/soft-dfp/truncdddf.c: Likewise.
+	* sysdeps/soft-dfp/trunctfdd.c: Likewise.
+	* sysdeps/soft-dfp/trunctddf.c: Likewise.
+	* sysdeps/soft-dfp/truncsdsf.c: Likewise.
+	* sysdeps/soft-dfp/trunctdtf.c: Likewise.
+	* sysdeps/soft-dfp/extendsfdd.c: Likewise.
+	* sysdeps/soft-dfp/extendsddf.c: Likewise.
+	* sysdeps/soft-dfp/truncddsf.c: Likewise.
+	* sysdeps/soft-dfp/truncdfsd.c: Likewise.
+
+2011-10-27  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* Makefile.in (libdfp_tests): Added test-bfp-conversions.
+	* base-math/Makefile (libdfp_files): Moved extendsfsd extendsddf
+	extendsdtf extendsfdd extenddfdd extendddtf extendsftd extenddftd
+	extendtftd truncsdsf truncdfsd trunctfsd truncddsf truncdddf
+	trunctfdd trunctdsf trunctddf trunctdtf from sysdeps/soft-dfp/Makefile
+	since they're required in all builds.
+	* tests/test-bfp-conversions.c: New file to test bfp -> dfp and dfp ->
+	bfp conversions.
+	* include/convert.h: Moved from sysdeps/soft-dfp/ in preparation for
+	moving extend and trunc bfp->dfp and dfp->bfp conversion functions.
+	* sysdeps/soft-dfp/Makefile (libdfp_files): Removed extendsfsd
+	extendsddf extendsdtf extendsfdd extenddfdd extendddtf extendsftd
+	extenddftd extendtftd truncsdsf truncdfsd trunctfsd truncddsf
+	truncdddf trunctfdd trunctdsf trunctddf trunctdtf and moved to
+	base-math/Makefile since they're required in all builds.
+	* sysdeps/soft-dfp/extendsfsd.c: Replaced magic number '24' with
+	__FLT_MANT_DIG__.
+	* sysdeps/soft-dfp/convert.h: Moved to include/convert.h.
+	* sysdeps/soft-dfp/truncdfsd.c: Replaced magic number '53' with
+	__DBL_MANT_DIG__.
+
 2011-04-28  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* tests/gdb_start_address.py: New file which provides the

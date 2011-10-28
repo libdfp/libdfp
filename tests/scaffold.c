@@ -1,6 +1,6 @@
 /* Test facility scaffolding.
 
-   Copyright (C) 2009 Free Software Foundation, Inc.
+   Copyright (C) 2009, 2011 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -96,10 +96,10 @@ static char bufy[CHAR_MAX];
   sprintf(bufx, fmt, x); \
   sprintf(bufy, fmt, y); \
   if(x!=y) { \
-    fprintf(stderr, "%-3d Error:   Expected: \"%s\"\n             Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
+    fprintf(stderr, "%-3d Error: Expected: \"%s\"\n             Result: \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
     ++fail; \
   } else { \
-    fprintf(stdout, "%-3d Success: Expected: \"%s\"\n               Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
+    fprintf(stdout, "%-3d Success: Expected: \"%s\"\n               Result: \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
   } \
 } while (0)
 

@@ -88,7 +88,7 @@ int main (void)
   sftd_type *sftdp;
 
 #include "decode.h"
-  char buf[256];
+  char decodebuf[256];
 
   for (sfsdp = sfsd_tests; sfsdp->line; sfsdp++)
     {
@@ -99,8 +99,8 @@ int main (void)
        * same printf statement.  */
       fprintf(stdout, "%He = (_Decimal32) ", retval);
       fprintf(stdout, "%f; /* float */ in: %s: %d\n", (double) sfsdp->x,__FILE__,__LINE__-4);
-      fprintf(stdout, "expected: %s\n", decoded32(sfsdp->e,buf));
-      fprintf(stdout, "retval:   %s\n", decoded32(retval,buf));
+      fprintf(stdout, "expected: %s\n", decoded32(sfsdp->e,decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded32(retval,decodebuf));
       _VC_P(__FILE__,sfsdp->line, sfsdp->e, retval, sfsdp->format);
     }
 
@@ -109,14 +109,27 @@ int main (void)
       /* This will force the conversion and result in the hidden call to
        * __dpd_extendsfdd ().  */
       _Decimal64 retval = sfddp->x;
-      float f = retval;
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
-      fprintf(stdout, "%De = (_Decimal64)", retval);
+      fprintf(stdout, "%De = (_Decimal64) ", retval);
       fprintf(stdout, "%f; /* float */ in: %s: %d\n", (double) sfddp->x,__FILE__,__LINE__-4);
-      fprintf(stdout, "expected: %s\n", decoded64(sfddp->e,buf));
-      fprintf(stdout, "retval:   %s\n", decoded64(retval,buf));
+      fprintf(stdout, "expected: %s\n", decoded64(sfddp->e,decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded64(retval,decodebuf));
       _VC_P(__FILE__,sfddp->line, sfddp->e, retval, sfddp->format);
+    }
+
+  for (sftdp = sftd_tests; sftdp->line; sftdp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __dpd_extendsftd ().  */
+      _Decimal128 retval = sftdp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      fprintf(stdout, "%DDe = (_Decimal128) ", retval);
+      fprintf(stdout, "%f; /* float */ in: %s: %d\n", (double) sftdp->x,__FILE__,__LINE__-4);
+      fprintf(stdout, "expected: %s\n", decoded128(sftdp->e,decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded128(retval,decodebuf));
+      _VC_P(__FILE__,sftdp->line, sftdp->e, retval, sftdp->format);
     }
 
 
