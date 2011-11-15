@@ -1,3 +1,12 @@
+2011-11-15  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* dfp/stdlib.h: Added #include <features.h> to correct include order
+	problem.
+	* dfp/wchar.h: Likewise.
+	* tests/test-stdlib.c: New test to verify <features.h> inclusion.
+	* tests/test-wchar.c: New test to verify <features.h> inclusion.
+	* Makefile.in (libdfp_tests): Added test-stdlib and test-wchar.
+
 2011-10-27  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* configure: Regenerated.

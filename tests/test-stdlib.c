@@ -1,6 +1,6 @@
-/* wchar.h for libdfp and redirect to system wchar.h.
+/* Test stdlib.h includes.
 
-   Copyright (C) 2009, 2011 Free Software Foundation, Inc.
+   Copyright (C) 2011 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -22,25 +22,13 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _DFP_WCHAR_H
-#define _DFP_WCHAR_H 1
+#ifndef __STDC_WANT_DEC_FP__
+#define __STDC_WANT_DEC_FP__
+#endif
 
-#ifdef __STDC_WANT_DEC_FP__
-
-#include <features.h>
-#include <stddef.h>
-
-__BEGIN_DECLS
-extern _Decimal32 wcstod32 (__const wchar_t *__restrict __nptr, wchar_t **__restrict __endptr) __THROW;
-
-extern _Decimal64 wcstod64 (__const wchar_t *__restrict __nptr, wchar_t **__restrict __endptr) __THROW;
-
-extern _Decimal128 wcstod128 (__const wchar_t *__restrict __nptr, wchar_t **__restrict __endptr) __THROW;
-__END_DECLS
-
-#endif /* __STDC_WANT_DEC_FP__  */
-
-/* Pick up the system fenv.h.  */
-#include_next <wchar.h>
-
-#endif /* _DFP_WCHAR_H  */
+/* In the past stdlib.h was missing a #include <features.h>  */
+#include <dfp/stdlib.h>
+int main(void)
+{
+	return 0;
+}

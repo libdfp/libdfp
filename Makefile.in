@@ -304,7 +304,7 @@ else
 GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so $(glibc_builddir)/nptl/libpthread.so
 endif
 
-libdfp_tests = test-printf test-param test-amort test-decode test-quantize test-isnan test-isinf test-isfinite test-fpclassify test-logd test-log10d test-strtod test-numdigits test-get_digits test-round test-bfp-conversions
+libdfp_tests = test-printf test-param test-amort test-decode test-quantize test-isnan test-isinf test-isfinite test-fpclassify test-logd test-log10d test-strtod test-numdigits test-get_digits test-round test-bfp-conversions test-stdlib test-wchar
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
