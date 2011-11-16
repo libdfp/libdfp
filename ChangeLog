@@ -1,3 +1,12 @@
+2011-11-16  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* Makefile.in: Replace erroneous usage of $? with $^.  Fix
+	libdfp_tests based rules to correct prerequisite usage so that a
+	complete rebuild isn't required when only a few of the test case
+	dependencies change.
+	* Makefile.gdb: Correct prerequisite usage to not require a complete
+	rebuild when only a few of the test case dependencies change.
+
 2011-11-15  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* dfp/stdlib.h: Added #include <features.h> to correct include order

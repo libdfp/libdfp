@@ -1,6 +1,7 @@
 # These are all used for debugging testcases.  This is sufficiently hackish so
 # it's going into it's own Makefile.
 
+# We only need to regenerated the default .conf file if the Makefile has changed.
 $(top_builddir)/debug-test.conf: Makefile
 	@echo "Generating common debug configuration file $@."
 	@echo 'CC="$(CC)"' > $@
@@ -14,7 +15,8 @@ $(top_builddir)/debug-test.conf: Makefile
 	cp $(top_srcdir)/tests/debug-test.sh $(top_builddir)/
 	@echo
 
-$(addsuffix .conf,$(libdfp_tests)):
+# We only need to regenerated the .conf files if the Makefile has changed.
+$(addsuffix .conf,$(libdfp_tests)): Makefile
 	@echo "Generating $@ configuration file."
 	@echo 'GDB_SCRIPT="$(patsubst %.conf,%,$@).gdb"' > $@
 	@echo 'APP="$(patsubst %.conf,%,$@)"' >> $@
@@ -26,8 +28,9 @@ else
 endif
 	@echo
 
-#$(addsuffix .gdb,$(libdfp_tests)): $(top_builddir)/$(patsubst %.gdb,%,$@)
-$(addsuffix .gdb,$(libdfp_tests)): $(libdfp_tests)
+# These need to be regenerated whenever the test executables change since the
+# address layouts may have changed.
+$(addsuffix .gdb,$(libdfp_tests)): %.gdb:%
 	@echo "Generating GDB script $@"
 	@echo 'source $(top_srcdir)/tests/gdb_start_address.py' > $@
 	@echo 'set environment C -E -x c-header' >> $@

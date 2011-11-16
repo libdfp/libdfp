@@ -198,8 +198,8 @@ static: $(top_builddir)/$(STATIC_LIB)
 # Create the actual file with the version and the .so linker symlink.  The
 # $(SHARED_SONAME_LIB) symlink is created by ldconfig be reading the `soname'
 # from the SHARED_REALNAME_LIB.
-shared: $(top_builddir)/$(SHARED_REALNAME_LIB)  $(top_builddir)/$(SHARED_LINKERNAME_LIB) $(top_builddir)/$(SHARED_SONAME_LIB)
-	@echo +Building shared lib and symlinks: $(notdir $?)
+shared: $(top_builddir)/$(SHARED_REALNAME_LIB) $(top_builddir)/$(SHARED_LINKERNAME_LIB) $(top_builddir)/$(SHARED_SONAME_LIB)
+	@echo +Building shared lib and symlinks: $(notdir $^)
 
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
 C_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_POSIX_C_SOURCE=200809L -std=gnu99 -D_SVID_SOURCE
@@ -226,25 +226,33 @@ ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -
 # mechanism will need to be more robust than this.
 $(top_builddir)/$(STATIC_LIB): $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,$(libdfp_files))
 	@echo +Creating static library $@
-	$(AR) rc $@ $(wordlist 2,$(words $?),$?) $(top_builddir)/$(dfp_backend)/*.o
+	$(AR) rc $@ $(wordlist 2,$(words $^),$^) $(top_builddir)/$(dfp_backend)/*.o
 	@ranlibpath=`which $(RANLIB)`; \
 	if test -x "$$ranlibpath"; \
 	then $(RANLIB) $@; fi;
 	@echo
 
+# $(AR) rc $@ $(wordlist 2,$(words $?),$?) $(top_builddir)/$(dfp_backend)/*.o
+
 # Create libdfp.so -> libdfp.so.1 symlink.
 $(top_builddir)/$(SHARED_LINKERNAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
-	@echo "+Creating linker .so symlink $(notdir $@) -> $(notdir $?)"
-	ln -f -s $? $@
+	@echo "+Creating linker .so symlink $(notdir $@) -> $(notdir $<)"
+	ln -f -s $< $@
 	@echo
+
+# @echo "+Creating linker .so symlink $(notdir $@) -> $(notdir $?)"
+#ln -f -s $? $@
 
 # Create libdfp.so.1 -> libdfp-1.0.1.so symlink.
 # The $(SHARED_SONAME_LIB) -> $(SHARED_REALNAME_LIB) symlink is supposed to
 # be created by ldconfig be reading the `soname' from the SHARED_REALNAME_LIB.
 $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
-	@echo "+Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $?)"
-	$(LDCONFIG) -l $(notdir $?)
+	@echo "+Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $<)"
+	$(LDCONFIG) -l $(notdir $<)
 	@echo
+
+# @echo "+Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $?)"
+# $(LDCONFIG) -l $(notdir $?)
 
 # Build the version tagged 'realname' shared object.  This requires that the
 # $(dfp_name).map file be composed out of individual Versions files.  The
@@ -261,11 +269,13 @@ $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_ba
 # Versions.def defines the package versions.
 $(top_builddir)/Versions.all: $(..)scripts/firstversions.awk \
 			      $(top_srcdir)/Versions.def
-	@echo +Creating $@ by running $(word 1,$?) against $(word 2,$?).
+	@echo +Creating $@ by running $(word 1,$^) against $(word 2,$^).
 	{ cat $(word 2,$^); } | LC_ALL=C $(AWK) -f $< > $@T
 	mv -f $@T $@
 	@echo
 
+# @echo +Creating $@ by running $(word 1,$?) against $(word 2,$?).
+#
 # Versions.sysdeps is a concatenation of all of the sysdep directory Versions
 # files (that accompany a Makefile) and run through sed to strip comments.  We
 # use the wildcard function to verify that there actually is a Versions file
@@ -273,9 +283,11 @@ $(top_builddir)/Versions.all: $(..)scripts/firstversions.awk \
 # only add internal interfaces.
 $(top_builddir)/Versions.sysdeps: $(top_srcdir)/Versions $(wildcard $(makefile_dirs:%=%Versions))
 	@echo +Scrubbing the following Versions files for comments and concatenating into a single $@ file.
-	sed '/^[        ]*%/!s/#.*$$//;/^[      ]*$$/d;s/^[     ]*%/#/' $? > $@T
+	sed '/^[        ]*%/!s/#.*$$//;/^[      ]*$$/d;s/^[     ]*%/#/' $^ > $@T
 	mv -f $@T $@
 	@echo
+
+# sed '/^[        ]*%/!s/#.*$$//;/^[      ]*$$/d;s/^[     ]*%/#/' $? > $@T
 
 move-if-change = $(SHELL) $(top_srcdir)/scripts/move-if-change
 
@@ -304,12 +316,15 @@ else
 GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so $(glibc_builddir)/nptl/libpthread.so
 endif
 
-libdfp_tests = test-printf test-param test-amort test-decode test-quantize test-isnan test-isinf test-isfinite test-fpclassify test-logd test-log10d test-strtod test-numdigits test-get_digits test-round test-bfp-conversions test-stdlib test-wchar
+libdfp_tests = test-printf test-param test-amort test-decode test-quantize \
+	       test-isnan test-isinf test-isfinite test-fpclassify test-logd \
+	       test-log10d test-strtod test-numdigits test-get_digits \
+	       test-round test-bfp-conversions test-stdlib test-wchar
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
-$(libdfp_tests): %:%.o $(top_builddir)/$(SHARED_SONAME_LIB)
-	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .o,$@) -o $@
+$(libdfp_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
+	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .os,$@) -o $@
 	@echo
 
 LIBRARY_PATH = $(glibc_builddir)/:$(glibc_builddir)/math:$(glibc_builddir)/elf:$(glibc_builddir)/nptl
@@ -318,8 +333,7 @@ LIBRARY_PATH = $(glibc_builddir)/:$(glibc_builddir)/math:$(glibc_builddir)/elf:$
 # the .gdb files are generated before the tests are run so that they get
 # generated even if the tests fail.  Stderr is piped to the .out file while
 # stdout is dumped to /dev/null.
-#$(addsuffix .out,$(libdfp_tests)): $(libdfp_tests) $(addsuffix .gdb,$(patsubst %.out,%,$@))
-$(addsuffix .out,$(libdfp_tests)): $(libdfp_tests) $(addsuffix .gdb,$(libdfp_tests))
+$(addsuffix .out,$(libdfp_tests)): %.out:% %.gdb
 ifneq ($(glibc_builddir),)
 	ulimit -c unlimited; \
 	GCONV_PATH=$(glibc_builddir)/iconvdata LC_ALL=C \
@@ -341,8 +355,10 @@ DISTCLEANFILES = $(top_builddir)/debug-test.conf
 #	$(addsuffix .gdb,$(libdfp_tests)):
 include $(top_srcdir)/Makefile.gdb
 
-# We use debug-test.conf as an input file for some debugging utilities.
-check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests))
+# We use debug-test.conf as an input file for some debugging utilities.  The
+# .out files are predicated in another rule on the actual test executables, so
+# those are built from those rules.
+check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests))
 	@echo +Completed make check
 
 .PHONY: check
