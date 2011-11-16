@@ -260,6 +260,15 @@ pick up both /pathto/include/dfp/<foo>.h and /usr/include/<foo>.h:
 #include <stdlib.h>
 #include <wchar.h>
 
+Alternatively, if you don't want to use the -I/pathto/include/dfp/, for
+instance, if you don't want to have to specify this directly, you may do the
+following:
+
+#include <dfp/math.h>
+#include <dfp/fenv.h>
+#include <dfp/stdlib.h>
+#include <dfp/wchar.h>
+
 ---------------------------------------------------------------------------
 7.  Compile and Link
 

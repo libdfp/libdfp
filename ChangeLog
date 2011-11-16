@@ -1,5 +1,13 @@
 2011-11-16  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
+	* README.user: Updated with instructions for using #include <dfp/  >.
+	* sysdeps/soft-dfp/dpd/Versions: Moved __dpd_extend* and __dpd_trunc*
+	symbol definitions from here to...
+	* sysdeps/dpd/Versions: here, since these are needed for all versions
+	of libdfp, not just the soft-dfp version.
+
+2011-11-16  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
 	* Makefile.in: Replace erroneous usage of $? with $^.  Fix
 	libdfp_tests based rules to correct prerequisite usage so that a
 	complete rebuild isn't required when only a few of the test case
