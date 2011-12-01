@@ -56,12 +56,20 @@ IEEE_FUNCTION_NAME (DEC_TYPE val)
   long exp;
   long tmp;
 
+  int neg = 0;
+
   if (__isinfd64(val))
     {
       if (val < DFP_CONSTANT(0.0))
 	return DFP_CONSTANT(0.0); /* exp(-inf) = 0  */
       else
 	return val;               /* exp(inf) = inf  */
+    }
+
+  if (val < DFP_CONSTANT(0.0))
+    {
+      neg = 1;
+      val = FUNC_D(fabs) (val);
     }
 
   tmp = val;
@@ -164,6 +172,10 @@ IEEE_FUNCTION_NAME (DEC_TYPE val)
       else
         result = 1.DD;
     }
+
+  if (neg)
+    result = 1/result;
+
   return result;
 }
 

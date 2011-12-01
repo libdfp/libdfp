@@ -83,6 +83,48 @@ static char buf[CHAR_MAX];
 #endif /* _PC  */
 #endif /* _WANT_PC  */
 
+/* Approximate Value Compare (takes a variation limit)  */
+#ifdef _WANT_AVC
+static char bufx[CHAR_MAX];
+static char bufy[CHAR_MAX];
+static char bufz[CHAR_MAX];
+#ifndef _AVC
+/* _AVC_P == Approximate Value Compare with Position  */
+#define _AVC_P(f,l,x,y,lim,fmt,lfmt) do { \
+  ++testnum; \
+  memset(bufx,'\0',CHAR_MAX); \
+  memset(bufy,'\0',CHAR_MAX); \
+  memset(bufz,'\0',CHAR_MAX); \
+  /* Invokes printf dfp.  */  \
+  sprintf(bufx, fmt, x); \
+  sprintf(bufy, fmt, y); \
+  sprintf(bufz, lfmt, lim); \
+  if(y<(x+lim) && y>(x+lim)) { \
+    fprintf(stderr, "%-3d Error: Expected: \"%s\"\n", testnum, bufx); \
+    fprintf(stderr, "             Result: \"%s\"\n", bufy); \
+    fprintf(stderr, "                lim: \"%s\"\n", bufz); \
+    fprintf(stderr, "    in: %s:%d.\n\n", f,l); \
+    ++fail; \
+  } else { \
+    fprintf(stdout, "%-3d Success: Expected: \"%s\"\n", testnum, bufx); \
+    fprintf(stdout, "               Result: \"%s\"\n", bufy); \
+    fprintf(stderr, "                  lim: \"%s\"\n", bufz); \
+    fprintf(stdout, "    in: %s:%d.\n\n", f,l); \
+  } \
+} while (0)
+
+/* _AVC == Approximate Value Compare
+ *
+ * Macro used to compare the result of an operation against an approximate expected result.
+ * X: Expected Value
+ * Y: Actual Value
+ * lim: The variation +/- from the expected that the actual can fall into for a
+ * "success"
+ */
+#define _AVC(x,y,lim, fmt,lfmt) _AVC_P (__FILE__,__LINE__,x,y,lim, fmt,lfmt)
+#endif /* _AVC  */
+#endif /* _WANT_AVC  */
+
 #ifdef _WANT_VC
 static char bufx[CHAR_MAX];
 static char bufy[CHAR_MAX];

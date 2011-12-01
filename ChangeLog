@@ -1,3 +1,18 @@
+2011-12-01  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* Makefile.in (libdfp_tests): Add test-expd, testing
+	expd[64|128](-1.0) which was previously failing.
+	(libdfp_tests.so): New dummy rule to add
+	$(top_srcdir)/tests/scaffold.c as a dependency so that scaffold.c
+	changes result in rebuilding the libdfp_test .so files on make check.
+	* tests/test-expd.c: New file testing expd[32|64|128].
+	* tests/scaffold.c (_AVC _AVC_P): New macros which do a value compare
+	but allow a +/- variation.
+	* README.user: Added instructions for C++ types compatibility with
+	ISO-C DFP types.
+	* sysdeps/powerpc/dfpu/expd64.c: Existing code only accounts for
+	positive 'n' in e^n.  This fix allows for e^-n, which is just 1/(e^n).
+
 2011-11-16  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* README.user: Updated with instructions for using #include <dfp/  >.

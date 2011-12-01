@@ -32,6 +32,7 @@ Table of Contents:
 	  4.2  GLIBC Minimum Version
 	  4.3  GCC With --enable-decimal-float Support
 	5.  _Decimal* Data Types
+	  5.1  C++ Interoperability
 	6.  DFP Headers
 	7.  Compile and Link
 	8.  Unsupported/Non-Standard Additions
@@ -226,6 +227,40 @@ suffix, e.g.,
 The following will result in a binary-float to decimal-float conversion:
 
 	_Decimal64 d64 = 1.0;
+
+
+5.1  C++ Interoperability
+---------------------------------------------------------------------------
+C++ does not natively use the ISO C DFP _Decimal[32|64|128] types.
+
+Per the C++ DFP specification: ISO/IEC JTC1 SC22 WG21 N2732 "Extension for
+the programming language C++ to support decimal floating point arithmetic",
+the header float.h shall include the following C-compatibility convenience
+typedefs:
+
+	typedef std::decimal::decimal32  _Decimal32;
+	typedef std::decimal::decimal64  _Decimal64;
+	typedef std::decimal::decimal128 _Decimal128;
+
+This allows C++ programs, which use the native decimal32, decimal64, and
+decimal128 types to use the _Decimal32, _Decimal64, and_Decimal128
+types.
+
+Your compiler may or may not yet have this defined in float.h.  If it is
+not defined you will need to define them yourself before including any dfp
+headers, e.g.,
+
+	#ifndef _Decimal32
+	typedef std::decimal::decimal32  _Decimal32;
+	#endif
+	#ifndef _Decimal64
+	typedef std::decimal::decimal64  _Decimal64;
+	#endif
+	#ifndef _Decimal128
+	typedef std::decimal::decimal128 _Decimal128;
+	#endif
+
+	#include <dfp/stdlib.h>
 
 ---------------------------------------------------------------------------
 6.  DFP Headers

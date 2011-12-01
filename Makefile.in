@@ -214,6 +214,7 @@ ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -
 	@echo
 
 # Build the shared object files.
+#.c.os: $(if $(findstring %, $(libdfp_tests)), $(top_srcdir)/tests/scaffold.c)
 .c.os:
 	$(CC) $(CFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
@@ -319,7 +320,13 @@ endif
 libdfp_tests = test-printf test-param test-amort test-decode test-quantize \
 	       test-isnan test-isinf test-isfinite test-fpclassify test-logd \
 	       test-log10d test-strtod test-numdigits test-get_digits \
-	       test-round test-bfp-conversions test-stdlib test-wchar
+	       test-round test-bfp-conversions test-stdlib test-wchar \
+	       test-expd
+
+# Empty rule which simply makes the libdfp_tests .so's dependent on
+# tests/scaffold.c so that when the scaffold file changes all of the test .so
+# files are rebuilt since almost all of them depend on the scaffold anyway.
+$(addsuffix .os, $(libdfp_tests)): $(top_srcdir)/tests/scaffold.c
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
