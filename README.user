@@ -12,7 +12,7 @@ NOTE:Eight space tabs are the optimum editor setting for reading this file.
 
 		Author(s) : Ryan S. Arnold <rsa@us.ibm.com>
 		      Date Created: January 27, 2010
-		      Last Changed: August 12, 2010
+		      Last Changed: December 5, 2011
 
 ---------------------------------------------------------------------------
 Table of Contents:
@@ -27,12 +27,13 @@ Table of Contents:
 	  3.2  GNU99 Compatibility
 	  3.3  scanf Support
 	  3.4  printf Support
+	    3.4.1 printf "a,A" Conversion Specifier
 	4.  Dependencies
 	  4.1  GNU/Linux OS
 	  4.2  GLIBC Minimum Version
 	  4.3  GCC With --enable-decimal-float Support
 	5.  _Decimal* Data Types
-	  5.1  C++ Interoperability
+	  5.1  C++ decimal[32|64|128] Types Compatibility
 	6.  DFP Headers
 	7.  Compile and Link
 	8.  Unsupported/Non-Standard Additions
@@ -166,15 +167,43 @@ When libdfp is loaded printf will recognize the following length modifiers:
 	%D - for _Decimal64
 	%DD - for _Decimal128
 
-It will recognize the following spec characters:
+It will recognize the following conversion specifier 'spec' characters:
 
-	%e
-	%f
-	%g
-	%a  (as debuted in TR 24732)
+	e,E
+	f,F
+	g,G
+	a,A  (as debuted in TR 24732)
 
 Therefore, any combination of DFP length modifiers and spec characters is
 supported.
+
+3.4.1 printf "a,A" Conversion Specifier
+---------------------------------------------------------------------------
+
+The ISO-C DFP specification adds "a/A" as a printf conversion specifier.
+This conversion specifier is unique in that when it is used the precision
+of the output string includes as many of the significant digits in the
+mantissa in the as possible unless there are fewer digits in the mantissa
+than in the specified precision.  Following are some examples to
+demonstrate the use of the a/A conversion specifier.
+
+	printf("Result: %.1HaDF\n", 6543.00DF);
+
+	Result: 7E+3DF
+
+	printf("Result: %.5HaDF\n", 6543.00DF);
+
+	Result: 6543.0DF
+
+	printf("Result: %.4HaDF\n", 6543.00DF);
+
+	Result: 6543DF
+
+	/* Example where the implicit number of digits is less than the
+	 * explicit precision.  */
+	printf("Result: %.8HaDF\n", 6543.00DF);
+
+	Result: 6543.00DF
 
 ---------------------------------------------------------------------------
 4. Dependencies
@@ -228,9 +257,9 @@ The following will result in a binary-float to decimal-float conversion:
 
 	_Decimal64 d64 = 1.0;
 
-
-5.1  C++ Interoperability
+5.1  C++ decimal[32|64|128] Types Compatibility
 ---------------------------------------------------------------------------
+
 C++ does not natively use the ISO C DFP _Decimal[32|64|128] types.
 
 Per the C++ DFP specification: ISO/IEC JTC1 SC22 WG21 N2732 "Extension for
@@ -247,7 +276,7 @@ decimal128 types to use the _Decimal32, _Decimal64, and_Decimal128
 types.
 
 Your compiler may or may not yet have this defined in float.h.  If it is
-not defined you will need to define them yourself before including any dfp
+not defined you  need to define them yourself before including any dfp
 headers, e.g.,
 
 	#ifndef _Decimal32

@@ -1,19 +1,22 @@
 # These are all used for debugging testcases.  This is sufficiently hackish so
 # it's going into it's own Makefile.
 
-# We only need to regenerated the default .conf file if the Makefile has changed.
+# We only need to regenerate the default .conf file if the Makefile has changed.
 $(top_builddir)/debug-test.conf: Makefile
 	@echo "Generating common debug configuration file $@."
 	@echo 'CC="$(CC)"' > $@
-	@echo 'DBG=$(dir $(firstword $(CC)))gdb$(cc_msize)' >> $@
-	@echo 'OBJDUMP=$(dir $(firstword $(CC)))objdump' >> $@
+	@echo 'DBG=$(GDB)' >> $@
+	@echo 'OBJDUMP=$(OBJDUMP)' >> $@
 	@echo 'GLIBC_BUILD=$(glibc_builddir)' >> $@
 	@echo 'GLIBC_HEADERS=$(glibc_headers)' >> $@
 	@echo 'LIBDFP_BUILD=$(top_builddir)/' >> $@
 	@echo 'LIBDFP_HEADERS=$(top_srcdir)/dfp' >> $@
 	@echo 'LIBDFP_SRC=$(top_srcdir)' >> $@
 	cp $(top_srcdir)/tests/debug-test.sh $(top_builddir)/
+	@chmod +x $(top_builddir)/debug-test.sh
 	@echo
+
+# @echo 'DBG=$(dir $(firstword $(CC)))gdb$(cc_msize)' >> $@
 
 # We only need to regenerated the .conf files if the Makefile has changed.
 $(addsuffix .conf,$(libdfp_tests)): Makefile
@@ -49,30 +52,29 @@ else
 endif
 	@echo '' >> $@
 	@echo -n 'add-symbol-file $(top_builddir)/$(patsubst %.gdb,%,$@) 0x' >> $@
-	@echo `$(dir $(firstword $(CC)))objdump -s --section=".text" $(top_builddir)/$(patsubst %.gdb,%,$@) | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
+	@echo `$(OBJDUMP) -s --section=".text" $(top_builddir)/$(patsubst %.gdb,%,$@) | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
 	@echo '' >> $@
 	@echo 'p/x $$start_address("libc")' >> $@
 	@echo 'set $$libc_start = $$' >> $@
 	@echo -n 'set $$libc_text = 0x' >> $@
 ifneq ($(glibc_builddir),)
-	@echo `$(dir $(firstword $(CC)))objdump -s --section=".text" $(glibc_builddir)/libc.so | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
+	@echo `$(OBJDUMP) -s --section=".text" $(glibc_builddir)/libc.so | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
 else
-	@$(dir $(firstword $(CC)))objdump -s --section=".text" `LD_LIBRARY_PATH=./:$$LD_LIBRARY_PATH ldd $(patsubst %.gdb,%,$@) | grep libc.so | awk -F' ' '{print $$3}'` | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}' >> $@
-	@echo >> $@
+	@echo `$(OBJDUMP) -s --section=".text" \`LD_LIBRARY_PATH=./:$$LD_LIBRARY_PATH $(LDD) $(patsubst %.gdb,%,$@) | grep libc.so | awk -F' ' '{print $$3}'\` | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
 endif
 	@echo 'set $$libc_addr = $$libc_start + $$libc_text' >> $@
 	@echo -n 'add-symbol-file ' >> $@
 ifneq ($(glibc_builddir),)
 	@echo -n '$(glibc_builddir)/libc.so' >> $@
 else
-	@echo -n `LD_LIBRARY_PATH=./:$$LD_LIBRARY_PATH ldd $(patsubst %.gdb,%,$@) | grep libc.so | awk -F' ' '{print $$3}'` >> $@
+	@echo -n `LD_LIBRARY_PATH=./:$$LD_LIBRARY_PATH $(LDD) $(patsubst %.gdb,%,$@) | grep libc.so | awk -F' ' '{print $$3}'` >> $@
 endif
 	@echo ' $$libc_addr' >> $@
 	@echo '' >> $@
 	@echo 'p/x $$start_address("libdfp")' >> $@
 	@echo 'set $$libdfp_start = $$' >> $@
 	@echo -n 'set $$libdfp_text = 0x' >> $@
-	@echo `$(dir $(firstword $(CC)))objdump -s --section=".text" $(top_builddir)/libdfp.so.1 | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
+	@echo `$(OBJDUMP) -s --section=".text" $(top_builddir)/libdfp.so.1 | grep Contents -A 1 | tail -n 1 | awk -F' ' '{printf $$1}'` >> $@
 	@echo 'set $$libdfp_addr = $$libdfp_start + $$libdfp_text' >> $@
 	@echo 'add-symbol-file $(top_builddir)/libdfp.so.1 $$libdfp_addr' >> $@
 	@echo

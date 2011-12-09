@@ -538,8 +538,8 @@ __printf_dfp (FILE *fp,
     {
       case 'a':
 	  {
-	    /* This is totally bogus but the DFP spec addition for %a refers to
-	     * all of the significant digits in the precision.  */
+	    /* The DFP spec addition for %a refers to all of the significant
+	     * digits in the precision.  */
 	    if (exp < 0)
 	      {
 		  input_prec = nd;

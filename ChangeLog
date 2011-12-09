@@ -1,3 +1,50 @@
+2011-12-08  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* configure: Regenerated.
+	* Makefile.in:
+	(@CXX@, @LLD@, @OBDJUMP@, @GDB@, @CXXFLAGS@, and @CPPFLAGS@): New
+	imports.
+	(header_dirs): Move dfp/ to $(system_header_dirs).
+	(CXX_DEFINES CXX_WARNS): New variables.
+	(.c.o): Add $(CPPFLAGS). Add -I$(system_header_dirs).
+	(.c.os): Likewise
+	(.S.o): Add -I$(system_headers).
+	(.cpp.os) Likewise.
+	(GLIBC_LIBS): Remove unnecessary libpthread.so linkage.
+	(libdfp_cxx_tests): New variable.
+	(libdfp_tests): Renamed to (libdfp_c_tests) and replaced with
+	$(libdfp_c_tests) $(libdp_cxx_tests).
+	Added new rule for $(libdfp_cxx_tests).os dependencies on float.h.
+	Added new rule for $(libdfp_tests) to rely on tests/scaffold.c.
+	Added new rule to link $(libdfp_cxx_tests) to their .os files.
+	(.SUFFIXES): Added .cpp.
+	* ieee754r/lgammad32.c: Changed <dfp/math.h> to <math.h>.
+	* tests/test-printf.c: Discovered a bug in %.Ha.  If there is a '.'
+	with no precision specifier it prints a bogus value.  This adds this
+	failure to the test suite.
+	* tests/test-ostream.cpp: New test to test operator<< header file
+	additions in dfp/decimal.
+	* configure.ac: Added AC_PATH_PROG for OBJDUMP, LDD, GDB.  Added
+	AC_SUBST for CXXFLAGS, CPPFLAGS.
+	* README.user: Added instructions for printf "a,A" Conversion
+	Specifier usage.
+	* README.developer: Added instructions for specifying PATH to pick up
+	toolchain default programs.  Added instructions for LDD, GDB, OBJDUMP,
+	CXX, CXXFLAGS, and CPPLAGS.
+	* Versions.def
+	* Makefile.gdb: Use configure exported 'objdump' via $(OBJDUMP). Use
+	configure exported 'ldd' via $(LDD).  Use configure exported 'gdb' via
+	$(GDB).
+	* dfp/stdlib.h: Comment update.
+	* dfp/float.h: New file adds _Decimal[32|64|128] types #ifdef
+	__cplusplus and if they aren't added by the compiler.  At the time of
+	this writing the compiler hasn't added them to float.h yet.
+	* dfp/decimal: New file adds operator<< for decimal[32|64|128] C++
+	types.  This use C++ template metaprogramming to create functions that
+	call printf.
+	* printf_dfp.c: Comment change for a/A spec char.
+	* TODO: New item.
+
 2011-12-01  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_tests): Add test-expd, testing

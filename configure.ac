@@ -236,18 +236,31 @@ changequote([,])dnl
 AC_SUBST(base_machine)
 AC_SUBST(machine)
 
-# The implication of using AC_PROG_CC is that on a biarch POWER system where
-# the toolchain defaults to 32-bit and the kernel reports a 64-bit environment
-# there is a screwy disconnect between the two.  This is OK as long as we
-# export the computed default cc_msize to the Makefile.in.
 AC_PROG_CC(gcc)
+#AC_PROC_CC checks $PATH for 'gcc' but doesn't prefix $CC with $PATH
+CC=`which $CC`
+echo "CC = $CC"
 
-OBJDUMP="$OBJDUMP"
-AS="$AS"
-AC_SUBST(OBJDUMP)
-AC_SUBST(AS)
+AC_PROG_CXX(g++)
+#AC_PROC_CXX checks $PATH for 'g++' but doesn't prefix $CXX with $PATH
+CXX=`which $CXX`
+echo "CXX = $CXX"
+
+AC_PATH_PROG([OBJDUMP], [objdump])
+AC_ARG_VAR(OBJDUMP,The path to the objdump used by the debug scripts.
+	   Defaults to that found in $$PATH)
+
+AC_PATH_PROG([GDB], [gdb])
+AC_ARG_VAR(GDB,The path to the gdb used by the debug scripts.
+	   Defaults to that found in $$PATH)
+
+AC_PATH_PROG([LDD], [ldd])
+AC_ARG_VAR(LDD,The path to the ldd used by the debug scripts.
+	   Defaults to that found in $$PATH)
 
 AC_SUBST(CFLAGS)
+AC_SUBST(CXXFLAGS)
+AC_SUBST(CPPFLAGS)
 AC_SUBST(ASFLAGS)
 
 # Don't even bother configuring if the compiler can't handle Decimal

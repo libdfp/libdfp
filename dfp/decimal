@@ -1,0 +1,246 @@
+/* <decimal> for libdfp and redirect to system <decimal>
+
+   Copyright (C) 2011 Free Software Foundation, Inc.
+
+   This file is part of the Decimal Floating Point C Library.
+
+   Author(s): Ryan S. Arnold <rsa@us.ibm.com>
+
+   The Decimal Floating Point C Library is free software; you can
+   redistribute it and/or modify it under the terms of the GNU Lesser
+   General Public License version 2.1.
+
+   The Decimal Floating Point C Library is distributed in the hope that
+   it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+   the GNU Lesser General Public License version 2.1 for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License version 2.1 along with the Decimal Floating Point C Library;
+   if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+   Suite 330, Boston, MA 02111-1307 USA.
+
+   Please see libdfp/COPYING.txt for more information.  */
+
+#ifndef _LIBDFP_DECIMAL_H
+#define _LIBDFP_DECIMAL_H 1
+
+#ifdef _GLIBCXX_DECIMAL_IMPL
+# error "<dfp/decimal> should be included before the system <decimal> header."
+#endif
+
+#ifdef __cplusplus
+
+/* Pick up the system <decimal> */
+#include_next <decimal>
+
+#pragma GCC system_header
+
+using namespace std::decimal;
+
+#include <ostream>
+using std::ostream;
+
+/* Per ISO/IEC JTC1 SC22 WG21 N2732 - TR 24733: "Extension for the programming
+ * language C++ to support decimal floating point arithmetic" define the
+ * ostream and istream operators.  These are included in libdfp and NOT
+ * libstdc++ because the ostream and istream operators rely upon libdfp
+ * printf and strtod[32|64|128] support provided by libdfp.  */
+
+/* Prototypes for functions providing ostream support in libdfp.  */
+
+std::ostream &
+ostream_d32(std::ostream & os, std::decimal::decimal32 &d) __THROW;
+
+std::ostream &
+ostream_d64(std::ostream & os, std::decimal::decimal64 &d) __THROW;
+
+std::ostream &
+ostream_d128(std::ostream & os, std::decimal::decimal128 &d) __THROW;
+
+#include <stdio.h> /* pick up snprintf  */
+
+#include <float.h> /* Pick up _Decimal[32|64|128] typedefs.  */
+
+#include <string>
+using std::string;
+
+#include <iostream>
+using namespace std;
+
+template<unsigned int size>
+struct FIND_DEC_MANT_DIG
+{
+  enum {RESULT = 0};
+  static inline std::string get_fmt(char conv)
+  {
+     std::string spec = "";
+     return spec;
+  }
+};
+
+template <>
+struct FIND_DEC_MANT_DIG<4>
+{
+  enum {RESULT = (__DEC32_MANT_DIG__) };
+  static inline std::string get_fmt(char conv)
+  {
+     std::string spec = "%.*H";
+     return spec.append(1,conv);
+  }
+};
+template <>
+struct FIND_DEC_MANT_DIG<8>
+{
+  enum {RESULT = (__DEC64_MANT_DIG__) };
+  static inline std::string get_fmt(char conv)
+  {
+     std::string spec = "%.*D";
+     return spec.append(1,conv);
+  }
+
+};
+template <>
+struct FIND_DEC_MANT_DIG<16>
+{
+  enum {RESULT = (__DEC128_MANT_DIG__) };
+  static inline std::string get_fmt(char conv)
+  {
+     std::string spec = "%.*DD";
+     return spec.append(1,conv);
+  }
+};
+
+/* Template meta-programming so we only have to write this code once for use
+ * with each of the _Decimal[32|64|128] types.  */
+template<class decimal_type>
+class LIBDFP_META_PRINTF {
+private:
+public:
+  static inline ostream & decimal_to_string(std::ostream &os, decimal_type &d)
+    {
+      char strbuf[64];
+
+      ios_base::fmtflags flags = os.flags();
+      unsigned int precision = os.precision();
+
+      if (precision > DEC_MANT_DIG)
+        precision = DEC_MANT_DIG;
+
+      char conv = 'a';
+
+      if (flags & ios::fixed)
+        {
+          /* Only used for "NAN" and "INF" rather than "nan" and "inf" for
+           * "%.*Df".  */
+          if (flags & ios::uppercase)
+            conv = 'F';
+          else
+            conv = 'f';
+        }
+      else if (flags & ios::scientific)
+       {
+          if (flags & ios::uppercase)
+            conv = 'E';
+          else
+            conv = 'e';
+        }
+      else if (flags & ios::uppercase)
+        conv = 'A';
+
+      std::string fmtstr = FIND_DEC_MANT_DIG<(sizeof(decimal_type))>::get_fmt(conv);
+      sprintf (strbuf, fmtstr.c_str(), precision, d.__getval());
+      os << strbuf;
+      return os;
+    }
+
+  enum {DEC_MANT_DIG = FIND_DEC_MANT_DIG<(sizeof(decimal_type))>::RESULT};
+};
+
+namespace std
+{
+namespace decimal
+{
+//  ISO/IEC TR 27433 - 3.2.11 Formatted input:
+//  template <class charT, class traits>
+//    std::basic_istream<charT, traits> &
+//      operator>>(std::basic_istream<charT, traits> & is, decimal32 & d);
+
+//  template <class charT, class traits>
+//    std::basic_istream<charT, traits> &
+//      operator>>(std::basic_istream<charT, traits> & is, decimal64 & d);
+
+//  template <class charT, class traits>
+//    std::basic_istream<charT, traits> &
+//      operator>>(std::basic_istream<charT, traits> & is, decimal128 & d);
+
+
+  //ISO/IEC TR 24733 - 3.2.11 Formatted output:
+
+  /* ISO/IEC TR 24733 doesn't have an equivalent to the 'a/A' conversion
+   * specifier in ISO/IEC TR 24732.  This ostream implementation can take one
+   * of two approaches.  It can either use 'a/A' by default or it can allow
+   * the user to select f/F or e/E.  It'd be nice to override  */
+
+
+  template <class charT, class traits>
+  inline std::basic_ostream<charT, traits> &
+    operator<<(std::basic_ostream<charT, traits> & os, decimal32 d)
+    {
+
+      /*   1  (leading zero)
+       * + 1  (.)
+       * + 7 (__DEC32_MANT_DIG__)
+       * + 1  (e)
+       * + 1  (+/-)
+       * + 2  (digits in __DEC32_MAX_EXP__)
+       * + 1  "\n"
+       * = 14 -> round up to a power of 2 = 16.  */
+      LIBDFP_META_PRINTF<std::decimal::decimal32>::decimal_to_string(os, d);
+      return os;
+    }
+
+  template <class charT, class traits>
+  inline std::basic_ostream<charT, traits> &
+    operator<<(std::basic_ostream<charT, traits> & os, decimal64 d)
+    {
+      /*   1  (leading zero)
+       * + 1  (.)
+       * + 16 (__DEC64_MANT_DIG__)
+       * + 1  (e)
+       * + 1  (+/-)
+       * + 3  (digits in __DEC64_MAX_EXP__)
+       * + 1  "\n"
+       * = 24 -> round up to a power of 2 = 32.  */
+
+      LIBDFP_META_PRINTF<std::decimal::decimal64>::decimal_to_string(os, d);
+      return os;
+    }
+
+  /*  */
+  template <class charT, class traits>
+  inline std::basic_ostream<charT, traits> &
+    operator<<(std::basic_ostream<charT, traits> & os, decimal128 d)
+    {
+
+      return ostream_d128(os, d);
+      /*   1  (leading zero)
+       * + 1  (.)
+       * + 34 (__DEC128_MANT_DIG__)
+       * + 1  (e)
+       * + 1  (+/-)
+       * + 4  (digits in __DEC128_MAX_EXP__)
+       * + 1  "\n"
+       * = 43 -> round up to a power of 2 = 64.  */
+      LIBDFP_META_PRINTF<std::decimal::decimal128>::decimal_to_string(os, d);
+      return os;
+    }
+
+} /* namespace decimal  */
+} /* namespace std  */
+
+#else
+# warning "<dfp/decimal> should only be included by C++ programs."
+#endif /* __cplusplus  */
+
+#endif /* _LIBDFP_DECIMAL_H  */

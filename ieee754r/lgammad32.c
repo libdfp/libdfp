@@ -31,7 +31,7 @@
 
 #include <decContext.h>
 #include <decNumber.h>
-#include <dfp/math.h>
+#include <math.h>
 #include <float.h>
 #include <errno.h>
 

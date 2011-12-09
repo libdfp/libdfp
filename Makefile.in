@@ -41,6 +41,12 @@ SHARED_SONAME_LIB = @PACKAGE_NAME@.so.1
 SHARED_LINKERNAME_LIB = @PACKAGE_NAME@.so
 
 CC = @CC@
+CXX = @CXX@
+LDD = @LDD@
+OBJDUMP = @OBJDUMP@
+GDB = @GDB@
+CXXFLAGS = @CXXFLAGS@ # This may be naive
+CPPFLAGS = @CPPFLAGS@
 RANLIB = @RANLIB@
 AWK = @AWK@
 LDCONFIG = /sbin/ldconfig
@@ -148,7 +154,9 @@ endif
 # For header files we want to search every directory that is relevant.  We
 # have to include $(top_builddir) in order to pick up the configure generated
 # config.h.
-header_dirs := $(strip include $(backend_headers) $(sysdep_dirs) dfp/ decNumberMath/ ieee754/ base-math/)
+header_dirs := $(strip include $(backend_headers) $(sysdep_dirs) decNumberMath/ ieee754/ base-math/)
+
+system_header_dirs := $(top_srcdir)/dfp/
 
 header_search_dirs := $(header_dirs:%=$(top_srcdir)/%) $(top_srcdir) $(top_builddir)
 
@@ -204,22 +212,29 @@ shared: $(top_builddir)/$(SHARED_REALNAME_LIB) $(top_builddir)/$(SHARED_LINKERNA
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
 C_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_POSIX_C_SOURCE=200809L -std=gnu99 -D_SVID_SOURCE
 ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1
+CXX_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_POSIX_C_SOURCE=200809L
+CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 
 # Build the static object files.
 .c.o:
-	$(CC) $(CFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h -I$(system_header_dirs) $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 .S.o:
-	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h -I$(system_header_dirs) $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
 # Build the shared object files.
-#.c.os: $(if $(findstring %, $(libdfp_tests)), $(top_srcdir)/tests/scaffold.c)
 .c.os:
-	$(CC) $(CFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h -I$(system_header_dirs) $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
+
 .S.os:
-	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h -I$(system_header_dirs) $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	@echo
+
+# C++ compatibility test cases.
+.cpp.os:
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(CXX_DEFINES) $(CXX_WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h -I$(system_header_dirs) $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
 # Archive the static library and include all of the .o files from the backend
@@ -233,16 +248,11 @@ $(top_builddir)/$(STATIC_LIB): $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,
 	then $(RANLIB) $@; fi;
 	@echo
 
-# $(AR) rc $@ $(wordlist 2,$(words $?),$?) $(top_builddir)/$(dfp_backend)/*.o
-
 # Create libdfp.so -> libdfp.so.1 symlink.
 $(top_builddir)/$(SHARED_LINKERNAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 	@echo "+Creating linker .so symlink $(notdir $@) -> $(notdir $<)"
 	ln -f -s $< $@
 	@echo
-
-# @echo "+Creating linker .so symlink $(notdir $@) -> $(notdir $?)"
-#ln -f -s $? $@
 
 # Create libdfp.so.1 -> libdfp-1.0.1.so symlink.
 # The $(SHARED_SONAME_LIB) -> $(SHARED_REALNAME_LIB) symlink is supposed to
@@ -251,9 +261,6 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 	@echo "+Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $<)"
 	$(LDCONFIG) -l $(notdir $<)
 	@echo
-
-# @echo "+Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $?)"
-# $(LDCONFIG) -l $(notdir $?)
 
 # Build the version tagged 'realname' shared object.  This requires that the
 # $(dfp_name).map file be composed out of individual Versions files.  The
@@ -265,7 +272,7 @@ $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_ba
 	@echo
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
-# script Makefile foo.  Thanks Roland and Uli!
+# script Makefile foo.  Thank you Roland McGrath and Ulrich Drepper!
 
 # Versions.def defines the package versions.
 $(top_builddir)/Versions.all: $(..)scripts/firstversions.awk \
@@ -275,8 +282,6 @@ $(top_builddir)/Versions.all: $(..)scripts/firstversions.awk \
 	mv -f $@T $@
 	@echo
 
-# @echo +Creating $@ by running $(word 1,$?) against $(word 2,$?).
-#
 # Versions.sysdeps is a concatenation of all of the sysdep directory Versions
 # files (that accompany a Makefile) and run through sed to strip comments.  We
 # use the wildcard function to verify that there actually is a Versions file
@@ -287,8 +292,6 @@ $(top_builddir)/Versions.sysdeps: $(top_srcdir)/Versions $(wildcard $(makefile_d
 	sed '/^[        ]*%/!s/#.*$$//;/^[      ]*$$/d;s/^[     ]*%/#/' $^ > $@T
 	mv -f $@T $@
 	@echo
-
-# sed '/^[        ]*%/!s/#.*$$//;/^[      ]*$$/d;s/^[     ]*%/#/' $? > $@T
 
 move-if-change = $(SHELL) $(top_srcdir)/scripts/move-if-change
 
@@ -312,26 +315,44 @@ $(top_builddir)/sysd-versions: $(top_builddir)/Versions.all \
 $(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
 
 ifeq ($(glibc_builddir),)
-GLIBC_LIBS := -lc -lm -lpthread
+# We might need -lpthread to test errno in TLS and to test TLS rounding mode
+# or soft-dfp versions of libdfp.
+#GLIBC_LIBS := -lc -lm -lpthread
+GLIBC_LIBS := -lc -lm
 else
-GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so $(glibc_builddir)/nptl/libpthread.so
+#GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so $(glibc_builddir)/nptl/libpthread.so
+GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so
 endif
 
-libdfp_tests = test-printf test-param test-amort test-decode test-quantize \
+libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
 	       test-isnan test-isinf test-isfinite test-fpclassify test-logd \
 	       test-log10d test-strtod test-numdigits test-get_digits \
 	       test-round test-bfp-conversions test-stdlib test-wchar \
 	       test-expd
+
+libdfp_cxx_tests = test-ostream
+
+libdfp_tests = $(libdfp_c_tests) $(libdfp_cxx_tests)
 
 # Empty rule which simply makes the libdfp_tests .so's dependent on
 # tests/scaffold.c so that when the scaffold file changes all of the test .so
 # files are rebuilt since almost all of them depend on the scaffold anyway.
 $(addsuffix .os, $(libdfp_tests)): $(top_srcdir)/tests/scaffold.c
 
+# The CPP test rely on the <dfp/decimal> header.  If that changes then they
+# need to be rebuilt.
+$(addsuffix .os, $(libdfp_cxx_tests)): $(top_srcdir)/dfp/decimal $(top_srcdir)/dfp/float.h
+
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
-$(libdfp_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
+$(libdfp_c_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .os,$@) -o $@
+	@echo
+
+# Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
+# built.
+$(libdfp_cxx_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
+	$(CXX) $(CXXFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .os,$@) -o $@
 	@echo
 
 LIBRARY_PATH = $(glibc_builddir)/:$(glibc_builddir)/math:$(glibc_builddir)/elf:$(glibc_builddir)/nptl
@@ -398,4 +419,4 @@ install-headers:
 .SUFFIXES:
 # Prioritize .S over .c when searching for target files.  The .os suffix
 # is used for shared object file and the .o suffix is for static object files.
-.SUFFIXES: .S .c .o .os
+.SUFFIXES: .S .c .cpp .o .os

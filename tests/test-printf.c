@@ -116,6 +116,8 @@ d32_type printf_d32s[] =
   {__LINE__, 123.456E-9DF, "1.23456e-7", "%Ha"},
   {__LINE__, 0.00000E-101DF, "0.000000e+00", "%He"},
 
+  /* Erroneously prints "1e+6" due to the '.' with no explicit precision.  */
+  {__LINE__, 6.0E5DF, "6e+5", "%.Ha"},
 
   {__LINE__, 0.0e10DF, "0.000000e+00", "%He"},
   {__LINE__, 0.0e10DF, "0.000000", "%Hf"},
@@ -337,6 +339,9 @@ d64_type printf_d64s[] =
   {__LINE__, 6.5DD, "6e+00", "%.0De"},
   {__LINE__, 6.6DD, "7e+00", "%.0De"},
 
+  /* Erroneously prints "1e+6" due to the '.' with no explicit precision.  */
+  {__LINE__, 6.0E5DD, "6e+5", "%.Da"},
+
   {__LINE__, 123.456E-9DD, "1.23456e-7", "%Da"},
   {__LINE__, 0.00000E-101DD, "0.000000e+00", "%De"},
 
@@ -557,6 +562,9 @@ d128_type printf_d128s[] =
   {__LINE__, 6.5DL, "6.5e+00", "%.1DDe"},
   {__LINE__, 6.5DL, "6e+00", "%.0DDe"},
   {__LINE__, 6.6DL, "7e+00", "%.0DDe"},
+
+  /* Erroneously prints "1e+6" due to the '.' with no explicit precision.  */
+  {__LINE__, 6.0E5DL, "6e+5", "%.DDa"},
 
   {__LINE__, 123.456E-9DL, "1.23456e-7", "%DDa"},
   {__LINE__, 0.00000E-101DL, "0.000000e+00", "%DDe"},

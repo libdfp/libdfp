@@ -1,3 +1,5 @@
+Add testcase to verify soft-dfp TLS version of rounding mode functions.
+
 Add printf_dfp test which change the rounding mode.
 
 [DONE] Configure runtime test for decimal floating point support in compiler.

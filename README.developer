@@ -291,14 +291,25 @@ from within the build directory, e.g.
 5.1 Configure Switches
 Environment Variables
 
+PATH
+	Set the PATH environment variable.  If this is specified and paths
+	to CC, CXX, OBJDUMP, LDD, and GDB aren't defined, libdfp configure
+	will search in $PATH for these binaries.
+
 CC
-	Select your compiler.
+	[OPTIONAL: Picked up from $PATH if not specified.]
+	Specify the C compiler to use to build libdfp and test cases.
+
+CXX
+	[OPTIONAL: Picked up from $PATH if not specified.]
+	Specify the C++ compiler to use for the Libdfp C++ compatibility
+	tests cases.
 
 CFLAGS="-m64 -O2 -g"
-	Since the default bitness of the compiler's generated binaries varies
-	between Linux distros, and on some architectures the Kernel has a
-	different bitness than the default user env it is recommended that the
-	-m[31|32|64] flags be passed.
+	Since the default bitness of the compiler's generated binaries
+	varies between Linux distros, and on some architectures the Kernel
+	has a different bitness than the default user env it is recommended
+	that the -m[31|32|64] flags be passed.
 
 	These should accompany sympathetic --build switch
 	described below, e.g.
@@ -306,14 +317,32 @@ CFLAGS="-m64 -O2 -g"
 		powerpc-linux-gnu for -m32
 		powerpc64-linux-gnu for -m64
 
-	For System Z (s390), depending on the cpu, Libdfp's configure.ac will
-	append a -mzarch flag onto CFLAGS automatically.  This is a special
-	flag required to enable hardware DFP on some System Z cpus.
+	For System Z (s390), depending on the cpu, Libdfp's configure.ac
+	will append a -mzarch flag onto CFLAGS automatically.  This is a
+	special flag required to enable hardware DFP on some System Z cpus.
 
 ASFLAGS
-	Libdfp's Makefile.in will pull -g or -m[31|32|64] into ASFLAGS if it is
-	specified in CFLAGS.  If you need anything else, pass it in here and
-	it'll be added.
+	Libdfp's Makefile.in will pull -g or -m[31|32|64] into ASFLAGS if
+	it is specified in CFLAGS.  If you need anything else, pass it in
+	here and it'll be added.
+
+CXXFLAGS
+	[Only needed for the C++ compatibility test suite.]  This should
+	generally match the CFLAGS (for the most part).
+
+CPPFLAGS
+	Use this to pass specific flags to the C Preprocessor, e.g.,
+	CPPFLAGS="-isystem /opt/at4.0/include/c++/4.5.4/decimal/"
+
+OBJDUMP
+	[OPTIONAL: Picked up from $PATH if not specified.]
+	Specify the objdump binary to use to generate the debug scripts.
+LDD
+	[OPTIONAL: Picked up from $PATH if not specified.]
+	Specify the ldd to use to generate the debug scripts.
+GDB
+	[OPTIONAL: Picked up from $PATH if not specified.]
+	Specify the gdb to use to debug the test cases.
 
 Libdfp's default configure  will be based on whatever bitness the user
 environment is.
@@ -368,8 +397,8 @@ Valid Combinations:
 
 	--prefix=/opt/foo --libdir=/opt/foo/lib64/
 
-	In otherwords, libdir REPLACES the path "<prefix>/lib" on installation
-	it doesn't concatenate onto "<prefix>"
+	In otherwords, libdir REPLACES the path "<prefix>/lib" on
+	installation it doesn't concatenate onto "<prefix>"
 
 --with-glibc-headers=/home/$USER/stage_libdfp/glibc-2.10-headers
 
@@ -379,11 +408,11 @@ Valid Combinations:
 
 	[OPTIONAL]
 
-	If you want to run make check but your system GLIBC isn't version 2.10
-	you need to pass the location of a temporary GLIBC build-dir (not
-	install dir) where that GLIBC meets or exceeds version 2.10.  Not
-	passing this switch tells the make check system to simply use the
-	system GLIBC.
+	If you want to run make check but your system GLIBC isn't version
+	2.10 you need to pass the location of a temporary GLIBC build-dir
+	(not install dir) where that GLIBC meets or exceeds version 2.10.
+	Not passing this switch tells the make check system to simply use
+	the system GLIBC.
 
 	WARNING: Make sure you link to a GLIBC build that supports the same
 	configure options as how you're configuring libdfp, e.g. if you're
@@ -400,78 +429,103 @@ Valid Combinations:
 	infrastructure to choose architecture specific overrides from the
 	sysdeps tree.
 
-Here are some valid configurations of Libdfp:
+Here are some easy-case configurations of libdfp using PATH:
+
+PATH=/opt/at4.0/bin:$PATH \
+  CPPFLAGS="-isystem /opt/at4.0/include/c++/4.5.4/decimal/" \
+  CXXFLAGS="-m32 -O2 -g" CFLAGS="-m32 -O2 -g" \
+  ../libdfp-decimal/configure --with-backend=libdecnumber \
+  --enable-decimal-float=dpd --build=powerpc-linux-gnu \
+  --with-cpu=power6 2>&1 | tee _configure32_power6
+
+PATH=/opt/at4.0/bin:$PATH \
+  CPPFLAGS="-isystem /opt/at4.0/include/c++/4.5.4/decimal/" \
+  CXXFLAGS="-m64 -O2 -g" CFLAGS="-m64 -O2 -g" \
+  ../libdfp-decimal/configure --with-backend=libdecnumber \
+  --enable-decimal-float=dpd --build=powerpc64-linux-gnu \
+  --with-cpu=power6 2>&1 | tee _configure64_power6
+
+Here are some more complicated configurations of libdfp linking an
+alternate GLIBC:
 
 64-bit PowerPC (soft-dfp) using the libdecnumber backend and dpd encoding:
 
 CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -O2 -g" \
-/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
-	--with-backend=libdecnumber --enable-decimal-float=dpd \
-	--libdir=/usr/lib64/ \
-	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc64-linux-gnu \
-	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power5 \
-	2>&1 | tee _configure64_power5
+CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m64 -O2 -g" \
+~/eglibc/eglibc/libdfp/trunk/configure \
+  --with-backend=libdecnumber --enable-decimal-float=dpd \
+  --libdir=/usr/lib64/ \
+  --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+  --build=powerpc64-linux-gnu \
+  --with-glibc-build=~/glibc-2.11/build/glibc64_power5 \
+  2>&1 | tee _configure64_power5
 
-64-bit PowerPC POWER6 (hard-dfp) using libdecnumber backend and dpd encoding: We only
-need the --with-cpu=power6 flag for power6 support and hardware-dfp:
-
-CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -O2 -g" \
-/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
-	--with-backend=libdecnumber --enable-decimal-float=dpd \
-	--libdir=/usr/lib64/ \
-	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc64-linux-gnu \
-	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power6 \
-	--with-cpu=power6 2>&1 | tee _configure64_power6
-
-64-bit PowerPC POWER7 (hard-dfp) using libdecnumber backend and dpd encoding: We only
-need the --with-cpu=power7 flag for power7 support and hardware-dfp:
+64-bit PowerPC POWER6 (hard-dfp) using libdecnumber backend and dpd
+encoding: We only need the --with-cpu=power6 flag for power6 support and
+hardware-dfp:
 
 CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -O2 -g" \
-/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
-	--with-backend=libdecnumber --enable-decimal-float=dpd \
-	--libdir=/usr/lib64/ \
-	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc64-linux-gnu \
-	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc64_power7 \
-	--with-cpu=power7 2>&1 | tee _configure64_power7
+CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m64 -O2 -g" \
+~/eglibc/eglibc/libdfp/trunk/configure \
+  --with-backend=libdecnumber --enable-decimal-float=dpd \
+  --libdir=/usr/lib64/ \
+  --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+  --build=powerpc64-linux-gnu \
+  --with-glibc-build=~/glibc-2.11/build/glibc64_power6 \
+  --with-cpu=power6 2>&1 | tee _configure64_power6
+
+64-bit PowerPC POWER7 (hard-dfp) using libdecnumber backend and dpd
+encoding: We only need the --with-cpu=power7 flag for power7 support and
+hardware-dfp:
+
+CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -O2 -g" \
+CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m64 -O2 -g" \
+~/eglibc/eglibc/libdfp/trunk/configure \
+  --with-backend=libdecnumber --enable-decimal-float=dpd \
+  --libdir=/usr/lib64/ \
+  --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+  --build=powerpc64-linux-gnu \
+  --with-glibc-build=~/glibc-2.11/build/glibc64_power7 \
+  --with-cpu=power7 2>&1 | tee _configure64_power7
 
 32-bit PowerPC (soft-dfp) using the libdecnumber backend and dpd encoding:
 
 CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -O2 -g" \
-/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
-	--with-backend=libdecnumber --enable-decimal-float=dpd \
-	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc-linux-gnu \
-	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power5 \
-	2>&1 | tee _configure32_power5
+CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m32 -O2 -g" \
+~/eglibc/eglibc/libdfp/trunk/configure \
+  --with-backend=libdecnumber --enable-decimal-float=dpd \
+  --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+  --build=powerpc-linux-gnu \
+  --with-glibc-build=~/glibc-2.11/build/glibc32_power5 \
+  2>&1 | tee _configure32_power5
 
 Or 32-bit POWER6 (hard-dfp):
 
 CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -O2 -g" \
-/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
-	--with-backend=libdecnumber --enable-decimal-float=dpd \
-	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc-linux-gnu \
-	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power6 \
-	--with-cpu=power6 2>&1 | tee _configure32_power6
+CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m32 -O2 -g" \
+~/eglibc/eglibc/libdfp/trunk/configure \
+  --with-backend=libdecnumber --enable-decimal-float=dpd \
+  --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+  --build=powerpc-linux-gnu \
+  --with-glibc-build=~/glibc-2.11/build/glibc32_power6 \
+  --with-cpu=power6 2>&1 | tee _configure32_power6
 
 Or 32-bit POWER7 (hard-dfp):
 
 CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -O2 -g" \
-/home/ryanarn/eglibc/eglibc/libdfp/trunk/configure \
-	--with-backend=libdecnumber --enable-decimal-float=dpd \
-	--with-glibc-headers=/home/ryanarn/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
-	--build=powerpc-linux-gnu \
-	--with-glibc-build=/home/ryanarn/glibc-2.11/build/glibc32_power7 \
-	--with-cpu=power7 2>&1 | tee _configure32_power7
+CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m32 -O2 -g" \
+~/eglibc/eglibc/libdfp/trunk/configure \
+  --with-backend=libdecnumber --enable-decimal-float=dpd \
+  --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
+  --build=powerpc-linux-gnu \
+  --with-glibc-build=~/glibc-2.11/build/glibc32_power7 \
+  --with-cpu=power7 2>&1 | tee _configure32_power7
 
 ---------------------------------------------------------------------------
 6. Source Tree Layout
 
-The Libdfp configure script is responsible for building the search order that
-is used by the Make system for selecting files out of the source tree.
+The Libdfp configure script is responsible for building the search order
+that is used by the Make system for selecting files out of the source tree.
 
 The configure script automatically knows how to search for
 	base_machine (e.g. powerpc)
@@ -485,8 +539,8 @@ following any of the previous *machine directories:
 	dfpu
 	bits
 
-It hard-searches for the following sysdep directories based upon configuration
-settings:
+It hard-searches for the following sysdep directories based upon
+configuration settings:
 	bid
 	dpd
 	soft-dfp
@@ -501,13 +555,14 @@ The top of the search list is the commond libdfp internal header files:
 
 	${srcdir}/include.
 
-Anything in these directories should be ABSOLUTELY COMMON since you can't get
-a header earlier than in the ${srcdir}/include directory.  If you need to
-override something in ${srcdir}/include then you may need to move the headers
-out of this directory and into the sysdeps tree.
+Anything in these directories should be ABSOLUTELY COMMON since you can't
+get a header earlier than in the ${srcdir}/include directory.  If you need
+to override something in ${srcdir}/include then you may need to move the
+headers out of this directory and into the sysdeps tree.
 
-Header files that are used when building libdfp, but also provided by libdfp
-and installed in the prefix directory are in the following directory:
+Header files that are used when building libdfp, but also provided by
+libdfp and installed in the prefix directory are in the following
+directory:
 
 	${srcdir}/dfp
 

@@ -52,7 +52,7 @@ __END_DECLS
 
 #endif /* __STDC_WANT_DEC_FP__  */
 
-/* Pick up the system fenv.h.  */
+/* Pick up the system stdlib.h.  */
 #include_next <stdlib.h>
 
 #endif /* _DFP_STDLIB_H  */
