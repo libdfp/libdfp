@@ -24,7 +24,6 @@
 
 
 #include <stdio.h>
-#include "decode.h"
 
 static int fail = 0;
 static int testnum = 0;

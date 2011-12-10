@@ -31,11 +31,12 @@
 #include <stdint.h>
 #include <math.h>
 
+#include "decode.h"
+
 #define _WANT_VC 1
 #define _WANT_DC 1
 
 #include "scaffold.c"
-#include "decode.h"
 
 /* Inspired by GLIBC stdio-common/tfformat.c  */
 typedef struct{
@@ -94,8 +95,6 @@ d_nan_type strtods_nan[] =
   {__LINE__, "1234.5678910111213e-5", "+1,234,568E-8", "+1,234,567,891,011,121E-17", "+0,000,000,000,000,000,012,345,678,910,111,213E-18" },
   {0,0,0,0,0 }
 };
-
-#include "decode.h"
 
 int main(void) {
 

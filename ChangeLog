@@ -1,5 +1,13 @@
 2011-12-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
+	* decode.h: Added __BEGIN_DECLS and __END_DECLS around
+	decoded[32|64|128] prototypes in order to allow them to be used in C++
+	compatibility testcases without warnings.
+	* scaffold.c: Removed extra #include "decode.h". 
+	* test-strtod.c: Likewise.
+
+2011-12-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
 	* Makefile.in: Copied contents of $(system_header_dirs) into
 	$(header_dirs) in order to have -I added automatically to the compiler
 	invocation.  This makes sure that dfp/decimal/decimal always comes

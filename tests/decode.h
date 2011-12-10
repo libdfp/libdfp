@@ -25,6 +25,10 @@
 #ifndef _DFP_DECODE_H
 #define _DFP_DECODE_H
 
+#include <features.h>
+
+__BEGIN_DECLS
+
 /* char * should ref a 14 byte char array, +0,000,000E+0\0  */
 extern char * decoded32 (_Decimal32, char*);
 /* char * should ref a 26 byte char array, +0,000,000,000,000,000E+0\0  */
@@ -32,5 +36,7 @@ extern char * decoded64 (_Decimal64, char*);
 /* char * should ref a 50 byte char array, *
  * +0,000,000,000,000,000,000,000,000,000,000,000E+0\0  */
 extern char * decoded128 (_Decimal128, char*);
+
+__END_DECLS
 
 #endif /* _DFP_DECODE_H  */
