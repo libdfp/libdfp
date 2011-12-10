@@ -154,9 +154,9 @@ endif
 # For header files we want to search every directory that is relevant.  We
 # have to include $(top_builddir) in order to pick up the configure generated
 # config.h.
-header_dirs := $(strip include $(backend_headers) $(sysdep_dirs) decNumberMath/ ieee754/ base-math/)
+system_header_dirs := dfp dfp/decimal
 
-system_header_dirs := $(top_srcdir)/dfp/ $(top_srcdir)/dfp/decimal
+header_dirs := $(strip include $(system_header_dirs) $(backend_headers) $(sysdep_dirs) decNumberMath/ ieee754/ base-math/)
 
 header_search_dirs := $(header_dirs:%=$(top_srcdir)/%) $(top_srcdir) $(top_builddir)
 
@@ -217,24 +217,24 @@ CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 
 # Build the static object files.
 .c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h -I$(system_header_dirs) $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 .S.o:
-	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h -I$(system_header_dirs) $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
 # Build the shared object files.
 .c.os:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h -I$(system_header_dirs) $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
 .S.os:
-	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h -I$(system_header_dirs) $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
 # C++ compatibility test cases.
 .cpp.os:
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(CXX_DEFINES) $(CXX_WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h -I$(system_header_dirs) $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(CXX_DEFINES) $(CXX_WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) $(glibc_headers_dir) -o $@
 	@echo
 
 # Archive the static library and include all of the .o files from the backend

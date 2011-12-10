@@ -1,5 +1,12 @@
 2011-12-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
+	* Makefile.in: Copied contents of $(system_header_dirs) into
+	$(header_dirs) in order to have -I added automatically to the compiler
+	invocation.  This makes sure that dfp/decimal/decimal always comes
+	before the system include/decimal/decimal header.
+
+2011-12-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
 	* README.user: Add instructions for using <decimal/decimal> to pick up
 	operator<< and operator>> overloads for decimal[32|64|128] types.
 	* README.developer: Removed necessity of including -isystem in
