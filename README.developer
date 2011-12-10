@@ -331,8 +331,7 @@ CXXFLAGS
 	generally match the CFLAGS (for the most part).
 
 CPPFLAGS
-	Use this to pass specific flags to the C Preprocessor, e.g.,
-	CPPFLAGS="-isystem /opt/at4.0/include/c++/4.5.4/decimal/"
+	Use this to pass specific flags to the C Preprocessor.
 
 OBJDUMP
 	[OPTIONAL: Picked up from $PATH if not specified.]
@@ -432,14 +431,12 @@ Valid Combinations:
 Here are some easy-case configurations of libdfp using PATH:
 
 PATH=/opt/at4.0/bin:$PATH \
-  CPPFLAGS="-isystem /opt/at4.0/include/c++/4.5.4/decimal/" \
   CXXFLAGS="-m32 -O2 -g" CFLAGS="-m32 -O2 -g" \
   ../libdfp-decimal/configure --with-backend=libdecnumber \
   --enable-decimal-float=dpd --build=powerpc-linux-gnu \
   --with-cpu=power6 2>&1 | tee _configure32_power6
 
 PATH=/opt/at4.0/bin:$PATH \
-  CPPFLAGS="-isystem /opt/at4.0/include/c++/4.5.4/decimal/" \
   CXXFLAGS="-m64 -O2 -g" CFLAGS="-m64 -O2 -g" \
   ../libdfp-decimal/configure --with-backend=libdecnumber \
   --enable-decimal-float=dpd --build=powerpc64-linux-gnu \

@@ -34,6 +34,7 @@ Table of Contents:
 	  4.3  GCC With --enable-decimal-float Support
 	5.  _Decimal* Data Types
 	  5.1  C++ decimal[32|64|128] Types Compatibility
+	  5.2  C++ decimal[32|64|128] operator<< and operator>> Overloads
 	6.  DFP Headers
 	7.  Compile and Link
 	8.  Unsupported/Non-Standard Additions
@@ -260,7 +261,7 @@ The following will result in a binary-float to decimal-float conversion:
 5.1  C++ decimal[32|64|128] Types Compatibility
 ---------------------------------------------------------------------------
 
-C++ does not natively use the ISO C DFP _Decimal[32|64|128] types.
+Your C++ compiler may not provide the ISO C DFP _Decimal[32|64|128] types.
 
 Per the C++ DFP specification: ISO/IEC JTC1 SC22 WG21 N2732 "Extension for
 the programming language C++ to support decimal floating point arithmetic",
@@ -275,21 +276,61 @@ This allows C++ programs, which use the native decimal32, decimal64, and
 decimal128 types to use the _Decimal32, _Decimal64, and_Decimal128
 types.
 
-Your compiler may or may not yet have this defined in float.h.  If it is
-not defined you  need to define them yourself before including any dfp
-headers, e.g.,
+Your compiler may or may not yet have this defined in float.h.  As a matter
+of convenience, libdfp has provided these headers in the libdfp headers
+directory include/dfp/float.h
 
-	#ifndef _Decimal32
-	typedef std::decimal::decimal32  _Decimal32;
-	#endif
-	#ifndef _Decimal64
-	typedef std::decimal::decimal64  _Decimal64;
-	#endif
-	#ifndef _Decimal128
-	typedef std::decimal::decimal128 _Decimal128;
-	#endif
+5.2  C++ decimal[32|64|128] operator<< and operator>> Overloads
+---------------------------------------------------------------------------
 
-	#include <dfp/stdlib.h>
+Your C++ compiler may not provide the operator<< and operator>> overloads
+for std::decimal::decimal[32|64|128] data types.  Per the C++ DFP
+specification: ISO/IEC JTC1 SC22 WG21 N2732 "Extension for the programming
+language C++ to support decimal floating point arithmetic", the header
+<decimal> shall provide the following operator overloads.
+
+namespace std {
+namespace decimal {
+
+  template <class charT, class traits>
+    std::basic_istream<charT, traits> &
+      operator>>(std::basic_istream<charT, traits> & is,
+                 decimal32 & d);
+
+  template <class charT, class traits>
+    std::basic_istream<charT, traits> &
+      operator>>(std::basic_istream<charT, traits> & is,
+                 decimal64 & d);
+
+  template <class charT, class traits>
+    std::basic_istream<charT, traits> &
+      operator>>(std::basic_istream<charT, traits> & is,
+                 decimal128 & d);
+
+  template <class charT, class traits>
+    std::basic_ostream<charT, traits> &
+      operator<<(std::basic_ostream<charT, traits> & os,
+                 decimal32 d);
+
+  template <class charT, class traits>
+    std::basic_ostream<charT, traits> &
+      operator<<(std::basic_ostream<charT, traits> & os,
+                 decimal64 d);
+
+  template <class charT, class traits>
+    std::basic_ostream<charT, traits> &
+      operator<<(std::basic_ostream<charT, traits> & os,
+                 decimal128 d);
+}}
+
+Per http://gcc.gnu.org/bugzilla/show_bug.cgi?id=51486, since C++ decimal
+support is defined in a technical report and not ratified into the actual
+C++ standard the <decimal> header shouldn't be located in the default
+headers include directory.  As a result the <decimal> header is located in
+the include/decimal directory.  Therefore, in order to include the decimal
+header implicitly use the following in applications:
+
+#include <decimal/decimal>
 
 ---------------------------------------------------------------------------
 6.  DFP Headers
@@ -302,11 +343,14 @@ up prior to the system headers.
 	dfp/math.h
 	dfp/stdlib.h
 	dfp/wchar.h
+	dfp/float.h
+	dfp/decimal/decimal
 
 Each of these headers uses the GCC construct include_next in order to pick up
 the system header as well, e.g.,
 
 	dfp/math.h will include_next <math.h>
+	dfp/decimal/decimal will include_next <decimal/decimal>
 
 This mechanism allows Libdfp to add the Decimal interfaces required by the
 specification to the aforementioned headers.
@@ -316,6 +360,10 @@ overrides compile with the following:
 
 -I/pathto/include/dfp/ -D__STDC_WANT_DEC_FP__
 
+Using -I instead of -isystem is suggested because -I indicates that the
+specified headers are picked up BEFORE the system headers, which is what we
+want.
+
 And then in the application source simply using the following include will
 pick up both /pathto/include/dfp/<foo>.h and /usr/include/<foo>.h:
 
@@ -323,6 +371,10 @@ pick up both /pathto/include/dfp/<foo>.h and /usr/include/<foo>.h:
 #include <fenv.h>
 #include <stdlib.h>
 #include <wchar.h>
+
+/* And for C++ programs */
+#include <float.h>
+#include <decimal/decimal>
 
 Alternatively, if you don't want to use the -I/pathto/include/dfp/, for
 instance, if you don't want to have to specify this directly, you may do the
@@ -332,6 +384,10 @@ following:
 #include <dfp/fenv.h>
 #include <dfp/stdlib.h>
 #include <dfp/wchar.h>
+
+/* And for C++ programs */
+#include <dfp/float.h>
+#include <dfp/decimal/decimal>
 
 ---------------------------------------------------------------------------
 7.  Compile and Link

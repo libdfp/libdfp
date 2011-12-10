@@ -1,5 +1,15 @@
 2011-12-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
+	* README.user: Add instructions for using <decimal/decimal> to pick up
+	operator<< and operator>> overloads for decimal[32|64|128] types.
+	* README.developer: Removed necessity of including -isystem in
+	CPPFLAGS in order to pick up decimal headers.
+	* dfp/decimal: Created dfp/decimal/ header include directory.
+	* dfp/decimal.tmp: Moved decimal.tmp to decimal/decimal.
+	* dfp/decimal/decimal: Moved decimal.tmp to decimal/decimal.
+
+2011-12-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
 	* Makefile.in: Install dfp/decimal/ directory.  Add
 	dfp/decimal/decimal path.
 	* tests/test-ostream.cpp: Change <decimal> to <decimal/decimal>
