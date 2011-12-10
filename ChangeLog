@@ -1,5 +1,10 @@
 2011-12-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
+	* dfp/decimal/decimal: Added back in erroneously removed #include
+	<stdio.h>.
+
+2011-12-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
 	* dfp/decimal/decimal: Removed ostreamd32, ostreamd64, and
 	ostreamd128 prototypes.
 

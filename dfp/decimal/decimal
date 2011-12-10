@@ -48,6 +48,7 @@ using std::ostream;
  * printf and strtod[32|64|128] support provided by libdfp.  */
 
 #include <float.h> /* Pick up _Decimal[32|64|128] typedefs.  */
+#include <stdio.h> /* Pick up the sprintf prototype.  */
 
 #include <string>
 using std::string;
