@@ -1,3 +1,5 @@
+test make install headers with dfp/decimal/ headers.
+
 Add testcase to verify soft-dfp TLS version of rounding mode functions.
 
 Add printf_dfp test which change the rounding mode.

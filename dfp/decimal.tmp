@@ -32,7 +32,7 @@
 #ifdef __cplusplus
 
 /* Pick up the system <decimal> */
-#include_next <decimal>
+#include_next <decimal/decimal>
 
 #pragma GCC system_header
 

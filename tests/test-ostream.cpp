@@ -30,7 +30,7 @@
  * definitions.  */
 #include <float.h>
 
-#include <decimal>
+#include <decimal/decimal>
 
 #include <iomanip>
 

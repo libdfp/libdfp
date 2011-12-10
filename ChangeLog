@@ -1,3 +1,12 @@
+2011-12-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* Makefile.in: Install dfp/decimal/ directory.  Add
+	dfp/decimal/decimal path.
+	* tests/test-ostream.cpp: Change <decimal> to <decimal/decimal>
+	* TODO: Added directive to test decimal/ directory installs.
+	* dfp/decimal: Moved file "decimal" to "decimal.tmp".
+	* dfp/decimal.tmp: Moved file "decimal" to "decimal.tmp".
+
 2011-12-08  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* configure: Regenerated.

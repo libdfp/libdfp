@@ -156,7 +156,7 @@ endif
 # config.h.
 header_dirs := $(strip include $(backend_headers) $(sysdep_dirs) decNumberMath/ ieee754/ base-math/)
 
-system_header_dirs := $(top_srcdir)/dfp/
+system_header_dirs := $(top_srcdir)/dfp/ $(top_srcdir)/dfp/decimal
 
 header_search_dirs := $(header_dirs:%=$(top_srcdir)/%) $(top_srcdir) $(top_builddir)
 
@@ -341,7 +341,7 @@ $(addsuffix .os, $(libdfp_tests)): $(top_srcdir)/tests/scaffold.c
 
 # The CPP test rely on the <dfp/decimal> header.  If that changes then they
 # need to be rebuilt.
-$(addsuffix .os, $(libdfp_cxx_tests)): $(top_srcdir)/dfp/decimal $(top_srcdir)/dfp/float.h
+$(addsuffix .os, $(libdfp_cxx_tests)): $(top_srcdir)/dfp/decimal/decimal $(top_srcdir)/dfp/float.h
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
@@ -406,13 +406,17 @@ endif
 	$(LDCONFIG) -l $(inst_libdir)/$(SHARED_REALNAME_LIB)
 	$(INSTALL) -d $(inst_includedir)
 	$(INSTALL) -d $(inst_includedir)/dfp
+	$(INSTALL) -d $(inst_includedir)/dfp/decimal
 	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
+	$(INSTALL) -t $(inst_includedir)/dfp/decimal/ $(top_srcdir)/dfp/decimal/*
 .PHONY: install
 
 install-headers:
 	$(INSTALL) -d $(inst_includedir)
 	$(INSTALL) -d $(inst_includedir)/dfp
+	$(INSTALL) -d $(inst_includedir)/dfp/decimal
 	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
+	$(INSTALL) -t $(inst_includedir)/dfp/decimal/ $(top_srcdir)/dfp/decimal/*
 .PHONY: install-headers
 
 # Clean out the existing .SUFFIXES setting.
