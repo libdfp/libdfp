@@ -47,19 +47,6 @@ using std::ostream;
  * libstdc++ because the ostream and istream operators rely upon libdfp
  * printf and strtod[32|64|128] support provided by libdfp.  */
 
-/* Prototypes for functions providing ostream support in libdfp.  */
-
-std::ostream &
-ostream_d32(std::ostream & os, std::decimal::decimal32 &d) __THROW;
-
-std::ostream &
-ostream_d64(std::ostream & os, std::decimal::decimal64 &d) __THROW;
-
-std::ostream &
-ostream_d128(std::ostream & os, std::decimal::decimal128 &d) __THROW;
-
-#include <stdio.h> /* pick up snprintf  */
-
 #include <float.h> /* Pick up _Decimal[32|64|128] typedefs.  */
 
 #include <string>
