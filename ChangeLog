@@ -1,3 +1,10 @@
+2011-12-12  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* dfp/decimal/decimal(operator<< decimal128): Removed now spurious
+	call to ostream_d128() (which has been removed from libdfp) in the
+	decimal128 operator<< overload.
+	Updated comments clarifying use of 'a/A' over 'g/G' for the default.
+
 2011-12-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* dfp/decimal/decimal: Added back in erroneously removed #include

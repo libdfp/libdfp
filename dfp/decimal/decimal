@@ -102,11 +102,22 @@ struct FIND_DEC_MANT_DIG<16>
 /* Template meta-programming so we only have to write this code once for use
  * with each of the _Decimal[32|64|128] types.  */
 template<class decimal_type>
-class LIBDFP_META_PRINTF {
+class LIBDFP_META {
 private:
 public:
   static inline ostream & decimal_to_string(std::ostream &os, decimal_type &d)
     {
+      /* If strbuf is big enough for a _Decimal128, it is big enough for the
+       * other types as well, so just use the same size for all of them.
+       *   1  (leading zero)
+       * + 1  (.)
+       * + 34 (__DEC128_MANT_DIG__)
+       * + 1  (e)
+       * + 1  (+/-)
+       * + 4  (digits in __DEC128_MAX_EXP__)
+       * + 1  "\n"
+       * = 43 -> round up to a power of 2 = 64.  */
+
       char strbuf[64];
 
       ios_base::fmtflags flags = os.flags();
@@ -149,6 +160,41 @@ namespace std
 {
 namespace decimal
 {
+  //ISO/IEC TR 24733 - 3.2.11 Formatted output:
+
+  /* ISO/IEC TR 24733 doesn't have an equivalent to the 'a/A' conversion
+   * specifier in ISO/IEC TR 24732.  This ostream implementation can take one
+   * of three approaches.  It can either use 'a/A' by default or it can allow
+   * the user to select 'f/F' or 'e/E'.  The 'a/A' conversion specifier is
+   * preferred over 'g/G' because 'a/A' includes the number of digits left of
+   * the decimal point in the specified precision.  This is important because
+   * a decimal mantissa has a fixed number of digits and there is no forced
+   * rounding, like in binary floating point.  */
+
+  template <class charT, class traits>
+  inline std::basic_ostream<charT, traits> &
+    operator<<(std::basic_ostream<charT, traits> & os, decimal32 d)
+    {
+      LIBDFP_META<std::decimal::decimal32>::decimal_to_string(os, d);
+      return os;
+    }
+
+  template <class charT, class traits>
+  inline std::basic_ostream<charT, traits> &
+    operator<<(std::basic_ostream<charT, traits> & os, decimal64 d)
+    {
+      LIBDFP_META<std::decimal::decimal64>::decimal_to_string(os, d);
+      return os;
+    }
+
+  template <class charT, class traits>
+  inline std::basic_ostream<charT, traits> &
+    operator<<(std::basic_ostream<charT, traits> & os, decimal128 d)
+    {
+      LIBDFP_META<std::decimal::decimal128>::decimal_to_string(os, d);
+      return os;
+    }
+
 //  ISO/IEC TR 27433 - 3.2.11 Formatted input:
 //  template <class charT, class traits>
 //    std::basic_istream<charT, traits> &
@@ -161,68 +207,6 @@ namespace decimal
 //  template <class charT, class traits>
 //    std::basic_istream<charT, traits> &
 //      operator>>(std::basic_istream<charT, traits> & is, decimal128 & d);
-
-
-  //ISO/IEC TR 24733 - 3.2.11 Formatted output:
-
-  /* ISO/IEC TR 24733 doesn't have an equivalent to the 'a/A' conversion
-   * specifier in ISO/IEC TR 24732.  This ostream implementation can take one
-   * of two approaches.  It can either use 'a/A' by default or it can allow
-   * the user to select f/F or e/E.  It'd be nice to override  */
-
-
-  template <class charT, class traits>
-  inline std::basic_ostream<charT, traits> &
-    operator<<(std::basic_ostream<charT, traits> & os, decimal32 d)
-    {
-
-      /*   1  (leading zero)
-       * + 1  (.)
-       * + 7 (__DEC32_MANT_DIG__)
-       * + 1  (e)
-       * + 1  (+/-)
-       * + 2  (digits in __DEC32_MAX_EXP__)
-       * + 1  "\n"
-       * = 14 -> round up to a power of 2 = 16.  */
-      LIBDFP_META_PRINTF<std::decimal::decimal32>::decimal_to_string(os, d);
-      return os;
-    }
-
-  template <class charT, class traits>
-  inline std::basic_ostream<charT, traits> &
-    operator<<(std::basic_ostream<charT, traits> & os, decimal64 d)
-    {
-      /*   1  (leading zero)
-       * + 1  (.)
-       * + 16 (__DEC64_MANT_DIG__)
-       * + 1  (e)
-       * + 1  (+/-)
-       * + 3  (digits in __DEC64_MAX_EXP__)
-       * + 1  "\n"
-       * = 24 -> round up to a power of 2 = 32.  */
-
-      LIBDFP_META_PRINTF<std::decimal::decimal64>::decimal_to_string(os, d);
-      return os;
-    }
-
-  /*  */
-  template <class charT, class traits>
-  inline std::basic_ostream<charT, traits> &
-    operator<<(std::basic_ostream<charT, traits> & os, decimal128 d)
-    {
-
-      return ostream_d128(os, d);
-      /*   1  (leading zero)
-       * + 1  (.)
-       * + 34 (__DEC128_MANT_DIG__)
-       * + 1  (e)
-       * + 1  (+/-)
-       * + 4  (digits in __DEC128_MAX_EXP__)
-       * + 1  "\n"
-       * = 43 -> round up to a power of 2 = 64.  */
-      LIBDFP_META_PRINTF<std::decimal::decimal128>::decimal_to_string(os, d);
-      return os;
-    }
 
 } /* namespace decimal  */
 } /* namespace std  */
