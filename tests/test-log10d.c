@@ -30,6 +30,7 @@
 #include <math.h>
 #include <string.h>
 
+#include "decode.h"
 #define _WANT_VC 1 /* Pick up the _VC_P(x,y,fmt) macro.  */
 
 #include "scaffold.c" /* Pick up the _VC_P(x,y,fmt) macro.  */

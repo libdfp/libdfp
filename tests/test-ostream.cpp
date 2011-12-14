@@ -1,4 +1,4 @@
-/* Test the ostream operator in the cpp compatibility header <dfp/decimal>.
+/* Test ostream operator in cpp compat header <dfp/decimal/decimal>.
 
    Copyright (C) 2011 Free Software Foundation, Inc.
 
@@ -40,47 +40,93 @@
 using namespace std;
 using namespace std::decimal;
 
-//#define _WANT_PC 1 /* Pick up the _PC(x,y,...) macro.  */
-//#include "scaffold.c"
+ /* Pick up the _OSC(x,y,precision,upper,spec) macro.  */
+#define _WANT_OSC 1
+#include "scaffold.c"
 
 /* Inspired by GLIBC stdio-common/tfformat.c  */
 typedef struct{
   int line;
   decimal32 d;
   const char *expect;
+  int precision; /* -1 means unspecified.  */
+  char upper; /* l or u */
+  char spec; /* a, e, f */
 } d32_type;
 
-d32_type printf_d32s[] =
+d32_type ostream_d32s[] =
 {
-  {__LINE__, 123.456E-9DF, "1.23456e-7" },
-  {__LINE__, 123.DF, "123" },
-  {0,0,0}
+  {__LINE__, 0.0000006E-90DF, "6e-97", -1, 'l', 'a' },
+  {__LINE__, 0.0000006E-90DF, "6E-97", -1, 'u', 'a' },
+  /* Test where specified precision '10' exceeds __DEC32_MANT_DIG__.
+   * This should reset precision to __DEC32_MANT_DIG__.  */
+  {__LINE__, 0.6666666666E-90DF, "6.666667E-91", 10, 'u', 'a' },
+  {0,0,0,0,0,0}
+};
+
+typedef struct{
+  int line;
+  decimal64 d;
+  const char *expect;
+  int precision; /* -1 means unspecified.  */
+  char upper; /* l or u */
+  char spec; /* a, e, f */
+} d64_type;
+
+d64_type ostream_d64s[] =
+{
+  {__LINE__, -9.999E-3DD, "-0.009999", -1, 'l', 'f' },
+  {__LINE__, -9.999E-3DD, "-9.999000e-03", -1, 'l', 'e' },
+  {__LINE__, -9.999E-3DD, "-9.999E-03", 3, 'u', 'e' },
+  {__LINE__, -9.999E-3DD, "-0.009999", -1, 'l', 'a' },
+  {__LINE__, __builtin_infd64(), "inf", -1, 'l', 'a' },
+  {__LINE__, __builtin_infd64(), "INF", -1, 'u', 'a' },
+  {__LINE__, (0.0DD * __builtin_infd64()), "NAN", -1, 'u', 'a' },
+  {__LINE__, (0.0DD * __builtin_infd64()), "nan", -1, 'l', 'a' },
+  {0,0,0,0,0,0}
+};
+
+typedef struct{
+  int line;
+  decimal128 d;
+  const char *expect;
+  int precision; /* -1 means unspecified.  */
+  char upper; /* l or u */
+  char spec; /* a, e, f */
+} d128_type;
+
+d128_type ostream_d128s[] =
+{
+  {__LINE__, -1234.56789123456789123455678DL, "-1234.57", -1, 'l', 'a' },
+  {__LINE__, -1234.56789123456789123455678DL, "-1234.5679", 8, 'l', 'a' },
+  {__LINE__, -12345678912345678.9123455678DL, "-12345678912345678.9123455678", 10, 'u', 'f' },
+  {0,0,0,0,0,0}
 };
 
 int main(void)
 {
-  decimal32 d32 = 0.0000006E-90DF;
-  decimal64 d64 = -9.999E-3DD;
-  decimal128 d128 = -1234.56789123456789123455678DL;
-//  cout << d32 << "DF" << endl;
-//  cout << setprecision(__DEC64_MANT_DIG__) << d64 << "DD" << endl;
-//  cout << setprecision(4) << d128 << "DL" << endl;
-// cout << "**************" << endl;
-  cout << d32 << "DF" << endl;
-  cout << d64 << "DD" << endl;
-  cout.flags(ios::scientific);
-  cout << d64 << "DD" << endl;
-  //cout.flags(ios::scientific | ios::uppercase);
-  cout.flags(ios::scientific | ios::uppercase);
-  cout << d64 << "DD" << endl;
-  cout << d64 << "DD" << endl;
-  cout.flags();
-  cout.flags(ios::fixed);
-  cout << d64 << "DD" << endl;
-  d64 = (decimal64) __builtin_infd64();
-  cout.flags(ios::fixed | ios::uppercase);
-  cout << d64 << "DD" << endl;
-  cout.flags(ios::fixed);
-  cout << d64 << "DD" << endl;
-  return 0;
+
+  d32_type *d32ptr;
+  d64_type *d64ptr;
+  d128_type *d128ptr;
+  for (d32ptr = ostream_d32s; d32ptr->line; d32ptr++)
+    {
+      _OSC_P(__FILE__,d32ptr->line, d32ptr->expect,d32ptr->d,d32ptr->precision,d32ptr->upper,d32ptr->spec);
+    }
+
+  for (d64ptr = ostream_d64s; d64ptr->line; d64ptr++)
+    {
+      _OSC_P(__FILE__,d64ptr->line, d64ptr->expect,d64ptr->d,d64ptr->precision,d64ptr->upper,d64ptr->spec);
+    }
+
+  for (d128ptr = ostream_d128s; d128ptr->line; d128ptr++)
+    {
+      _OSC_P(__FILE__,d128ptr->line, d128ptr->expect,d128ptr->d,d128ptr->precision,d128ptr->upper,d128ptr->spec);
+    }
+
+  _REPORT();
+
+  /* fail comes from scaffold.c  */
+  return fail;
+
 }

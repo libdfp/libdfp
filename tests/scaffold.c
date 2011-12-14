@@ -51,6 +51,61 @@ static int testnum = 0;
 
 #endif /* _SC  */
 
+#ifdef _WANT_OSC
+#ifndef __cplusplus
+#warning "_WANT_OSC only available #ifdef __cplusplus.  _OSC and _OSC_P use <sstream>."
+#else /* __cplusplus  */
+#ifndef _OSC
+#include <sstream>
+
+#define _OSC_P(f,l,x,y,precision,upper,spec) do {	\
+  std::stringstream s;					\
+  ios_base::fmtflags flags = s.flags();			\
+  if (precision > -1)					\
+    s << setprecision(precision);			\
+  if (upper == 'u')					\
+    flags |= ios::uppercase;				\
+  if (spec == 'f')					\
+    flags |= ios::fixed;				\
+  else if (spec == 'e')					\
+    flags |= ios::scientific;				\
+  /* else if (spec == 'a') this is the default.  */     \
+  s.flags(flags);					\
+  s << y;						\
+  _SC_P(f,l,x,s.str().c_str());				\
+} while(0)
+
+/* _OSC == Ostream Compare
+ *
+ * Macro used to compare an ostream (operator<<) invocation with an expected
+ * result.
+ *
+ * X: Expected String
+ * Y: decimal[32|64|128] value
+ * precision: Desired precision of output (can't exceed
+ *            __DEC[32|64|128]_MANT_DIG__.  Equivalent to setprecision(x).
+ * upper: 'l' is default.  'u' means uppercase; equivalent to ios::uppercase.
+ * spec: 'a' is default.  'e' equivalent to ios::scientific, 'f' equivalent to
+ *        ios::fixed.
+ *
+ * e.g.
+ *   _OSC("-0.009999",-9.999E-3DD, -1, 'l', 'f');
+ *
+ * Equivalent to the following example:
+ *
+ *  _Decimal64 y = -9.999E-3DD;
+ *  std::stringstream s;
+ *  ios_base::fmtflags flags = s.flags();
+ *  flags |= ios::fixed
+ *  flags |= ios::upper
+ *  s.flags(flags);
+ *  s << y;
+ */
+#define _OSC(x,y,precision,upper,spec) _OSC_P (__FILE__,__LINE__,x,y,precision,upper,spec)
+#endif /* _OSC  */
+#endif /* __cplusplus  */
+#endif /* _WANT_OSC */
+
 #ifdef _WANT_PC
 static char buf[CHAR_MAX];
 #ifndef _PC

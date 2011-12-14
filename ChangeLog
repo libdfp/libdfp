@@ -1,3 +1,10 @@
+2011-12-14  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* tests/test-log10d.c: Added missing #include "decode.h".
+	* tests/scaffold.c (_OSC _OSC_P): Added new ostream compare macros
+	conditional on #ifdef __cpluspluc.
+	* tests/test-ostream.cpp: Added scaffold.c based tests.
+
 2011-12-12  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* dfp/decimal/decimal(operator<< decimal128): Removed now spurious
