@@ -1,6 +1,6 @@
 /* <float.h> for libdfp and redirect to system <float.h>
 
-   Copyright (C) 2011 Free Software Foundation, Inc.
+   Copyright (C) 2011, 2012 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -36,18 +36,23 @@
 #ifndef _Decimal64
 
 /* Predeclare the decimal classes so we can typedef without errors.  */
-namespace std { namespace decimal { class decimal32; }; };
-namespace std { namespace decimal { class decimal64; }; };
-namespace std { namespace decimal { class decimal128; }; };
+//namespace std { namespace decimal { class decimal32; }; };
+//namespace std { namespace decimal { class decimal64; }; };
+//namespace std { namespace decimal { class decimal128; }; };
 
 /* Per ISO/IEC TR 24733 the following typedefs SHOULD be defined in float.h
- * but depending on the compiler version they may NOT be, so we'll define them
- * as a service if they are not defined in the system float.h.  */
+*
+ * typedef std::decimal::decimal32  _Decimal32;
+ * typedef std::decimal::decimal64  _Decimal64;
+ * typedef std::decimal::decimal128 _Decimal128;
+ *
+ * Depending on the compiler version they may NOT be, so we'll define them
+ * as a service if they are not defined in the system float.h.
+ */
 
-typedef std::decimal::decimal32  _Decimal32;
-typedef std::decimal::decimal64  _Decimal64;
-typedef std::decimal::decimal128 _Decimal128;
-
+typedef float _Decimal32 __attribute__((mode(SD)));
+typedef float _Decimal64 __attribute__((mode(DD)));
+typedef float _Decimal128 __attribute__((mode(TD)));
 #endif /* _Decimal64  */
 #endif /* __cplusplus  */
 #endif /* _LIBDFP_FLOAT_H  */

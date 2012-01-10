@@ -4,7 +4,7 @@
 	    The "Decimal Floating Point C Library" User's Guide
 		   for the GNU/Linux OS and GLIBC 2.10+
 		      Contributed by IBM Corporation
-		Copyright (C) 2010 Free Software Foundation
+	    Copyright (C) 2010 - 2012 Free Software Foundation
 
 ===========================================================================
 NOTE:Eight space tabs are the optimum editor setting for reading this file.
@@ -12,7 +12,7 @@ NOTE:Eight space tabs are the optimum editor setting for reading this file.
 
 		Author(s) : Ryan S. Arnold <rsa@us.ibm.com>
 		      Date Created: January 27, 2010
-		      Last Changed: December 5, 2011
+		      Last Changed: January 10, 2012
 
 ---------------------------------------------------------------------------
 Table of Contents:
@@ -34,7 +34,7 @@ Table of Contents:
 	  4.3  GCC With --enable-decimal-float Support
 	5.  _Decimal* Data Types
 	  5.1  C++ decimal[32|64|128] Types Compatibility
-	  5.2  C++ decimal[32|64|128] operator<< and operator>> Overloads
+	  5.2  C++ decimal[32|64|128] operator<< and operator>> Support
 	6.  DFP Headers
 	7.  Compile and Link
 	8.  Unsupported/Non-Standard Additions
@@ -280,10 +280,10 @@ Your compiler may or may not yet have this defined in float.h.  As a matter
 of convenience, libdfp has provided these headers in the libdfp headers
 directory include/dfp/float.h
 
-5.2  C++ decimal[32|64|128] operator<< and operator>> Overloads
+5.2  C++ decimal[32|64|128] operator<< and operator>> Support
 ---------------------------------------------------------------------------
 
-Your C++ compiler may not provide the operator<< and operator>> overloads
+Your C++ compiler may not provide operator<< and operator>> support
 for std::decimal::decimal[32|64|128] data types.  Per the C++ DFP
 specification: ISO/IEC JTC1 SC22 WG21 N2732 "Extension for the programming
 language C++ to support decimal floating point arithmetic", the header

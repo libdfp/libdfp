@@ -1,6 +1,6 @@
 /* <decimal> for libdfp and redirect to system <decimal>
 
-   Copyright (C) 2011 Free Software Foundation, Inc.
+   Copyright (C) 2011, 2012 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -40,6 +40,9 @@ using namespace std::decimal;
 
 #include <ostream>
 using std::ostream;
+
+#include <istream>
+using std::istream;
 
 /* Per ISO/IEC JTC1 SC22 WG21 N2732 - TR 24733: "Extension for the programming
  * language C++ to support decimal floating point arithmetic" define the
@@ -156,6 +159,14 @@ public:
   enum {DEC_MANT_DIG = FIND_DEC_MANT_DIG<(sizeof(decimal_type))>::RESULT};
 };
 
+#include <stdlib.h> /* Pick up the strtod* prototypes */
+
+#include <limits.h> /* For CHAR_MAX  */
+
+#include <istream>
+
+#include <string.h> /* For memset  */
+
 namespace std
 {
 namespace decimal
@@ -196,17 +207,39 @@ namespace decimal
     }
 
 //  ISO/IEC TR 27433 - 3.2.11 Formatted input:
-//  template <class charT, class traits>
-//    std::basic_istream<charT, traits> &
-//      operator>>(std::basic_istream<charT, traits> & is, decimal32 & d);
 
-//  template <class charT, class traits>
-//    std::basic_istream<charT, traits> &
-//      operator>>(std::basic_istream<charT, traits> & is, decimal64 & d);
+  template <class charT, class traits>
+    inline std::basic_istream<charT, traits> &
+      operator>>(std::basic_istream<charT, traits> & is, decimal32 & d)
+      {
+	char buf[CHAR_MAX];
+	memset(buf, '\0', CHAR_MAX);
+	is.read(buf,CHAR_MAX);
+	d.__setval(strtod32(buf, NULL));
+	return is;
+      }
 
-//  template <class charT, class traits>
-//    std::basic_istream<charT, traits> &
-//      operator>>(std::basic_istream<charT, traits> & is, decimal128 & d);
+  template <class charT, class traits>
+    inline std::basic_istream<charT, traits> &
+      operator>>(std::basic_istream<charT, traits> & is, decimal64 & d)
+      {
+	char buf[CHAR_MAX];
+	memset(buf, '\0', CHAR_MAX);
+	is.read(buf,CHAR_MAX);
+	d.__setval(strtod64(buf, NULL));
+	return is;
+      }
+
+  template <class charT, class traits>
+    inline std::basic_istream<charT, traits> &
+      operator>>(std::basic_istream<charT, traits> & is, decimal128 & d)
+      {
+	char buf[CHAR_MAX];
+	memset(buf, '\0', CHAR_MAX);
+	is.read(buf,CHAR_MAX);
+	d.__setval(strtod128(buf, NULL));
+	return is;
+      }
 
 } /* namespace decimal  */
 } /* namespace std  */

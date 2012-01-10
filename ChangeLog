@@ -1,3 +1,16 @@
+2012-01-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* Makefile.in (libdfp_cxx_tests): Added test-istream.
+	* tests/scaffold.c (_ISC _ISC_P): Added new istream compare macros
+	conditional on #ifdef __cplusplus.
+	* tests/test-istream.cpp: New test for operator>>.
+	* tests/test-strtod.c: Added a new value to test.
+	* dfp/float.h: Correct _Decimal[32|64|128] declarations.
+	* dfp/decimal/decimal: Added operator>> support for decimal[32|64|128]
+	C++ decimal floating point types.
+	* README.user: Updated information on operator<< and operator>>
+	support.
+
 2011-12-14  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* tests/test-log10d.c: Added missing #include "decode.h".

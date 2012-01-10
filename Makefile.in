@@ -330,7 +330,7 @@ libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
 	       test-round test-bfp-conversions test-stdlib test-wchar \
 	       test-expd
 
-libdfp_cxx_tests = test-ostream
+libdfp_cxx_tests = test-ostream test-istream
 
 libdfp_tests = $(libdfp_c_tests) $(libdfp_cxx_tests)
 

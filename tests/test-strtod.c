@@ -1,6 +1,6 @@
 /* Test strtod[32|64|128] facility.
 
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010, 2012 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -70,6 +70,7 @@ d_type strtods[] =
   {__LINE__, "3.14", 3.140000DF, 3.140000DD, 3.140000DL },
   {__LINE__, "3.14e-2", 0.031400DF, 0.031400DD, 0.031400DL },
   {__LINE__, "1234.5678910111213e-5", 0.01234568DF ,0.01234567891011121DD ,0.012345678910111213DL },
+  {__LINE__, "-1234.57", -1234.57F, -1234.57DD, -1234.57DL},
   {0,0,0,0,0 }
 };
 

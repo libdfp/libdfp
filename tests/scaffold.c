@@ -1,6 +1,6 @@
 /* Test facility scaffolding.
 
-   Copyright (C) 2009, 2011 Free Software Foundation, Inc.
+   Copyright (C) 2009, 2011, 2011 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -105,6 +105,46 @@ static int testnum = 0;
 #endif /* _OSC  */
 #endif /* __cplusplus  */
 #endif /* _WANT_OSC */
+
+#ifdef _WANT_ISC
+#ifndef __cplusplus
+#warning "_WANT_ISC only available #ifdef __cplusplus.  _ISC and _ISC_P use <sstream>."
+#else /* __cplusplus  */
+#ifndef _ISC
+#include <sstream>
+#define _WANT_VC 1
+
+#define _ISC_P(f,l,x,y,z,fmt) do {				\
+  std::stringstream s;						\
+  /* Clear the stringstream.  */				\
+  s.str(std::string());						\
+  /* Push the string to test onto the stream.  */		\
+  s << y;							\
+  /* invoke operator>>(istream &,decimal[32|64|128] &)  */	\
+  s >> z;							\
+  _VC_P(f,l,x,z,fmt);						\
+} while(0)
+
+/* _ISC == Istream Compare
+ *
+ * Macro used to compare an istream (operator>>) invocation with an expected
+ * result.
+ *
+ * X: Expected decimal[32|64|128] value
+ * Y: Input string
+ * Z: Input temp decimal[32|64|128] used to store the result
+ * fmt: format string for the decimal type.
+ * e.g.
+ *   _ISC("-0.009999",-9.999E-3DD,z,fmt);
+ *
+ * Equivalent to the following example:
+ *
+ */
+#define _ISC(x,y,z,fmt) _ISC_P (__FILE__,__LINE__,x,y,z,fmt)
+#endif /* _ISC  */
+#endif /* __cplusplus  */
+#endif /* _WANT_ISC */
+
 
 #ifdef _WANT_PC
 static char buf[CHAR_MAX];
