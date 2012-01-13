@@ -1,3 +1,19 @@
+2012-01-13  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* Makefile.in (libdfp_cxx_tests): Add test-ostream-g-spec test.
+	* tests/test-ostream-g-spec.cpp: New file to test decimal/decimal's
+	_LIBDFP_G_CONV_SPEC guard.
+	* tests/test-printf.c: Add newly discovered %DDg failures.
+	* tests/scaffold.c (_OSC_P): Add comment regarding
+	_LIBDFP_G_CONV_SPEC.
+	* tests/test-istream.cpp: Removed unused variable.
+	* README.user: Update with information about NOT using #include
+	<dfp/*header*>.
+	* dfp/float.h: Remove commented out decimal class predeclares.
+	* dfp/decimal/decimal: Move #include <float.h> to before #include_next
+	<decimal/decimal> to prevent missing _Decimal[32|64|128] definition
+	errors.
+
 2012-01-10  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_cxx_tests): Added test-istream.

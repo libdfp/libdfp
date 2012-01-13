@@ -346,11 +346,11 @@ up prior to the system headers.
 	dfp/float.h
 	dfp/decimal/decimal
 
-Each of these headers uses the GCC construct include_next in order to pick up
+Each of these headers uses the GCC construct #include_next in order to pick up
 the system header as well, e.g.,
 
-	dfp/math.h will include_next <math.h>
-	dfp/decimal/decimal will include_next <decimal/decimal>
+	dfp/math.h will #include_next <math.h>
+	dfp/decimal/decimal will #include_next <decimal/decimal>
 
 This mechanism allows Libdfp to add the Decimal interfaces required by the
 specification to the aforementioned headers.
@@ -358,36 +358,37 @@ specification to the aforementioned headers.
 In order to pick up the Libdfp prototypes and classification macro
 overrides compile with the following:
 
--I/pathto/include/dfp/ -D__STDC_WANT_DEC_FP__
+  -I/pathto/include/dfp/ -D__STDC_WANT_DEC_FP__=1
 
 Using -I instead of -isystem is suggested because -I indicates that the
 specified headers are picked up BEFORE the system headers, which is what we
 want.
 
-And then in the application source simply using the following include will
+Then in the application source simply using the following include will
 pick up both /pathto/include/dfp/<foo>.h and /usr/include/<foo>.h:
 
-#include <math.h>
-#include <fenv.h>
-#include <stdlib.h>
-#include <wchar.h>
+	#include <math.h>
+	#include <fenv.h>
+	#include <stdlib.h>
+	#include <wchar.h>
 
-/* And for C++ programs */
-#include <float.h>
-#include <decimal/decimal>
+	/* And for C++ programs */
+	#include <float.h>
+	#include <decimal/decimal>
 
-Alternatively, if you don't want to use the -I/pathto/include/dfp/, for
-instance, if you don't want to have to specify this directly, you may do the
-following:
+Due to the use of #include_next in the DFP headers (in order to wrap the
+default system headers with DFP prototypes) the methodology of including
+"dfp/" in the include path, and then excluding -I/pathto/include/dfp/ is
+NOT supported.
 
-#include <dfp/math.h>
-#include <dfp/fenv.h>
-#include <dfp/stdlib.h>
-#include <dfp/wchar.h>
+DO NOT DO THE FOLLOWING:
 
-/* And for C++ programs */
-#include <dfp/float.h>
-#include <dfp/decimal/decimal>
+	#include <dfp/math.h>
+	#include <dfp/fenv.h>
+	#include <dfp/stdlib.h>
+	#include <dfp/wchar.h>
+	#include <dfp/float.h>
+	#include <dfp/decimal/decimal>
 
 ---------------------------------------------------------------------------
 7.  Compile and Link

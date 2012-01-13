@@ -107,7 +107,7 @@ int main(void)
   d32_type *d32ptr;
   d64_type *d64ptr;
   d128_type *d128ptr;
-  int fail_save = 0;
+
   for (d32ptr = istream_d32s; d32ptr->line; d32ptr++)
     {
       _ISC_P(__FILE__,d32ptr->line, d32ptr->expect,d32ptr->d,d32ptr->tmp,d32ptr->fmt);

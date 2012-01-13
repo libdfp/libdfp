@@ -69,7 +69,9 @@ static int testnum = 0;
     flags |= ios::fixed;				\
   else if (spec == 'e')					\
     flags |= ios::scientific;				\
-  /* else if (spec == 'a') this is the default.  */     \
+  /* else if (spec == 'a') this is the default.  */	\
+  /* or else if (spec == 'g') this is the default  */	\
+  /* if _LIBDFP_G_CONV_SPEC is defined.  */		\
   s.flags(flags);					\
   s << y;						\
   _SC_P(f,l,x,s.str().c_str());				\

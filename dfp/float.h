@@ -35,11 +35,6 @@
 /* If _Decimal64 is defined we don't need to do any of this.  */
 #ifndef _Decimal64
 
-/* Predeclare the decimal classes so we can typedef without errors.  */
-//namespace std { namespace decimal { class decimal32; }; };
-//namespace std { namespace decimal { class decimal64; }; };
-//namespace std { namespace decimal { class decimal128; }; };
-
 /* Per ISO/IEC TR 24733 the following typedefs SHOULD be defined in float.h
 *
  * typedef std::decimal::decimal32  _Decimal32;
@@ -49,6 +44,10 @@
  * Depending on the compiler version they may NOT be, so we'll define them
  * as a service if they are not defined in the system float.h.
  */
+
+/* Because of how these are declared in the system decimal/decimal header the
+ * declarations specified by the TR don't work.  We need to define these in
+ * the same way decimal/decimal does for compatibility.  */
 
 typedef float _Decimal32 __attribute__((mode(SD)));
 typedef float _Decimal64 __attribute__((mode(DD)));

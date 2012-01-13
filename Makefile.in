@@ -325,12 +325,12 @@ GLIBC_LIBS := $(glibc_builddir)/libc.so $(glibc_builddir)/math/libm.so
 endif
 
 libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
-	       test-isnan test-isinf test-isfinite test-fpclassify test-logd \
-	       test-log10d test-strtod test-numdigits test-get_digits \
-	       test-round test-bfp-conversions test-stdlib test-wchar \
-	       test-expd
+		 test-isnan test-isinf test-isfinite test-fpclassify test-logd \
+		 test-log10d test-strtod test-numdigits test-get_digits \
+		 test-round test-bfp-conversions test-stdlib test-wchar \
+		 test-expd
 
-libdfp_cxx_tests = test-ostream test-istream
+libdfp_cxx_tests = test-ostream test-ostream-g-spec test-istream
 
 libdfp_tests = $(libdfp_c_tests) $(libdfp_cxx_tests)
 
@@ -343,7 +343,7 @@ $(addsuffix .os, $(libdfp_tests)): $(top_srcdir)/tests/scaffold.c
 # need to be rebuilt.
 $(addsuffix .os, $(libdfp_cxx_tests)): $(top_srcdir)/dfp/decimal/decimal $(top_srcdir)/dfp/float.h
 
-# Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
+# Explicitly link against the uninstalled GLIBC and the libdfp.so.1 we just
 # built.
 $(libdfp_c_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .os,$@) -o $@

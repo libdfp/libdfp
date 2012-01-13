@@ -26,17 +26,23 @@
 #define _LIBDFP_DECIMAL_H 1
 
 #ifdef _GLIBCXX_DECIMAL_IMPL
-# error "<dfp/decimal> should be included before the system <decimal> header."
+# error "dfp/<decimal/decimal> should be #included before the system <decimal/decimal> header."
 #endif
 
 #ifdef __cplusplus
 
-/* Pick up the system <decimal> */
+/* This needs to be declared before #include_next <decimal/decimal> so that
+ * _Decimal types are declared when the system <decimal/decimal> pulls in
+ * other headers which are overloaded by libdfp, e.g., wchar.h.  */
+#include <float.h> /* Pick up _Decimal[32|64|128] typedefs.  */
+
+/* Pick up the system <decimal>. Since C++ DFP support is currently only a
+ * technical report the decimal header is in the non-default search path so
+ * <decimal/decimal> must be used.  */
 #include_next <decimal/decimal>
+using namespace std::decimal;
 
 #pragma GCC system_header
-
-using namespace std::decimal;
 
 #include <ostream>
 using std::ostream;
@@ -44,20 +50,16 @@ using std::ostream;
 #include <istream>
 using std::istream;
 
-/* Per ISO/IEC JTC1 SC22 WG21 N2732 - TR 24733: "Extension for the programming
- * language C++ to support decimal floating point arithmetic" define the
- * ostream and istream operators.  These are included in libdfp and NOT
- * libstdc++ because the ostream and istream operators rely upon libdfp
- * printf and strtod[32|64|128] support provided by libdfp.  */
-
-#include <float.h> /* Pick up _Decimal[32|64|128] typedefs.  */
-#include <stdio.h> /* Pick up the sprintf prototype.  */
-
 #include <string>
 using std::string;
 
 #include <iostream>
 using namespace std;
+
+#include <stdlib.h> /* Pick up the strtod[32|64|128] prototypes.  */
+#include <stdio.h>  /* Pick up the sprintf prototype.  */
+#include <limits.h> /* For CHAR_MAX.  */
+#include <string.h> /* For memset.  */
 
 template<unsigned int size>
 struct FIND_DEC_MANT_DIG
@@ -129,7 +131,35 @@ public:
       if (precision > DEC_MANT_DIG)
         precision = DEC_MANT_DIG;
 
+      /* ISO/IEC TR 24733 (DFP C++ Technical Report) doesn't have a
+       * specific ios:: flag that matches the 'a/A' conversion specifier
+       * defined in ISO/IEC TR 24732 (DFP C Technical Report).  Nor does it
+       * specify a default.  It only identifies ios::fixed and
+       * ios::scientific.  There is no default ios_base::fmtflags set if
+       * the user has not specified one or the other.  Presumably the 'g/G'
+       * specifier would be chosen as the default since this implicitly
+       * chooses f/F or e/E based on the number encountered.  */
+
+      /* This ostream implementation prefers the behavior of the DFP C TR
+       * 'a/A' conversion specifier as the default over 'g/G'.  The 'a/A'
+       * conversion specifier is preferred because 'a/A' includes the
+       * number of digits left of the decimal point in the specified
+       * precision.  This is important because a decimal mantissa has a
+       * fixed number of digits and there is no forced (approximate)
+       * rounding, like in binary floating point.  */
+
+      /* This implementation allows one of three approaches.  It can
+       * either use 'a/A' by default or it can allow the user to select
+       * 'f/F' (with ios::fixed) or 'e/E' (with ios::scientific).
+
+      /* IF the user wants 'g/G' as the default he should compile with
+       * #define _LIBDFP_G_CONV_SPEC. */
+
+#ifdef _LIBDFP_G_CONV_SPEC
+      char conv = 'g';
+#else
       char conv = 'a';
+#endif
 
       if (flags & ios::fixed)
         {
@@ -148,7 +178,11 @@ public:
             conv = 'e';
         }
       else if (flags & ios::uppercase)
+#ifdef _LIBDFP_G_CONV_SPEC
+        conv = 'G';
+#else
         conv = 'A';
+#endif
 
       std::string fmtstr = FIND_DEC_MANT_DIG<(sizeof(decimal_type))>::get_fmt(conv);
       sprintf (strbuf, fmtstr.c_str(), precision, d.__getval());
@@ -159,28 +193,17 @@ public:
   enum {DEC_MANT_DIG = FIND_DEC_MANT_DIG<(sizeof(decimal_type))>::RESULT};
 };
 
-#include <stdlib.h> /* Pick up the strtod* prototypes */
-
-#include <limits.h> /* For CHAR_MAX  */
-
-#include <istream>
-
-#include <string.h> /* For memset  */
+/* Per ISO/IEC JTC1 SC22 WG21 N2732 - TR 24733: "Extension for the programming
+ * language C++ to support decimal floating point arithmetic" define the
+ * ostream and istream operators.  These are included in libdfp and NOT
+ * libstdc++ because the ostream and istream operators rely upon libdfp
+ * printf and strtod[32|64|128] support provided by libdfp.  */
 
 namespace std
 {
 namespace decimal
 {
   //ISO/IEC TR 24733 - 3.2.11 Formatted output:
-
-  /* ISO/IEC TR 24733 doesn't have an equivalent to the 'a/A' conversion
-   * specifier in ISO/IEC TR 24732.  This ostream implementation can take one
-   * of three approaches.  It can either use 'a/A' by default or it can allow
-   * the user to select 'f/F' or 'e/E'.  The 'a/A' conversion specifier is
-   * preferred over 'g/G' because 'a/A' includes the number of digits left of
-   * the decimal point in the specified precision.  This is important because
-   * a decimal mantissa has a fixed number of digits and there is no forced
-   * rounding, like in binary floating point.  */
 
   template <class charT, class traits>
   inline std::basic_ostream<charT, traits> &
@@ -245,7 +268,7 @@ namespace decimal
 } /* namespace std  */
 
 #else
-# warning "<dfp/decimal> should only be included by C++ programs."
+# warning "dfp/<decimal/decimal> should only be #included by C++ programs."
 #endif /* __cplusplus  */
 
 #endif /* _LIBDFP_DECIMAL_H  */

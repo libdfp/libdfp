@@ -1,6 +1,6 @@
 /* Test printf_dfp facility.
 
-   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2009-2012 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -116,7 +116,8 @@ d32_type printf_d32s[] =
   {__LINE__, 123.456E-9DF, "1.23456e-7", "%Ha"},
   {__LINE__, 0.00000E-101DF, "0.000000e+00", "%He"},
 
-  /* Erroneously prints "1e+6" due to the '.' with no explicit precision.  */
+  /* Erroneously prints "1e+6" due to the '.' with no explicit precision. FIX
+   * ME.  */
   {__LINE__, 6.0E5DF, "6e+5", "%.Ha"},
 
   {__LINE__, 0.0e10DF, "0.000000e+00", "%He"},
@@ -339,7 +340,8 @@ d64_type printf_d64s[] =
   {__LINE__, 6.5DD, "6e+00", "%.0De"},
   {__LINE__, 6.6DD, "7e+00", "%.0De"},
 
-  /* Erroneously prints "1e+6" due to the '.' with no explicit precision.  */
+  /* Erroneously prints "1e+6" due to the '.' with no explicit precision. Fix
+   * ME.  */
   {__LINE__, 6.0E5DD, "6e+5", "%.Da"},
 
   {__LINE__, 123.456E-9DD, "1.23456e-7", "%Da"},
@@ -563,7 +565,8 @@ d128_type printf_d128s[] =
   {__LINE__, 6.5DL, "6e+00", "%.0DDe"},
   {__LINE__, 6.6DL, "7e+00", "%.0DDe"},
 
-  /* Erroneously prints "1e+6" due to the '.' with no explicit precision.  */
+  /* Erroneously prints "1e+6" due to the '.' with no explicit precision. FIX
+   * ME.  */
   {__LINE__, 6.0E5DL, "6e+5", "%.DDa"},
 
   {__LINE__, 123.456E-9DL, "1.23456e-7", "%DDa"},
@@ -707,7 +710,7 @@ d128_type printf_d128s[] =
   {__LINE__, 6543.00DL, "7e+3", "%.1DDa"},
   {__LINE__, 6543.00DL, "7E+3", "%.1DDA"},
 
-  {__LINE__, 6543.00DL, " 6543.00", "%8DDa"},
+  {__LINE__, 6543.00DL, "6543.00", "%.8DDa"},
 
   /* Fixed by Andreas Schwab on 2010-20-04 */
   {__LINE__, 0.9999999999DL, "1.000000", "%DDf"},
@@ -716,6 +719,14 @@ d128_type printf_d128s[] =
    * It was fixed by Andreas Krebbel on 2011-01-18 */
   {__LINE__, (1.0DL / 1.000000e-123DL), "1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.000000", "%DDf"},
 
+  {__LINE__, -1234.56789123456789123455678DL, "-1234.56789123", "%.8DDf"},
+  /* This should be the same as %.8DDf.  FIX ME. */
+  {__LINE__, -1234.56789123456789123455678DL, "-1234.56789123", "%.8DDg"},
+  /* This isn't properly rounding after the truncated.  FIX ME. */
+  {__LINE__, -1234.56789123456789123455678DL, "-1234.57", "%DDg"},
+  {__LINE__, -1234.56789123456789123455678DL, "-1234.5679", "%.8DDa"},
+  {__LINE__, -1234.56789123456789123455678DL, "-1.234568e+03", "%.6DDe"},
+  {__LINE__, -1234.56789123456789123455678DL, "-1.23456789e+03", "%.8DDe"},
   {0,0,0,0 }
 };
 
