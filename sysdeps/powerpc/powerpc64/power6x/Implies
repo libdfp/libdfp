@@ -1,0 +1,3 @@
+# Pick up the power6 versions of files since power6x is basically the same
+# thing.
+sysdeps/powerpc/powerpc64/power6
