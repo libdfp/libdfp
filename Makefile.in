@@ -9,6 +9,7 @@ prefix = @prefix@
 exec_prefix = @exec_prefix@
 libdir = @libdir@
 includedir = @includedir@
+docdir =
 
 # Where to install the library and object files.
 ifndef libdir
@@ -21,6 +22,12 @@ ifndef includedir
 includedir = $(prefix)/include
 endif
 inst_includedir = $(install_root)$(includedir)
+
+# Where to install the README document
+ifndef docdir
+docdir = $(prefix)/share/doc/
+endif
+inst_docdir = $(install_root)$(docdir)
 
 dfp_name = @PACKAGE_NAME@
 dfp_version = @PACKAGE_VERSION@
@@ -396,7 +403,7 @@ clean:
 
 .PHONY: clean
 
-install: all
+install: all install-readme install-headers
 	$(INSTALL) -d $(inst_libdir)
 ifeq ("@enable_static@","static")
 	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(STATIC_LIB)
@@ -404,11 +411,14 @@ endif
 	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(SHARED_REALNAME_LIB)
 	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_LINKERNAME_LIB)
 	$(LDCONFIG) -l $(inst_libdir)/$(SHARED_REALNAME_LIB)
-	$(INSTALL) -d $(inst_includedir)
-	$(INSTALL) -d $(inst_includedir)/dfp
-	$(INSTALL) -d $(inst_includedir)/dfp/decimal
-	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
-	$(INSTALL) -t $(inst_includedir)/dfp/decimal/ $(top_srcdir)/dfp/decimal/*
+#	$(INSTALL) -d $(inst_includedir)
+#	$(INSTALL) -d $(inst_includedir)/dfp
+#	$(INSTALL) -d $(inst_includedir)/dfp/decimal
+#	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
+#	$(INSTALL) -t $(inst_includedir)/dfp/decimal/ $(top_srcdir)/dfp/decimal/*
+#	#$(INSTALL) -d $(inst_docdir)dfp/
+#	#$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/README.user
+#	#mv $(inst_docdir)dfp/README.user $(inst_docdir)dfp/README
 .PHONY: install
 
 install-headers:
@@ -418,6 +428,12 @@ install-headers:
 	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
 	$(INSTALL) -t $(inst_includedir)/dfp/decimal/ $(top_srcdir)/dfp/decimal/*
 .PHONY: install-headers
+
+install-readme:
+	$(INSTALL) -d $(inst_docdir)dfp/
+	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/README.user
+	mv $(inst_docdir)dfp/README.user $(inst_docdir)dfp/README
+.PHONY: install-readme
 
 # Clean out the existing .SUFFIXES setting.
 .SUFFIXES:

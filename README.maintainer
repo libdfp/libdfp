@@ -20,15 +20,23 @@ Table of Contents:
 	2.  Specification
 	  2.1  DFP Spec
 	  2.2  Spec Changes
-	3.  DFP ABI Changes
-	4.  Versioning
-	5.  Mailing Lists
-	6.  ChangeLog
-	7.  Backends
-	8.  Bugs
-	9.  Contributions
-	10. Commit Access
+	3.  Libdfp API Changes
+	4.  Libdfp ABI Changes
+	5.  Versioning
+	6.  Mailing Lists
+	7.  ChangeLog
+	8.  Backends
+	9.  Bugs
+	10.  Contributions
+	11. Commit Access
 
+
+---------------------------------------------------------------------------
+3.  Libdfp API Changes
+
+When new functions or interfaces are added to Libdfp then the API has changed
+and the library version must change.  For guidelines on adding new symbols to
+a particular version see README.developer.
 
 ---------------------------------------------------------------------------
 10.  Commit Access

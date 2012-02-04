@@ -1,3 +1,12 @@
+2012-02-04  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* Makefile.in (install-readme): New target.
+	(install): Consolidated by making install-headers and install-readme
+	as dependent rules.
+	* README.maintainer: Updated info on Versioning.
+	* README.user: Added discussion on __STDC_DEC_FP__
+	* README.developer: Updated info on Versioning.
+
 2012-01-17  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/powerpc32/power6x/Implies: Points to power6.

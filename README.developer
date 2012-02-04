@@ -37,6 +37,7 @@ Table of Contents:
 	  5.1  Configure Switches
 	6.  Source Tree Layout
 	7.  Make Rules
+	8.  Adding New Functions (API changes) (TODO)
 	8.  Precision (TODO)
 	9.  Testing (make check) (TODO)
 	10. Contribution Checklist (TODO)
@@ -645,6 +646,19 @@ make install-headers [install_root=<path>]
 make clean
 
 [TODO] make distclean
+
+
+---------------------------------------------------------------------------
+8.  Adding New Functions (API changes) (TODO)
+
+Libdfp versioning uses the following convention:
+
+	major.minor.revision
+
+New functions must ALWAYS be added to the next revision number of the library.
+For instance, if the maintainer has designated the current release at 1.0.8
+new function should be added to 1.0.9.  Then, when the maintainer increments
+the library to 1.0.9 the new functions will become available.
 
 ---------------------------------------------------------------------------
 Appendices

@@ -23,11 +23,12 @@ Table of Contents:
 	  1.3.  Backends (libdecnumber & libbid)
 	2.  Availability
 	3.  Compliance With ISO/IEC TR 24732
-	  3.1  __STDC_WANT_DEC_FP__
-	  3.2  GNU99 Compatibility
-	  3.3  scanf Support
-	  3.4  printf Support
-	    3.4.1 printf "a,A" Conversion Specifier
+	  3.1  __STDC_DEC_FP__
+	  3.2  __STDC_WANT_DEC_FP__
+	  3.3  GNU99 Compatibility
+	  3.4  scanf Support
+	  3.5  printf Support
+	    3.5.1 printf "a,A" Conversion Specifier
 	4.  Dependencies
 	  4.1  GNU/Linux OS
 	  4.2  GLIBC Minimum Version
@@ -103,7 +104,38 @@ extension for Decimal Floating Point Types.
 This section covers issues related to compliance with ISO/IEC TR 24732.
 
 ---------------------------------------------------------------------------
-3.1 __STDC_WANT_DEC_FP__
+3.1 __STDC_DEC_FP__
+
+The draft standard ISO/IEC TR 24732 specifies the macro __STDC_DEC_FP__ as
+integer constant 200805L to indicate conformance to the technical report.
+
+This macro describes properties of the compiler and library that together
+satisfy the technical report.
+
+The intention is that user applications may check for conformance with the
+following:
+
+#ifdef __STDC_DEC_FP__
+/* Select implementation conforming to the TR.  */
+#else
+/* Select non-conforming DFP emulation library.  */
+#endif
+
+Since __STDC_DEC_FP__ is a property fulfilled by both the compiler and
+library the compiler can't predefine this macro without know if the user is
+using libdfp.  There is currently no mechanism for the compiler to
+determine this early in the translation unit.
+
+This will eventually be provided, once a mechanism is added into GLIBC and
+GCC for identifying stdc predefines as highlighted in this email:
+
+http://sourceware.org/ml/libc-alpha/2009-04/msg00005.html
+
+At that point libdfp will provide __STDC_DEC_FP__ for GLIBC versions
+greater than FOO and GCC versions greater than BAR.
+
+---------------------------------------------------------------------------
+3.2 __STDC_WANT_DEC_FP__
 
 The standard ISO/IEC TR 24732 indicates that programs that wish to use
 Decimal Floating Point should define the following macro:
@@ -121,7 +153,7 @@ This macro is REQUIRED when including dfp/math.h dfp/fenv.h, etc to pick
 up the DFP function prototypes and data types defined in these headers.
 
 ---------------------------------------------------------------------------
-3.2 GNU99 Compatibility
+3.3 GNU99 Compatibility
 
 GNU99 compatibility is required to pick up some DFP prototypes that are
 similar to the binary floating point prototypes guarded in <math.h> by
@@ -140,7 +172,7 @@ prototype which will have an incorrect return type.
 Compile with -Wall to pick up undefined prototype warnings.
 
 ---------------------------------------------------------------------------
-3.3 scanf Support
+3.4 scanf Support
 
 Libdfp does not, and will not comply with the TR 24732 requirement for the
 addition of scanf in support of decimal floating point data types.  The
@@ -148,7 +180,7 @@ strtod[32|64|128] functions can be used for the same purpose without the
 implications of scanf.
 
 ---------------------------------------------------------------------------
-3.4 printf Support
+3.5 printf Support
 
 Libdfp supports the addition of the printf format codes indicated by TR
 24732.  GLIBC proper owns the printf implementation.  Libdfp utilizes the
@@ -178,7 +210,7 @@ It will recognize the following conversion specifier 'spec' characters:
 Therefore, any combination of DFP length modifiers and spec characters is
 supported.
 
-3.4.1 printf "a,A" Conversion Specifier
+3.5.1 printf "a,A" Conversion Specifier
 ---------------------------------------------------------------------------
 
 The ISO-C DFP specification adds "a/A" as a printf conversion specifier.
