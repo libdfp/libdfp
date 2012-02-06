@@ -1,3 +1,11 @@
+2012-02-06  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* Makefile.in (libdfp_c_tests): Add test-GCC-PR52140.c.
+	* tests/test-istream.cpp: Comment out NaN tests.  Two nans can't be
+	compared.
+	* tests/test-GCC-PR52140.c: New testcase for ICE.
+	* TODO: Add item to upgrade libdecnumber version.
+
 2012-02-04  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* Makefile.in (install-readme): New target.

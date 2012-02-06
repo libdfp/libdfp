@@ -37,6 +37,8 @@
 /* For cout support.  */
 #include <iostream>
 
+#include <math.h>
+
 using namespace std;
 using namespace std::decimal;
 
@@ -71,6 +73,7 @@ typedef struct{
   decimal64 tmp;
 } d64_type;
 
+
 d64_type istream_d64s[] =
 {
   {__LINE__, -9.999E-3DD, "-0.009999", "%Da", -1.0DD},
@@ -79,10 +82,14 @@ d64_type istream_d64s[] =
   {__LINE__, -9.999E-3DD, "-0.009999", "%Da", -1.0DD},
   {__LINE__, __builtin_infd64(), "inf", "%Da", -1.0DD},
   {__LINE__, __builtin_infd64(), "INF", "%Da", -1.0DD},
-  {__LINE__, (0.0DD * __builtin_infd64()), "NAN", "%Da", -1.0DD},
-  {__LINE__, (0.0DD * __builtin_infd64()), "nan", "%Da", -1.0DD},
+  /* You can't value compare nan to nan.  */
+  /* {__LINE__, (0.0DD * __builtin_infd64()), "NAN", "%Da", -1.0DD},  */
+  /* You can't value compare nan to nan.  */
+  /* {__LINE__, (0.0DD * __builtin_infd64()), "nan", "%Da", -1.0DD},  */
   {0,0,0,0,0}
 };
+
+
 
 typedef struct{
   int line;

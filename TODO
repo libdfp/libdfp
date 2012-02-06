@@ -1,3 +1,9 @@
+
+
+Upgrade libdecnumber version.
+  Upgrade autoconf version
+    Add @docdir@ to Makefile (supported in autoconf 2.6.0).
+
 test make install headers with dfp/decimal/ headers.
 
 Add testcase to verify soft-dfp TLS version of rounding mode functions.
@@ -20,10 +26,12 @@ test cases.
 [DONE] If system glibc is 2.10 then make check shouldn't need all the GLIBC build
 scaffolding for executing and debugging tests.
 
-Clear up make clean and make distclean.
+[DONE] Clear up make clean 
 
-Clear up dependency issue so that libdfp.so.1 is rebuilt when a .c file
-changes.
+Work on make distclean.
+
+[DONE] Clear up dependency issue so that libdfp.so.1 is rebuilt when a .c
+file changes.
 
 Finish make check test suite.
 

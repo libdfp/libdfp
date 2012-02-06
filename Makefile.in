@@ -335,7 +335,7 @@ libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
 		 test-isnan test-isinf test-isfinite test-fpclassify test-logd \
 		 test-log10d test-strtod test-numdigits test-get_digits \
 		 test-round test-bfp-conversions test-stdlib test-wchar \
-		 test-expd
+		 test-expd test-GCC-PR52140
 
 libdfp_cxx_tests = test-ostream test-ostream-g-spec test-istream
 
