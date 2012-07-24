@@ -46,7 +46,7 @@ typedef struct{
   const char *expect;
 } d64_type;
 
-typedef union{
+/*typedef union{
   _Decimal128 d;
   long i[4];
 } d128_u;
@@ -54,23 +54,37 @@ typedef union{
 typedef union{
   _Decimal64 d;
   long i[4];
-} d64_u;
+} d64_u; */
+
+#define DEC_INFINITY	__builtin_infd32()
+#define DEC_NAN		(0.0DF * DEC_INFINITY)
 
 int main (void)
 {
   d64_type *d64ptr = NULL;
   d128_type *d128ptr = NULL;
 
-  d64_u d64u;
+/*  d64_u d64u;
   d64u.d = 1.00DD;
 
   d128_u d128u;
-  d128u.d = 1.00DL;
+  d128u.d = 1.00DL; */
 
   d64_type d64types[] =
     {
 #ifdef _DPD_BACKEND
       {__LINE__,1.00DD, "+0,000,000,000,000,100E-2"},
+      {__LINE__,__DEC64_MAX__, "+9,999,999,999,999,999E+369"},
+      {__LINE__,-DEC_NAN, "-0,000,000,000,000,000E-398"},
+      {__LINE__,9.999999999999999E369DD, "+9,999,999,999,999,999E+354"},
+      {__LINE__,9.999999999999999E370DD, "+9,999,999,999,999,999E+355"},
+      {__LINE__,9.999999999999999E384DD, "+9,999,999,999,999,999E+369"},
+      {__LINE__,__DEC64_MIN__, "+0,000,000,000,000,001E-383"},
+      {__LINE__,__DEC64_SUBNORMAL_MIN__, "+0,000,000,000,000,001E-398"},
+      {__LINE__,1E-398DD, "+0,000,000,000,000,001E-398" },
+      /* Notice, this number exceeds DEC64_SUBNORMAL_MIN.  */
+      {__LINE__,1E-399DD, "+0,000,000,000,000,000E-398" },
+      {__LINE__, 9E370DD, "+0,000,000,000,000,090E+369"},
 #else
       {__LINE__,1.00DD, "BID not supported."},
 #endif

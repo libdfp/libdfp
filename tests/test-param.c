@@ -80,10 +80,10 @@ static int param_test(_Decimal128 d128 __attribute__ ((unused)),
 	       _Decimal64 f64 __attribute__ ((unused)),
 	       _Decimal128 f128)
 {
-  volatile _Decimal128 z;
-  volatile _Decimal128 y;
-  z = e128;
-  y = f128;
+  volatile _Decimal128 z = e128;
+  volatile _Decimal128 y = f128;
+//  z = e128;
+ // y = f128;
   return 0;
 }
 

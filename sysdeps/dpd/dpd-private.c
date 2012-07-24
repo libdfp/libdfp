@@ -775,6 +775,7 @@ __get_digits_d64 (_Decimal64 x, char *str, int *exp_p, int *sign_p,
   union ieee754r_Decimal64 d;
   d.dd = x;
   c_f =  c_decoder[d.ieee.c];
+  /* Consider replacing with a call to getexp_d* for hardware support  */
   exp = c_f.lm_exp << DECIMAL64_BEC_bits;
   exp += d.ieee.bec;
   exp -= DECIMAL64_Bias;

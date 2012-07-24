@@ -219,6 +219,13 @@ padn (FILE *fp, int pad, int count)
       OUT("prec",pr); \
     } while (0)
 
+#define OUT_INPUT_PREC(pr) \
+  do \
+    { \
+      OUT("input_prec",pr); \
+    } while (0)
+
+
 #define OUT_INDEX(idx) \
   do \
     { \
@@ -540,14 +547,7 @@ __printf_dfp (FILE *fp,
 	  {
 	    /* The DFP spec addition for %a refers to all of the significant
 	     * digits in the precision.  */
-	    if (exp < 0)
-	      {
-		  input_prec = nd;
-	      }
-	    else
-	      {
-	        input_prec = 1;
-	      }
+	    input_prec = nd;
 
 	    /* This same check is done in two different places but it'll only
 	     * effect a single pass through once.  If prec is not set it'll hit
@@ -607,8 +607,8 @@ __printf_dfp (FILE *fp,
 	      {
 		prec = P - 1;
 		spec = 'e';
-		input_prec = nd - 1;
 	      }
+	    input_prec = nd - 1;
 	  break;
 	  }
 	case 'e':
@@ -646,8 +646,10 @@ __printf_dfp (FILE *fp,
 	index = n + nd + exp + prec;
       /* Goofy special case where we round significant digits which aren't
        * right of the decimal place.  */
-      else if (tolower(info->spec) == 'a')
+      else if (tolower(info->spec) == 'a' && prec > 0)
+       {
 	index = n + prec;
+       }
       else
 	index = n + prec + 1;
 

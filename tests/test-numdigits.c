@@ -92,7 +92,7 @@ typedef struct{
 
 d64_type printf_d64s[] =
 {
-  {__LINE__, 0.02E-2DD, 1,  "%d"},
+/*  {__LINE__, 0.02E-2DD, 1,  "%d"},
   {__LINE__, 0.0200E-2DD, 3,  "%d"},
   {__LINE__, 1.0E-2DD, 2,  "%d"},
   {__LINE__, 0.0000345E-2DD, 3,  "%d"},
@@ -100,9 +100,34 @@ d64_type printf_d64s[] =
   {__LINE__, 123456.0E-2DD, 7,  "%d"},
   {__LINE__, 123456.000E-2DD, 9,  "%d"},
   {__LINE__, 123456.000E-4DD, 9,  "%d"},
-  {__LINE__, 123456.000E-6DD, 9,  "%d"},
-  /* can't exceed __DEC64_MANT_DIG__  */
-  {__LINE__, 123456.00000000000000E-18DD, 16,  "%d"},
+  {__LINE__, 123456.000E-6DD, 9,  "%d"}, */
+
+  /* Can't exceed __DEC64_MANT_DIG__.  This test has 17 digits but the
+   * compiler will truncate it (or round) before it's passed   */
+  {__LINE__, 9.9999999999999999E300DD, 16, "%d"},
+
+  /* There was a known bug with any value where the normalized exponent
+   * exceeded 369.  This caused __DEC64_MAX__ to return incorrect results.  */
+  {__LINE__, __DEC64_MAX__, 16, "%d"},
+
+  /* The normalized exponent is '369' so the right justified encoding has two
+   * digits, '90', in the mantissa.  */
+
+  {__LINE__, 9E370DD, 2, "%d"},
+
+  /* Fails the same way since the absolute value of the exponent exceeds 369.
+   */
+  {__LINE__, __DEC64_MIN__, 1, "%d"},
+  {__LINE__, 1E-398DD, 1, "%d"},
+
+  /* 0.000000000000001E-383DD  */
+  {__LINE__, __DEC64_SUBNORMAL_MIN__, 1, "%d"},
+
+  /* The compiler truncates this and anything with a smaller (more negative)
+   * exponent than 398 to zero when normalizing the constant into DFP
+   * representation.  */
+  {__LINE__, 1E-399DD, 1, "%d"}, 
+
   {0,0,0,0 }
 };
 
@@ -148,6 +173,26 @@ d32_type printf_d32s[] =
   {0,0,0,0 }
 };
 
+int nd128 (_Decimal128 d);
+int nd64 (_Decimal64 d);
+int nd32 (_Decimal32 d);
+
+/* Use these so that the inline function is inlined into a wrapper function
+ * for easier debugging.  */
+int nd128(_Decimal128 d)
+{
+	return numdigitsd128(d);
+}
+int nd64(_Decimal64 d)
+{
+	return numdigitsd64(d);
+}
+
+int nd32(_Decimal32 d)
+{
+	return numdigitsd32(d);
+}
+
 int main (void)
 {
   d128_type *d128ptr;
@@ -156,21 +201,21 @@ int main (void)
 
   for (d128ptr = printf_d128s; d128ptr->line; d128ptr++)
     {
-      int retval = numdigitsd128(d128ptr->x);
+      int retval = nd128(d128ptr->x);
       fprintf(stdout,"numdigitsd128(%DDfDL) in: %s:%d\n", d128ptr->x,__FILE__,__LINE__-1);
       _VC_P(__FILE__,d128ptr->line, d128ptr->e,retval,d128ptr->format);
     }
 
   for (d64ptr = printf_d64s; d64ptr->line; d64ptr++)
     {
-      int retval = numdigitsd64(d64ptr->x);
+      int retval = nd64(d64ptr->x);
       fprintf(stdout,"numdigitsd64(%DfDD) in: %s:%d\n", d64ptr->x,__FILE__,__LINE__-1);
       _VC_P(__FILE__,d64ptr->line, d64ptr->e,retval,d64ptr->format);
     }
 
   for (d32ptr = printf_d32s; d32ptr->line; d32ptr++)
     {
-      int retval = numdigitsd32(d32ptr->x);
+      int retval = nd32(d32ptr->x);
       fprintf(stdout,"numdigitsd32(%HfDF) in: %s:%d\n", d32ptr->x,__FILE__,__LINE__-1);
       _VC_P(__FILE__,d32ptr->line, d32ptr->e,retval,d32ptr->format);
     }

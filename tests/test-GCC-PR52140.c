@@ -26,6 +26,8 @@
 #define __STDC_WANT_DEC_FP__
 #endif
 
+int foo (_Decimal64 x, _Decimal64 y);
+
 int
 foo (_Decimal64 x, _Decimal64 y)
 {
@@ -37,9 +39,8 @@ foo (_Decimal64 x, _Decimal64 y)
 
 int main(void)
 {
-  int ret = -1;
   _Decimal64 a = 12.45DD;
   _Decimal64 b = 12.43DD;
-  ret = foo (a,b);
+  foo (a,b);
   return 0;
 }

@@ -122,27 +122,55 @@ FUNC_D (numdigits) (DEC_TYPE x)
 #endif
   double f1, f2;
   DEC_TYPE f3;
-  int i1, i2;
+  long long i1, i2;
   static union
   {
     int i[2];
+    long long l;
     double f;
-  } u = { { 0, 1 } };
+  } u = { { 0, 1 } }, v = { { 0, 398 } };
   asm (
 #if _DECIMAL_SIZE != 128
-    "dxex %2,%5\n\t"
-    "drrnd %4,%6,%5,1\n\t"
-    "dxex %3,%4\n\t"
-#else /* _DECIMAL_SIZE == 128 */
-    "dxexq %2,%5\n\t"
-    "drrndq %4,%6,%5,1\n\t"
-    "dxexq %3,%4\n\t"
+    /* Prep for a NAN test.  */
+    "dxex %0,%4\n\t"
+    "stfd %0,%3\n\t"
+    /* We don't care what the exponent actually is, as long at it's less than
+     * '369'.  Set the exponent to zero in preparation for the reround.  Biased
+     * exponent '398' equals zero.*/
+    "diex %2,%5,%4\n\t"
+#else /* _DECIMAL_SIZE == 128  */
+    /* Prep for a NAN test.  */
+    "dxexq %0,%4\n\t"
+    "stfd %0,%3\n\t"
+    /* We don't care what the exponent actually is, as long at it's less than
+     * '369'.  Set the exponent to zero in preparation for the reround.  Biased
+     * exponent '398' equals zero.*/
+    "diexq %2,%5,%4\n\t"
 #endif
-    "stfiwx %2,%y0\n\t"
-    "stfiwx %3,%y1\n\t"
-    : "=Z"(i1), "=Z"(i2), "=&d"(f1), "=&d"(f2), "=&d"(f3)
-    : "d"(tmp), "d"(u.f));
-  return i2 - i1 + 1;
+  : "=&d"(f1), "=&d"(f2), "=&d"(f3), "=m"(i1)
+  : "d"(tmp), "d"(v.f));
+
+  /* check for NaN and infinity.  dxex returns < 0 for qnan, snan, and inf.  */
+  if (i1 < 0)
+    return i1;
+
+  asm (
+#if _DECIMAL_SIZE != 128
+    "drrnd %0,%3,%4,1\n\t" 
+    "dxex %1,%0\n\t"
+    "stfd %1,%2\n\t"
+#else /* _DECIMAL_SIZE == 128  */
+    "drrndq %0,%3,%4,1\n\t" 
+    "dxexq %1,%0\n\t"
+    "stfd %1,%2\n\t"
+#endif
+    : "=&d"(f1), "=&d"(f2), "=m"(i2)
+    : "d"(u.f), "d"(f3));
+
+  /* v.l holds the normalized reference exponent.
+     i2 holds the computed exponent after reround.  */
+
+  return i2 - v.l + 1;
 }
 
 static inline DEC_TYPE

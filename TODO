@@ -1,4 +1,8 @@
+Add tests/test-getexp to determine whether the hardware dfp version stores the
+proper sign of the exponent with the stfiwx call.
 
+Make get_digits calls use getexp_d* rather than computing the exponent
+directly.
 
 Upgrade libdecnumber version.
   Upgrade autoconf version
