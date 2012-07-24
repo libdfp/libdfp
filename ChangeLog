@@ -1,3 +1,26 @@
+2012-07-24  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* Makefile.in (check): Add printf_dfp.o dependency to check in order to
+	have make check automatically rebuild libdfp is printf_dfp.c has
+	changed.
+	* tests/test-decode.c: Add tests for decoding numbers with high
+	exponents near __DEC*_MAX_EXP__.
+	* tests/test-param.c (param_test): Remove unnecessary assingments.
+	* tests/test-printf.c: Add tests for __DEC64_MAX__.
+	* tests/test-numdigits.c: Add tests for __DEC64_MAX__ and numbers
+	approaching __DEC*_MAX_EXP__.
+	* tests/test-GCC-PR52140.c (main): Remove unnecessary assignments.
+	* tests/test-ostream.cpp: Formatting.
+	* tests/debug-test.sh: Add ./ as a path prefix.
+	* sysdeps/powerpc/dfpu/numdigits.h (numdigitsd*): Fix for numbers with
+	exponent approaching __DEC*_MAX_EXP__ by biasing the exponent toward
+	zero.
+	* sysdeps/dpd/dpd-private.c: Formatting.
+	* TODO: New items.
+	* printf_dfp.c (__printf_dfp): Fix for g/G specifier that converst to
+	f/F form.  Fix for a/A when the user supplied precision is 0, i.e.
+	%.Ha.
+
 2012-02-06  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add test-GCC-PR52140.c.
