@@ -1,5 +1,11 @@
 2012-07-25  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/numdigits.h: Cleaned up inline asm DEC_TYPE
+	declarations.  Removed redundant macros.  Merged macros under similar
+	guards.
+
+2012-07-25  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/numdigits.h (numdigits*): Fix inline asm to
 	place result of drrnd[q] into DEC_TYPE instead of double.  Update
 	copyright years to range.

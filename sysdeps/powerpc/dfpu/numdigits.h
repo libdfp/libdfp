@@ -43,11 +43,16 @@
 
 #if _DECIMAL_SIZE == 32
 // DECIMAL32 gets widened to DECIMAL64, so it ought to use DECIMAL64 bias
-#  define DECIMAL_BIAS (101+297)
+# define DECIMAL_BIAS (101+297)
+# define Q ""
 #elif _DECIMAL_SIZE == 64
-#  define DECIMAL_BIAS 398
+# define DECIMAL_BIAS 398
+# define Q ""
 #elif _DECIMAL_SIZE == 128
-#  define DECIMAL_BIAS 6176
+# define DECIMAL_BIAS 6176
+# define Q "q"
+#else
+#error _DECIMAL_SIZE must be '32', '64' or '128'
 #endif
 
 #ifndef PASTE
@@ -57,12 +62,6 @@
 
 #ifndef FUNC_D
 # define FUNC_D(x)		PASTE(x,PASTE(d,_DECIMAL_SIZE))
-#endif
-
-#if _DECIMAL_SIZE != 128
-# define Q ""
-#else
-# define Q "q"
 #endif
 
 static inline int
@@ -76,27 +75,18 @@ FUNC_D (getexp) (DEC_TYPE x)
 #elif _DECIMAL_SIZE == 64
   asm ("dxex %0,%1" : "=d"(f) : "d"(x));
 #elif _DECIMAL_SIZE == 128
-  /* dec quad needs to be in an even-odd fr pair */
-  register DEC_TYPE tmp asm ("fr0") = x;
+  //register DEC_TYPE tmp asm ("fr0") = x;
+  DEC_TYPE tmp = x;
   asm ("dxexq %0,%1" : "=d"(f) : "d"(tmp));
 #endif
   asm ("stfiwx %1,%y0" : "=Z"(i) : "d"(f));
   return i - DECIMAL_BIAS;
 }
 
-#ifndef PASTE
-# define PASTE(x,y) PASTE2(x,y)
-# define PASTE2(x,y) x##y
-#endif
-
 static inline DEC_TYPE
 FUNC_D (setexp) (DEC_TYPE x, int exp)
 {
-#if _DECIMAL_SIZE == 128
-  register DEC_TYPE tmp asm ("fr0") = x;
-#else
-  register DEC_TYPE tmp = x;
-#endif
+  DEC_TYPE tmp = x;
   union {
     int i[2];
     double f;
@@ -142,7 +132,7 @@ FUNC_D (numdigits) (DEC_TYPE x)
     "stfd %0,%3\n\t"
     /* We don't care what the exponent actually is, as long at it's less than
      * '369'.  Set the exponent to zero in preparation for the reround.  Biased
-     * exponent '398' equals zero.*/
+     * exponent equals zero.*/
     "diex" Q " %2,%5,%4\n\t"
   : "=&d"(f1), "=&d"(f2), "=&d"(f3), "=m"(i1)
   : "d"(tmp), "d"(v.f));
