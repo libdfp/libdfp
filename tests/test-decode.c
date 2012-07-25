@@ -1,6 +1,6 @@
 /* Test decoded facility.
 
-   Copyright (C) 2009 Free Software Foundation, Inc.
+   Copyright (C) 2009-2012 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -85,6 +85,7 @@ int main (void)
       /* Notice, this number exceeds DEC64_SUBNORMAL_MIN.  */
       {__LINE__,1E-399DD, "+0,000,000,000,000,000E-398" },
       {__LINE__, 9E370DD, "+0,000,000,000,000,090E+369"},
+      {__LINE__, 4E384DD, "+4,000,000,000,000,000E+369"},
 #else
       {__LINE__,1.00DD, "BID not supported."},
 #endif

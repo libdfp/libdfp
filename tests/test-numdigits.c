@@ -1,6 +1,6 @@
 /* Unit test the internal numdigitsd[32|64|128]() functions.
 
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010-2012 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -92,7 +92,7 @@ typedef struct{
 
 d64_type printf_d64s[] =
 {
-/*  {__LINE__, 0.02E-2DD, 1,  "%d"},
+  {__LINE__, 0.02E-2DD, 1,  "%d"},
   {__LINE__, 0.0200E-2DD, 3,  "%d"},
   {__LINE__, 1.0E-2DD, 2,  "%d"},
   {__LINE__, 0.0000345E-2DD, 3,  "%d"},
@@ -100,7 +100,7 @@ d64_type printf_d64s[] =
   {__LINE__, 123456.0E-2DD, 7,  "%d"},
   {__LINE__, 123456.000E-2DD, 9,  "%d"},
   {__LINE__, 123456.000E-4DD, 9,  "%d"},
-  {__LINE__, 123456.000E-6DD, 9,  "%d"}, */
+  {__LINE__, 123456.000E-6DD, 9,  "%d"},
 
   /* Can't exceed __DEC64_MANT_DIG__.  This test has 17 digits but the
    * compiler will truncate it (or round) before it's passed   */

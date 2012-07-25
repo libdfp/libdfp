@@ -1,6 +1,6 @@
 /* Test parameter passing compliance with the ABI.
 
-   Copyright (C) 2009 Free Software Foundation, Inc.
+   Copyright (C) 2009-2012 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

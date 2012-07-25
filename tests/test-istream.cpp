@@ -82,6 +82,7 @@ d64_type istream_d64s[] =
   {__LINE__, -9.999E-3DD, "-0.009999", "%Da", -1.0DD},
   {__LINE__, __builtin_infd64(), "inf", "%Da", -1.0DD},
   {__LINE__, __builtin_infd64(), "INF", "%Da", -1.0DD},
+  {__LINE__, 4E384DD, "4.0E384", "%Da", -1.0DD},
   /* You can't value compare nan to nan.  */
   /* {__LINE__, (0.0DD * __builtin_infd64()), "NAN", "%Da", -1.0DD},  */
   /* You can't value compare nan to nan.  */

@@ -89,7 +89,7 @@ typedef struct{
 
 d_nan_type strtods_nan[] =
 {
-  /* Compare against the decoded declet for each representation of DEC_NAN since
+  /* Compare against the decoded declet for each representation of DEC_NAN
    * since you can't compare DEC_NAN to DEC_NAN.  */
   {__LINE__, "NaN", DECLET32_NAN, DECLET64_NAN, DECLET128_NAN},
   {__LINE__, "1.23456789E-7", "+1,234,568E-13", "+0,000,000,123,456,789E-15", "+0,000,000,000,000,000,000,000,000,123,456,789E-15" },
@@ -121,6 +121,14 @@ int main(void) {
       _DC_P(__FILE__,dnanptr->line,dnanptr->d64, strtod64(dnanptr->input,NULL));
       _DC_P(__FILE__,dnanptr->line,dnanptr->d128, strtod128(dnanptr->input,NULL));
     }
+
+  {
+   #include "decode.h"
+    _Decimal64 d64 = strtod64("4e384",NULL);
+    printf("4e384DD: %.16Da\n", d64);
+   char dbuf[256];
+   printf("%s\n", decoded64(d64,dbuf));
+  }
 
   _REPORT();
 

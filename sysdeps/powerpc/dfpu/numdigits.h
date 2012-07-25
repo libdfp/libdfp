@@ -1,13 +1,14 @@
 /* Number of digits functions, optimized for Power6.
 
-   Copyright (C) 2006, 2007, 2008 IBM Corporation.
-   Copyright (C) 2006, 2007, 2008, 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2006-2008 IBM Corporation.
+   Copyright (C) 2006-2012 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
               Michael Meissner <meissner@linux.vnet.ibm.com>
               Peter Bergner <bergner@linux.vnet.ibm.com>
+	      Ryan S. Arnold <rsa@linux.vnet.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -56,6 +57,12 @@
 
 #ifndef FUNC_D
 # define FUNC_D(x)		PASTE(x,PASTE(d,_DECIMAL_SIZE))
+#endif
+
+#if _DECIMAL_SIZE != 128
+# define Q ""
+#else
+# define Q "q"
 #endif
 
 static inline int
@@ -121,32 +128,22 @@ FUNC_D (numdigits) (DEC_TYPE x)
   register DEC_TYPE tmp = x;
 #endif
   double f1, f2;
-  DEC_TYPE f3;
+  DEC_TYPE f3, f4;
   long long i1, i2;
   static union
   {
     int i[2];
     long long l;
     double f;
-  } u = { { 0, 1 } }, v = { { 0, 398 } };
+  } u = { { 0, 1 } }, v = { { 0, DECIMAL_BIAS } };
   asm (
-#if _DECIMAL_SIZE != 128
     /* Prep for a NAN test.  */
-    "dxex %0,%4\n\t"
+    "dxex" Q " %0,%4\n\t"
     "stfd %0,%3\n\t"
     /* We don't care what the exponent actually is, as long at it's less than
      * '369'.  Set the exponent to zero in preparation for the reround.  Biased
      * exponent '398' equals zero.*/
-    "diex %2,%5,%4\n\t"
-#else /* _DECIMAL_SIZE == 128  */
-    /* Prep for a NAN test.  */
-    "dxexq %0,%4\n\t"
-    "stfd %0,%3\n\t"
-    /* We don't care what the exponent actually is, as long at it's less than
-     * '369'.  Set the exponent to zero in preparation for the reround.  Biased
-     * exponent '398' equals zero.*/
-    "diexq %2,%5,%4\n\t"
-#endif
+    "diex" Q " %2,%5,%4\n\t"
   : "=&d"(f1), "=&d"(f2), "=&d"(f3), "=m"(i1)
   : "d"(tmp), "d"(v.f));
 
@@ -155,16 +152,10 @@ FUNC_D (numdigits) (DEC_TYPE x)
     return i1;
 
   asm (
-#if _DECIMAL_SIZE != 128
-    "drrnd %0,%3,%4,1\n\t" 
-    "dxex %1,%0\n\t"
+    "drrnd" Q " %0,%3,%4,1\n\t" 
+    "dxex" Q " %1,%0\n\t"
     "stfd %1,%2\n\t"
-#else /* _DECIMAL_SIZE == 128  */
-    "drrndq %0,%3,%4,1\n\t" 
-    "dxexq %1,%0\n\t"
-    "stfd %1,%2\n\t"
-#endif
-    : "=&d"(f1), "=&d"(f2), "=m"(i2)
+    : "=&d"(f4), "=&d"(f2), "=m"(i2)
     : "d"(u.f), "d"(f3));
 
   /* v.l holds the normalized reference exponent.
@@ -205,12 +196,6 @@ FUNC_D (left_justify) (DEC_TYPE x)
   register vector int tmp3;
 #else
   union int_dbl d2;
-#endif
-
-#if _DECIMAL_SIZE != 128
-# define Q ""
-#else
-# define Q "q"
 #endif
 
   asm ("drrnd" Q " %0,%1,%2,1" : "=d"(rnd) : "d"(d.f), "d"(tmp));

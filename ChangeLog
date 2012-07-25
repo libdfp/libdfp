@@ -1,3 +1,18 @@
+2012-07-25  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dfpu/numdigits.h (numdigits*): Fix inline asm to
+	place result of drrnd[q] into DEC_TYPE instead of double.  Update
+	copyright years to range.
+	* tests/test-decode.c: Update copyright years to range.
+	* tests/test-param.c: Likewise.
+	* tests/test-printf.c: Likewise.
+	* tests/test-numdigits.c: Likewise.
+	* tests/test-istream.cpp: Likewise.
+	* tests/test-strtod.c: Likewise.
+	* sysdeps/dpd/dpd-private.c: Likewise.
+	* printf_dfp.c: Fix erroneous test for _Decimal64.  Update copyright
+	years to range.
+
 2012-07-24  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* Makefile.in (check): Add printf_dfp.o dependency to check in order to

@@ -752,6 +752,7 @@ __get_digits_d32 (_Decimal32 x, char *str, int *exp_p, int *sign_p,
   union ieee754r_Decimal32 d;
   d.sd = x;
   c_f =  c_decoder[d.ieee.c];
+  /* Consider replacing with a call to getexp_d* for hardware support  */
   exp = c_f.lm_exp << DECIMAL32_BEC_bits;
   exp += d.ieee.bec;
   exp -= DECIMAL32_Bias;
@@ -804,6 +805,7 @@ __get_digits_d128 (_Decimal128 x, char *str, int *exp_p, int *sign_p,
   union ieee754r_Decimal128 d;
   d.td = x;
   c_f =  c_decoder[d.ieee.c];
+  /* Consider replacing with a call to getexp_d* for hardware support  */
   exp = c_f.lm_exp << DECIMAL128_BEC_bits;
   exp += d.ieee.bec;
   exp -= DECIMAL128_Bias;
