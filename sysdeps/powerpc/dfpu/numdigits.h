@@ -68,18 +68,16 @@ static inline int
 FUNC_D (getexp) (DEC_TYPE x)
 {
   double f;
-  int i;
+  long long i;
 #if _DECIMAL_SIZE == 32
   asm ("dctdp %0,%1\n\t"
        "dxex %0,%0\n\t" : "=d"(f) : "f"(x));
 #elif _DECIMAL_SIZE == 64
   asm ("dxex %0,%1" : "=d"(f) : "d"(x));
 #elif _DECIMAL_SIZE == 128
-  //register DEC_TYPE tmp asm ("fr0") = x;
-  DEC_TYPE tmp = x;
-  asm ("dxexq %0,%1" : "=d"(f) : "d"(tmp));
+  asm ("dxexq %0,%1" : "=d"(f) : "d"(x));
 #endif
-  asm ("stfiwx %1,%y0" : "=Z"(i) : "d"(f));
+  asm ("stfd %1,%0" : "=m"(i) : "d"(f));
   return i - DECIMAL_BIAS;
 }
 

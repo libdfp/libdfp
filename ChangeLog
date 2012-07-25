@@ -1,5 +1,14 @@
 2012-07-25  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Added test-getexp.
+	* tests/test-getexp.c: New test.
+	* tests/test-decode.c (d64types): Added test for __DEC64_MAX__ and
+	__DEC64_MIN__.
+	* sysdeps/powerpc/dfpu/numdigits.h (getexpd[32|64|128]): Fixed in
+	order to prevent erroneous sign extension due to using stfiwx.
+
+2012-07-25  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/numdigits.h: Cleaned up inline asm DEC_TYPE
 	declarations.  Removed redundant macros.  Merged macros under similar
 	guards.

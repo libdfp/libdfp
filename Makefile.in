@@ -335,13 +335,13 @@ libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
 		 test-isnan test-isinf test-isfinite test-fpclassify test-logd \
 		 test-log10d test-strtod test-numdigits test-get_digits \
 		 test-round test-bfp-conversions test-stdlib test-wchar \
-		 test-expd test-GCC-PR52140
+		 test-expd test-GCC-PR52140 test-getexp
 
 libdfp_cxx_tests = test-ostream test-ostream-g-spec test-istream
 
 libdfp_tests = $(libdfp_c_tests) $(libdfp_cxx_tests)
 
-CFLAGS-test-param.c += -O0
+test-printf.os: $(top_builddir)/printf_dfp.os
 
 # Empty rule which simply makes the libdfp_tests .so's dependent on
 # tests/scaffold.c so that when the scaffold file changes all of the test .so
@@ -395,7 +395,7 @@ include $(top_srcdir)/Makefile.gdb
 # We use debug-test.conf as an input file for some debugging utilities.  The
 # .out files are predicated in another rule on the actual test executables, so
 # those are built from those rules.
-check: $(top_builddir)/printf_dfp.o $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests))
+check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests))
 	@echo +Completed make check
 
 .PHONY: check
