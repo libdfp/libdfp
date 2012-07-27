@@ -1,4 +1,9 @@
 2012-07-27  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* tests/test-negate.c: New testcase.
+	* Makefile.in (libdfp_c_tests): Add test-negate.
+
+2012-07-27  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 	* Makefile.in (test-printf.os, test-strtod.os): New rules to depend on
 	printf_dfp.os and strtod[32|64|128].os respectively.
 	* strtod128.c (__DEC_MANT_DIG__, __DEC_MAX_EXP__, __DEC_MIN_EXP__):
