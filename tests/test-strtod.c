@@ -70,13 +70,20 @@ d_type strtods[] =
   {__LINE__, "3.14", 3.140000DF, 3.140000DD, 3.140000DL },
   {__LINE__, "3.14e-2", 0.031400DF, 0.031400DD, 0.031400DL },
   {__LINE__, "1234.5678910111213e-5", 0.01234568DF ,0.01234567891011121DD ,0.012345678910111213DL },
-  {__LINE__, "-1234.57", -1234.57F, -1234.57DD, -1234.57DL},
+  {__LINE__, "-1234.57", -1234.57DF, -1234.57DD, -1234.57DL},
   {0,0,0,0,0 }
 };
 
 const char DECLET32_NAN[] = "+0,000,000E-101";
 const char DECLET64_NAN[] = "+0,000,000,000,000,000E-398";
 const char DECLET128_NAN[] = "+0,000,000,000,000,000,000,000,000,000,000,000E-6176";
+
+const char DECLET_ZERO_D32[] = "+0,000,000E+0";
+const char DECLET_ZERO_D64[] = "+0,000,000,000,000,000E+0";
+
+const char DECLET_HUGE_VAL_D32[] = "+0,000,000E-101";
+const char DECLET_HUGE_VAL_D64[] = "+0,000,000,000,000,000E-398";
+const char DECLET_HUGE_VAL_D128[] = "+0,000,000,000,000,000,000,000,000,000,000,000E-6176";
 
 /* Inspired by GLIBC stdio-common/tfformat.c  */
 typedef struct{
@@ -92,6 +99,25 @@ d_nan_type strtods_nan[] =
   /* Compare against the decoded declet for each representation of DEC_NAN
    * since you can't compare DEC_NAN to DEC_NAN.  */
   {__LINE__, "NaN", DECLET32_NAN, DECLET64_NAN, DECLET128_NAN},
+  {__LINE__, "4E-382", "+0,000,000E+0", "+0,000,000,000,000,004E-382", "+0,000,000,000,000,000,000,000,000,000,000,004E-382"},
+
+  /* __DEC64_SUBNORMAL_MIN__ */
+  {__LINE__, "0.000000000000001E-383",  DECLET_ZERO_D32, "+0,000,000,000,000,001E-398", "+0,000,000,000,000,000,000,000,000,000,000,001E-398"},
+  /* This exceeds __DEC64_MIN_EXP__ so it can't be encoded in _Decimal64 and will underflow.  */
+  {__LINE__, "4E-399", DECLET_ZERO_D32, "+0,000,000,000,000,000E+0", "+0,000,000,000,000,000,000,000,000,000,000,004E-399"},
+  {__LINE__, "4000000000000000E-383", DECLET_ZERO_D32, "+4,000,000,000,000,000E-383", "+0,000,000,000,000,000,004,000,000,000,000,000E-383"},
+  {__LINE__, "4000000000000000E-384", DECLET_ZERO_D32, "+4,000,000,000,000,000E-384", "+0,000,000,000,000,000,004,000,000,000,000,000E-384"},
+  {__LINE__, "4000000000000000E-398", DECLET_ZERO_D32, "+4,000,000,000,000,000E-398", "+0,000,000,000,000,000,004,000,000,000,000,000E-398"},
+  /* This exceeds __DEC64_MIN_EXP__ so it can't be encoded in _Decimal64 and will underflow.  */
+  {__LINE__, "4000000000000000E-399", DECLET_ZERO_D32, DECLET_ZERO_D64, "+0,000,000,000,000,000,004,000,000,000,000,000E-399"},
+  /* This exceeds __DEC64_SUBNORMAL_MIN__ so it can't be encoded in _Decimal64 and will underflow.  */
+  {__LINE__, "4E-400", DECLET_ZERO_D32, DECLET_ZERO_D64, "+0,000,000,000,000,000,000,000,000,000,000,004E-400"},
+
+  {__LINE__, "4E369", DECLET_HUGE_VAL_D32, "+0,000,000,000,000,004E+369", "+0,000,000,000,000,000,000,000,000,000,000,004E+369"},
+  {__LINE__, "4E383", DECLET_HUGE_VAL_D32, "+4,000,000,000,000,000E+368", "+0,000,000,000,000,000,000,000,000,000,000,004E+383"},
+  {__LINE__, "4E384", DECLET_HUGE_VAL_D32, "+4,000,000,000,000,000E+369", "+0,000,000,000,000,000,000,000,000,000,000,004E+384"},
+  {__LINE__, "4E385", DECLET_HUGE_VAL_D32, DECLET_HUGE_VAL_D64, "+0,000,000,000,000,000,000,000,000,000,000,004E+385"},
+
   {__LINE__, "1.23456789E-7", "+1,234,568E-13", "+0,000,000,123,456,789E-15", "+0,000,000,000,000,000,000,000,000,123,456,789E-15" },
   {__LINE__, "1234.5678910111213e-5", "+1,234,568E-8", "+1,234,567,891,011,121E-17", "+0,000,000,000,000,000,012,345,678,910,111,213E-18" },
   {0,0,0,0,0 }
@@ -121,14 +147,6 @@ int main(void) {
       _DC_P(__FILE__,dnanptr->line,dnanptr->d64, strtod64(dnanptr->input,NULL));
       _DC_P(__FILE__,dnanptr->line,dnanptr->d128, strtod128(dnanptr->input,NULL));
     }
-
-  {
-   #include "decode.h"
-    _Decimal64 d64 = strtod64("4e384",NULL);
-    printf("4e384DD: %.16Da\n", d64);
-   char dbuf[256];
-   printf("%s\n", decoded64(d64,dbuf));
-  }
 
   _REPORT();
 

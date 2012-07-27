@@ -1,7 +1,7 @@
 /* Convert string representing a number to Decimal Float value, using given locale.
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation.
+   Copyright (C) 2007-2012 Free Software Foundation.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -30,6 +30,10 @@
 #define FLOAT_SIZE	128
 #define FLOAT_ZERO	0.DL
 #define SET_MANTISSA(x,y)
+#define PRINTF_SPEC "%DDf"
+#define __DEC_MANT_DIG__ __DEC128_MANT_DIG__
+#define __DEC_MAX_EXP__ __DEC128_MAX_EXP__
+#define __DEC_MIN_EXP__ __DEC128_MIN_EXP__
 #endif
 
 #include "strtod32.c"

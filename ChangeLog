@@ -1,3 +1,23 @@
+2012-07-27  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+	* Makefile.in (test-printf.os, test-strtod.os): New rules to depend on
+	printf_dfp.os and strtod[32|64|128].os respectively.
+	* strtod128.c (__DEC_MANT_DIG__, __DEC_MAX_EXP__, __DEC_MIN_EXP__):
+	Define to _Decimal128 values.
+	* tests/test-strtod.c: Added tests near __DEC*_MAX_EXP__ and
+	__DEC*_MIN_EXP__.
+	* strtod64.c (__DEC_MANT_DIG__, __DEC_MAX_EXP__, __DEC_MIN_EXP__):
+	Define to _Decimal64 values.
+	* sysdeps/powerpc/dfpu/numdigits.h (left_justify): Fix VSX case by
+	replacing xxlxor with xxlor insn.
+	(getexp): Replace stfwix with stfd to prevent erroneous sign extend.
+	* sysdeps/soft-dfp/dpd/numdigits.h (getexp): Make return value
+	congruent with hardware-dfp for NaN.
+	* strtod32.c (__DEC_MANT_DIG__, __DEC_MAX_EXP__, __DEC_MIN_EXP__):
+	Define to _Decimal32 values.
+	(FUNCTION_L_INTERNAL): Add left_justify call if proposed exponent is
+	sufficiently close to __DEC*_MAX_EXP__.  Add zero return if proposed
+	exponent is smaller than __DEC*_MIN_EXP__.
+
 2012-07-25  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Added test-getexp.

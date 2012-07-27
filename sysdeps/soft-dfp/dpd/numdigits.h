@@ -1,7 +1,7 @@
 /* Number of digits functions.
 
    Copyright (C) 2006, 2007, 2008 IBM Corporation.
-   Copyright (C) 2007, 2008, 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2007-2012, Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -23,7 +23,7 @@
 
    Please see dfp/COPYING.txt for more information.  */
 
-/* Alow this file to be included more than once, so don't use the usual
+/* Allow this file to be included more than once, so don't use the usual
    include guards.  */
 
 #define NUMDIGITS_SUPPORT 1
@@ -80,6 +80,10 @@ FUNC_D (getexp) (DEC_TYPE x)
   exp -= DECIMAL128_Bias;
 
 #endif
+
+  /* Hardware DFP returns -2 = DECIMAL*_BIAS for a NaN. Be congruent with that.  */
+  if (exp < 0)
+    return --exp;
 
   return exp;
 }

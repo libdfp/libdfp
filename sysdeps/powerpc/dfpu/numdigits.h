@@ -86,7 +86,7 @@ FUNC_D (setexp) (DEC_TYPE x, int exp)
 {
   DEC_TYPE tmp = x;
   union {
-    int i[2];
+    unsigned int i[2];
     double f;
   } e;
 
@@ -179,7 +179,7 @@ FUNC_D (left_justify) (DEC_TYPE x)
 # error "Unknown decimal size"
 #endif
 
-#ifdef __VSX__
+ #ifdef __VSX__
   static vector int vsx_adjust = { 0, ADJUST, 0, 0 };
   register vector int tmp3;
 #else
@@ -190,9 +190,9 @@ FUNC_D (left_justify) (DEC_TYPE x)
   asm ("dxex" Q " %0,%1\n\t" : "=d"(tmp2) : "d"(rnd));
 
 #ifdef __VSX__
-  asm ("xxlxor %x0,%x1,%x1" : "=v"(tmp3) : "d"(tmp2));
+  asm ("xxlor %x0,%x1,%x1" : "=v"(tmp3) : "d"(tmp2));
   asm ("vsubuwm %0,%1,%2" : "=v"(tmp3) : "v"(tmp3), "v"(vsx_adjust));
-  asm ("xxlxor %x0,%x1,%x1" : "=d"(tmp2) : "v"(tmp3));
+  asm ("xxlor %x0,%x1,%x1" : "=d"(tmp2) : "v"(tmp3));
 #else
   d2.f = tmp2;
   d2.i[1] -= ADJUST;

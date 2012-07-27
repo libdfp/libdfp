@@ -1,7 +1,6 @@
 /* Convert string representing a number to Decimal Float value, using given locale.
 
-   Copyright (C) 1997, 1998, 2002, 2004, 2005, 2006, 2009
-   Free Software Foundation, Inc.
+   Copyright (C) 1997-2012, Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -71,12 +70,15 @@
 # define FLT		DEC32
 # define FLOAT_ZERO	0.DF
 # define SET_MANTISSA(x,y)
+# define PRINTF_SPEC "%Hf"
+# define __DEC_MANT_DIG__ __DEC32_MANT_DIG__
+# define __DEC_MAX_EXP__ __DEC32_MAX_EXP__
+# define __DEC_MIN_EXP__ __DEC32_MIN_EXP__
 #endif
 
 #define DEC_TYPE	FLOAT
 #define _DECIMAL_SIZE	FLOAT_SIZE
 #include <numdigits.h>
-
 
 #ifdef USE_WIDE_CHAR
 extern unsigned long long int ____wcstoull_l_internal (const wchar_t *, wchar_t **,
@@ -869,7 +871,8 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       return negative ? -FLOAT_HUGE_VAL : FLOAT_HUGE_VAL;
     }
 
-  if (exponent < MIN_10_EXP - (MANT_DIG + 1))
+  /* Obvious underflow before normalization.  */
+  if (exponent < MIN_10_EXP - MANT_DIG + 1 )
     {
       __set_errno (ERANGE);
       freelocale(C_locale);
@@ -979,7 +982,23 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   while(++exponent < 0)
     d32 /= 10;
 #else
+  /* Computed underflow after normalization.  */
+  if ( exponent <  (__DEC_MIN_EXP__ - __DEC_MANT_DIG__))
+    {
+      __set_errno (ERANGE);
+      freelocale(C_locale);
+      return FLOAT_ZERO;
+    }
+
+  /* Left justification allows us to set a positive exponent that's near
+   * __DEC*_MAX_EXP__, i.e. _almost_ overflowing.  Complete left justification
+   * may be overkill for most numbers in this situation, so perhaps a specific
+   * digit shift will be a better solution in the future.  */
+  if (exponent > (__DEC_MAX_EXP__ - __DEC_MANT_DIG__))
+      d32 = FUNC_D(left_justify) (d32);
+
   d32 = FUNC_D(setexp) (d32, FUNC_D (getexp) (d32) + exponent);
+
 #endif
 
   return negative? -d32:d32;
