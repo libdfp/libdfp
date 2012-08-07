@@ -1,3 +1,19 @@
+2012-08-07  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* tests/test-printf.c: Add missing 'D' to a/A conv tests.
+	* tests/scaffold.c: Correct comments for _OSC and added a/A support.
+	* tests/test-ostream.cpp: Modified expectations such that a/A ignores
+	precision and always uses the num of significant digits in the
+	mantissa when output.
+	* tests/test-ostream-g-spec.cpp: Removed unnecessary define that used
+	to be used to get g/G support.
+	* dfp/decimal/decimal (FIND_DEC_MANT_DIG): Remove ".*" from default
+	string string.
+	(LIBDFP_META): Make g/G spec default. Enable a/A spec by checking
+	flags for ios::fixed | ios::scientific. Condense uppercase/lowercase
+	check. Don't call printf with a precision specifier if a/A is the
+	desires spec conv.
+
 2012-07-27  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* tests/test-negate.c: New testcase.

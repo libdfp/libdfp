@@ -69,9 +69,9 @@ static int testnum = 0;
     flags |= ios::fixed;				\
   else if (spec == 'e')					\
     flags |= ios::scientific;				\
-  /* else if (spec == 'a') this is the default.  */	\
-  /* or else if (spec == 'g') this is the default  */	\
-  /* if _LIBDFP_G_CONV_SPEC is defined.  */		\
+  else if (spec == 'a')					\
+    flags |= (ios::scientific | ios::fixed);		\
+  /* else if (spec == 'g') this is the default.  */	\
   s.flags(flags);					\
   s << y;						\
   _SC_P(f,l,x,s.str().c_str());				\
@@ -82,16 +82,19 @@ static int testnum = 0;
  * Macro used to compare an ostream (operator<<) invocation with an expected
  * result.
  *
- * X: Expected String
- * Y: decimal[32|64|128] value
+ * X: decimal[32|64|128] value
+ * Y: Expected String
  * precision: Desired precision of output (can't exceed
  *            __DEC[32|64|128]_MANT_DIG__.  Equivalent to setprecision(x).
  * upper: 'l' is default.  'u' means uppercase; equivalent to ios::uppercase.
- * spec: 'a' is default.  'e' equivalent to ios::scientific, 'f' equivalent to
- *        ios::fixed.
+ * spec: 'g' is default.  'e' equivalent to ios::scientific, 'f' equivalent to
+ *        ios::fixed, 'a' is equivalent to ios::scientific | ios::fixed.
  *
  * e.g.
- *   _OSC("-0.009999",-9.999E-3DD, -1, 'l', 'f');
+ *   _OSC(4.000000000000000e+384DD, "4.000000000000000e384", -1, 'l', 'a');
+ *   _OSC(4.000000000000000e+384DD, "4.000000000000000e384", -1, 'l', 'g');
+ *   _OSC(4.000000000000000e+384DD, "4.00000e384", -1, 'l', 'f');
+ *   _OSC(4.000000000000000e+384DD, "4.00000e384", -1, 'l', 'f');
  *
  * Equivalent to the following example:
  *

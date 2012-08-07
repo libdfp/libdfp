@@ -30,10 +30,6 @@
  * definitions.  */
 #include <float.h>
 
-/* This testcase sets _LIBDFP_G_CONV_SPEC which causes decimal/decimal's
- * operator<< to default to the equivalent of an printf g/G spec conv rather
- * than the DFP SPEC printf a/A spec conv.  */
-#define _LIBDFP_G_CONV_SPEC
 #include <decimal/decimal>
 
 #include <iomanip>
@@ -55,8 +51,11 @@ typedef struct{
   const char *expect;
   int precision; /* -1 means unspecified.  */
   char upper; /* l or u */
-  char spec; /* a, e, f */
+  char spec; /* a, e, f, g */
 } d32_type;
+
+/* The g/G conv spec used to be provided separate from the others
+   so there was a separate test program.  */
 
 d32_type ostream_d32s[] =
 {

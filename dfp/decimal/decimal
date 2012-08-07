@@ -65,6 +65,7 @@ template<unsigned int size>
 struct FIND_DEC_MANT_DIG
 {
   enum {RESULT = 0};
+
   static inline std::string get_fmt(char conv)
   {
      std::string spec = "";
@@ -78,7 +79,7 @@ struct FIND_DEC_MANT_DIG<4>
   enum {RESULT = (__DEC32_MANT_DIG__) };
   static inline std::string get_fmt(char conv)
   {
-     std::string spec = "%.*H";
+     std::string spec = "H";
      return spec.append(1,conv);
   }
 };
@@ -88,7 +89,7 @@ struct FIND_DEC_MANT_DIG<8>
   enum {RESULT = (__DEC64_MANT_DIG__) };
   static inline std::string get_fmt(char conv)
   {
-     std::string spec = "%.*D";
+     std::string spec = "D";
      return spec.append(1,conv);
   }
 
@@ -99,7 +100,7 @@ struct FIND_DEC_MANT_DIG<16>
   enum {RESULT = (__DEC128_MANT_DIG__) };
   static inline std::string get_fmt(char conv)
   {
-     std::string spec = "%.*DD";
+     std::string spec = "DD";
      return spec.append(1,conv);
   }
 };
@@ -128,64 +129,42 @@ public:
       ios_base::fmtflags flags = os.flags();
       unsigned int precision = os.precision();
 
+      /* Anything over DEC_MANT_DIG can't be represented anyway.  */
       if (precision > DEC_MANT_DIG)
         precision = DEC_MANT_DIG;
 
-      /* ISO/IEC TR 24733 (DFP C++ Technical Report) doesn't have a
-       * specific ios:: flag that matches the 'a/A' conversion specifier
-       * defined in ISO/IEC TR 24732 (DFP C Technical Report).  Nor does it
-       * specify a default.  It only identifies ios::fixed and
-       * ios::scientific.  There is no default ios_base::fmtflags set if
-       * the user has not specified one or the other.  Presumably the 'g/G'
-       * specifier would be chosen as the default since this implicitly
-       * chooses f/F or e/E based on the number encountered.  */
-
-      /* This ostream implementation prefers the behavior of the DFP C TR
-       * 'a/A' conversion specifier as the default over 'g/G'.  The 'a/A'
-       * conversion specifier is preferred because 'a/A' includes the
-       * number of digits left of the decimal point in the specified
-       * precision.  This is important because a decimal mantissa has a
-       * fixed number of digits and there is no forced (approximate)
-       * rounding, like in binary floating point.  */
-
-      /* This implementation allows one of three approaches.  It can
-       * either use 'a/A' by default or it can allow the user to select
-       * 'f/F' (with ios::fixed) or 'e/E' (with ios::scientific).
-
-      /* IF the user wants 'g/G' as the default he should compile with
-       * #define _LIBDFP_G_CONV_SPEC. */
-
-#ifdef _LIBDFP_G_CONV_SPEC
       char conv = 'g';
-#else
-      char conv = 'a';
-#endif
 
-      if (flags & ios::fixed)
+      std::string fmtstr = "%";
+
+      /* A strict reading of the draft DFP C++ spec indicates that a/A conv
+         specifier can't be accompanied by a precision specifier.  */
+
+      if (flags & ios::fixed && flags & ios::scientific)
+	  conv = flags & ios::uppercase ? 'A' : 'a';
+      else
         {
-          /* Only used for "NAN" and "INF" rather than "nan" and "inf" for
-           * "%.*Df".  */
-          if (flags & ios::uppercase)
-            conv = 'F';
-          else
-            conv = 'f';
-        }
-      else if (flags & ios::scientific)
-       {
-          if (flags & ios::uppercase)
-            conv = 'E';
-          else
-            conv = 'e';
-        }
-      else if (flags & ios::uppercase)
-#ifdef _LIBDFP_G_CONV_SPEC
-        conv = 'G';
-#else
-        conv = 'A';
-#endif
+	  if (flags & ios::fixed)
+	      /* Only used for "NAN" and "INF" rather than "nan" and "inf" for
+	       * "%.*Df".  */
+	      conv = flags & ios::uppercase ? 'F' : 'f';
+	  else if (flags & ios::scientific)
+	      conv = flags & ios::uppercase ? 'E' : 'e';
+	  else if (flags & ios::uppercase)
+	      conv = 'G';
+	  fmtstr.append(".*");
+	}
 
-      std::string fmtstr = FIND_DEC_MANT_DIG<(sizeof(decimal_type))>::get_fmt(conv);
-      sprintf (strbuf, fmtstr.c_str(), precision, d.__getval());
+      /* Get the conv spec and length modifier based on size of the type.  */
+      fmtstr.append(FIND_DEC_MANT_DIG<(sizeof(decimal_type))>::get_fmt(conv));
+
+      /* Per the confusing reading of the draft DFP C++ Specification, a/A type
+         are never passed with an accompanying precision.  This causes the
+	 implicit precision in the type to be used for printing.  */
+      if (flags & ios::fixed && flags & ios::scientific)
+        sprintf (strbuf, fmtstr.c_str(), d.__getval());
+      else
+        sprintf (strbuf, fmtstr.c_str(), precision, d.__getval());
       os << strbuf;
       return os;
     }
