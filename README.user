@@ -12,30 +12,34 @@ NOTE:Eight space tabs are the optimum editor setting for reading this file.
 
 		Author(s) : Ryan S. Arnold <rsa@us.ibm.com>
 		      Date Created: January 27, 2010
-		      Last Changed: January 10, 2012
+		       Last Changed: August 8, 2012
 
 ---------------------------------------------------------------------------
 Table of Contents:
 
 	1.  Introduction
 	  1.1.  ISO/IEC TR 24732
-	  1.2.  IEEE 754-2008 (DPD & BID Encodings)
-	  1.3.  Backends (libdecnumber & libbid)
+	  1.2.  ISO/IEC DTR 24733
+	  1.3.  IEEE 754-2008 (DPD & BID Encodings)
+	  1.4.  Backends (libdecnumber & libbid)
 	2.  Availability
 	3.  Compliance With ISO/IEC TR 24732
 	  3.1  __STDC_DEC_FP__
 	  3.2  __STDC_WANT_DEC_FP__
 	  3.3  GNU99 Compatibility
-	  3.4  scanf Support
-	  3.5  printf Support
+	  3.4  _Decimal[32|64|128] Data Types
+	    3.4.1  _Decimal[32|64|128] Encoding
+	  3.5  scanf Support
+	  3.6  printf Support
 	    3.5.1 printf "a,A" Conversion Specifier
-	4.  Dependencies
-	  4.1  GNU/Linux OS
-	  4.2  GLIBC Minimum Version
-	  4.3  GCC With --enable-decimal-float Support
-	5.  _Decimal* Data Types
-	  5.1  C++ decimal[32|64|128] Types Compatibility
-	  5.2  C++ decimal[32|64|128] operator<< and operator>> Support
+	4.  Compliance With ISO/IEC DTR 24733
+	  4.1  C++ decimal[32|64|128] Types Compatibility
+	  4.2  C++ decimal[32|64|128] operator<< and operator>> Support
+	  4.3  Printing decimal[32|64|128] Types and Precision
+	5.  Dependencies
+	  5.1  GNU/Linux OS
+	  5.2  GLIBC Minimum Version
+	  5.3  GCC With --enable-decimal-float Support
 	6.  DFP Headers
 	7.  Compile and Link
 	8.  Unsupported/Non-Standard Additions
@@ -53,6 +57,9 @@ _Decimal64, and _Decimal128.
 ---------------------------------------------------------------------------
 1.1. ISO/IEC TR 24732
 
+The decimal floating point extension to the C programming language is
+described in the ratified ISO/IEC Technical Report 24732.
+
 The latest description of ISO/IEC TR 24732 at the time of this writing can
 be found here:
 
@@ -63,7 +70,18 @@ A rationale can be found here:
 	http://www.open-std.org/JTC1/SC22/wg14/www/docs/n1242.pdf
 
 ---------------------------------------------------------------------------
-1.2. IEEE754-2008 (DPD & BID Encodings)
+1.2.  ISO/IEC DTR 24733
+
+The decimal floating point extension to the C++ programming language is
+described in ISO/IEC DRAFT Technical Report 24733.
+
+The latest description of ISO/IEC DTR 24733 at the time of this writing
+can be found here:
+
+	http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2009/n2849.pdf	
+
+---------------------------------------------------------------------------
+1.3. IEEE754-2008 (DPD & BID Encodings)
 
 IEEE 754-2008 defines two different encodings for the decimal floating
 point data types.  These are DPD and BID.
@@ -78,7 +96,7 @@ Both encodings can be investigated in the draft IEEE754r:
 	http://754r.ucbtest.org/drafts/archive/2006-10-04.pdf
 
 ---------------------------------------------------------------------------
-1.3. Backends (libdecnumber & libbid)
+1.4. Backends (libdecnumber & libbid)
 
 Libdfp can make use of two backend libraries for software emulation.  These
 are "libdecnumber" and "libbid".
@@ -101,7 +119,8 @@ extension for Decimal Floating Point Types.
 ---------------------------------------------------------------------------
 3. Compliance With ISO/IEC TR 24732
 
-This section covers issues related to compliance with ISO/IEC TR 24732.
+This section covers issues related to compliance with ISO/IEC TR 24732, the
+ratified ISO C DFP Technical Report.
 
 ---------------------------------------------------------------------------
 3.1 __STDC_DEC_FP__
@@ -172,7 +191,53 @@ prototype which will have an incorrect return type.
 Compile with -Wall to pick up undefined prototype warnings.
 
 ---------------------------------------------------------------------------
-3.4 scanf Support
+3.4  _Decimal* Data Types
+
+The Decimal Floating Point data types are as follows:
+
+	_Decimal32
+	_Decimal64
+	_Decimal128
+
+The floating point suffix for DFP constants follows:
+
+	'DF' for _Decimal32, e.g. _Decimal32 d32 = 1.045DF;
+	'DD' for _Decimal64, e.g. _Decimal64 d64 = 1.4738273DD;
+	'DL' for _Decimal128, e.g. _Decimal128 d128 = 1.0823382394823945DL;
+
+NOTE: Assigning a naked constant to a DFP variable will actually be
+performing a binary to decimal conversion and, depending on the precision,
+can assign an incorrect number.  Always use the decimal floating point
+suffix, e.g.,
+
+	_Decimal64 d64 = 1.0DD;
+
+The following will result in a binary float to decimal float conversion:
+
+	_Decimal64 d64 = 1.0;
+
+---------------------------------------------------------------------------
+3.4.1  _Decimal[32|64|128] Encoding
+
+Consider the following _Decimal64 values and encodings (displayed in declet
+triples):
+
+	/* Encoded as "+1,000,000,000,000,000e+285"  */
+	_Decimal64 d64 = 1.000000000000000e300DD;
+
+	/* Encoded as "+0,000,000,000,000,001e+300"  */
+	_Decimal64 e64 = 1e300DD;
+
+These values are equivalent in comparison but there is inherently more
+precision in the first value and this should be preserved when the value is
+printed.
+
+As described in section 3.6.1, the a/A conversion specifier is used to
+direct printf to use the precision encoded in the actual value for the
+output string precision.
+
+---------------------------------------------------------------------------
+3.5 scanf Support
 
 Libdfp does not, and will not comply with the TR 24732 requirement for the
 addition of scanf in support of decimal floating point data types.  The
@@ -180,7 +245,7 @@ strtod[32|64|128] functions can be used for the same purpose without the
 implications of scanf.
 
 ---------------------------------------------------------------------------
-3.5 printf Support
+3.6 printf Support
 
 Libdfp supports the addition of the printf format codes indicated by TR
 24732.  GLIBC proper owns the printf implementation.  Libdfp utilizes the
@@ -205,12 +270,12 @@ It will recognize the following conversion specifier 'spec' characters:
 	e,E
 	f,F
 	g,G
-	a,A  (as debuted in TR 24732)
+	a,A  (as debuted in ISO/IEC TR 24732)
 
 Therefore, any combination of DFP length modifiers and spec characters is
 supported.
 
-3.5.1 printf "a,A" Conversion Specifier
+3.6.1 printf "a,A" Conversion Specifier
 ---------------------------------------------------------------------------
 
 The ISO-C DFP specification adds "a/A" as a printf conversion specifier.
@@ -238,62 +303,29 @@ demonstrate the use of the a/A conversion specifier.
 
 	Result: 6543.00DF
 
----------------------------------------------------------------------------
-4. Dependencies
+If your compiler is being pedantic you may get the following warning (due
+to -Wformat) when using the a/A conversion specifier with the H/D/DD
+length modifiers.
+
+	warning: use of ‘H’ length modifier with ‘A’ type character [-Wformat]
+
+This is not a real problem.  It simply hints at the issue described in
+section 3.1.  When the compiler and library are able to define
+__STDC_DEC_FP__ then the compiler can detect that libdfp is available and
+that a/A conv specifier is a valid combination with the H/D?DD length
+modifiers.
 
 ---------------------------------------------------------------------------
-4.1 GNU/Linux OS
+4. Compliance With ISO/IEC DTR 24733
 
-Libdfp is only enabled to work on the GNU/Linux OS.
+This section covers issues related to compliance with ISO/IEC DTR 24733,
+the ISO C++ DFP Draft Technical Report.
 
----------------------------------------------------------------------------
-4.2 GLIBC Minimum Version
-
-Libdfp version 1.0.0 relies upon a minimum GLIBC 2.10 for printf-hooks
-support.  The libdfp configure stage will check the libc that it is linked
-against for the printf-hook support and will warn if it is not found.
-
----------------------------------------------------------------------------
-4.3 GCC With --enable-decimal-float Support
-
-There's a dependency on a version of GCC which supports Decimal Floating
-Point.  Use the following to determine if your compiler supports it:
-
-	gcc -v 2>&1 | grep "\-\-enable\-decimal\-float"
-
-If decimal floating point support is not available in your compiler the
-libdfp configure stage will fail with a warning.
-
----------------------------------------------------------------------------
-5.  _Decimal* Data Types
-
-The Decimal Floating Point data types are as follows:
-
-	_Decimal32
-	_Decimal64
-	_Decimal128
-
-The floating point suffix for DFP constants follows:
-
-	'DF' for _Decimal32, e.g. _Decimal32 d32 = 1.045DF;
-	'DD' for _Decimal64, e.g. _Decimal64 d64 = 1.4738273DD;
-	'DL' for _Decimal128, e.g. _Decimal128 d128 = 1.0823382394823945DL;
-
-NOTE: Assigning a naked constant to a DFP variable will actually be
-performing a binary to decimal conversion and, depending on the precision,
-can assign an incorrect number.  Always use the decimal floating point
-suffix, e.g.,
-
-	_Decimal64 d64 = 1.0DD;
-
-The following will result in a binary-float to decimal-float conversion:
-
-	_Decimal64 d64 = 1.0;
-
-5.1  C++ decimal[32|64|128] Types Compatibility
+4.1  C++ decimal[32|64|128] Types Compatibility
 ---------------------------------------------------------------------------
 
-Your C++ compiler may not provide the ISO C DFP _Decimal[32|64|128] types.
+Your C++ compiler may not yet provide the ISO C DFP _Decimal[32|64|128]
+types.
 
 Per the C++ DFP specification: ISO/IEC JTC1 SC22 WG21 N2732 "Extension for
 the programming language C++ to support decimal floating point arithmetic",
@@ -312,7 +344,7 @@ Your compiler may or may not yet have this defined in float.h.  As a matter
 of convenience, libdfp has provided these headers in the libdfp headers
 directory include/dfp/float.h
 
-5.2  C++ decimal[32|64|128] operator<< and operator>> Support
+4.2  C++ decimal[32|64|128] operator<< and operator>> Support
 ---------------------------------------------------------------------------
 
 Your C++ compiler may not provide operator<< and operator>> support
@@ -363,6 +395,98 @@ the include/decimal directory.  Therefore, in order to include the decimal
 header implicitly use the following in applications:
 
 #include <decimal/decimal>
+
+4.3  Printing decimal[32|64|128] Types and Precision
+---------------------------------------------------------------------------
+
+Libdfp provides two mechanisms for printing decimal floating-point data
+types in string representation.  These are via the C++ ostream operator
+"<<" for decimal[32|64|128] data types and the ISO C printf interface
+(described in section 3.6) for _Decimal[32|64|128] data types.
+
+The ISO C DFP Technical Report provides well described extensions to the
+printf interface for decimal floating-point types.
+
+Unfortunately, the DFP C++ Draft Technical Report simply describes the
+ostream operator that needs to be provided for string formatting but does
+not fully describe the procedure for printing full precision decimal
+types considering the fully encoded precision in decimal types.  Please
+refer to section 3.4.1 for a discussion of the encoding.
+
+The base C++ specification describes ostream operator support for
+floating-point types as equivalent to corresponding ISO C printf conversion
+specifiers (as described in the following table):
+
+C++ ios_base::fmtflags       | ISO C printf equivalent conv spec
+-----------------------------|-----------------------------------------
+<default-no-flags>           |    g
+ios::fixed                   |    f
+ios::scientific              |    e
+ios::fixed | ios::scientific |    a
+ios::upper                   |    G/F/E/A
+ios::lower                   |    g/f/e/a
+
+Since the DFP C++ Draft Technical Report makes no explicit provisions for
+format codes specific to decimal floating-point types the Libdfp
+implementation falls back on the equivalency to printf conversion
+specifiers described in this table.
+
+Under binary floating-point the a/A spec is used to print hexadecimal
+representation of floating point values, which is why no precision is
+allowed to convert (truncate and round) the output string representation.
+
+The C++ specification indicates that a/A is specified by passing
+ios::fixed | ios::scientific in the ios_base::fmtflags for the stream.  When
+this combination of flags is specified the precision set in the ostream
+(whether the default or user specified) is not honored or used in the
+printing of the type.
+
+As described in section 3.5.1, the overridden a/A conversion specifier is
+the most desireable conversion specifier used with printf for decimal
+floating-point types since it preserves the encoded precision in the output
+string representation by default (when no explicit precision is specified).
+
+Since there is no interface specified in the DFP C or C++ specifications
+for querying the number of significant digits in a decimal floating-point
+value the user should most often use the a/A conversion specifier in order
+to preserve significant digits.
+
+The caveat, of course, is that since the C++ specification does not provide
+a way to programmatically determine whether the queried stream precision is
+the default of '6', or a value set by the user, nor does the C++
+specification allow stream precision to be considered when printing the a/A
+style conversion, this ostream operator implementation can not pass the
+stream precision on to the printf function.
+
+Therefore, all use of (ios::fixed | ios::scientific) will result in full
+precision output and it will not honor the output precision specified in
+the stream.
+
+---------------------------------------------------------------------------
+5. Dependencies
+
+---------------------------------------------------------------------------
+5.1 GNU/Linux OS
+
+Libdfp is only enabled to work on the GNU/Linux OS.
+
+---------------------------------------------------------------------------
+5.2 GLIBC Minimum Version
+
+Libdfp version 1.0.0 relies upon a minimum GLIBC 2.10 for printf-hooks
+support.  The libdfp configure stage will check the libc that it is linked
+against for the printf-hook support and will warn if it is not found.
+
+---------------------------------------------------------------------------
+5.3 GCC With --enable-decimal-float Support
+
+There's a dependency on a version of GCC which supports Decimal Floating
+Point.  Use the following to determine if your compiler supports it:
+
+	gcc -v 2>&1 | grep "\-\-enable\-decimal\-float"
+
+If decimal floating point support is not available in your compiler the
+libdfp configure stage will fail with a warning.
 
 ---------------------------------------------------------------------------
 6.  DFP Headers

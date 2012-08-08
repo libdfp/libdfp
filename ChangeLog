@@ -1,3 +1,10 @@
+2012-08-08  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* README.user: Added new section on compliance With ISO/IEC TR 24732,
+	the C++ DFP Draft Technical Report, including instructions on how to
+	use (ios::fixed | ios::scientific) as ios_base::fmtflags in order to
+	get fully encoded precision in output string representation.
+
 2012-08-07  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* tests/test-printf.c: Add missing 'D' to a/A conv tests.
