@@ -14,28 +14,11 @@ Add testcase to verify soft-dfp TLS version of rounding mode functions.
 
 Add printf_dfp test which change the rounding mode.
 
-[DONE] Configure runtime test for decimal floating point support in compiler.
-
-[DONE] Configure test for glibc 2.10 headers.
-
-[DONE] Configure runtime test for glibc 2.10 based on register_printf_type()
-function..
-
 Add --with-cross feature to prevent the make check suite from being executed
 on the build machine.
 
 Add --export-test feature to export the test-suite into stand-alone static
 test cases.
-
-[DONE] If system glibc is 2.10 then make check shouldn't need all the GLIBC build
-scaffolding for executing and debugging tests.
-
-[DONE] Clear up make clean 
-
-Work on make distclean.
-
-[DONE] Clear up dependency issue so that libdfp.so.1 is rebuilt when a .c
-file changes.
 
 Finish make check test suite.
 
@@ -50,8 +33,25 @@ Prototype versioned symbols support.
 
 Implement libbid backend for x86_64.
 
-[DONE] Write User's guide
-
 Write Man Page
 
 Write User's guide in docbook format, .i.e. info file.
+
+[DONE] Configure runtime test for decimal floating point support in compiler.
+
+[DONE] Configure test for glibc 2.10 headers.
+
+[DONE] Configure runtime test for glibc 2.10 based on register_printf_type()
+function..
+
+[DONE] Write User's guide
+
+[DONE] If system glibc is 2.10 then make check shouldn't need all the GLIBC build
+scaffolding for executing and debugging tests.
+
+[DONE] Clear up make clean 
+
+[DONE] Work on make distclean.
+
+[DONE] Clear up dependency issue so that libdfp.so.1 is rebuilt when a .c
+file changes.

@@ -403,9 +403,41 @@ check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(adds
 .PHONY: check
 
 clean:
-	rm *.o *.os $(STATIC_LIB) $(SHARED_LINKERNAME_LIB) $(SHARED_SONAME_LIB) $(SHARED_REALNAME_LIB) Versions.all Versions.sysdeps libdfp.map Versions.tmp sysd-versions $(top_builddir)/$(dfp_backend)/*.o $(top_builddir)/$(dfp_backend)/*.a debug-test.conf $(addsuffix .out,$(libdfp_tests)) $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .gdb,$(libdfp_tests)) $(libdfp_tests)
+	rm -f *.o
+	rm -f *.os
+	rm -f $(STATIC_LIB)
+	rm -f $(SHARED_LINKERNAME_LIB)
+	rm -f $(SHARED_SONAME_LIB)
+	rm -f $(SHARED_REALNAME_LIB)
+	rm -f Versions.all
+	rm -f Versions.sysdeps
+	rm -f libdfp.map
+	rm -f Versions.tmp
+	rm -f sysd-versions
+	rm -f debug-test.conf
+	rm -f $(addsuffix .out,$(libdfp_tests))
+	rm -f $(addsuffix .conf,$(libdfp_tests))
+	rm -f $(addsuffix .gdb,$(libdfp_tests))
+	rm -f $(libdfp_tests)
+	rm -f $(top_builddir)/$(dfp_backend)/*.o
+	rm -f $(top_builddir)/$(dfp_backend)/*.a
 
 .PHONY: clean
+
+# distclean cleans up the files added by configure.
+distclean:
+	rm -f $(top_builddir)/config.h
+	rm -f $(top_builddir)/config.log
+	rm -f $(top_builddir)/config.status
+	rm -f $(top_builddir)/Makefile
+	rm -f $(top_builddir)/$(dfp_backend)/config.h
+	rm -f $(top_builddir)/$(dfp_backend)/config.log
+	rm -f $(top_builddir)/$(dfp_backend)/config.status
+	rm -f $(top_builddir)/$(dfp_backend)/gstdint.h
+	rm -f $(top_builddir)/$(dfp_backend)/Makefile
+	rm -f $(top_builddir)/$(dfp_backend)/stamp-h1
+
+.PHONY: distclean
 
 install: all install-readme install-headers
 	$(INSTALL) -d $(inst_libdir)
@@ -415,14 +447,6 @@ endif
 	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(SHARED_REALNAME_LIB)
 	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_LINKERNAME_LIB)
 	$(LDCONFIG) -l $(inst_libdir)/$(SHARED_REALNAME_LIB)
-#	$(INSTALL) -d $(inst_includedir)
-#	$(INSTALL) -d $(inst_includedir)/dfp
-#	$(INSTALL) -d $(inst_includedir)/dfp/decimal
-#	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
-#	$(INSTALL) -t $(inst_includedir)/dfp/decimal/ $(top_srcdir)/dfp/decimal/*
-#	#$(INSTALL) -d $(inst_docdir)dfp/
-#	#$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/README.user
-#	#mv $(inst_docdir)dfp/README.user $(inst_docdir)dfp/README
 .PHONY: install
 
 install-headers:
