@@ -1,7 +1,7 @@
 /* Returns the type of floating point number from a _Decimal32 type
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -36,7 +36,7 @@
 #include <float.h>
 #include <dfpmacro.h>
 
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
 #  define END_FIX(i)	i
 #else
 #  define END_FIX(i)	(_DECIMAL_SIZE/8 - 1 - i)

@@ -1,7 +1,7 @@
 /* Returns non-zero if the _Decimal32 is nan
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -46,7 +46,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   } u_conv;
 
   u_conv.dec = x;
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
   top_byte = u_conv.bytes[0];
 #else
   top_byte = u_conv.bytes[_DECIMAL_SIZE/8 - 1];

@@ -1,5 +1,17 @@
 2013-01-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* dfptypeconv.c (___host_to_ieee_32): Fix endian macro check.
+	(___host_to_ieee_64): Likewise.
+	(___host_to_ieee_128): Likewise.
+	(___ieee_32_to_host): Likewise.
+	(___ieee_64_to_host): Likewise.
+	(___ieee_128_to_host): Likewise.
+	* ieee754r/fpclassifyd32.c (fpclassify): Likewise.
+	* ieee754r/isinfd32.c (isinf): Likewise.
+	* ieee754r/isnand32.c (isnan): Likewise.
+
+2013-01-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* config.guess: Add powerpc LE support.
 	* configure.ac: Likewise.
 	* scripts/config.guess: Likewise.

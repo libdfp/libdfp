@@ -1,7 +1,7 @@
 /* DFP_C_TYPE to/from IEEE DFP type conversion routines definitions
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation.
+   Copyright (C) 2007-2014 Free Software Foundation.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -41,7 +41,7 @@ typedef struct {
 
 
 void ___host_to_ieee_32 (_Decimal32 *src, decimal32 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
   memcpy(dest, src, 4);
 #else
   bytes32 *s, *d;
@@ -52,7 +52,7 @@ void ___host_to_ieee_32 (_Decimal32 *src, decimal32 *dest) {
 }
 
 void ___host_to_ieee_64 (_Decimal64 *src, decimal64 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
   memcpy(dest, src, 8);
 #else
   bytes32 *s, *d;
@@ -66,7 +66,7 @@ void ___host_to_ieee_64 (_Decimal64 *src, decimal64 *dest) {
 }
 
 void ___host_to_ieee_128 (_Decimal128 *src, decimal128 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
   memcpy(dest, src, 16);
 #else
   bytes32 *s, *d;
@@ -84,7 +84,7 @@ void ___host_to_ieee_128 (_Decimal128 *src, decimal128 *dest) {
 }
 
 void ___ieee_32_to_host (decimal32 *src, _Decimal32 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
   memcpy(dest, src, 4);
 #else
   bytes32 *s, *d;
@@ -95,7 +95,7 @@ void ___ieee_32_to_host (decimal32 *src, _Decimal32 *dest) {
 }
 
 void ___ieee_64_to_host (decimal64 *src, _Decimal64 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
   memcpy(dest, src, 8);
 #else
   bytes32 *s, *d;
@@ -109,7 +109,7 @@ void ___ieee_64_to_host (decimal64 *src, _Decimal64 *dest) {
 }
 
 void ___ieee_128_to_host (decimal128 *src, _Decimal128 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
   memcpy(dest, src, 16);
 #else
   bytes32 *s, *d;
