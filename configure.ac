@@ -45,7 +45,7 @@ case "$host_cpu" in
   s390|s390x)
     default_encoding=dpd
     ;;
-  powerpc|powerpc64)
+  powerpc*|powerpc64*)
     default_encoding=dpd
     ;;
   *)
@@ -89,11 +89,11 @@ AC_MSG_NOTICE(Using $enable_decimal_float decimal floating point encoding)
 # possible and use sysdep file overrides.  A good place to use it is in the
 # tests/ directory.
 if test $enable_decimal_float = dpd; then
-  AC_DEFINE_UNQUOTED(_DPD_BACKEND,1
-		     ,"Defined if DPD is the backend designated by configure.")
+  AC_DEFINE_UNQUOTED([_DPD_BACKEND], [1],
+		     ["Defined if DPD is the backend designated by configure."])
 else
-  AC_DEFINE_UNQUOTED(_BID_BACKEND,1
-		     ,"Defined if BID is the backend designated by configure.")
+  AC_DEFINE_UNQUOTED([_BID_BACKEND], [1],
+		     ["Defined if BID is the backend designated by configure."])
 fi
 
 # Now we know how to chose the desired backend directory, e.g.
@@ -225,8 +225,8 @@ dnl We need to use [ and ] for other purposes for a while now.
 changequote(,)dnl
 
 case "$machine" in
-	powerpc) base_machine=powerpc machine=powerpc/powerpc32 ;;
-	powerpc64) base_machine=powerpc machine=powerpc/powerpc64 ;;
+	powerpc|powerpcle) base_machine=powerpc machine=powerpc/powerpc32 ;;
+	powerpc64|powerpc64le) base_machine=powerpc machine=powerpc/powerpc64 ;;
 	s390) base_machine=s390 machine=s390/s390-32 ;;
 	s390x) base_machine=s390 machine=s390/s390-64 ;;
 	i[34567]86) base_machine=i386 machine=i386/$machine ;;

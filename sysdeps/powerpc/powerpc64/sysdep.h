@@ -1,6 +1,5 @@
 /* Assembly macros for 64-bit PowerPC.
-
-   Copyright (C) 2002, 2003, 2004, 2006, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2002-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -22,24 +21,76 @@
 
 #include <sysdeps/powerpc/sysdep.h>
 
-/* Taken from GLIBC in 2009.  */
-
-#ifdef __ELF__
-
 #ifdef __ASSEMBLER__
 
+/* Stack frame offsets.  */
+#if _CALL_ELF != 2
+#define FRAME_MIN_SIZE		112
+#define FRAME_MIN_SIZE_PARM	112
+#define FRAME_BACKCHAIN		0
+#define FRAME_CR_SAVE		8
+#define FRAME_LR_SAVE		16
+#define FRAME_TOC_SAVE		40
+#define FRAME_PARM_SAVE		48
+#define FRAME_PARM1_SAVE	48
+#define FRAME_PARM2_SAVE	56
+#define FRAME_PARM3_SAVE	64
+#define FRAME_PARM4_SAVE	72
+#define FRAME_PARM5_SAVE	80
+#define FRAME_PARM6_SAVE	88
+#define FRAME_PARM7_SAVE	96
+#define FRAME_PARM8_SAVE	104
+#define FRAME_PARM9_SAVE	112
+#else
+#define FRAME_MIN_SIZE		32
+#define FRAME_MIN_SIZE_PARM	96
+#define FRAME_BACKCHAIN		0
+#define FRAME_CR_SAVE		8
+#define FRAME_LR_SAVE		16
+#define FRAME_TOC_SAVE		24
+#define FRAME_PARM_SAVE		32
+#define FRAME_PARM1_SAVE	32
+#define FRAME_PARM2_SAVE	40
+#define FRAME_PARM3_SAVE	48
+#define FRAME_PARM4_SAVE	56
+#define FRAME_PARM5_SAVE	64
+#define FRAME_PARM6_SAVE	72
+#define FRAME_PARM7_SAVE	80
+#define FRAME_PARM8_SAVE	88
+#define FRAME_PARM9_SAVE	96
+#endif
+
 /* Support macros for CALL_MCOUNT.  */
+#if _CALL_ELF == 2
+#define call_mcount_parm_offset (-64)
+#else
+#define call_mcount_parm_offset FRAME_PARM_SAVE
+#endif
 	.macro SAVE_ARG NARG
 	.if \NARG
 	SAVE_ARG \NARG-1
-	std	2+\NARG,-72+8*(\NARG)(1)
+	std	2+\NARG,call_mcount_parm_offset-8+8*(\NARG)(1)
 	.endif
 	.endm
 
 	.macro REST_ARG NARG
 	.if \NARG
 	REST_ARG \NARG-1
-	ld	2+\NARG,40+8*(\NARG)(1)
+	ld	2+\NARG,FRAME_MIN_SIZE_PARM+call_mcount_parm_offset-8+8*(\NARG)(1)
+	.endif
+	.endm
+
+	.macro CFI_SAVE_ARG NARG
+	.if \NARG
+	CFI_SAVE_ARG \NARG-1
+	cfi_offset(2+\NARG,call_mcount_parm_offset-8+8*(\NARG))
+	.endif
+	.endm
+
+	.macro CFI_REST_ARG NARG
+	.if \NARG
+	CFI_REST_ARG \NARG-1
+	cfi_restore(2+\NARG)
 	.endif
 	.endm
 
@@ -49,14 +100,33 @@
 #ifdef	PROF
 	mflr	r0
 	SAVE_ARG \NARG
-	std	r0,16(r1)
-	stdu	r1,-112(r1)
+	std	r0,FRAME_LR_SAVE(r1)
+	stdu	r1,-FRAME_MIN_SIZE_PARM(r1)
+	cfi_adjust_cfa_offset(FRAME_MIN_SIZE_PARM)
+	cfi_offset(lr,FRAME_LR_SAVE)
+	CFI_SAVE_ARG \NARG
 	bl	JUMPTARGET (_mcount)
-	ld	r0,128(r1)
-	REST_ARG \NARG
-	addi	r1,r1,112
-	mtlr	r0
+#ifndef SHARED
+	nop
 #endif
+	ld	r0,FRAME_MIN_SIZE_PARM+FRAME_LR_SAVE(r1)
+	REST_ARG \NARG
+	mtlr	r0
+	addi	r1,r1,FRAME_MIN_SIZE_PARM
+	cfi_adjust_cfa_offset(-FRAME_MIN_SIZE_PARM)
+	cfi_restore(lr)
+	CFI_REST_ARG \NARG
+#endif
+	.endm
+
+#if _CALL_ELF != 2
+
+/* Macro to prepare for calling via a function pointer.  */
+	.macro PPC64_LOAD_FUNCPTR PTR
+	ld      r12,0(\PTR)
+	ld      r2,8(\PTR)
+	mtctr   r12
+	ld      r11,16(\PTR)
 	.endm
 
 #ifdef USE_PPC64_OVERLAPPING_OPD
@@ -66,7 +136,6 @@
 #endif
 
 #define ENTRY_1(name)	\
-	.section	".text";		\
 	.type BODY_LABEL(name),@function;	\
 	.globl name;				\
 	.section ".opd","aw";			\
@@ -93,12 +162,37 @@ name##: OPD_ENT (name);				\
 	.size name,.-BODY_LABEL(name);		\
 	.size BODY_LABEL(name),.-BODY_LABEL(name);
 #endif
+#define LOCALENTRY(name)
+
+#else /* _CALL_ELF */
+
+/* Macro to prepare for calling via a function pointer.  */
+	.macro PPC64_LOAD_FUNCPTR PTR
+	mr	r12,\PTR
+	mtctr   r12
+	.endm
+
+#define DOT_LABEL(X) X
+#define BODY_LABEL(X) X
+#define ENTRY_2(name)	\
+	.globl name;				\
+	.type name,@function;
+#define END_2(name)	\
+	.size name,.-name;
+#define LOCALENTRY(name)	\
+1:      addis	r2,r12,.TOC.-1b@ha; \
+        addi	r2,r2,.TOC.-1b@l; \
+	.localentry name,.-name;
+
+#endif /* _CALL_ELF */
 
 #define ENTRY(name)	\
+	.section	".text";		\
 	ENTRY_2(name)				\
 	.align ALIGNARG(2);			\
 BODY_LABEL(name):				\
-	cfi_startproc;
+	cfi_startproc;				\
+	LOCALENTRY(name)
 
 #define EALIGN_W_0  /* No words to insert.  */
 #define EALIGN_W_1  nop
@@ -112,11 +206,13 @@ BODY_LABEL(name):				\
 /* EALIGN is like ENTRY, but does alignment to 'words'*4 bytes
    past a 2^alignt boundary.  */
 #define EALIGN(name, alignt, words) \
+	.section	".text";		\
 	ENTRY_2(name)				\
 	.align ALIGNARG(alignt);		\
 	EALIGN_W_##words;			\
 BODY_LABEL(name):				\
-	cfi_startproc;
+	cfi_startproc;				\
+	LOCALENTRY(name)
 
 /* Local labels stripped out by the linker.  */
 #undef L
@@ -203,9 +299,37 @@ LT_LABELSUFFIX(name,_name_end): ; \
   ENTRY (name) \
   DO_CALL (SYS_ify (syscall_name));
 
+#ifdef SHARED
+#define TAIL_CALL_SYSCALL_ERROR \
+    b JUMPTARGET(__syscall_error)
+#else
+/* Static version might be linked into a large app with a toc exceeding
+   64k.  We can't put a toc adjusting stub on a plain branch, so can't
+   tail call __syscall_error.  */
+#define TAIL_CALL_SYSCALL_ERROR \
+    .ifdef .Local_syscall_error; \
+    b .Local_syscall_error; \
+    .else; \
+.Local_syscall_error: \
+    mflr 0; \
+    std 0,FRAME_LR_SAVE(1); \
+    stdu 1,-FRAME_MIN_SIZE(1); \
+    cfi_adjust_cfa_offset(FRAME_MIN_SIZE); \
+    cfi_offset(lr,FRAME_LR_SAVE); \
+    bl JUMPTARGET(__syscall_error); \
+    nop; \
+    ld 0,FRAME_MIN_SIZE+FRAME_LR_SAVE(1); \
+    addi 1,1,FRAME_MIN_SIZE; \
+    cfi_adjust_cfa_offset(-FRAME_MIN_SIZE); \
+    mtlr 0; \
+    cfi_restore(lr); \
+    blr; \
+    .endif
+#endif
+
 #define PSEUDO_RET \
     bnslr+; \
-    b JUMPTARGET(__syscall_error)
+    TAIL_CALL_SYSCALL_ERROR
 
 #define ret PSEUDO_RET
 
@@ -243,29 +367,68 @@ LT_LABELSUFFIX(name,_name_end): ; \
 
 #else /* !__ASSEMBLER__ */
 
+#if _CALL_ELF != 2
+
+#define PPC64_LOAD_FUNCPTR(ptr) \
+	"ld 	12,0(" #ptr ");\n"					\
+	"ld	2,8(" #ptr ");\n"					\
+	"mtctr	12;\n"							\
+	"ld	11,16(" #ptr ");"
+
 #ifdef USE_PPC64_OVERLAPPING_OPD
 # define OPD_ENT(name)	".quad " BODY_PREFIX #name ", .TOC.@tocbase;"
 #else
 # define OPD_ENT(name)	".quad " BODY_PREFIX #name ", .TOC.@tocbase, 0;"
 #endif
 
+#define ENTRY_1(name)	\
+	".type   " BODY_PREFIX #name ",@function;\n"			\
+	".globl " #name ";\n"						\
+	".pushsection \".opd\",\"aw\";\n"				\
+	".align  3;\n"							\
+#name ":\n"								\
+	OPD_ENT (name) "\n"						\
+	".popsection;"
+
 #ifdef HAVE_ASM_GLOBAL_DOT_NAME
 # define DOT_PREFIX "."
 # define BODY_PREFIX "."
 # define ENTRY_2(name)	\
 	".globl " BODY_PREFIX #name ";\n"				\
+	ENTRY_1(name) "\n"						\
 	".size  " #name ", 24;"
 # define END_2(name)	\
 	".size " BODY_PREFIX #name ",.-" BODY_PREFIX #name ";"
 #else
 # define DOT_PREFIX ""
 # define BODY_PREFIX ".LY"
-# define ENTRY_2(name) ".type " #name ",@function;"
+# define ENTRY_2(name)	\
+	".type " #name ",@function;\n"					\
+	ENTRY_1(name)
 # define END_2(name)	\
 	".size " #name ",.-" BODY_PREFIX #name ";\n"			\
 	".size " BODY_PREFIX #name ",.-" BODY_PREFIX #name ";"
 #endif
+#define LOCALENTRY(name)
+
+#else /* _CALL_ELF */
+
+#define PPC64_LOAD_FUNCPTR(ptr) \
+	"mr	12," #ptr ";\n"						\
+	"mtctr 	12;"
+
+#define DOT_PREFIX ""
+#define BODY_PREFIX ""
+#define ENTRY_2(name)	\
+	".type " #name ",@function;\n"					\
+	".globl " #name ";"
+#define END_2(name)	\
+	".size " #name ",.-" #name ";"
+#define LOCALENTRY(name)	\
+	"1: addis 2,12,.TOC.-1b@ha;\n"					\
+	"addi	2,2,.TOC.-1b@l;\n"					\
+	".localentry " #name ",.-" #name ";"
+
+#endif /* _CALL_ELF */
 
 #endif	/* __ASSEMBLER__ */
-
-#endif /* __ELF__ */
