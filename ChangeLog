@@ -1,5 +1,14 @@
 2013-01-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* ieee754r/isfinited32.c (__finited32d): Change implementation to
+	follow isinf and isnan by checking the bits directly.
+	* sysdeps/powerpc/dfpu/is_template.h (__isfinite32d): Simplify
+	implemenation by checking the cr0 results using C instead of assembly.
+	* tests/test-isfinite.c: Unify tests by removing negative results for
+	PowerPC HD DFP.
+
+2013-01-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/isinfd32.c (__isinfd32): Return -1 for minus infinity and
 	+1 for plus infinity.
 	* sysdeps/powerpc/dfpu/isinfd128.c (__isinfd128): Use the isinfd32.c
