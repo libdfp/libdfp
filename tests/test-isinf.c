@@ -1,6 +1,6 @@
 /* Test isinfd[32|64|128] and polymorphic macro isinf() in math.h.
 
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -47,6 +47,7 @@ d128_type printf_d128s[] =
   {__LINE__, DEC_NAN, 0,  "%d"},
   {__LINE__, HUGE_VAL_D128, 1, "%d"},
   {__LINE__, DEC_INFINITY, 1, "%d"},
+  {__LINE__, -DEC_INFINITY, -1, "%d"},
   {__LINE__, -1.95DL, 0, "%d"},
   {0,0,0,0 }
 };
@@ -64,6 +65,7 @@ d64_type printf_d64s[] =
   {__LINE__, DEC_NAN, 0,  "%d"},
   {__LINE__, HUGE_VAL_D64, 1, "%d"},
   {__LINE__, DEC_INFINITY, 1, "%d"},
+  {__LINE__, -DEC_INFINITY, -1, "%d"},
   {__LINE__, -1.95DD, 0, "%d"},
   {0,0,0,0 }
 };
@@ -81,6 +83,7 @@ d32_type printf_d32s[] =
   {__LINE__, DEC_NAN, 0,  "%d"},
   {__LINE__, HUGE_VAL_D32, 1, "%d"},
   {__LINE__, DEC_INFINITY, 1, "%d"},
+  {__LINE__, -DEC_INFINITY, -1, "%d"},
   {__LINE__, -1.95DF, 0, "%d"},
   {0,0,0,0 }
 };
