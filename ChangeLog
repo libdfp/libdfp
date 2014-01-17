@@ -1,5 +1,10 @@
 2013-01-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/soft-dfp/dpd/numdigits.h (getexp): Simplify code and fix
+	issues exp is DECIMAL_BIAS;
+
+2013-01-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/isfinited32.c (__finited32d): Change implementation to
 	follow isinf and isnan by checking the bits directly.
 	* sysdeps/powerpc/dfpu/is_template.h (__isfinite32d): Simplify
