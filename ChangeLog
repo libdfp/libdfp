@@ -1,5 +1,15 @@
 2013-01-18  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* include/convert.h (DEST_INFINITY): Define correct builtin for double
+	and long double.
+	(DEST_NAN): Likewise.
+	(PREFIXED_FUNCTION_NAME): Reformat.
+	* base-math/extendddtf.c (extendddtf): Add volatile to double
+	operations to avoid long double optimizations and recursive calls.
+	* base-math/extendsdtf.c (extendddtf): Likewise.
+
+2013-01-18  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* libdecnumber/decNumber.c (decSetSubnormal): Remove unused variable.
 	* strtod32.c (strtod32): Likewise.
 
