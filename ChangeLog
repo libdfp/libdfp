@@ -1,5 +1,14 @@
 2013-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/fe_decround.c (__fe_dec_getround): Fix endianess
+	issues when getting the rounding mode.
+	* sysdeps/powerpc/fpu/fenv_libdfp.h (fenv_union_t): (fenv_union_t): 
+	Replace int array with long long.
+	* include/convert.h (DFP_TEST_EXCEPTIONS): Likewise.
+	(DFP_CLEAR_EXCEPTIONS): Likewise.
+
+2013-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/powerpc32/power8/Implies: New file: POWER8 support.
 	* sysdeps/powerpc/powerpc32/power8/fpu/Implies: New file:
 	* sysdeps/powerpc/powerpc64/power8/Implies: New file.

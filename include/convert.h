@@ -305,12 +305,12 @@ extern const _Decimal128 decpowof2[];
 # define DFP_TEST_EXCEPTIONS(status)	({	\
 	fenv_union_t u; 			\
 	u.fenv = fegetenv_register(); 		\
-	u.l[1] & (status);			\
+	u.l & (status);				\
 	})
 # define DFP_CLEAR_EXCEPTIONS(status)	{	\
 	fenv_union_t u;				\
 	u.fenv = fegetenv_register();		\
-	u.l[1] &= ~status;			\
+	u.l &= ~status;				\
 	fesetenv_register(u.fenv);		\
 	}
 #else
