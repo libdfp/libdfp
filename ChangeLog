@@ -1,3 +1,10 @@
+2013-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc32/power8/Implies: New file: POWER8 support.
+	* sysdeps/powerpc/powerpc32/power8/fpu/Implies: New file:
+	* sysdeps/powerpc/powerpc64/power8/Implies: New file.
+	* sysdeps/powerpc/powerpc64/power8/fpu/Implies: New file.
+
 2013-01-18  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* include/convert.h (DEST_INFINITY): Define correct builtin for double
