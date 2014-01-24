@@ -1,7 +1,7 @@
 /* Number of digits functions, optimized for Power6.
 
    Copyright (C) 2006-2008 IBM Corporation.
-   Copyright (C) 2006-2012 Free Software Foundation, Inc.
+   Copyright (C) 2006-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -43,13 +43,16 @@
 
 #if _DECIMAL_SIZE == 32
 // DECIMAL32 gets widened to DECIMAL64, so it ought to use DECIMAL64 bias
-# define DECIMAL_BIAS (101+297)
+# define DECIMAL_BIAS         (101+297)
+# define DECIMAL_BIAS_DOUBLE  0x0.000000000018ep-1022
 # define Q ""
 #elif _DECIMAL_SIZE == 64
-# define DECIMAL_BIAS 398
+# define DECIMAL_BIAS         398
+# define DECIMAL_BIAS_DOUBLE  0x0.000000000018ep-1022
 # define Q ""
 #elif _DECIMAL_SIZE == 128
-# define DECIMAL_BIAS 6176
+# define DECIMAL_BIAS         6176
+# define DECIMAL_BIAS_DOUBLE  0x0.000000000182p-1022
 # define Q "q"
 #else
 #error _DECIMAL_SIZE must be '32', '64' or '128'
@@ -120,10 +123,11 @@ FUNC_D (numdigits) (DEC_TYPE x)
   long long i1, i2;
   static union
   {
-    int i[2];
-    long long l;
+    long long int l;
     double f;
-  } u = { { 0, 1 } }, v = { { 0, DECIMAL_BIAS } };
+  } u = { .f = 0x0.0000000000001p-1022 },
+    v = { .f = DECIMAL_BIAS_DOUBLE };
+
   asm (
     /* Prep for a NAN test.  */
     "dxex" Q " %0,%4\n\t"
