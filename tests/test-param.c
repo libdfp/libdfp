@@ -1,6 +1,6 @@
 /* Test parameter passing compliance with the ABI.
 
-   Copyright (C) 2009-2012 Free Software Foundation, Inc.
+   Copyright (C) 2009-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -80,15 +80,14 @@ static int param_test(_Decimal128 d128 __attribute__ ((unused)),
 	       _Decimal64 f64 __attribute__ ((unused)),
 	       _Decimal128 f128)
 {
-  volatile _Decimal128 z = e128;
-  volatile _Decimal128 y = f128;
+  volatile _Decimal128 z __attribute__ ((unused)) = e128;
+  volatile _Decimal128 y __attribute__ ((unused)) = f128;
 //  z = e128;
  // y = f128;
   return 0;
 }
 
 int main(void) {
-  int x;
   struct sparm s, t;
 
   d32_type d32types[] =
@@ -145,7 +144,7 @@ int main(void) {
   /* This may seem like a trivial test but the compiler screwed this up at one
    * point and it'd be nice to not have this ever regress without us knowing it.
    */
-  x = param_test(d128types[0].d,d64types[0].d,d32types[0].d,&s,&t,d32types[1].d,d64types[1].d,d64types[2].d,d128types[1].d,d64types[3].d,d128types[2].d);
+  param_test(d128types[0].d,d64types[0].d,d32types[0].d,&s,&t,d32types[1].d,d64types[1].d,d64types[2].d,d128types[1].d,d64types[3].d,d128types[2].d);
 
   /* Make sure the compiler hasn't screwed up the save/restore of these
    * _Decimal types.  */

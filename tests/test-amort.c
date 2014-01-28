@@ -1,6 +1,6 @@
 /* Amortization Benchmarck
 
-   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2009-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -270,7 +270,7 @@ main (int argc, char *argv[])
   int numinputs;
   FILE *inputfile;
   char inputfilename[] = "amort.input";
-  char *argv_option;
+  const char *argv_option;
 
   table = (tabletype *) malloc (30 * 12 * sizeof (tabletype));
   //printf ("table@%p for %d bytes\n", table, (30 * 12 * sizeof (tabletype)));
