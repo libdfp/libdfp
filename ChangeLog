@@ -1,5 +1,10 @@
 2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/numdigits.h (setexp): Fix endianess when setting
+	the exponent.
+
+2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* libdecnumber/dpd/decimal128.c (decimal128FromNumber): Fix LE internal
 	data handling.
 	(decimal128ToNumber): Likewise.

@@ -89,12 +89,11 @@ FUNC_D (setexp) (DEC_TYPE x, int exp)
 {
   DEC_TYPE tmp = x;
   union {
-    unsigned int i[2];
+    long long int l;
     double f;
   } e;
 
-  e.i[0] = 0;
-  e.i[1] = exp + DECIMAL_BIAS;
+  e.l = exp + DECIMAL_BIAS;
 
   asm (
 #if _DECIMAL_SIZE == 32
