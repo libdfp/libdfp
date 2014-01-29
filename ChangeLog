@@ -1,3 +1,13 @@
+2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* dfptypeconv.c (___ieee_32_to_host): Optimize to use word or doublewords
+	loads store by using compiler builtins.
+	(___ieee_64_to_host): Likewise.
+	(___ieee_128_to_host): Likewise.
+	(___ieee_32_to_host): Likewise.
+	(___ieee_64_to_host): Likewise.
+	(___ieee_128_to_host): Likewise.
+
 2013-01-28  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/test-amort.c (main): Fix compile warnings.
