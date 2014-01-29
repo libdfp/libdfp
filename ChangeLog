@@ -1,5 +1,10 @@
 2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* tests/test-logd.c: Add more coverage with tests for logd32 and logd128.
+	Also fix file indentation.
+
+2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* dfptypeconv.c (___ieee_32_to_host): Optimize to use word or doublewords
 	loads store by using compiler builtins.
 	(___ieee_64_to_host): Likewise.
