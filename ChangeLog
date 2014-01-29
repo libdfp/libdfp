@@ -1,5 +1,15 @@
 2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/dpd/decimal128.c (decimal128FromNumber): Fix LE internal
+	data handling.
+	(decimal128ToNumber): Likewise.
+	* libdecnumber/dpd/decimal32.c (decimal32FromNumber): Likewise.
+	(decimal32ToNumber): Likewise.
+	* libdecnumber/dpd/decimal64.c (decimal64FromNumber): Likewise.
+	(decimal64ToNumber): Likewise.
+
+2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* tests/test-logd.c: Add more coverage with tests for logd32 and logd128.
 	Also fix file indentation.
 

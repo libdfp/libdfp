@@ -1,5 +1,5 @@
 /* Decimal 128-bit format module for the decNumber C Library.
-   Copyright (C) 2005, 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2005, 2007, 2009, 2014 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -169,10 +169,10 @@ decimal128 * decimal128FromNumber(decimal128 *d128, const decNumber *dn,
   /* now write to storage; this is endian */
   pu=(uInt *)d128->bytes;	   /* overlay */
   if (DECLITEND) {
-    pu[0]=targlo;		   /* directly store the low int */
-    pu[1]=targml;		   /* then the mid-low */
-    pu[2]=targmh;		   /* then the mid-high */
-    pu[3]=targhi;		   /* then the high int */
+    pu[0]=__builtin_bswap32(targhi);		   /* directly store the high int */
+    pu[1]=__builtin_bswap32(targmh);		   /* then the mid-high */
+    pu[2]=__builtin_bswap32(targml);		   /* then the mid-low */
+    pu[3]=__builtin_bswap32(targlo);		   /* then the low int */
     }
    else {
     pu[0]=targhi;		   /* directly store the high int */
@@ -207,10 +207,10 @@ decNumber * decimal128ToNumber(const decimal128 *d128, decNumber *dn) {
   /* load source from storage; this is endian */
   pu=(const uInt *)d128->bytes;	   /* overlay */
   if (DECLITEND) {
-    sourlo=pu[0];		   /* directly load the low int */
-    sourml=pu[1];		   /* then the mid-low */
-    sourmh=pu[2];		   /* then the mid-high */
-    sourhi=pu[3];		   /* then the high int */
+    sourhi=__builtin_bswap32(pu[0]);		   /* directly load the high int */
+    sourmh=__builtin_bswap32(pu[1]);		   /* then the mid-high */
+    sourml=__builtin_bswap32(pu[2]);		   /* then the mid-low */
+    sourlo=__builtin_bswap32(pu[3]);		   /* then the low int */
     }
    else {
     sourhi=pu[0];		   /* directly load the high int */
