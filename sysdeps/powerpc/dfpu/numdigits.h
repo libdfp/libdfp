@@ -41,6 +41,8 @@
 
 #include <dpd-private.h>
 
+#undef DECIMAL_BIAS
+#undef DECIMAL_BIAS_DOUBLE
 #if _DECIMAL_SIZE == 32
 // DECIMAL32 gets widened to DECIMAL64, so it ought to use DECIMAL64 bias
 # define DECIMAL_BIAS         (101+297)
@@ -159,48 +161,34 @@ static inline DEC_TYPE
 FUNC_D (left_justify) (DEC_TYPE x)
 {
 #if _DECIMAL_SIZE == 32
-  register _Decimal64 tmp = x;
-  register _Decimal64 rnd;
+# define ADJUST 6
+  _Decimal64 tmp = x;
+  _Decimal64 rnd;
 #else
-  register DEC_TYPE tmp = x;
-  register DEC_TYPE rnd;
+# if _DECIMAL_SIZE == 64
+#  define ADJUST 15
+# elif _DECIMAL_SIZE == 128
+#  define ADJUST 33
+# endif
+  DEC_TYPE tmp = x;
+  DEC_TYPE rnd;
 #endif
   double tmp2;
   union int_dbl
   {
-    int i[2];
+    long long int l;
     double f;
   };
-  static union int_dbl d = { { 0, 1 } };
-#if _DECIMAL_SIZE==32
-# define ADJUST 6
-#elif _DECIMAL_SIZE==64
-# define ADJUST 15
-#elif _DECIMAL_SIZE==128
-# define ADJUST 33
-#else
-# error "Unknown decimal size"
-#endif
-
- #ifdef __VSX__
-  static vector int vsx_adjust = { 0, ADJUST, 0, 0 };
-  register vector int tmp3;
-#else
+  static union int_dbl d = { .f = 0x0.0000000000001p-1022 };
   union int_dbl d2;
-#endif
 
   asm ("drrnd" Q " %0,%1,%2,1" : "=d"(rnd) : "d"(d.f), "d"(tmp));
   asm ("dxex" Q " %0,%1\n\t" : "=d"(tmp2) : "d"(rnd));
 
-#ifdef __VSX__
-  asm ("xxlor %x0,%x1,%x1" : "=v"(tmp3) : "d"(tmp2));
-  asm ("vsubuwm %0,%1,%2" : "=v"(tmp3) : "v"(tmp3), "v"(vsx_adjust));
-  asm ("xxlor %x0,%x1,%x1" : "=d"(tmp2) : "v"(tmp3));
-#else
   d2.f = tmp2;
-  d2.i[1] -= ADJUST;
+  d2.l -= ADJUST;
   tmp2 = d2.f;
-#endif
+
   asm ("diex" Q " %0,%1,%0\n\t" : "=d"(rnd) : "d"(tmp2), "0"(rnd));
   asm ("dqua" Q " %0,%0,%2,1\n\t" : "=d"(rnd) : "0"(rnd), "d"(tmp));
 

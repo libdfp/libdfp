@@ -1,5 +1,13 @@
 2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/numdigits.h (left_justify): Fix for LE targets and
+	cleanup VSX code.
+	(DECIMAL_BIAS): Undef before define to avoid compiler warnings with
+	multiple file inclusions.
+	(DECIMAL_BIAS_DOUBLE): Likewise.
+
+2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/numdigits.h (setexp): Fix endianess when setting
 	the exponent.
 
