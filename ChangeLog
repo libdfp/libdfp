@@ -1,5 +1,12 @@
 2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* configure.ac: Add sysdeps/generic as default sysdep directory.
+	* configure: Regenerated.
+	* sysdeps/generic/math_private.h: New file: helper macros and
+	functions to manipulate IEEE 754 bitwise
+
+2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* configure.ac: Incremented the version number to 1.0.9.
 	* configure: Regenerated.
 	* Versions.def: Incremented the version number to 1.0.9.

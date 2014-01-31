@@ -3304,6 +3304,10 @@ fi
 # Close out the sysdeps directory.
 #sysnames="$sysnames sysdeps"
 
+# Add the default directories.
+default_sysnames="sysdeps/generic"
+sysnames="$sysnames $default_sysnames"
+
 set $sysnames
 names=
 while test $# -gt 0; do
