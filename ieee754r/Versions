@@ -243,4 +243,12 @@ libdfp {
     __fpclassifyd64;
     __fpclassifyd128;
   }
+  LIBDFP_1.0.9 {
+    issignalingd32;
+    __issignalingd32;
+    issignalingd64;
+    __issignalingd64;
+    issignalingd128;
+    __issignalingd128;
+  }
 }

@@ -2,7 +2,7 @@
    system math.h classification macros.
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2009-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -178,6 +178,9 @@ extern int __isinfd32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 
 extern int isfinited32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 extern int __isfinited32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
+
+extern int __issignalingd32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
+extern int issignalingd32 (_Decimal32 __value) __THROW __attribute__ ((__const__));
 
 /* Deprecated but older uses of math.h may have invocations of these if they
  * used the polymorphic finite().  */
@@ -421,6 +424,9 @@ extern int __isinfd64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
 extern int isfinited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
 extern int __isfinited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
 
+extern int __issignalingd64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
+extern int issignalingd64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
+
 /* Deprecated but older uses of math.h may have invocations of these if they
  * used the polymorphic finite().  */
 extern int finited64 (_Decimal64 __value) __THROW __attribute__ ((__const__));
@@ -662,6 +668,9 @@ extern int __isinfd128 (_Decimal128 __value) __THROW __attribute__ ((__const__))
 
 extern int isfinited128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
 extern int __isfinited128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
+
+extern int __issignalingd128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
+extern int issignalingd128 (_Decimal128 __value) __THROW __attribute__ ((__const__));
 
 /* Deprecated but older uses of math.h may have invocations of these if they
  * used the polymorphic finite().  */
@@ -961,6 +970,35 @@ extern _Bool __samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
       : (sizeof (x) == sizeof (_Decimal64)				      \
 	? __isnand64(x)							      \
 	: __isnand32(x)))						      \
+  )
+
+
+/* Return nonzero value if X is a sNaN.  */
+#ifdef issignaling
+# undef issignaling
+# ifdef __NO_LONG_DOUBLE_MATH
+#  define ____issignaling(x) 				\
+     (sizeof (x) == sizeof (float) ? __issignalingf (x) \
+	: __issignaling (x))
+# else
+#  define ____issignaling(x)				\
+     (sizeof (x) == sizeof (float)			\
+      ? __issignalingf (x)				\
+      : sizeof (x) == sizeof (double)			\
+      ? __issignaling (x) : __issignalingl (x))
+# endif
+#else
+# define ____issignaling(x) x
+#endif
+
+#define issignaling(x)					\
+  (!__dfp_compatible(x)					\
+    ? (____issignaling(x))				\
+    : (sizeof (x) == sizeof (_Decimal128)		\
+      ? __issignalingd128(x)				\
+      : (sizeof (x) == sizeof (_Decimal64)		\
+	? __issignalingd64(x)				\
+	: __issignalingd32(x)))				\
   )
 
 __END_DECLS

@@ -1,5 +1,25 @@
 2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* ieee754r/Makefile: Add issignaling objects.
+	* ieee754r/Versions: Likewise.
+	* ieee754r/issignalingd128.c: New file: software version of issignaling
+	for _Decimal128.
+	* ieee754r/issignalingd32.c: New file: software version of issignaling
+	for _Decimal64.
+	* ieee754r/issignalingd64.c: New file: software version of issignaling
+	for _Decimal32.
+	* sysdeps/powerpc/dfpu/issignalingd128.c: New file: PowerPC version of
+	issignaling for _Decimal128.
+	* sysdeps/powerpc/dfpu/issignalingd32.c: New file: PowerPC version of 
+	issignaling for _Decimal64.
+	* sysdeps/powerpc/dfpu/issignalingd64.c: New file: PowerPC version of 
+	issignaling for _Decimal32.
+	* tests/test-issignaling.c: New file: issignaling tests.
+	* Makefile.in: Add test-issignaling.
+	* dfp/math.h: Add issignaling definitions and polymorphic macro.
+
+2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* configure.ac: Add sysdeps/generic as default sysdep directory.
 	* configure: Regenerated.
 	* sysdeps/generic/math_private.h: New file: helper macros and
