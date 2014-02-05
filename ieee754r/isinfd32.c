@@ -1,7 +1,7 @@
 /* Returns non-zero if the _Decimal32 is infinite
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -49,15 +49,17 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   } u_conv;
 
   u_conv.dec = x;
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER == __BIG_ENDIAN
   top_byte = u_conv.bytes[0];
 #else
   top_byte = u_conv.bytes[_DECIMAL_SIZE/8 -1];
 #endif
 
   /* a NaN is not Inf, but the bitmasks overlap, so extract everything for NaN
-   * and if there are more bits than DECIMAL_Inf it is a NaN and not an Inf.  */
-  return (top_byte & DECIMAL_NaN) == DECIMAL_Inf;
+     and if there are more bits than DECIMAL_Inf it is a NaN and not an Inf.
+     Return -1 for -INF and 1 for +INF.  */
+  return (top_byte & DECIMAL_NaN) == DECIMAL_Inf ?
+    (top_byte & 0x80 ? -1 : 1) : 0;
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

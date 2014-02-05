@@ -1,3 +1,94 @@
+2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* ieee754r/Makefile: Add issignaling objects.
+	* ieee754r/Versions: Likewise.
+	* ieee754r/issignalingd128.c: New file: software version of issignaling
+	for _Decimal128.
+	* ieee754r/issignalingd32.c: New file: software version of issignaling
+	for _Decimal64.
+	* ieee754r/issignalingd64.c: New file: software version of issignaling
+	for _Decimal32.
+	* sysdeps/powerpc/dfpu/issignalingd128.c: New file: PowerPC version of
+	issignaling for _Decimal128.
+	* sysdeps/powerpc/dfpu/issignalingd32.c: New file: PowerPC version of 
+	issignaling for _Decimal64.
+	* sysdeps/powerpc/dfpu/issignalingd64.c: New file: PowerPC version of 
+	issignaling for _Decimal32.
+	* tests/test-issignaling.c: New file: issignaling tests.
+	* Makefile.in: Add test-issignaling.
+	* dfp/math.h: Add issignaling definitions and polymorphic macro.
+
+2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* configure.ac: Add sysdeps/generic as default sysdep directory.
+	* configure: Regenerated.
+	* sysdeps/generic/math_private.h: New file: helper macros and
+	functions to manipulate IEEE 754 bitwise
+
+2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* configure.ac: Incremented the version number to 1.0.9.
+	* configure: Regenerated.
+	* Versions.def: Incremented the version number to 1.0.9.
+
+2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dfpu/numdigits.h (left_justify): Fix for LE targets and
+	cleanup VSX code.
+	(DECIMAL_BIAS): Undef before define to avoid compiler warnings with
+	multiple file inclusions.
+	(DECIMAL_BIAS_DOUBLE): Likewise.
+
+2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dfpu/numdigits.h (setexp): Fix endianess when setting
+	the exponent.
+
+2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* libdecnumber/dpd/decimal128.c (decimal128FromNumber): Fix LE internal
+	data handling.
+	(decimal128ToNumber): Likewise.
+	* libdecnumber/dpd/decimal32.c (decimal32FromNumber): Likewise.
+	(decimal32ToNumber): Likewise.
+	* libdecnumber/dpd/decimal64.c (decimal64FromNumber): Likewise.
+	(decimal64ToNumber): Likewise.
+
+2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* tests/test-logd.c: Add more coverage with tests for logd32 and logd128.
+	Also fix file indentation.
+
+2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* dfptypeconv.c (___ieee_32_to_host): Optimize to use word or doublewords
+	loads store by using compiler builtins.
+	(___ieee_64_to_host): Likewise.
+	(___ieee_128_to_host): Likewise.
+	(___ieee_32_to_host): Likewise.
+	(___ieee_64_to_host): Likewise.
+	(___ieee_128_to_host): Likewise.
+
+2013-01-28  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* tests/test-amort.c (main): Fix compile warnings.
+	* tests/test-param.c (param_test): Likewise.
+	(main): Likewise.
+
+2013-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dfpu/numdigits.h (numdigits): Define the decimal bias
+	masks in an endianess neutral way.
+
+2013-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dfpu/fe_decround.c (__fe_dec_getround): Fix endianess
+	issues when getting the rounding mode.
+	* sysdeps/powerpc/fpu/fenv_libdfp.h (fenv_union_t): (fenv_union_t): 
+	Replace int array with long long.
+	* include/convert.h (DFP_TEST_EXCEPTIONS): Likewise.
+	(DFP_CLEAR_EXCEPTIONS): Likewise.
+
 2013-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/powerpc32/power8/Implies: New file: POWER8 support.

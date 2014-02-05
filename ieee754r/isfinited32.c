@@ -1,7 +1,7 @@
 /* Returns non-zero if the _Decimal32 is non-infinite
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -30,8 +30,9 @@
 #  include <decimal32.h>
 #endif
 
-#include <decNumber.h>
 #include <math.h>
+#include <endian.h>
+#include <decNumber.h>
 
 #define FUNCTION_NAME isfinite
 
@@ -40,14 +41,24 @@
 int
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
-  decNumber dn_x;
+  uint8_t top_byte;
+  union
+  {
+    DEC_TYPE dec;
+    uint8_t bytes[_DECIMAL_SIZE/8];
+  } u_conv;
 
-  FUNC_CONVERT_TO_DN(&x, &dn_x);
+  u_conv.dec = x;
+#if __BYTE_ORDER == __BIG_ENDIAN
+  top_byte = u_conv.bytes[0];
+#else
+  top_byte = u_conv.bytes[_DECIMAL_SIZE/8 - 1];
+#endif
 
-  if(___decNumberIsNaN(&dn_x))
+  if (((top_byte & DECIMAL_NaN) == DECIMAL_NaN) ||
+      ((top_byte & DECIMAL_Inf) == DECIMAL_Inf))
     return 0;
-
-  return ___decNumberIsInfinite(&dn_x)?0:1;
+  return 1;
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

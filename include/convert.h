@@ -1,5 +1,6 @@
 /* Handle conversion from binary integers, floats and decimal types
    Copyright (C) 2007,2008 IBM Corporation.
+   Copyright (C) 2014 Free Software Foundation, Inc.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
 
@@ -178,25 +179,28 @@ extern int CLASSIFY (SRC_TYPE);
 #if defined DECIMAL_TO_BINARY
 
 #if DEST==32
-#define DEST_TYPE float
+#define DEST_TYPE       float
 #define DEST_LITERAL(n) n##F
-#define DEST_KIND sf
+#define DEST_KIND       sf
+#define DEST_INFINITY   __builtin_inff ()
+#define DEST_NAN        __builtin_nanf ("")
 #endif
 
 #if DEST==64
-#define DEST_TYPE double
+#define DEST_TYPE       double
 #define DEST_LITERAL(n) n
-#define DEST_KIND df
+#define DEST_KIND       df
+#define DEST_INFINITY   __builtin_inf ()
+#define DEST_NAN        __builtin_nan ("")
 #endif
 
 #if DEST==128
-#define DEST_TYPE long double
+#define DEST_TYPE       long double
 #define DEST_LITERAL(n) n##L
-#define DEST_KIND tf
+#define DEST_KIND       tf
+#define DEST_INFINITY   __builtin_infl ()
+#define DEST_NAN        __builtin_nanl ("")
 #endif
-
-#define DEST_INFINITY INFINITY
-#define DEST_NAN NAN
 
 
 #endif //DECIMAL_TO_BINARY
@@ -301,12 +305,12 @@ extern const _Decimal128 decpowof2[];
 # define DFP_TEST_EXCEPTIONS(status)	({	\
 	fenv_union_t u; 			\
 	u.fenv = fegetenv_register(); 		\
-	u.l[1] & (status);			\
+	u.l & (status);				\
 	})
 # define DFP_CLEAR_EXCEPTIONS(status)	{	\
 	fenv_union_t u;				\
 	u.fenv = fegetenv_register();		\
-	u.l[1] &= ~status;			\
+	u.l &= ~status;				\
 	fesetenv_register(u.fenv);		\
 	}
 #else
@@ -323,14 +327,18 @@ extern const _Decimal128 decpowof2[];
 DEST_TYPE					\
 PREFIXED_FUNCTION_NAME (SRC_TYPE a)		\
 {						\
-	DEST_TYPE result = DEST_LITERAL(0.);	\
+	DEST_TYPE result = DEST_LITERAL(0.0);	\
 						\
 	switch (CLASSIFY (a)) {			\
 		case FP_ZERO:			\
-			result = SIGNBIT(a) ? DEST_LITERAL(-0.) : DEST_LITERAL(0.);	\
+			result = SIGNBIT(a) ?   \
+			  DEST_LITERAL(-0.0) :  \
+			  DEST_LITERAL(0.0);	\
 			break;			\
 		case FP_INFINITE: 		\
-			result = SIGNBIT(a) ? -DEST_INFINITY : DEST_INFINITY;	\
+			result = SIGNBIT(a) ? 	\
+			  -DEST_INFINITY : 	\
+			  DEST_INFINITY;	\
 			break;			\
 		case FP_NAN:			\
 			result = DEST_NAN;	\

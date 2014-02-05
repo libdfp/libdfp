@@ -1,11 +1,8 @@
-/* Returns non-zero if the _Decimal32 is nan
+/* Returns non-zero if the _Decimal32 is a signaling nan
 
-   Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007-2014 Free Software Foundation, Inc.
+   Copyright (C) 2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
-
-   Author(s): Joseph Kerian <jkerian@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -23,36 +20,16 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _DECIMAL_SIZE
-#  define _DECIMAL_SIZE 32
-#  include <decimal32.h>
-#endif
-
 #include <math.h>
-#include <endian.h>
-
-#define FUNCTION_NAME isnan
-
-#include <dfpmacro.h>
+#include <math_private.h>
 
 int
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
+__issignalingd32 (_Decimal32 x)
 {
-  uint8_t top_byte;
-  union
-  {
-    DEC_TYPE dec;
-    uint8_t bytes[_DECIMAL_SIZE/8];
-  } u_conv;
+  uint32_t hx;
+  GET_DEC32_WORD (hx, x);
 
-  u_conv.dec = x;
-#if __BYTE_ORDER == __BIG_ENDIAN
-  top_byte = u_conv.bytes[0];
-#else
-  top_byte = u_conv.bytes[_DECIMAL_SIZE/8 - 1];
-#endif
-
-  return (top_byte & DECIMAL_NaN) == DECIMAL_NaN;
+  /* 0 11111 10 ... == sNaN  */
+  return (hx & DEC32_SNAN_MASK) == DEC32_SNAN_MASK;
 }
-
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+weak_alias (__issignalingd32, issignalingd32)

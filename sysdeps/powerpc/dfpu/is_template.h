@@ -1,5 +1,6 @@
 /* Template for generating Power6 isXXX functions.
    Copyright (C) 2008 IBM Corporation.
+   Copyright (C) 2014 Free Software Foundation, Inc.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
 
@@ -30,40 +31,25 @@
 int
 INTERNAL_FUNCTION_NAME (DEC_TYPE val)
 {
-  int result = 0;
-#if _DECIMAL_SIZE == 32
-  _Decimal64 dummy;
+  int cr0;
+#if _DECIMAL_SIZE == 32 || _DECIMAL_SIZE == 64
+#define DTSTD "dtstdc"
+  _Decimal64 input = val;
 #elif _DECIMAL_SIZE == 128
-  register _Decimal128 fr0 asm("fr0") = val;
+# define DTSTD "dtstdcq"
+  register _Decimal128 input asm("fr0") = val;
 #endif
 
-  __asm__ (
-#if _DECIMAL_SIZE == 32
-   "dctdp %1,%2;"
-#endif
-#if _DECIMAL_SIZE == 128
-   "dtstdcq cr0,%1," STRINGIFY(TEST_CLASS_MASK) ";"
-#else
-   "dtstdc cr0,%1," STRINGIFY(TEST_CLASS_MASK) ";"
-#endif
-   "li %0,0;"
-   "bne cr0,1f;"
-   "li %0,1;"
-   "bnl cr0,1f;"
-   "neg %0,%0;"
- "1:;"
- : "=r" (result)
-#if _DECIMAL_SIZE == 32
- , "=f"(dummy)
-#endif
-#if _DECIMAL_SIZE == 128
- : "f" (fr0)
-#else
- : "f" (val)
-#endif
- : "cr0");
+  asm (
+    DTSTD " cr0,%1," STRINGIFY(TEST_CLASS_MASK) "\n"
+   "mfcr   %0, 0\n"
+   : "=r" (cr0)
+   : "f" (input)
+   : "cr0");
 
-  return result;
+  /* cr0 0010 - operand positive with match
+     cr0 1010 - operand negative with math  */
+  return (cr0 & 0x20000000) ? 1 : 0;
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

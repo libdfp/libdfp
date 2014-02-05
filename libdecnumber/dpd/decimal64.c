@@ -1,5 +1,5 @@
 /* Decimal 64-bit format module for the decNumber C Library.
-   Copyright (C) 2005, 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2005, 2007, 2009, 2014 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -190,8 +190,8 @@ decimal64 * decimal64FromNumber(decimal64 *d64, const decNumber *dn,
   /* now write to storage; this is now always endian */
   pu=(uInt *)d64->bytes;	   /* overlay */
   if (DECLITEND) {
-    pu[0]=targar[0];		   /* directly store the low int */
-    pu[1]=targar[1];		   /* then the high int */
+    pu[0]=__builtin_bswap32(targar[1]);		   /* directly store the high int */
+    pu[1]=__builtin_bswap32(targar[0]);		   /* then the low int */
     }
    else {
     pu[0]=targar[1];		   /* directly store the high int */
@@ -222,13 +222,13 @@ decNumber * decimal64ToNumber(const decimal64 *d64, decNumber *dn) {
   /* load source from storage; this is endian */
   pu=(const uInt *)d64->bytes;	   /* overlay */
   if (DECLITEND) {
-    sourlo=pu[0];		   /* directly load the low int */
-    sourhi=pu[1];		   /* then the high int */
+    sourhi=__builtin_bswap32(pu[0]);   /* directly load the low int */
+    sourlo=__builtin_bswap32(pu[1]);   /* then the high int */
     }
    else {
     sourhi=pu[0];		   /* directly load the high int */
     sourlo=pu[1];		   /* then the low int */
-    }
+  }
 
   comb=(sourhi>>26)&0x1f;	   /* combination field */
 

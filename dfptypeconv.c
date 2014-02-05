@@ -1,7 +1,7 @@
 /* DFP_C_TYPE to/from IEEE DFP type conversion routines definitions
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation.
+   Copyright (C) 2007-2014 Free Software Foundation.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -26,109 +26,79 @@
 #include "dfptypeconv128.h"
 #include "dfptypeconv64.h"
 #include "dfptypeconv32.h"
-#include <string.h>
 #include <endian.h>
 
-typedef struct {
-  char elem[4];
-} bytes32;
-
-#define SWAPBYTES(s,d) \
-    (d)->elem[0] = (s)->elem[3]; \
-    (d)->elem[1] = (s)->elem[2]; \
-    (d)->elem[2] = (s)->elem[1]; \
-    (d)->elem[3] = (s)->elem[0];
-
-
-void ___host_to_ieee_32 (_Decimal32 *src, decimal32 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
-  memcpy(dest, src, 4);
+static inline void
+__copy32 (uint32_t * src, uint32_t * dst)
+{
+#if __BYTE_ORDER == __BIG_ENDIAN
+  *dst = *src;
 #else
-  bytes32 *s, *d;
-  s = (bytes32*) src;
-  d = (bytes32*) dest;
-  SWAPBYTES(s,d);
+  *dst = __builtin_bswap32 (*src);
 #endif
 }
 
-void ___host_to_ieee_64 (_Decimal64 *src, decimal64 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
-  memcpy(dest, src, 8);
+static inline void
+__copy64 (uint64_t * src, uint64_t * dst)
+{
+#if __BYTE_ORDER == __BIG_ENDIAN
+  *dst = *src;
 #else
-  bytes32 *s, *d;
-  s = (bytes32*) src;
-  d = (bytes32*) dest;
-  ++d;
-  SWAPBYTES(s,d);
-  --d; ++s;
-  SWAPBYTES(s,d);
+  *dst = __builtin_bswap64 (*src);
 #endif
 }
 
-void ___host_to_ieee_128 (_Decimal128 *src, decimal128 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
-  memcpy(dest, src, 16);
+static inline void
+__copy128 (uint64_t * src, uint64_t * dst)
+{
+#if __BYTE_ORDER == __BIG_ENDIAN
+  *dst = *src;
+  *(dst + 1) = *(src + 1);
 #else
-  bytes32 *s, *d;
-  s = (bytes32*) src;
-  d = (bytes32*) dest;
-  d += 3;
-  SWAPBYTES(s,d);
-  --d; ++s;
-  SWAPBYTES(s,d);
-  --d; ++s;
-  SWAPBYTES(s,d);
-  --d; ++s;
-  SWAPBYTES(s,d);
+  *dst = __builtin_bswap64 (*(src + 1));
+  *(dst + 1) = __builtin_bswap64 (*src);
 #endif
 }
 
-void ___ieee_32_to_host (decimal32 *src, _Decimal32 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
-  memcpy(dest, src, 4);
-#else
-  bytes32 *s, *d;
-  s = (bytes32*) src;
-  d = (bytes32*) dest;
-  SWAPBYTES(s,d);
-#endif
+void
+___host_to_ieee_32 (_Decimal32 * src, decimal32 * dest)
+{
+  __copy32 ((uint32_t *) src, (uint32_t *) dest);
 }
 
-void ___ieee_64_to_host (decimal64 *src, _Decimal64 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
-  memcpy(dest, src, 8);
-#else
-  bytes32 *s, *d;
-  s = (bytes32*) src;
-  d = (bytes32*) dest;
-  ++d;
-  SWAPBYTES(s,d);
-  --d; ++s;
-  SWAPBYTES(s,d);
-#endif
+void
+___host_to_ieee_64 (_Decimal64 * src, decimal64 * dest)
+{
+  __copy64 ((uint64_t *) src, (uint64_t *) dest);
 }
 
-void ___ieee_128_to_host (decimal128 *src, _Decimal128 *dest) {
-#if BYTE_ORDER == BIG_ENDIAN
-  memcpy(dest, src, 16);
-#else
-  bytes32 *s, *d;
-  s = (bytes32*) src;
-  d = (bytes32*) dest;
-  d += 3;
-  SWAPBYTES(s,d);
-  --d; ++s;
-  SWAPBYTES(s,d);
-  --d; ++s;
-  SWAPBYTES(s,d);
-  --d; ++s;
-  SWAPBYTES(s,d);
-#endif
+void
+___host_to_ieee_128 (_Decimal128 * src, decimal128 * dest)
+{
+  __copy128 ((uint64_t *) src, (uint64_t *) dest);
 }
 
-hidden_def(___host_to_ieee_32)
-hidden_def(___host_to_ieee_64)
-hidden_def(___host_to_ieee_128)
-hidden_def(___ieee_32_to_host)
-hidden_def(___ieee_64_to_host)
-hidden_def(___ieee_128_to_host)
+void
+___ieee_32_to_host (decimal32 * src, _Decimal32 * dest)
+{
+  __copy32 ((uint32_t *) src, (uint32_t *) dest);
+}
+
+void
+___ieee_64_to_host (decimal64 * src, _Decimal64 * dest)
+{
+  __copy64 ((uint64_t *) src, (uint64_t *) dest);
+}
+
+void
+___ieee_128_to_host (decimal128 * src, _Decimal128 * dest)
+{
+  __copy128 ((uint64_t *) src, (uint64_t *) dest);
+}
+
+hidden_def (___host_to_ieee_32)
+hidden_def (___host_to_ieee_64)
+hidden_def (___host_to_ieee_128)
+hidden_def (___ieee_32_to_host)
+hidden_def (___ieee_64_to_host)
+hidden_def (___ieee_128_to_host)

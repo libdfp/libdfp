@@ -17,6 +17,7 @@ libdfp_files +=	acosd32 acosd64 acosd128 \
 		fabsd32 fabsd64 fabsd128 \
 		fdimd32 fdimd64 fdimd128 \
 		isfinited32 isfinited64 isfinited128 \
+		issignalingd32 issignalingd64 issignalingd128 \
 		floord32 floord64 floord128 \
 		fmad32 fmad64 fmad128 \
 		fmaxd32 fmaxd64 fmaxd128 \

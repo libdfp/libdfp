@@ -1,7 +1,7 @@
 /* Number of digits functions.
 
    Copyright (C) 2006, 2007, 2008 IBM Corporation.
-   Copyright (C) 2007-2012, Free Software Foundation, Inc.
+   Copyright (C) 2007-2014, Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -55,34 +55,32 @@ FUNC_D (getexp) (DEC_TYPE x)
   int exp;
   struct ieee754r_c_field c_f;
 
+#undef DECIMAL_BIAS
+#undef DECIMAL_DEC_BITS
 #if _DECIMAL_SIZE == 32
   union ieee754r_Decimal32 d;
   d.sd = x;
-  c_f =  c_decoder[d.ieee.c];
-  exp = c_f.lm_exp << DECIMAL32_BEC_bits;
-  exp += d.ieee.bec;
-  exp -= DECIMAL32_Bias;
-
+# define DECIMAL_BIAS      DECIMAL32_Bias
+# define DECIMAL_DEC_BITS  DECIMAL32_BEC_bits
 #elif _DECIMAL_SIZE == 64
   union ieee754r_Decimal64 d;
   d.dd = x;
-  c_f =  c_decoder[d.ieee.c];
-  exp = c_f.lm_exp << DECIMAL64_BEC_bits;
-  exp += d.ieee.bec;
-  exp -= DECIMAL64_Bias;
-
+# define DECIMAL_BIAS      DECIMAL64_Bias
+# define DECIMAL_DEC_BITS  DECIMAL64_BEC_bits
 #elif _DECIMAL_SIZE == 128
   union ieee754r_Decimal128 d;
   d.td = x;
-  c_f =  c_decoder[d.ieee.c];
-  exp = c_f.lm_exp << DECIMAL128_BEC_bits;
-  exp += d.ieee.bec;
-  exp -= DECIMAL128_Bias;
-
+# define DECIMAL_BIAS      DECIMAL128_Bias
+# define DECIMAL_DEC_BITS  DECIMAL128_BEC_bits
 #endif
 
+  c_f =  c_decoder[d.ieee.c];
+  exp = c_f.lm_exp << DECIMAL_DEC_BITS;
+  exp += d.ieee.bec;
+  exp -= DECIMAL_BIAS;
+
   /* Hardware DFP returns -2 = DECIMAL*_BIAS for a NaN. Be congruent with that.  */
-  if (exp < 0)
+  if (exp == -DECIMAL_BIAS)
     return --exp;
 
   return exp;

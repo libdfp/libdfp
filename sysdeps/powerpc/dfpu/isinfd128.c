@@ -1,5 +1,6 @@
 /* Returns non-zero if the _Decimal128 is infinite
    Copyright (C) 2008 IBM Corporation.
+   Copyright (C) 2014 Free Software Foundation, Inc.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
 
@@ -20,7 +21,4 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #define _DECIMAL_SIZE 128
-#define FUNCTION_NAME isinf
-#define TEST_CLASS_MASK 0x04
-
-#include "is_template.h"
+#include "isinfd32.c"

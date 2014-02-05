@@ -1,11 +1,8 @@
-/* Returns non-zero if the _Decimal32 is nan
+/* _Decimal32 issignaling classification function.
 
-   Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007-2014 Free Software Foundation, Inc.
+   Copyright (C) 2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
-
-   Author(s): Joseph Kerian <jkerian@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -23,36 +20,24 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _DECIMAL_SIZE
-#  define _DECIMAL_SIZE 32
-#  include <decimal32.h>
-#endif
-
 #include <math.h>
-#include <endian.h>
-
-#define FUNCTION_NAME isnan
-
-#include <dfpmacro.h>
 
 int
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
+__issignalingd32 (_Decimal32 x)
 {
-  uint8_t top_byte;
-  union
-  {
-    DEC_TYPE dec;
-    uint8_t bytes[_DECIMAL_SIZE/8];
-  } u_conv;
+  _Decimal64 input = x;
+  int cr0;
 
-  u_conv.dec = x;
-#if __BYTE_ORDER == __BIG_ENDIAN
-  top_byte = u_conv.bytes[0];
-#else
-  top_byte = u_conv.bytes[_DECIMAL_SIZE/8 - 1];
-#endif
+  /* DCM bit 5 is signaling NaN  */
+  asm ("dtstdc cr0,%1,33\n"
+       "mfcr   %0, 0\n"
+       : "=r" (cr0)
+       : "f" (input)
+       : "cr0");
 
-  return (top_byte & DECIMAL_NaN) == DECIMAL_NaN;
+  /* cr0 bits are 28:31 and:
+     - 0010 operand positive with match
+     - 1010 operand negative with math  */
+  return (cr0 & 0x20000000) ? 1 : 0;
 }
-
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+weak_alias (__issignalingd32, issignalingd32)

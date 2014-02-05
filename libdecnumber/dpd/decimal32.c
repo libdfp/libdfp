@@ -1,5 +1,5 @@
 /* Decimal 32-bit format module for the decNumber C Library.
-   Copyright (C) 2005, 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2005, 2007, 2009, 2014 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -171,7 +171,10 @@ decimal32 * decimal32FromNumber(decimal32 *d32, const decNumber *dn,
 
   /* now write to storage; this is endian */
   pu=(uInt *)d32->bytes;	   /* overlay */
-  *pu=targ;			   /* directly store the int */
+  if (DECLITEND)
+    *pu = __builtin_bswap32 (targ);
+  else
+    *pu = targ;			   /* directly store the int */
 
   if (status!=0) decContextSetStatus(set, status); /* pass on status */
   /* decimal32Show(d32); */
@@ -193,7 +196,10 @@ decNumber * decimal32ToNumber(const decimal32 *d32, decNumber *dn) {
 
   /* load source from storage; this is endian */
   pu=(const uInt *)d32->bytes;	   /* overlay */
-  sour=*pu;			   /* directly load the int */
+  if (DECLITEND)
+    sour = __builtin_bswap32 (*pu);
+  else
+    sour = *pu;			   /* directly load the int */
 
   comb=(sour>>26)&0x1f;		   /* combination field */
 

@@ -1,7 +1,7 @@
 /* Decimal Float fe_dec_getround and fe_dec_setround definitions.
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009, 2010, 2011 Free Software Foundation, Inc.
+   Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -25,9 +25,10 @@
    Please see dfp/COPYING.txt for more information.  */
 
 #include <fenv.h>
+#include <fenv_libdfp.h>
 #include <dfpfenv_private.h>
 
-int __fe_dec_setround(int rounding_direction)
+int __fe_dec_setround (int rounding_direction)
 {
   /* The rounding modes are as follows:
    *
@@ -69,7 +70,7 @@ int __fe_dec_setround(int rounding_direction)
 	 W:  Word [Implicit '0' for bits 32:63 {low order word.}]
 		  ['1' indicates the bits 0:31 {high order word}.] */
 
-  switch(rounding_direction)
+  switch (rounding_direction)
     {
       case FE_DEC_TONEAREST:
 	asm ("mtfsfi 7, 0, 1\n");
@@ -100,23 +101,16 @@ int __fe_dec_setround(int rounding_direction)
     }
   return 0;
 }
-strong_alias(__fe_dec_setround, fe_dec_setround)
+strong_alias (__fe_dec_setround, fe_dec_setround)
 hidden_def (__fe_dec_setround)
 
-int __fe_dec_getround(void)
+int __fe_dec_getround (void)
 {
-  union {
-    double as_double;
-    /* Per ISA 2.05 bit 28 of the FPSCR is reserved for future extension of the
-     * FPSCR (DRN) and is therefore ok to read bits 28-31 of the high word with
-     * the mffs.  */
-    struct { unsigned int dummy: 28, drn:4, dummy2; };
-  } fpscr;
+  fenv_union_t u = { .fenv = fegetenv_register () };
+  /* DFP Rounding Control bits are 29:31 (bit 28 is reserved). */
+  int rounding = (u.l & 0x700000000ULL) >> 32;
 
-  /* On Power6, read the fpscr into a double union using mffs
-     instruction, then convert the DRN rounding mode to DEC spec. */
-  asm ("mffs %0\n" : "=f" (fpscr.as_double) : );
-  switch (fpscr.drn) {
+  switch (rounding) {
     case 0: return FE_DEC_TONEAREST;
     case 1: return FE_DEC_TOWARDZERO;
     case 2: return FE_DEC_UPWARD;
@@ -128,12 +122,13 @@ int __fe_dec_getround(void)
     default: return FE_DEC_TONEAREST; /* Default  */
   }
 }
-strong_alias(__fe_dec_getround, fe_dec_getround)
-hidden_def(__fe_dec_getround)
+strong_alias (__fe_dec_getround, fe_dec_getround)
+hidden_def (__fe_dec_getround)
 
 extern int (*__printf_dfp_getround_callback)(void);
 
-static void __attribute__ ((constructor))__init_printf_dfp_getround (void)
+static void __attribute__ ((constructor))
+__init_printf_dfp_getround (void)
 {
   __printf_dfp_getround_callback = &__fe_dec_getround;
 }

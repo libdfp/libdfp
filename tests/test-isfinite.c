@@ -1,6 +1,6 @@
 /* Test isfinite[32|64|128] and polymorphic macro isfinite() in math.h.
 
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -47,13 +47,7 @@ d128_type printf_d128s[] =
   {__LINE__, DEC_NAN, 0,  "%d"},
   {__LINE__, HUGE_VAL_D128, 0, "%d"},
   {__LINE__, DEC_INFINITY, 0, "%d"},
-#if defined __s390__ || defined __s390x__ || !defined _ARCH_PWR6
   {__LINE__, -1.95DL, 1, "%d"},
-#else
-  /* isfinite returns 'nonzero' if the argument is finite.  This could be
-   * anything other than zero.  */
-  {__LINE__, -1.95DL, -1, "%d"},
-#endif
   {0,0,0,0 }
 };
 
@@ -70,14 +64,7 @@ d64_type printf_d64s[] =
   {__LINE__, DEC_NAN, 0,  "%d"},
   {__LINE__, HUGE_VAL_D64, 0, "%d"},
   {__LINE__, DEC_INFINITY, 0, "%d"},
-#if defined __s390__ || defined __s390x__ || !defined _ARCH_PWR6
   {__LINE__, -1.95DD, 1, "%d"},
-#else
-  /* isfinite returns 'nonzero' if the argument is finite.  This could be
-   * anything other than zero.  */
-  {__LINE__, -1.95DD, -1, "%d"},
-#endif
-
   {0,0,0,0 }
 };
 
@@ -94,13 +81,7 @@ d32_type printf_d32s[] =
   {__LINE__, DEC_NAN, 0,  "%d"},
   {__LINE__, HUGE_VAL_D32, 0, "%d"},
   {__LINE__, DEC_INFINITY, 0, "%d"},
-#if defined __s390__ || defined __s390x__ || !defined _ARCH_PWR6
   {__LINE__, -1.95DF, 1, "%d"},
-#else
-  /* isfinite returns 'nonzero' if the argument is finite.  This could be
-   * anything other than zero.  */
-  {__LINE__, -1.95DF, -1, "%d"},
-#endif
   {0,0,0,0 }
 };
 
