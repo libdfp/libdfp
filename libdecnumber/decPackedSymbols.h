@@ -6,9 +6,4 @@
 #define decPackedToNumber __decPackedToNumber
 #endif
 
-#ifdef __STDC_DEC_FP__
-#define decPackedFromNumber ___decPackedFromNumber
-#define decPackedToNumber ___decPackedToNumber
-#endif
-
 #endif

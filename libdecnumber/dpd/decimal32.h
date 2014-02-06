@@ -1,5 +1,5 @@
 /* Decimal 32-bit format module header for the decNumber C Library.
-   Copyright (C) 2005, 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2005-2014 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -30,7 +30,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #if !defined(DECIMAL32)
   #define DECIMAL32
   #define DEC32NAME	"decimal32"		      /* Short name   */
-  #define DEC32FULLNAME "Decimal 32-bit Number"	      /* Verbose name */
+  #define DEC32FULLNAME "Decimal 32-bit Number"       /* Verbose name */
   #define DEC32AUTHOR	"Mike Cowlishaw"	      /* Who to blame */
 
   /* parameters for decimal32s */
@@ -41,7 +41,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #define DECIMAL32_Bias   101		/* bias for the exponent      */
   #define DECIMAL32_String 15		/* maximum string length, +1  */
   #define DECIMAL32_EconL  6		/* exp. continuation length   */
-  /* highest biased exponent (Elimit-1)				      */
+  /* highest biased exponent (Elimit-1) 			      */
   #define DECIMAL32_Ehigh  (DECIMAL32_Emax+DECIMAL32_Bias-DECIMAL32_Pmax+1)
 
   /* check enough digits, if pre-defined			      */
@@ -66,18 +66,22 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   /* special values [top byte excluding sign bit; last two bits are   */
   /* don't-care for Infinity on input, last bit don't-care for NaN]   */
   #if !defined(DECIMAL_NaN)
-    #define DECIMAL_NaN	    0x7c	/* 0 11111 00 NaN	      */
+    #define DECIMAL_NaN     0x7c	/* 0 11111 00 NaN	      */
     #define DECIMAL_sNaN    0x7e	/* 0 11111 10 sNaN	      */
-    #define DECIMAL_Inf	    0x78	/* 0 11110 00 Infinity	      */
+    #define DECIMAL_Inf     0x78	/* 0 11110 00 Infinity	      */
   #endif
 
   /* ---------------------------------------------------------------- */
   /* Routines							      */
   /* ---------------------------------------------------------------- */
 
-  #include "decimal32Symbols.h"
+#include "decimal32Symbols.h"
 
-  /* String conversions						      */
+  #ifdef __cplusplus
+  extern "C" {
+  #endif
+
+  /* String conversions 					      */
   decimal32 * decimal32FromString(decimal32 *, const char *, decContext *);
   char * decimal32ToString(const decimal32 *, char *);
   char * decimal32ToEngString(const decimal32 *, char *);
@@ -87,8 +91,12 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 				  decContext *);
   decNumber * decimal32ToNumber(const decimal32 *, decNumber *);
 
-  /* Format-dependent utilities					      */
+  /* Format-dependent utilities 				      */
   uint32_t    decimal32IsCanonical(const decimal32 *);
   decimal32 * decimal32Canonical(decimal32 *, const decimal32 *);
+
+  #ifdef __cplusplus
+  }
+  #endif
 
 #endif

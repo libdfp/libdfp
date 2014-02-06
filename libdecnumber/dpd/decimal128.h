@@ -1,5 +1,5 @@
 /* Decimal 128-bit format module header for the decNumber C Library.
-   Copyright (C) 2005, 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2005-2014 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -24,7 +24,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 <http://www.gnu.org/licenses/>.  */
 
 /* ------------------------------------------------------------------ */
-/* Decimal 128-bit format module header				      */
+/* Decimal 128-bit format module header 			      */
 /* ------------------------------------------------------------------ */
 
 #if !defined(DECIMAL128)
@@ -41,7 +41,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #define DECIMAL128_Bias   6176	/* bias for the exponent      */
   #define DECIMAL128_String 43		/* maximum string length, +1  */
   #define DECIMAL128_EconL  12		/* exp. continuation length   */
-  /* highest biased exponent (Elimit-1)				      */
+  /* highest biased exponent (Elimit-1) 			      */
   #define DECIMAL128_Ehigh  (DECIMAL128_Emax+DECIMAL128_Bias-DECIMAL128_Pmax+1)
 
   /* check enough digits, if pre-defined			      */
@@ -66,20 +66,24 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   /* special values [top byte excluding sign bit; last two bits are   */
   /* don't-care for Infinity on input, last bit don't-care for NaN]   */
   #if !defined(DECIMAL_NaN)
-    #define DECIMAL_NaN	    0x7c	/* 0 11111 00 NaN	      */
+    #define DECIMAL_NaN     0x7c	/* 0 11111 00 NaN	      */
     #define DECIMAL_sNaN    0x7e	/* 0 11111 10 sNaN	      */
-    #define DECIMAL_Inf	    0x78	/* 0 11110 00 Infinity	      */
+    #define DECIMAL_Inf     0x78	/* 0 11110 00 Infinity	      */
   #endif
 
-  #include "decimal128Local.h"
+#include "decimal128Local.h"
 
   /* ---------------------------------------------------------------- */
   /* Routines							      */
   /* ---------------------------------------------------------------- */
 
-  #include "decimal128Symbols.h"
+#include "decimal128Symbols.h"
 
-  /* String conversions						      */
+  #ifdef __cplusplus
+  extern "C" {
+  #endif
+
+  /* String conversions 					      */
   decimal128 * decimal128FromString(decimal128 *, const char *, decContext *);
   char * decimal128ToString(const decimal128 *, char *);
   char * decimal128ToEngString(const decimal128 *, char *);
@@ -89,8 +93,12 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 				    decContext *);
   decNumber * decimal128ToNumber(const decimal128 *, decNumber *);
 
-  /* Format-dependent utilities					      */
+  /* Format-dependent utilities 				      */
   uint32_t    decimal128IsCanonical(const decimal128 *);
   decimal128 * decimal128Canonical(decimal128 *, const decimal128 *);
+
+  #ifdef __cplusplus
+  }
+  #endif
 
 #endif

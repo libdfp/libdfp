@@ -21,24 +21,4 @@
 #define decSingleZero __decSingleZero
 #endif
 
-#ifdef __STDC_DEC_FP__
-#define decSingleFromBCD ___decSingleFromBCD
-#define decSingleFromPacked ___decSingleFromPacked
-#define decSingleFromString ___decSingleFromString
-#define decSingleFromWider ___decSingleFromWider
-#define decSingleGetCoefficient ___decSingleGetCoefficient
-#define decSingleGetExponent ___decSingleGetExponent
-#define decSingleRadix ___decSingleRadix
-#define decSingleSetCoefficient ___decSingleSetCoefficient
-#define decSingleSetExponent ___decSingleSetExponent
-#define decSingleShow ___decSingleShow
-#define decSingleToBCD ___decSingleToBCD
-#define decSingleToEngString ___decSingleToEngString
-#define decSingleToPacked ___decSingleToPacked
-#define decSingleToString ___decSingleToString
-#define decSingleToWider ___decSingleToWider
-#define decSingleVersion ___decSingleVersion
-#define decSingleZero ___decSingleZero
-#endif
-
 #endif

@@ -1,3 +1,57 @@
+2013-02-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* config/dfp.m4: New file: m4 macro to select the decimal floating
+	point format.
+	* libdecnumber/Makefile.in: Update from GCC.
+	* libdecnumber/aclocal.m4: Likewise.
+	* libdecnumber/bid/bid-dpd.h: Likewise.
+	* libdecnumber/bid/bid2dpd_dpd2bid.c: Likewise.
+	* libdecnumber/bid/bid2dpd_dpd2bid.h: Likewise.
+	* libdecnumber/bid/decimal128.c: Likewise.
+	* libdecnumber/bid/decimal32.c: Likewise.
+	* libdecnumber/bid/decimal64.c: Likewise.
+	* libdecnumber/bid/host-ieee128.c: Likewise.
+	* libdecnumber/bid/host-ieee32.c: Likewise.
+	* libdecnumber/bid/host-ieee64.c: Likewise.
+	* libdecnumber/config.in: Likewise.
+	* libdecnumber/configure: Likewise.
+	* libdecnumber/configure.ac: Likewise.
+	* libdecnumber/dconfig.h: Likewise.
+	* libdecnumber/decBasic.c: Likewise.
+	* libdecnumber/decCommon.c: Likewise.
+	* libdecnumber/decCommonSymbols.h:: Likewise.
+	* libdecnumber/decContext.c: Likewise.
+	* libdecnumber/decContext.h: Likewise.
+	* libdecnumber/decDPD.h: Likewise.
+	* libdecnumber/decDPDSymbols.h: Likewise.
+	* libdecnumber/decDouble.c: Likewise.
+	* libdecnumber/decDouble.h: Likewise.
+	* libdecnumber/decDoubleSymbols.h: Likewise.
+	* libdecnumber/decExcept.c: Likewise.
+	* libdecnumber/decExcept.h: Likewise.
+	* libdecnumber/decLibrary.c: Likewise.
+	* libdecnumber/decNumber.c: Likewise.
+	* libdecnumber/decNumber.h: Likewise.
+	* libdecnumber/decNumberLocal.h: Likewise.
+	* libdecnumber/decPacked.c: Likewise.
+	* libdecnumber/decPacked.h: Likewise.
+	* libdecnumber/decPackedSymbols.h: Likewise.
+	* libdecnumber/decQuad.c: Likewise.
+	* libdecnumber/decQuad.h: Likewise.
+	* libdecnumber/decQuadSymbols.h: Likewise.
+	* libdecnumber/decRound.c: Likewise.
+	* libdecnumber/decRound.h: Likewise.
+	* libdecnumber/decSingle.c: Likewise.
+	* libdecnumber/decSingle.h: Likewise.
+	* libdecnumber/decSingleSymbols.h: Likewise.
+	* libdecnumber/dpd/decimal128.c: Likewise.
+	* libdecnumber/dpd/decimal128.h: Likewise.
+	* libdecnumber/dpd/decimal128Local.h: Likewise.
+	* libdecnumber/dpd/decimal32.c : Likewise.
+	* libdecnumber/dpd/decimal32.h: Likewise.
+	* libdecnumber/dpd/decimal64.c: Likewise.
+	* libdecnumber/dpd/decimal64.h: Likewise.
+
 2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/Makefile: Add issignaling objects.

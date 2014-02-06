@@ -1,5 +1,5 @@
 /* Decimal 32-bit format module for the decNumber C Library.
-   Copyright (C) 2005, 2007, 2009, 2014 Free Software Foundation, Inc.
+   Copyright (C) 2005-2014 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -24,7 +24,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 <http://www.gnu.org/licenses/>.  */
 
 /* ------------------------------------------------------------------ */
-/* Decimal 32-bit format module					      */
+/* Decimal 32-bit format module 				      */
 /* ------------------------------------------------------------------ */
 /* This module comprises the routines for decimal32 format numbers.   */
 /* Conversions are supplied to and from decNumber and String.	      */
@@ -37,8 +37,8 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include <string.h>	      /* [for memset/memcpy] */
 #include <stdio.h>	      /* [for printf] */
 
-#include "dconfig.h"	      /* GCC definitions */
-#define	 DECNUMDIGITS  7      /* make decNumbers with space for 7 */
+#include "dconfig.h"          /* GCC definitions */
+#define  DECNUMDIGITS  7      /* make decNumbers with space for 7 */
 #include "decNumber.h"	      /* base number library */
 #include "decNumberLocal.h"   /* decNumber local types, etc. */
 #include "decimal32.h"	      /* our primary include */
@@ -64,9 +64,9 @@ extern void decNumberShow(const decNumber *);	  /* .. */
 /* ------------------------------------------------------------------ */
 /* decimal32FromNumber -- convert decNumber to decimal32	      */
 /*								      */
-/*   ds is the target decimal32					      */
+/*   ds is the target decimal32 				      */
 /*   dn is the source number (assumed valid)			      */
-/*   set is the context, used only for reporting errors		      */
+/*   set is the context, used only for reporting errors 	      */
 /*								      */
 /* The set argument is used only for status reporting and for the     */
 /* rounding mode (used if the coefficient is more than DECIMAL32_Pmax */
@@ -84,8 +84,8 @@ decimal32 * decimal32FromNumber(decimal32 *d32, const decNumber *dn,
   Int ae;			   /* adjusted exponent */
   decNumber  dw;		   /* work */
   decContext dc;		   /* .. */
-  uInt *pu;			   /* .. */
   uInt comb, exp;		   /* .. */
+  uInt uiwork;			   /* for macros */
   uInt targ=0;			   /* target 32-bit */
 
   /* If the number has too many digits, or the exponent could be */
@@ -93,9 +93,9 @@ decimal32 * decimal32FromNumber(decimal32 *d32, const decNumber *dn,
   /* constraints.  This could push the number to Infinity or zero, */
   /* so this check and rounding must be done before generating the */
   /* decimal32] */
-  ae=dn->exponent+dn->digits-1;		     /* [0 if special] */
-  if (dn->digits>DECIMAL32_Pmax		     /* too many digits */
-   || ae>DECIMAL32_Emax			     /* likely overflow */
+  ae=dn->exponent+dn->digits-1; 	     /* [0 if special] */
+  if (dn->digits>DECIMAL32_Pmax 	     /* too many digits */
+   || ae>DECIMAL32_Emax 		     /* likely overflow */
    || ae<DECIMAL32_Emin) {		     /* likely underflow */
     decContextDefault(&dc, DEC_INIT_DECIMAL32); /* [no traps] */
     dc.round=set->round;		     /* use supplied rounding */
@@ -109,7 +109,7 @@ decimal32 * decimal32FromNumber(decimal32 *d32, const decNumber *dn,
   if (dn->bits&DECSPECIAL) {			  /* a special value */
     if (dn->bits&DECINF) targ=DECIMAL_Inf<<24;
      else {					  /* sNaN or qNaN */
-      if ((*dn->lsu!=0 || dn->digits>1)		  /* non-zero coefficient */
+      if ((*dn->lsu!=0 || dn->digits>1) 	  /* non-zero coefficient */
        && (dn->digits<DECIMAL32_Pmax)) {	  /* coefficient fits */
 	decDigitsToDPD(dn, &targ, 0);
 	}
@@ -135,7 +135,7 @@ decimal32 * decimal32FromNumber(decimal32 *d32, const decNumber *dn,
       comb=(exp>>3) & 0x18;		/* msd=0, exp top 2 bits .. */
       }
      else {				/* non-zero finite number */
-      uInt msd;				/* work */
+      uInt msd; 			/* work */
       Int pad=0;			/* coefficient pad digits */
 
       /* the dn is known to fit, but it may need to be padded */
@@ -170,11 +170,7 @@ decimal32 * decimal32FromNumber(decimal32 *d32, const decNumber *dn,
   if (dn->bits&DECNEG) targ|=0x80000000;  /* add sign bit */
 
   /* now write to storage; this is endian */
-  pu=(uInt *)d32->bytes;	   /* overlay */
-  if (DECLITEND)
-    *pu = __builtin_bswap32 (targ);
-  else
-    *pu = targ;			   /* directly store the int */
+  UBFROMUIBW(d32->bytes, targ);	   /* directly store the int */
 
   if (status!=0) decContextSetStatus(set, status); /* pass on status */
   /* decimal32Show(d32); */
@@ -192,16 +188,12 @@ decNumber * decimal32ToNumber(const decimal32 *d32, decNumber *dn) {
   uInt exp;			   /* exponent top two bits */
   uInt comb;			   /* combination field */
   uInt sour;			   /* source 32-bit */
-  const uInt *pu;		   /* work */
+  uInt uiwork;			   /* for macros */
 
   /* load source from storage; this is endian */
-  pu=(const uInt *)d32->bytes;	   /* overlay */
-  if (DECLITEND)
-    sour = __builtin_bswap32 (*pu);
-  else
-    sour = *pu;			   /* directly load the int */
+  sour=UBTOUIBW(d32->bytes);	   /* directly load the int */
 
-  comb=(sour>>26)&0x1f;		   /* combination field */
+  comb=(sour>>26)&0x1f; 	   /* combination field */
 
   decNumberZero(dn);		   /* clean number */
   if (sour&0x80000000) dn->bits=DECNEG; /* set sign if negative */
@@ -209,7 +201,7 @@ decNumber * decimal32ToNumber(const decimal32 *d32, decNumber *dn) {
   msd=COMBMSD[comb];		   /* decode the combination field */
   exp=COMBEXP[comb];		   /* .. */
 
-  if (exp==3) {			   /* is a special */
+  if (exp==3) { 		   /* is a special */
     if (msd==0) {
       dn->bits|=DECINF;
       return dn;		   /* no coefficient needed */
@@ -230,7 +222,7 @@ decNumber * decimal32ToNumber(const decimal32 *d32, decNumber *dn) {
     return dn;
     }
   /* msd=0 */
-  if (!sour) return dn;		   /* easy: coefficient is 0 */
+  if (!sour) return dn; 	   /* easy: coefficient is 0 */
   if (sour&0x000ffc00)		   /* need 2 declets? */
     decDigitsFromDPD(dn, &sour, 2); /* process 2 declets */
    else
@@ -239,11 +231,11 @@ decNumber * decimal32ToNumber(const decimal32 *d32, decNumber *dn) {
   } /* decimal32ToNumber */
 
 /* ------------------------------------------------------------------ */
-/* to-scientific-string -- conversion to numeric string		      */
+/* to-scientific-string -- conversion to numeric string 	      */
 /* to-engineering-string -- conversion to numeric string	      */
 /*								      */
 /*   decimal32ToString(d32, string);				      */
-/*   decimal32ToEngString(d32, string);				      */
+/*   decimal32ToEngString(d32, string); 			      */
 /*								      */
 /*  d32 is the decimal32 format number to convert		      */
 /*  string is the string where the result will be laid out	      */
@@ -253,7 +245,7 @@ decNumber * decimal32ToNumber(const decimal32 *d32, decNumber *dn) {
 /*  No error is possible, and no status can be set.		      */
 /* ------------------------------------------------------------------ */
 char * decimal32ToEngString(const decimal32 *d32, char *string){
-  decNumber dn;				/* work */
+  decNumber dn; 			/* work */
   decimal32ToNumber(d32, &dn);
   decNumberToEngString(&dn, string);
   return string;
@@ -263,29 +255,28 @@ char * decimal32ToString(const decimal32 *d32, char *string){
   uInt msd;			   /* coefficient MSD */
   Int  exp;			   /* exponent top two bits or full */
   uInt comb;			   /* combination field */
-  char *cstart;			   /* coefficient start */
+  char *cstart; 		   /* coefficient start */
   char *c;			   /* output pointer in string */
-  const uInt *pu;		   /* work */
-  const uByte *u;		   /* .. */
+  const uByte *u;		   /* work */
   char *s, *t;			   /* .. (source, target) */
   Int  dpd;			   /* .. */
   Int  pre, e;			   /* .. */
+  uInt uiwork;			   /* for macros */
   uInt sour;			   /* source 32-bit */
 
   /* load source from storage; this is endian */
-  pu=(const uInt *)d32->bytes;	   /* overlay */
-  sour=*pu;			   /* directly load the int */
+  sour=UBTOUI(d32->bytes);	   /* directly load the int */
 
   c=string;			   /* where result will go */
   if (((Int)sour)<0) *c++='-';	   /* handle sign */
 
-  comb=(sour>>26)&0x1f;		   /* combination field */
+  comb=(sour>>26)&0x1f; 	   /* combination field */
   msd=COMBMSD[comb];		   /* decode the combination field */
   exp=COMBEXP[comb];		   /* .. */
 
   if (exp==3) {
     if (msd==0) {		   /* infinity */
-      strcpy(c,	  "Inf");
+      strcpy(c,   "Inf");
       strcpy(c+3, "inity");
       return string;		   /* easy */
       }
@@ -310,18 +301,18 @@ char * decimal32ToString(const decimal32 *d32, char *string){
   /* length.  We use fixed-length memcpys because variable-length */
   /* causes a subroutine call in GCC.  (These are length 4 for speed */
   /* and are safe because the array has an extra terminator byte.) */
-  #define dpd2char u=&BIN2CHAR[DPD2BIN[dpd]*4];			  \
+  #define dpd2char u=&BIN2CHAR[DPD2BIN[dpd]*4]; 		  \
 		   if (c!=cstart) {memcpy(c, u+1, 4); c+=3;}	  \
 		    else if (*u)  {memcpy(c, u+4-*u, 4); c+=*u;}
 
-  dpd=(sour>>10)&0x3ff;		   /* declet 1 */
+  dpd=(sour>>10)&0x3ff; 	   /* declet 1 */
   dpd2char;
   dpd=(sour)&0x3ff;		   /* declet 2 */
   dpd2char;
 
   if (c==cstart) *c++='0';	   /* all zeros -- make 0 */
 
-  if (exp==0) {			   /* integer or NaN case -- easy */
+  if (exp==0) { 		   /* integer or NaN case -- easy */
     *c='\0';			   /* terminate */
     return string;
     }
@@ -349,13 +340,13 @@ char * decimal32ToString(const decimal32 *d32, char *string){
     /* finally add the E-part, if needed; it will never be 0, and has */
     /* a maximum length of 3 digits (E-101 case) */
     if (e!=0) {
-      *c++='E';			   /* starts with E */
-      *c++='+';			   /* assume positive */
+      *c++='E'; 		   /* starts with E */
+      *c++='+'; 		   /* assume positive */
       if (e<0) {
 	*(c-1)='-';		   /* oops, need '-' */
 	e=-e;			   /* uInt, please */
 	}
-      u=&BIN2CHAR[e*4];		   /* -> length byte */
+      u=&BIN2CHAR[e*4]; 	   /* -> length byte */
       memcpy(c, u+4-*u, 4);	   /* copy fixed 4 characters [is safe] */
       c+=*u;			   /* bump pointer appropriately */
       }
@@ -385,7 +376,7 @@ char * decimal32ToString(const decimal32 *d32, char *string){
 /*	    the conversion					      */
 /*  *string is the character string which should contain a valid      */
 /*	    number (which may be a special value)		      */
-/*  set	    is the context					      */
+/*  set     is the context					      */
 /*								      */
 /* The context is supplied to this routine is used for error handling */
 /* (setting of status and traps) and for the rounding mode, only.     */
@@ -394,7 +385,7 @@ char * decimal32ToString(const decimal32 *d32, char *string){
 decimal32 * decimal32FromString(decimal32 *result, const char *string,
 				decContext *set) {
   decContext dc;			     /* work */
-  decNumber dn;				     /* .. */
+  decNumber dn; 			     /* .. */
 
   decContextDefault(&dc, DEC_INIT_DECIMAL32); /* no traps, please */
   dc.round=set->round;			      /* use supplied rounding */
@@ -410,11 +401,11 @@ decimal32 * decimal32FromString(decimal32 *result, const char *string,
 /* ------------------------------------------------------------------ */
 /* decimal32IsCanonical -- test whether encoding is canonical	      */
 /*   d32 is the source decimal32				      */
-/*   returns 1 if the encoding of d32 is canonical, 0 otherwise	      */
+/*   returns 1 if the encoding of d32 is canonical, 0 otherwise       */
 /* No error is possible.					      */
 /* ------------------------------------------------------------------ */
-uint32_t decimal32IsCanonical(const decimal32 *d32) {
-  decNumber dn;				/* work */
+uInt decimal32IsCanonical(const decimal32 *d32) {
+  decNumber dn; 			/* work */
   decimal32 canon;			/* .. */
   decContext dc;			/* .. */
   decContextDefault(&dc, DEC_INIT_DECIMAL32);
@@ -431,7 +422,7 @@ uint32_t decimal32IsCanonical(const decimal32 *d32) {
 /* No error is possible.					      */
 /* ------------------------------------------------------------------ */
 decimal32 * decimal32Canonical(decimal32 *result, const decimal32 *d32) {
-  decNumber dn;				/* work */
+  decNumber dn; 			/* work */
   decContext dc;			/* .. */
   decContextDefault(&dc, DEC_INIT_DECIMAL32);
   decimal32ToNumber(d32, &dn);
@@ -461,8 +452,8 @@ decimal32 * decimal32Canonical(decimal32 *result, const decimal32 *d32) {
 /* This assumes range has been checked and exponent previously 0; */
 /* type of exponent must be unsigned */
 #define decimal32SetExpCon(d, e) {				      \
-  (d)->bytes[0]|=(uint8_t)((e)>>4);				      \
-  (d)->bytes[1]|=(uint8_t)(((e)&0x0F)<<4);}
+  (d)->bytes[0]|=(uByte)((e)>>4);				      \
+  (d)->bytes[1]|=(uByte)(((e)&0x0F)<<4);}
 
 /* ------------------------------------------------------------------ */
 /* decimal32Show -- display a decimal32 in hexadecimal [debug aid]    */

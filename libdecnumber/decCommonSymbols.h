@@ -6,9 +6,4 @@
 #define DECCOMBMSD __decCOMBMSD
 #endif
 
-#ifdef __STDC_DEC_FP__
-#define DECCOMBFROM ___decCOMBFROM
-#define DECCOMBMSD ___decCOMBMSD
-#endif
-
 #endif

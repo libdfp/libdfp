@@ -1,5 +1,5 @@
 /* Decimal number arithmetic module header for the decNumber C Library.
-   Copyright (C) 2005, 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2005-2014 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -41,7 +41,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #define DECNEG    0x80      /* Sign; 1=negative, 0=positive or zero */
   #define DECINF    0x40      /* 1=Infinity			      */
   #define DECNAN    0x20      /* 1=NaN				      */
-  #define DECSNAN   0x10      /* 1=sNaN				      */
+  #define DECSNAN   0x10      /* 1=sNaN 			      */
   /* The remaining bits are reserved; they must be 0		      */
   #define DECSPECIAL (DECINF|DECNAN|DECSNAN) /* any special value     */
 
@@ -108,6 +108,10 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 
   #include "decNumberSymbols.h"
 
+  #ifdef __cplusplus
+  extern "C" {
+  #endif
+
   /* Conversions						      */
   decNumber * decNumberFromInt32(decNumber *, int32_t);
   decNumber * decNumberFromUInt32(decNumber *, uint32_t);
@@ -119,7 +123,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   uint8_t   * decNumberGetBCD(const decNumber *, uint8_t *);
   decNumber * decNumberSetBCD(decNumber *, const uint8_t *, uint32_t);
 
-  /* Operators and elementary functions				      */
+  /* Operators and elementary functions 			      */
   decNumber * decNumberAbs(decNumber *, const decNumber *, decContext *);
   decNumber * decNumberAdd(decNumber *, const decNumber *, const decNumber *, decContext *);
   decNumber * decNumberAnd(decNumber *, const decNumber *, const decNumber *, decContext *);
@@ -180,7 +184,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 
   /* Macros for testing decNumber *dn				      */
   #define decNumberIsCanonical(dn) (1)	/* All decNumbers are saintly */
-  #define decNumberIsFinite(dn)	   (((dn)->bits&DECSPECIAL)==0)
+  #define decNumberIsFinite(dn)    (((dn)->bits&DECSPECIAL)==0)
   #define decNumberIsInfinite(dn)  (((dn)->bits&DECINF)!=0)
   #define decNumberIsNaN(dn)	   (((dn)->bits&(DECNAN|DECSNAN))!=0)
   #define decNumberIsNegative(dn)  (((dn)->bits&DECNEG)!=0)
@@ -191,5 +195,9 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 				    && (dn)->digits==1 \
 				    && (((dn)->bits&DECSPECIAL)==0))
   #define decNumberRadix(dn)	   (10)
+
+  #ifdef __cplusplus
+  }
+  #endif
 
 #endif

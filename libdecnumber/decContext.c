@@ -1,5 +1,5 @@
 /* Decimal context module for the decNumber C Library.
-   Copyright (C) 2005, 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2005-2014 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -31,17 +31,17 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 /* ------------------------------------------------------------------ */
 
 #include <string.h>	      /* for strcmp */
+#ifdef DECCHECK
 #include <stdio.h>	      /* for printf if DECCHECK */
+#endif
 #include "dconfig.h"	      /* for GCC definitions */
-#include "decContext.h"	      /* context and base types */
+#include "decContext.h"       /* context and base types */
 #include "decNumberLocal.h"   /* decNumber local types, etc. */
 
-#if DECCHECK
 /* compile-time endian tester [assumes sizeof(Int)>1] */
 static	const  Int mfcone=1;		     /* constant 1 */
-static	const  Flag *mfctop=(Flag *)&mfcone; /* -> top byte */
+static	const  Flag *mfctop=(const Flag *)&mfcone; /* -> top byte */
 #define LITEND *mfctop		   /* named flag; 1=little-endian */
-#endif
 
 /* ------------------------------------------------------------------ */
 /* round-for-reround digits					      */
@@ -59,7 +59,7 @@ const uInt DECPOWERS[10]={1, 10, 100, 1000, 10000, 100000, 1000000,
 /*								      */
 /*  context is the context structure to be queried		      */
 /*  mask indicates the bits to be cleared (the status bit that	      */
-/*    corresponds to each 1 bit in the mask is cleared)		      */
+/*    corresponds to each 1 bit in the mask is cleared) 	      */
 /*  returns context						      */
 /*								      */
 /* No error is possible.					      */
@@ -75,9 +75,9 @@ decContext *decContextClearStatus(decContext *context, uInt mask) {
 /*  context is the structure to be initialized			      */
 /*  kind selects the required set of default values, one of:	      */
 /*	DEC_INIT_BASE	    -- select ANSI X3-274 defaults	      */
-/*	DEC_INIT_DECIMAL32  -- select IEEE 754r defaults, 32-bit      */
-/*	DEC_INIT_DECIMAL64  -- select IEEE 754r defaults, 64-bit      */
-/*	DEC_INIT_DECIMAL128 -- select IEEE 754r defaults, 128-bit     */
+/*	DEC_INIT_DECIMAL32  -- select IEEE 754 defaults, 32-bit       */
+/*	DEC_INIT_DECIMAL64  -- select IEEE 754 defaults, 64-bit       */
+/*	DEC_INIT_DECIMAL128 -- select IEEE 754 defaults, 128-bit      */
 /*	For any other value a valid context is returned, but with     */
 /*	Invalid_operation set in the status field.		      */
 /*  returns a context structure with the appropriate initial values.  */
@@ -100,11 +100,11 @@ decContext * decContextDefault(decContext *context, Int kind) {
       break;
     case DEC_INIT_DECIMAL32:
       context->digits=7;		     /* digits */
-      context->emax=96;			     /* Emax */
+      context->emax=96; 		     /* Emax */
       context->emin=-95;		     /* Emin */
       context->round=DEC_ROUND_HALF_EVEN;    /* 0.5 to nearest even */
-      context->traps=0;			     /* no traps set */
-      context->clamp=1;			     /* clamp exponents */
+      context->traps=0; 		     /* no traps set */
+      context->clamp=1; 		     /* clamp exponents */
       #if DECSUBSET
       context->extended=1;		     /* set */
       #endif
@@ -114,8 +114,8 @@ decContext * decContextDefault(decContext *context, Int kind) {
       context->emax=384;		     /* Emax */
       context->emin=-383;		     /* Emin */
       context->round=DEC_ROUND_HALF_EVEN;    /* 0.5 to nearest even */
-      context->traps=0;			     /* no traps set */
-      context->clamp=1;			     /* clamp exponents */
+      context->traps=0; 		     /* no traps set */
+      context->clamp=1; 		     /* clamp exponents */
       #if DECSUBSET
       context->extended=1;		     /* set */
       #endif
@@ -125,8 +125,8 @@ decContext * decContextDefault(decContext *context, Int kind) {
       context->emax=6144;		     /* Emax */
       context->emin=-6143;		     /* Emin */
       context->round=DEC_ROUND_HALF_EVEN;    /* 0.5 to nearest even */
-      context->traps=0;			     /* no traps set */
-      context->clamp=1;			     /* clamp exponents */
+      context->traps=0; 		     /* no traps set */
+      context->clamp=1; 		     /* clamp exponents */
       #if DECSUBSET
       context->extended=1;		     /* set */
       #endif
@@ -137,15 +137,6 @@ decContext * decContextDefault(decContext *context, Int kind) {
       decContextSetStatus(context, DEC_Invalid_operation); /* trap */
     }
 
-  #if DECCHECK
-  if (LITEND!=DECLITEND) {
-    const char *adj;
-    if (LITEND) adj="little";
-	   else adj="big";
-    printf("Warning: DECLITEND is set to %d, but this computer appears to be %s-endian\n",
-	   DECLITEND, adj);
-    }
-  #endif
   return context;} /* decContextDefault */
 
 /* ------------------------------------------------------------------ */
@@ -161,7 +152,7 @@ enum rounding decContextGetRounding(decContext *context) {
   } /* decContextGetRounding */
 
 /* ------------------------------------------------------------------ */
-/* decContextGetStatus -- return current status			      */
+/* decContextGetStatus -- return current status 		      */
 /*								      */
 /*  context is the context structure to be queried		      */
 /*  returns status						      */
@@ -176,8 +167,8 @@ uInt decContextGetStatus(decContext *context) {
 /* decContextRestoreStatus -- restore bits in current status	      */
 /*								      */
 /*  context is the context structure to be updated		      */
-/*  newstatus is the source for the bits to be restored		      */
-/*  mask indicates the bits to be restored (the status bit that	      */
+/*  newstatus is the source for the bits to be restored 	      */
+/*  mask indicates the bits to be restored (the status bit that       */
 /*    corresponds to each 1 bit in the mask is set to the value of    */
 /*    the correspnding bit in newstatus)			      */
 /*  returns context						      */
@@ -247,7 +238,7 @@ decContext * decContextSetStatus(decContext *context, uInt status) {
 /*								      */
 /*  returns the context structure, unless the string is equal to      */
 /*    DEC_Condition_MU or is not recognized.  In these cases NULL is  */
-/*    returned.							      */
+/*    returned. 						      */
 /* ------------------------------------------------------------------ */
 decContext * decContextSetStatusFromString(decContext *context,
 					   const char *string) {
@@ -298,7 +289,7 @@ decContext * decContextSetStatusFromString(decContext *context,
 /*								      */
 /*  returns the context structure, unless the string is equal to      */
 /*    DEC_Condition_MU or is not recognized.  In these cases NULL is  */
-/*    returned.							      */
+/*    returned. 						      */
 /* ------------------------------------------------------------------ */
 decContext * decContextSetStatusFromStringQuiet(decContext *context,
 						const char *string) {
@@ -351,11 +342,11 @@ decContext * decContextSetStatusQuiet(decContext *context, uInt status) {
   return context;} /* decContextSetStatusQuiet */
 
 /* ------------------------------------------------------------------ */
-/* decContextStatusToString -- convert status flags to a string	      */
+/* decContextStatusToString -- convert status flags to a string       */
 /*								      */
 /*  context is a context with valid status field		      */
 /*								      */
-/*  returns a constant string describing the condition.	 If multiple  */
+/*  returns a constant string describing the condition.  If multiple  */
 /*    (or no) flags are set, a generic constant message is returned.  */
 /* ------------------------------------------------------------------ */
 const char *decContextStatusToString(const decContext *context) {
@@ -380,9 +371,41 @@ const char *decContextStatusToString(const decContext *context) {
   #if DECSUBSET
   if (status==DEC_Lost_digits	       ) return DEC_Condition_LD;
   #endif
-  if (status==0			       ) return DEC_Condition_ZE;
+  if (status==0 		       ) return DEC_Condition_ZE;
   return DEC_Condition_MU;  /* Multiple errors */
   } /* decContextStatusToString */
+
+/* ------------------------------------------------------------------ */
+/* decContextTestEndian -- test whether DECLITEND is set correctly    */
+/*								      */
+/*  quiet is 1 to suppress message; 0 otherwise 		      */
+/*  returns 0 if DECLITEND is correct				      */
+/*	    1 if DECLITEND is incorrect and should be 1 	      */
+/*	   -1 if DECLITEND is incorrect and should be 0 	      */
+/*								      */
+/* A message is displayed if the return value is not 0 and quiet==0.  */
+/*								      */
+/* No error is possible.					      */
+/* ------------------------------------------------------------------ */
+Int decContextTestEndian(Flag quiet) {
+  Int res=0;		      /* optimist */
+  uInt dle=(uInt)DECLITEND;   /* unsign */
+  if (dle>1) dle=1;	      /* ensure 0 or 1 */
+
+  if (LITEND!=DECLITEND) {
+    if (!quiet) {
+#if DECCHECK
+      const char *adj;
+      if (LITEND) adj="little";
+	     else adj="big";
+      printf("Warning: DECLITEND is set to %d, but this computer appears to be %s-endian\n",
+	     DECLITEND, adj);
+#endif
+      }
+    res=(Int)LITEND-dle;
+    }
+  return res;
+  } /* decContextTestEndian */
 
 /* ------------------------------------------------------------------ */
 /* decContextTestSavedStatus -- test bits in saved status	      */
