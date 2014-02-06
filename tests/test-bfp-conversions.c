@@ -60,7 +60,7 @@ typedef struct{
 
 sfdd_type sfdd_tests[] =
 {
-  {__LINE__, 12.345, 12.345DD,  "%De"},
+  {__LINE__, 12.345, 12.345000267028809DD,  "%De"},
   {0,0,0,0 }
 };
 
@@ -75,7 +75,7 @@ typedef struct{
 
 sftd_type sftd_tests[] =
 {
-  {__LINE__, 12.345, 12.345DL,  "%DDe"},
+  {__LINE__, 12.345, 12.3450002670288085937500000000000000DL,  "%DDe"},
   {0,0,0,0 }
 };
 
@@ -105,7 +105,7 @@ typedef struct{
 
 dftd_type dftd_tests[] =
 {
-  {__LINE__, 12.3456789, 12.3456789DL,  "%DDe"},
+  {__LINE__, 12.3456789, 12.3456788999999993450273905182257295DL,  "%DDe"},
   {0,0,0,0 }
 };
 
@@ -120,7 +120,7 @@ typedef struct{
 
 tftd_type tftd_tests[] =
 {
-  {__LINE__, 12.3456789, 12.3456789DL,  "%DDe"},
+  {__LINE__, 12.3456789, 12.3456788999999993450273905182257295DL,  "%DDe"},
   {0,0,0,0 }
 };
 
@@ -303,7 +303,6 @@ int main (void)
       fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", ddtfp->x,__FILE__,__LINE__-4);
       _VC_P(__FILE__,ddtfp->line, ddtfp->e, retval, ddtfp->format);
     }
-
 
   _REPORT();
 

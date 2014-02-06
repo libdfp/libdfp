@@ -1,5 +1,12 @@
 2013-02-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* tests/test-bfp-conversions.c (sfdd_tests): Fix expected conversion
+	value.
+	(sftd_tests): Likewise.
+	(dftd_tests): Likewise.
+
+2013-02-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* config/dfp.m4: New file: m4 macro to select the decimal floating
 	point format.
 	* libdecnumber/Makefile.in: Update from GCC.
