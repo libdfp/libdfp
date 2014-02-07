@@ -1,5 +1,11 @@
 2013-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* ieee754r/isfinited128.c (__isfinited128): Refactor using generic code.
+	* ieee754r/isfinited32.c (__isfinited32): Likewise.
+	* ieee754r/isfinited64.c (__isfinited64): Likewise.
+
+2013-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/isinfd128.c (__isinfd128): Refactor using generic code.
 	* ieee754r/isinfd32.c (__isinfd32): Likewise.
 	* ieee754r/isinfd64.c (__isinfd64): Likewise.

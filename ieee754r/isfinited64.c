@@ -1,7 +1,7 @@
 /* Returns non-zero if the _Decimal64 is non-infinite
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -23,7 +23,24 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#include <decimal64.h>
+#include <math.h>
+#include <math_private.h>
 
-#include "isfinited32.c"
+int
+__isfinited64 (_Decimal64 x)
+{
+  uint64_t hx;
+  GET_DEC64_WORD64 (hx, x);
+
+  if (((hx & DEC64_NAN_MASK64) == DEC64_NAN_MASK64) ||
+      ((hx & DEC64_INF_MASK64) == DEC64_INF_MASK64))
+    return 0;
+  return 1;
+}
+weak_alias (__isfinited64, isfinited64)
+
+/* We erroneously published a version of math.h which used 'finite' instead of
+ * 'isfinite' and math.h contained a polymorphic 'isfinite()' function which
+ * inlined calles to 'finited*' so we've created aliases for compatability.  */
+strong_alias (__isfinited64, finited64)
+strong_alias (__isfinited64, __finited64)

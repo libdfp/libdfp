@@ -24,47 +24,24 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _DECIMAL_SIZE
-#  define _DECIMAL_SIZE 32
-   /* needed to pick up DECNUMDIGITS before including decNumber.h  */
-#  include <decimal32.h>
-#endif
-
 #include <math.h>
-#include <endian.h>
-#include <decNumber.h>
-
-#define FUNCTION_NAME isfinite
-
-#include <dfpmacro.h>
+#include <math_private.h>
 
 int
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
+__isfinited32 (_Decimal32 x)
 {
-  uint8_t top_byte;
-  union
-  {
-    DEC_TYPE dec;
-    uint8_t bytes[_DECIMAL_SIZE/8];
-  } u_conv;
+  uint32_t hx;
+  GET_DEC32_WORD (hx, x);
 
-  u_conv.dec = x;
-#if __BYTE_ORDER == __BIG_ENDIAN
-  top_byte = u_conv.bytes[0];
-#else
-  top_byte = u_conv.bytes[_DECIMAL_SIZE/8 - 1];
-#endif
-
-  if (((top_byte & DECIMAL_NaN) == DECIMAL_NaN) ||
-      ((top_byte & DECIMAL_Inf) == DECIMAL_Inf))
+  if (((hx & DEC32_NAN_MASK) == DEC32_NAN_MASK) ||
+      ((hx & DEC32_INF_MASK) == DEC32_INF_MASK))
     return 0;
   return 1;
 }
-
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+weak_alias (__isfinited32, isfinited32)
 
 /* We erroneously published a version of math.h which used 'finite' instead of
  * 'isfinite' and math.h contained a polymorphic 'isfinite()' function which
  * inlined calles to 'finited*' so we've created aliases for compatability.  */
-strong_alias (INTERNAL_FUNCTION_NAME,FUNC_D(finite))
-strong_alias (INTERNAL_FUNCTION_NAME,FUNC_D(__finite))
+strong_alias (__isfinited32, finited32)
+strong_alias (__isfinited32, __finited32)
