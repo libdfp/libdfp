@@ -1,7 +1,7 @@
 /* Returns non-zero if the _Decimal64 is infinite
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -23,7 +23,17 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#include <decimal64.h>
+#include <math.h>
+#include <math_private.h>
 
-#include "isinfd32.c"
+int
+__isinfd64 (_Decimal64 x)
+{
+  uint64_t hx;
+  GET_DEC64_WORD64 (hx, x);
+
+  /* 0 1111000 ... == sINF  */
+  return ((hx & DEC64_NAN_MASK64) == DEC64_INF_MASK64) ?
+   ((hx & UINT64_C(0x8000000000000000)) ? -1 : 1) : 0;
+}
+weak_alias (__isinfd64, isinfd64)

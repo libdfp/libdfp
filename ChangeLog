@@ -1,5 +1,15 @@
 2013-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* ieee754r/isinfd128.c (__isinfd128): Refactor using generic code.
+	* ieee754r/isinfd32.c (__isinfd32): Likewise.
+	* ieee754r/isinfd64.c (__isinfd64): Likewise.
+	* sysdeps/generic/math_private.h (DEC128_INF_MASK64): New define:
+	_Decimal128 Inf mask.
+	(DEC64_INF_MASK64): New define: _Decimal64 Inf mask.
+	(DEC32_INF_MASK): New define: _Decimal32 Inf mask.
+
+2013-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/isnand128.c (__isnand128): Refactor using generic code.
 	* ieee754r/isnand32.c (__isnand32): Likewise.
 	* ieee754r/isnand64.c (__isnand64): Likewise.

@@ -23,43 +23,17 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _DECIMAL_SIZE
-#  define _DECIMAL_SIZE 32
-#  include <decimal32.h>
-#endif
-
 #include <math.h>
-#include <endian.h>
-
-#define FUNCTION_NAME isinf
-
-#include <dfpmacro.h>
-
-#include <stdio.h>
+#include <math_private.h>
 
 int
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
+__isinfd32 (_Decimal32 x)
 {
-  uint8_t top_byte;
-  union
-  {
-    DEC_TYPE dec;
-    uint8_t bytes[_DECIMAL_SIZE/8];
-    uint32_t words[_DECIMAL_SIZE/32];
-  } u_conv;
+  uint32_t hx;
+  GET_DEC32_WORD (hx, x);
 
-  u_conv.dec = x;
-#if __BYTE_ORDER == __BIG_ENDIAN
-  top_byte = u_conv.bytes[0];
-#else
-  top_byte = u_conv.bytes[_DECIMAL_SIZE/8 -1];
-#endif
-
-  /* a NaN is not Inf, but the bitmasks overlap, so extract everything for NaN
-     and if there are more bits than DECIMAL_Inf it is a NaN and not an Inf.
-     Return -1 for -INF and 1 for +INF.  */
-  return (top_byte & DECIMAL_NaN) == DECIMAL_Inf ?
-    (top_byte & 0x80 ? -1 : 1) : 0;
+  /* 0 1111000 ... == sINF  */
+  return ((hx & DEC32_NAN_MASK) == DEC32_INF_MASK) ?
+   ((hx & 0x80000000) ? -1 : 1) : 0;
 }
-
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+weak_alias (__isinfd32, isinfd32)

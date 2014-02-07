@@ -1,7 +1,7 @@
 /* Returns non-zero if the _Decimal128 is infinite
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -23,7 +23,17 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 128
-#include <decimal128.h>
+#include <math.h>
+#include <math_private.h>
 
-#include "isinfd32.c"
+int
+__isinfd128 (_Decimal128 x)
+{
+  uint64_t hx;
+  GET_DEC128_HIGH_WORD64 (hx, x);
+
+  /* 0 1111000 ... == sINF  */
+  return ((hx & DEC128_NAN_MASK64) == DEC128_INF_MASK64) ?
+   ((hx & UINT64_C(0x8000000000000000)) ? -1 : 1) : 0;
+}
+weak_alias (__isinfd128, isinfd128)
