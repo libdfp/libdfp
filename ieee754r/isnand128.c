@@ -1,7 +1,7 @@
 /* Returns non-zero if the _Decimal128 is nan
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -23,7 +23,16 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 128
-#include <decimal128.h>
+#include <math.h>
+#include <math_private.h>
 
-#include "isnand32.c"
+int
+__isnand128 (_Decimal128 x)
+{
+  uint64_t hx;
+  GET_DEC128_HIGH_WORD64 (hx, x);
+
+  /* 0 11111 10 ... == sNaN  */
+  return (hx & DEC128_NAN_MASK64) == DEC128_NAN_MASK64;
+}
+weak_alias (__isnand128, isnand128)

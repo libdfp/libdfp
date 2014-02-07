@@ -1,3 +1,13 @@
+2013-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* ieee754r/isnand128.c (__isnand128): Refactor using generic code.
+	* ieee754r/isnand32.c (__isnand32): Likewise.
+	* ieee754r/isnand64.c (__isnand64): Likewise.
+	* sysdeps/generic/math_private.h (DEC128_NAN_MASK64): New define:
+	_Decimal128 NaN mask.
+	(DEC64_NAN_MASK64): New define: _Decimal64 NaN mask.
+	(DEC32_NAN_MASK): New define: _Decimal32 NaN mask.
+
 2013-02-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/test-bfp-conversions.c (sfdd_tests): Fix expected conversion

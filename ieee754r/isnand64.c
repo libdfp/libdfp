@@ -23,7 +23,16 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#include <decimal64.h>
+#include <math.h>
+#include <math_private.h>
 
-#include "isnand32.c"
+int
+__isnand64 (_Decimal64 x)
+{
+  uint64_t hx;
+  GET_DEC64_WORD64 (hx, x);
+
+  /* 0 11111 10 ... == sNaN  */
+  return (hx & DEC64_NAN_MASK64) == DEC64_NAN_MASK64;
+}
+weak_alias (__isnand64, isnand64)

@@ -63,6 +63,7 @@ do {								\
   (i) = gf_u.parts64.dw1;					\
 } while (0)
 
+#define DEC128_NAN_MASK64	UINT64_C(0x7C00000000000000)
 #define DEC128_SNAN_MASK64	UINT64_C(0x7E00000000000000)
 
 
@@ -90,6 +91,7 @@ do {								\
   (i) = gf_u.word;						\
 } while (0)
 
+#define DEC64_NAN_MASK64	UINT64_C(0x7C00000000000000)
 #define DEC64_SNAN_MASK64	UINT64_C(0x7E00000000000000)
 
 
@@ -107,6 +109,7 @@ do {								\
   (i) = gf_u.word;						\
 } while (0)
 
+#define DEC32_NAN_MASK		0x7C000000
 #define DEC32_SNAN_MASK		0x7E000000
 
 #endif
