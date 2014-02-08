@@ -66,14 +66,11 @@ DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
   DEC_TYPE z = IEEE_FUNCTION_NAME (x);
-#ifndef _IEEE_LIBDFP
-  if(_LIB_VERSION == _IEEE_) return z;
   if (!FUNC_D(__isfinite) (z) && FUNC_D(__isfinite) (x))
     {
       DFP_ERRNO (ERANGE);
       return (z > DFP_CONSTANT(0.0) ? DFP_HUGE_VAL : -DFP_HUGE_VAL );
     }
-#endif
   return z;
 }
 

@@ -90,8 +90,6 @@ DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y, DEC_TYPE z)
 {
   DEC_TYPE r = IEEE_FUNCTION_NAME (x, y, z);
-#ifndef _IEEE_LIBDFP
-  if(_LIB_VERSION == _IEEE_) return r;
   if ( (FUNC_D(__isinf) (x) && y == DFP_CONSTANT(0.0)) ||
 	(FUNC_D(__isinf) (y) && x == DFP_CONSTANT(0.0)) )
       DFP_ERRNO(EDOM);
@@ -102,7 +100,6 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y, DEC_TYPE z)
       if ( inf && FUNC_D (__signbit) (z) != isneg)
 	DFP_ERRNO (EDOM);
     }
-#endif
   return r;
 }
 

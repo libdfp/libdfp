@@ -205,8 +205,6 @@ DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
   DEC_TYPE z = IEEE_FUNCTION_NAME (x, y);
-#ifndef _IEEE_LIBDFP
-  if (_LIB_VERSION == _IEEE_)  return z;
   /* Pole error: x = 0, y < 0 (non-inf). Set ERANGE in accordance with C99 */
   if (x == DFP_CONSTANT(0.0) && FUNC_D(__isfinite)(y) && y < DFP_CONSTANT(0.0))
       DFP_ERRNO (ERANGE);
@@ -218,7 +216,6 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
       else	/*  Overflow */
 	DFP_ERRNO (ERANGE);
     }
-#endif
   return z;
 }
 

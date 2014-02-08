@@ -59,12 +59,6 @@
   #include <dfptypeconv32.h>
 #endif
 
-/* If _IEEE_LIBDFP is defined, errno will not be set when errors occur in
- * math functions */
-#ifdef _IEEE_LIBM
-# define _IEEE_LIBDFP
-#endif
-
 /* Data type to use for the generic function implementations */
 #define DEC_TYPE		PASTE(_Decimal,_DECIMAL_SIZE)
 

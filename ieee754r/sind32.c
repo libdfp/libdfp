@@ -66,11 +66,8 @@ DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
   DEC_TYPE z = IEEE_FUNCTION_NAME (x);
-#ifndef _IEEE_LIBDFP
-  if (_LIB_VERSION == _IEEE_) return z;
   if (FUNC_D(isinf) (x))
     DFP_ERRNO (EDOM);
-#endif
   return z;
 }
 

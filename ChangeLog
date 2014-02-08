@@ -1,5 +1,46 @@
 2013-02-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* ieee754r/acosd32.c: Remove _IEEE_LIBDFP and _LIB_VERSION defines
+	check.
+	* ieee754r/acoshd32.c: Likewise.
+	* ieee754r/asind32.c: Likewise.
+	* ieee754r/atanhd32.c: Likewise.
+	* ieee754r/cosd32.c: Likewise.
+	* ieee754r/coshd32.c: Likewise.
+	* ieee754r/exp2d32.c: Likewise.
+	* ieee754r/expd32.c: Likewise.
+	* ieee754r/expm1d32.c: Likewise.
+	* ieee754r/fdimd32.c: Likewise.
+	* ieee754r/fmad32.c: Likewise.
+	* ieee754r/fmodd32.c: Likewise.
+	* ieee754r/hypotd32.c: Likewise.
+	* ieee754r/ldexpd32.c: Likewise.
+	* ieee754r/lgammad32.c: Likewise.
+	* ieee754r/llroundd32.c: Likewise.
+	* ieee754r/log10d32.c: Likewise.
+	* ieee754r/log1pd32.c: Likewise.
+	* ieee754r/log2d32.c: Likewise.
+	* ieee754r/logbd32.c: Likewise.
+	* ieee754r/logd32.c: Likewise.
+	* ieee754r/nearbyintd32.c: Likewise.
+	* ieee754r/nextafterd32.c: Likewise.
+	* ieee754r/nexttowardd32.c: Likewise.
+	* ieee754r/powd32.c: Likewise.
+	* ieee754r/remainderd32.c: Likewise.
+	* ieee754r/scalblnd32.c: Likewise.
+	* ieee754r/scalbnd32.c: Likewise.
+	* ieee754r/sind32.c: Likewise.
+	* ieee754r/sinhd32.c: Likewise.
+	* ieee754r/sqrtd32.c: Likewise.
+	* ieee754r/tand32.c: Likewise.
+	* ieee754r/tgammad32.c: Likewise.
+	* include/dfpmacro.h: Likewise.
+	* sysdeps/powerpc/dfpu/expd64.c: Likewise.
+	* sysdeps/powerpc/dfpu/logd64.c: Likewise.
+	* sysdeps/powerpc/dfpu/powd64.c: Likewise.
+
+2013-02-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* dfp/math.h (llogbd32): Add prototype.
 	(__llogbd32): Likewise.
 	(llogbd64): Likewise.
