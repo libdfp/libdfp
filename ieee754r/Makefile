@@ -27,6 +27,7 @@ libdfp_files +=	acosd32 acosd64 acosd128 \
 		frexpd32 frexpd64 frexpd128 \
 		hypotd32 hypotd64 hypotd128 \
 		ilogbd32 ilogbd64 ilogbd128 \
+		llogbd32 llogbd64 llogbd128 \
 		isgreaterd32 isgreaterd64 isgreaterd128 \
 		isgreaterequald32 isgreaterequald64 isgreaterequald128 \
 		isinfd32 isinfd64 isinfd128 \

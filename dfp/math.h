@@ -274,6 +274,9 @@ extern _Decimal32 __scalbnd32 (_Decimal32 __x, int __n) __THROW;
 extern int ilogbd32 (_Decimal32 __x) __THROW;
 extern int __ilogbd32 (_Decimal32 __x) __THROW;
 
+extern long int llogbd32 (_Decimal32 __x) __THROW;
+extern long int __llogbd32 (_Decimal32 __x) __THROW;
+
 extern _Decimal32 scalblnd32 (_Decimal32 __x, long int __n) __THROW;
 extern _Decimal32 __scalblnd32 (_Decimal32 __x, long int __n) __THROW;
 
@@ -519,6 +522,9 @@ extern _Decimal64 __scalbnd64 (_Decimal64 __x, int __n) __THROW;
 extern int ilogbd64 (_Decimal64 __x) __THROW;
 extern int __ilogbd64 (_Decimal64 __x) __THROW;
 
+extern long int llogbd64 (_Decimal64 __x) __THROW;
+extern long int __llogbd64 (_Decimal64 __x) __THROW;
+
 extern _Decimal64 scalblnd64 (_Decimal64 __x, long int __n) __THROW;
 extern _Decimal64 __scalblnd64 (_Decimal64 __x, long int __n) __THROW;
 
@@ -763,6 +769,9 @@ extern _Decimal128 __scalbnd128 (_Decimal128 __x, int __n) __THROW;
 
 extern int ilogbd128 (_Decimal128 __x) __THROW;
 extern int __ilogbd128 (_Decimal128 __x) __THROW;
+
+extern long int llogbd128 (_Decimal128 __x) __THROW;
+extern long int __llogbd128 (_Decimal128 __x) __THROW;
 
 extern _Decimal128 scalblnd128 (_Decimal128 __x, long int __n) __THROW;
 extern _Decimal128 __scalblnd128 (_Decimal128 __x, long int __n) __THROW;

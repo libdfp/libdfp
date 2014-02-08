@@ -1,11 +1,9 @@
-/* Returns the unbiased exponent of the passed _Decimal128 value as an int
+/* Returns the unbiased exponent of the passed _Decimal64 value as
+   an long int.
 
-   Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
-
-   Author(s): Joseph Kerian <jkerian@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -23,7 +21,12 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 128
-#include <decimal128.h>
+#define _RETURN_TYPE   long int
+#define FUNCTION_NAME  llogb
+#define _MAX_VALUE     LONG_MAX
+#define _MIN_VALUE     LONG_MIN
+
+#define _DECIMAL_SIZE  64
+#include <decimal64.h>
 
 #include "ilogbd32.c"

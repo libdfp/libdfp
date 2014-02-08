@@ -1,3 +1,23 @@
+2013-02-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* dfp/math.h (llogbd32): Add prototype.
+	(__llogbd32): Likewise.
+	(llogbd64): Likewise.
+	(__llogbd64): Likewise.
+	(llogbd128): Likewise.
+	(__llogbd128): Likewise.
+	* ieee754r/Makefile: Add llogb[32|64|128] objects.
+	* ieee754r/Versions (LIBDFP_1.0.9): Add llogbd[32|64|128] symbols.
+	* ieee754r/ilogbd32.c (INTERNAL_FUNCTION_NAME): Format fixes and
+	add generic way to use as llogbd[32|64|128].
+	* ieee754r/ilogbd64.c (DFP_DEBUG): Remove unused define.
+	* ieee754r/ilogbd128.c (DFP_DEBUG): Likewise.
+	* ieee754r/llogbd128.c: New file: llogbd128 software implementation.
+	* ieee754r/llogbd32.c: New file: llogbd32 software implementation.
+	* ieee754r/llogbd64.c: New file: llogbd64 software implementation.
+	* tests/test-illogb.c: New file: testcases for [i|l]logbd[32|64|128].
+	* Makefile.in: Add test-illogb.
+
 2013-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/isfinited128.c (__isfinited128): Refactor using generic code.

@@ -250,5 +250,8 @@ libdfp {
     __issignalingd64;
     issignalingd128;
     __issignalingd128;
+    llogbd32;
+    llogbd64;
+    llogbd128;
   }
 }

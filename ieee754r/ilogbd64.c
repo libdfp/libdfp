@@ -25,6 +25,5 @@
 
 #define _DECIMAL_SIZE 64
 #include <decimal64.h>
-#define DFP_DEBUG(arg) printf("%Df\n", arg)
 
 #include "ilogbd32.c"

@@ -26,7 +26,18 @@
 #ifndef _DECIMAL_SIZE
 #  include <decimal32.h>
 #  define _DECIMAL_SIZE 32
-#  define DFP_DEBUG(arg) printf("%Hf\n", arg)
+#endif
+
+#ifndef _RETURN_TYPE
+#  define _RETURN_TYPE int
+#endif
+
+#ifndef _MAX_VALUE
+#  define _MAX_VALUE   INT_MAX
+#endif
+
+#ifndef _MIN_VALUE
+#  define _MIN_VALUE   INT_MIN
 #endif
 
 #include <decContext.h>
@@ -37,12 +48,14 @@
 
 #include <decNumberMath.h>
 
-#define FUNCTION_NAME ilogb
+#ifndef FUNCTION_NAME
+#  define FUNCTION_NAME ilogb
+#endif
 
 #include <dfpmacro.h>
 
-static int
-IEEE_FUNCTION_NAME (DEC_TYPE x)
+_RETURN_TYPE
+INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
   DEC_TYPE result;
   decContext context;
@@ -50,56 +63,45 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x;
   decNumber dn_absx;
   decNumber dn_logx;
- /* int i_result; */
 
-  FUNC_CONVERT_TO_DN(&x, &dn_x);
+  FUNC_CONVERT_TO_DN (&x, &dn_x);
   if (___decNumberIsZero (&dn_x))
     {
       DFP_EXCEPT (FE_INVALID);
+      DFP_ERRNO (EDOM);
       return FP_ILOGB0;
     }
   if (___decNumberIsInfinite (&dn_x))
     {
       DFP_EXCEPT (FE_INVALID);
-      return INT_MAX;
+      DFP_ERRNO (EDOM);
+      return ___decNumberIsNegative (&dn_x) ? _MIN_VALUE : _MAX_VALUE;
     }
   if (___decNumberIsNaN (&dn_x))
     {
       DFP_EXCEPT (FE_INVALID);
+      DFP_ERRNO (EDOM);
       return FP_ILOGBNAN;
     }
 
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
+  ___decContextDefault (&context, DEFAULT_CONTEXT);
 
-  ___decNumberAbs(&dn_absx, &dn_x, &context);
+  ___decNumberAbs (&dn_absx, &dn_x, &context);
 
   /*  For DFP, we use radix 10 instead of whatever FLT_RADIX
-      happens to be */
-  ___decNumberLog10(&dn_logx, &dn_absx, &context);
+     happens to be */
+  ___decNumberLog10 (&dn_logx, &dn_absx, &context);
 
   /* Capture the case where truncation will return the wrong result.  */
-  if (x < DFP_CONSTANT(1.0) && x > DFP_CONSTANT(-1.0))
-    context.round = DEC_ROUND_UP; /* round away from zero  */
+  if (x < DFP_CONSTANT (1.0) && x > DFP_CONSTANT (-1.0))
+    context.round = DEC_ROUND_UP;	/* round away from zero  */
   else
-    context.round = DEC_ROUND_DOWN; /*  truncate */
-  ___decNumberToIntegralValue(&dn_result, &dn_logx, &context);
+    context.round = DEC_ROUND_DOWN;	/*  truncate */
+  ___decNumberToIntegralValue (&dn_result, &dn_logx, &context);
 
-  FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
+  FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
   /* Use _Decimal* to int casting.  */
-  return (int)result;
-}
-
-int
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
-{
-  int z = IEEE_FUNCTION_NAME (x);
-#ifndef _IEEE_LIBDFP
-  if(_LIB_VERSION == _IEEE_) return z;
-  if(x == DFP_CONSTANT(0.0) || isinf(x) || isnan(x) ||
-		x > INT_MAX || x < INT_MIN)
-	  DFP_ERRNO(EDOM);
-#endif
-  return z;
+  return (_RETURN_TYPE) result;
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
