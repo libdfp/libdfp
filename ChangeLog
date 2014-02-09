@@ -1,5 +1,14 @@
 2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/truncd128.c: New file: truncd128 optimized
+	implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/truncd32.c: New file: truncd64 optimized
+	implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/truncd64.c: New file: truncd32 optimized
+	implementation for PowerPC.
+
+2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/ceild128.c: New file: ceild128 optimized
 	implementation for PowerPC.
 	* sysdeps/powerpc/dfpu/ceild32.c: New file: ceild64 optimized
