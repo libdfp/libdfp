@@ -127,7 +127,7 @@ static int testnum = 0;
   s << y;							\
   /* invoke operator>>(istream &,decimal[32|64|128] &)  */	\
   s >> z;							\
-  _VC_P(f,l,x,z,fmt);						\
+  _VC_P_CPP(f,l,x,z,fmt);					\
 } while(0)
 
 /* _ISC == Istream Compare
@@ -229,19 +229,58 @@ static char bufx[CHAR_MAX];
 static char bufy[CHAR_MAX];
 #ifndef _VC
 /* _VC_P == Value Compare with Position  */
-#define _VC_P(f,l,x,y,fmt) do { \
-  ++testnum; \
-  memset(bufx,'\0',CHAR_MAX); \
-  memset(bufy,'\0',CHAR_MAX); \
-  /* Invokes printf dfp.  */  \
-  sprintf(bufx, fmt, x); \
-  sprintf(bufy, fmt, y); \
-  if(x!=y) { \
-    fprintf(stderr, "%-3d Error: Expected: \"%s\"\n             Result: \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
-    ++fail; \
-  } else { \
-    fprintf(stdout, "%-3d Success: Expected: \"%s\"\n               Result: \"%s\"\n    in: %s:%d.\n\n", testnum,bufx,bufy,f,l); \
-  } \
+#define _VC_P(f,l,x,y,fmt) do {                                 \
+  ++testnum;                                                    \
+  memset(bufx,'\0',CHAR_MAX);                                   \
+  memset(bufy,'\0',CHAR_MAX);                                   \
+  /* Invokes printf dfp.  */                                    \
+  sprintf(bufx, fmt, x);                                        \
+  sprintf(bufy, fmt, y);                                        \
+  if ((isnan(x) && isnan(y)) ||                                 \
+      (x == y))                                                 \
+    {                                                           \
+      fprintf (stdout, "%-3d Success: Expected: \"%s\"\n",      \
+        testnum, bufx);                                         \
+      fprintf (stdout, "              Result:   \"%s\"\n",      \
+        bufy);                                                  \
+      fprintf (stdout, "in: %s:%i\n\n", f, l);                  \
+    }                                                           \
+  else                                                          \
+    {                                                           \
+      fprintf (stderr, "%-3d Error:   Expected: \"%s\"\n",      \
+        testnum, bufx);                                         \
+      fprintf (stderr, "              Result:   \"%s\"\n",      \
+        bufy);                                                  \
+      fprintf (stderr, "in: %s:%i\n\n", f, l);                  \
+      ++fail;                                                   \
+    }                                                           \
+} while (0)
+
+/* _VC_P_CPP == Value Compare with Position for C++ types  */
+#define _VC_P_CPP(f,l,x,y,fmt) do {                             \
+  ++testnum;                                                    \
+  memset(bufx,'\0',CHAR_MAX);                                   \
+  memset(bufy,'\0',CHAR_MAX);                                   \
+  /* Invokes printf dfp.  */                                    \
+  sprintf(bufx, fmt, x);                                        \
+  sprintf(bufy, fmt, y);                                        \
+  if ((isnan(x.__getval()) && isnan(y.__getval())) ||           \
+      (x == y))                                                 \
+    {                                                           \
+      fprintf (stdout, "%-3d Success: Expected: \"%s\"\n",      \
+        testnum, bufx);                                         \
+      fprintf (stdout, "              Result:   \"%s\"\n",      \
+        bufy);                                                  \
+      fprintf (stdout, "in: %s:%i\n\n", f, l);                  \
+    }                                                           \
+  else                                                          \
+    {                                                           \
+      fprintf (stderr, "%-3d Error:   Expected: \"%s\"\n",      \
+        testnum, bufx);                                         \
+      fprintf (stderr, "              Result:   \"%s\"\n",      \
+        bufy);                                                  \
+      fprintf (stderr, "in: %s:%i\n\n", f, l);                  \
+    }                                                           \
 } while (0)
 
 /* _VC == Value Compare

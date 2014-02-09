@@ -1,3 +1,12 @@
+2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* tests/scaffold.c (_ICS_P): Use _VC_P_CPP macro instead of _VC_P.
+	(_VC_P): Add isnan test for the inputs.
+	(_VC_P_CPP): New macro: value Compare with Position for C++ types.
+	* tests/test-rounding.c: New file: test for ceil, floor, nearbyint,
+	round, and trunc.
+	* Makefile.in: Add test-rounding.
+
 2013-02-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/acosd32.c: Remove _IEEE_LIBDFP and _LIB_VERSION defines
