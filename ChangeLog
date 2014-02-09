@@ -1,5 +1,14 @@
 2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/roundevend128.c: New file: roundevend128
+	optimized implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/roundevend32.c: New file: roundevend64
+	optimized implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/roundevend64.c: New file: roundevend32
+	optimized implementation for PowerPC.
+
+2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* dfp/math.h (roundeven32): Add prototype.
 	(__roundevend32): Likewise.
 	(roundeven64): Likewise.
