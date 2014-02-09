@@ -1,5 +1,14 @@
 2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/ceild128.c: New file: ceild128 optimized
+	implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/ceild32.c: New file: ceild64 optimized
+	implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/ceild64.c: New file: ceild32 optimized
+	implementation for PowerPC.
+
+2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* tests/scaffold.c (_ICS_P): Use _VC_P_CPP macro instead of _VC_P.
 	(_VC_P): Add isnan test for the inputs.
 	(_VC_P_CPP): New macro: value Compare with Position for C++ types.
