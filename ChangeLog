@@ -1,5 +1,14 @@
 2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/nearbyintd128.c: New file: nearbyintd128
+	optimized implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/nearbyintd32.c: New file: nearbyintd64
+	optimized implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/nearbyintd64.c: New file: nearbyintd32
+	optimized implementation for PowerPC.
+
+2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/floord128.c: New file: floord128 optimized
 	implementation for PowerPC.
 	* sysdeps/powerpc/dfpu/floord32.c: New file: floord64 optimized
