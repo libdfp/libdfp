@@ -1,5 +1,23 @@
 2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* dfp/math.h (roundeven32): Add prototype.
+	(__roundevend32): Likewise.
+	(roundeven64): Likewise.
+	(__roundeven64): Likewise.
+	(roundeven128): Likewise.
+	(__roundeven128): Likewise.
+	* ieee754r/Makefile: Add roundeven[32|64|128] objects.
+	* ieee754r/Versions (LIBDFP_1.0.9): Add roundeven symbols.
+	* ieee754r/roundevend128.c: New file: roundevend128 software
+	implementation.
+	* ieee754r/roundevend32.c: New file: roundevend32 software
+	implementation.
+	* ieee754r/roundevend64.c: New file: roundevend64 software
+	implementation.
+	* tests/test-rounding.c: Add roundeven tests.
+
+2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/roundd128.c: New file: roundd128 optimized
 	implementation for PowerPC.
 	* sysdeps/powerpc/dfpu/roundd32.c: New file: roundd64 optimized

@@ -175,6 +175,38 @@ static const d128_type d128_round[] = {
 static const int d128_round_size =
   sizeof (d128_round) / sizeof (d128_round[0]);
 
+/* Test roundd128 function  */
+static const d128_type d128_roundeven[] = {
+  {__LINE__, DEC_INFINITY, DEC_INFINITY, "%.34DDgDL"},
+  {__LINE__, -DEC_INFINITY, -DEC_INFINITY, "%.34DDgDL"},
+  {__LINE__, DEC_NAN, DEC_NAN, "%.34DDgDL"},
+  {__LINE__, 0.0DL, 0.0DL, "%.34DDgDL"},
+  {__LINE__, -0.0DL, -0.0DL, "%.34DDgDL"},
+  {__LINE__, 0.2DL, 0.0DL, "%.34DDgDL"},
+  {__LINE__, -0.2DL, -0.0DL, "%.34DDgDL"},
+  {__LINE__, 0.5DL, 0.0DL, "%.34DDgDL"},
+  {__LINE__, -0.5DL, -0.0DL, "%.34DDgDL"},
+  {__LINE__, 0.8DL, 1.0DL, "%.34DDgDL"},
+  {__LINE__, -0.8DL, -1.0DL, "%.34DDgDL"},
+  {__LINE__, 1.5DL, 2.0DL, "%.34DDgDL"},
+  {__LINE__, -1.5DL, -2.0DL, "%.34DDgDL"},
+  {__LINE__, 0.1DL, 0.0DL, "%.34DDgDL"},
+  {__LINE__, 0.25DL, 0.0DL, "%.34DDgDL"},
+  {__LINE__, 0.625DL, 1.0DL, "%.34DDgDL"},
+  {__LINE__, -0.1DL, -0.0DL, "%.34DDgDL"},
+  {__LINE__, -0.25DL, -0.0DL, "%.34DDgDL"},
+  {__LINE__, -0.625DL, -1.0DL, "%.34DDgDL"},
+  {__LINE__, 2097152.5DL, 2097152.0DL, "%.34DDgDL"},
+  {__LINE__, -2097152.5DL, -2097152.0DL, "%.34DDgDL"},
+  {__LINE__, -4503599627370495.5DL, -4503599627370496.0DL, "%.34DDgDL"},
+  {__LINE__, -4503599627370496.25DL, -4503599627370496.0DL, "%.34DDgDL"},
+  {__LINE__, -4503599627370496.5DL, -4503599627370496.0DL, "%.34DDgDL"},
+  {__LINE__, -4503599627370496.75DL, -4503599627370497.0DL, "%.34DDgDL"},
+  {__LINE__, -4503599627370497.5DL, -4503599627370498.0DL, "%.34DDgDL"},
+};
+static const int d128_roundeven_size =
+  sizeof (d128_roundeven) / sizeof (d128_roundeven[0]);
+
 
 /* Test truncd128 function  */
 static const d128_type d128_trunc[] = {
@@ -353,6 +385,38 @@ static const d64_type d64_round[] = {
 static const int d64_round_size =
   sizeof (d64_round) / sizeof (d64_round[0]);
 
+/* Test roundeven64 function  */
+static const d64_type d64_roundeven[] = {
+  {__LINE__, DEC_INFINITY, DEC_INFINITY, "%.16DgDD"},
+  {__LINE__, -DEC_INFINITY, -DEC_INFINITY, "%.16DgDD"},
+  {__LINE__, DEC_NAN, DEC_NAN, "%.16DgDD"},
+  {__LINE__, 0.0DD, 0.0DD, "%.16DgDD"},
+  {__LINE__, -0.0DD, -0.0DD, "%.16DgDD"},
+  {__LINE__, 0.2DD, 0.0DD, "%.16DgDD"},
+  {__LINE__, -0.2DD, -0.0DD, "%.16DgDD"},
+  {__LINE__, 0.5DD, 0.0DD, "%.16DgDD"},
+  {__LINE__, -0.5DD, -0.0DD, "%.16DgDD"},
+  {__LINE__, 0.8DD, 1.0DD, "%.16DgDD"},
+  {__LINE__, -0.8DD, -1.0DD, "%.16DgDD"},
+  {__LINE__, 1.5DD, 2.0DD, "%.16DgDD"},
+  {__LINE__, -1.5DD, -2.0DD, "%.16DgDD"},
+  {__LINE__, 0.1DD, 0.0DD, "%.16DgDD"},
+  {__LINE__, 0.25DD, 0.0DD, "%.16DgDD"},
+  {__LINE__, 0.625DD, 1.0DD, "%.16DgDD"},
+  {__LINE__, -0.1DD, -0.0DD, "%.16DgDD"},
+  {__LINE__, -0.25DD, -0.0DD, "%.16DgDD"},
+  {__LINE__, -0.625DD, -1.0DD, "%.16DgDD"},
+  {__LINE__, 2097152.5DD, 2097152.0DD, "%.16DgDD"},
+  {__LINE__, -2097152.5DD, -2097152.0DD, "%.16DgDD"},
+  {__LINE__, -3599627370495.5DD, -3599627370496.0DD, "%.16DgDD"},
+  {__LINE__, -3599627370496.25DD, -3599627370496.0DD, "%.16DgDD"},
+  {__LINE__, -3599627370496.5DD, -3599627370496.0DD, "%.16DgDD"},
+  {__LINE__, -3599627370496.75DD, -3599627370497.0DD, "%.16DgDD"},
+  {__LINE__, -3599627370497.5DD, -3599627370498.0DD, "%.16DgDD"},
+};
+static const int d64_roundeven_size =
+  sizeof (d64_roundeven) / sizeof (d64_roundeven[0]);
+
 /* Test trunc64 function  */
 static const d64_type d64_trunc[] = {
   {__LINE__, DEC_INFINITY, DEC_INFINITY, "%.16DgDD"},
@@ -519,6 +583,38 @@ static const d32_type d32_round[] = {
 static const int d32_round_size =
   sizeof (d32_round) / sizeof (d32_round[0]);
 
+/* Test roundevend32 function  */
+static const d32_type d32_roundeven[] = {
+  {__LINE__, DEC_INFINITY, DEC_INFINITY, "%.7HgDF"},
+  {__LINE__, -DEC_INFINITY, -DEC_INFINITY, "%.7HgDF"},
+  {__LINE__, DEC_NAN, DEC_NAN, "%.7HgDF"},
+  {__LINE__, 0.0DF, 0.0DF, "%.7HgDF"},
+  {__LINE__, -0.0DF, -0.0DF, "%.7HgDF"},
+  {__LINE__, 0.2DF, 0.0DF, "%.7HgDF"},
+  {__LINE__, -0.2DF, -0.0DF, "%.7HgDF"},
+  {__LINE__, 0.5DF, 0.0DF, "%.7HgDF"},
+  {__LINE__, -0.5DF, -0.0DF, "%.7HgDF"},
+  {__LINE__, 0.8DF, 1.0DF, "%.7HgDF"},
+  {__LINE__, -0.8DF, -1.0DF, "%.7HgDF"},
+  {__LINE__, 1.5DF, 2.0DF, "%.7HgDF"},
+  {__LINE__, -1.5DF, -2.0DF, "%.7HgDF"},
+  {__LINE__, 0.1DF, 0.0DF, "%.7HgDF"},
+  {__LINE__, 0.25DF, 0.0DF, "%.7HgDF"},
+  {__LINE__, 0.625DF, 1.0DF, "%.7HgDF"},
+  {__LINE__, -0.1DF, -0.0DF, "%.7HgDF"},
+  {__LINE__, -0.25DF, -0.0DF, "%.7HgDF"},
+  {__LINE__, -0.625DF, -1.0DF, "%.7HgDF"},
+  {__LINE__, 97152.5DF, 97152.0DF, "%.7HgDF"},
+  {__LINE__, -97152.5DF, -97152.0DF, "%.7HgDF"},
+  {__LINE__, -370495.5DF, -370496.0DF, "%.7HgDF"},
+  {__LINE__, -370496.25DF, -370496.0DF, "%.7HgDF"},
+  {__LINE__, -370496.5DF, -370496.0DF, "%.7HgDF"},
+  {__LINE__, -370496.75DF, -370497.0DF, "%.7HgDF"},
+  {__LINE__, -370497.5DF, -370498.0DF, "%.7HgDF"},
+};
+static const int d32_roundeven_size =
+  sizeof (d32_roundeven) / sizeof (d32_roundeven[0]);
+
 /* Test truncd32 function  */
 static const d32_type d32_trunc[] = {
   {__LINE__, DEC_INFINITY, DEC_INFINITY, "%.7HgDF"},
@@ -590,6 +686,14 @@ main (void)
       _VC_P (__FILE__, d128_round[i].line, d128_round[i].e, r,
 	     d128_round[i].f);
     }
+  for (i = 0; i < d128_roundeven_size; ++i)
+    {
+      _Decimal128 r = roundevend128 (d128_roundeven[i].x);
+      printf ("roundeven (%.34DDfDL) = %.34DDfDL) in %s:%d\n", d128_roundeven[i].x, r,
+	      __FILE__, __LINE__ - 1);
+      _VC_P (__FILE__, d128_roundeven[i].line, d128_roundeven[i].e, r,
+	     d128_roundeven[i].f);
+    }
   for (i = 0; i < d128_trunc_size; ++i)
     {
       _Decimal128 r = truncd128 (d128_trunc[i].x);
@@ -632,6 +736,14 @@ main (void)
       _VC_P (__FILE__, d64_round[i].line, d64_round[i].e, r,
 	     d64_round[i].f);
     }
+  for (i = 0; i < d64_roundeven_size; ++i)
+    {
+      _Decimal64 r = roundevend64 (d64_roundeven[i].x);
+      printf ("roundeven (%.16DfDD) = %.16DfDD) in %s:%d\n", d64_roundeven[i].x, r,
+	      __FILE__, __LINE__ - 1);
+      _VC_P (__FILE__, d64_roundeven[i].line, d64_roundeven[i].e, r,
+	     d64_roundeven[i].f);
+    }
   for (i = 0; i < d64_trunc_size; ++i)
     {
       _Decimal64 r = truncd64 (d64_trunc[i].x);
@@ -673,6 +785,14 @@ main (void)
 	      __FILE__, __LINE__ - 1);
       _VC_P (__FILE__, d32_round[i].line, d32_round[i].e, r,
 	     d32_round[i].f);
+    }
+  for (i = 0; i < d32_roundeven_size; ++i)
+    {
+      _Decimal32 r = roundevend32 (d32_roundeven[i].x);
+      printf ("roundeven (%.9HfDF) = %.9HfDF) in %s:%d\n", d32_roundeven[i].x, r,
+	      __FILE__, __LINE__ - 1);
+      _VC_P (__FILE__, d32_roundeven[i].line, d32_roundeven[i].e, r,
+	     d32_roundeven[i].f);
     }
   for (i = 0; i < d32_trunc_size; ++i)
     {

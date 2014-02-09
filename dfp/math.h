@@ -286,6 +286,9 @@ extern _Decimal32 __nearbyintd32 (_Decimal32 __x) __THROW;
 extern _Decimal32 roundd32 (_Decimal32 __x) __THROW __attribute__ ((__const__));
 extern _Decimal32 __roundd32 (_Decimal32 __x) __THROW __attribute__ ((__const__));
 
+extern _Decimal32 roundevend32 (_Decimal32 __x) __THROW __attribute__ ((__const__));
+extern _Decimal32 __roundevend32 (_Decimal32 __x) __THROW __attribute__ ((__const__));
+
 extern _Decimal32 truncd32 (_Decimal32 __x) __THROW __attribute__ ((__const__));
 extern _Decimal32 __truncd32 (_Decimal32 __x) __THROW __attribute__ ((__const__));
 
@@ -534,6 +537,9 @@ extern _Decimal64 __nearbyintd64 (_Decimal64 __x) __THROW;
 extern _Decimal64 roundd64 (_Decimal64 __x) __THROW __attribute__ ((__const__));
 extern _Decimal64 __roundd64 (_Decimal64 __x) __THROW __attribute__ ((__const__));
 
+extern _Decimal64 roundevend64 (_Decimal64 __x) __THROW __attribute__ ((__const__));
+extern _Decimal64 __roundevend64 (_Decimal64 __x) __THROW __attribute__ ((__const__));
+
 extern _Decimal64 truncd64 (_Decimal64 __x) __THROW __attribute__ ((__const__));
 extern _Decimal64 __truncd64 (_Decimal64 __x) __THROW __attribute__ ((__const__));
 
@@ -781,6 +787,9 @@ extern _Decimal128 __nearbyintd128 (_Decimal128 __x) __THROW;
 
 extern _Decimal128 roundd128 (_Decimal128 __x) __THROW __attribute__ ((__const__));
 extern _Decimal128 __roundd128 (_Decimal128 __x) __THROW __attribute__ ((__const__));
+
+extern _Decimal128 roundevend128 (_Decimal128 __x) __THROW __attribute__ ((__const__));
+extern _Decimal128 __roundevend128 (_Decimal128 __x) __THROW __attribute__ ((__const__));
 
 extern _Decimal128 truncd128 (_Decimal128 __x) __THROW __attribute__ ((__const__));
 extern _Decimal128 __truncd128 (_Decimal128 __x) __THROW __attribute__ ((__const__));

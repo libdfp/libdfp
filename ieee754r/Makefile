@@ -58,6 +58,7 @@ libdfp_files +=	acosd32 acosd64 acosd128 \
 		remainderd32 remainderd64 remainderd128 \
 		rintd32 rintd64 rintd128 \
 		roundd32 roundd64 roundd128 \
+		roundevend32 roundevend64 roundevend128 \
 		samequantumd32 samequantumd64 samequantumd128 \
 		scalblnd32 scalblnd64 scalblnd128 \
 		scalbnd32 scalbnd64 scalbnd128 \

@@ -253,5 +253,8 @@ libdfp {
     llogbd32;
     llogbd64;
     llogbd128;
+    roundevend32;
+    roundevend64;
+    roundevend128;
   }
 }
