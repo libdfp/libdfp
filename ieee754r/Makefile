@@ -39,6 +39,7 @@ libdfp_files +=	acosd32 acosd64 acosd128 \
 		isunorderedd32 isunorderedd64 isunorderedd128 \
 		ldexpd32 ldexpd64 ldexpd128 \
 		lgammad32 lgammad64 lgammad128 \
+		llquantexpd32 llquantexpd64 llquantexpd128 \
 		llrintd32 llrintd64 llrintd128 \
 		llroundd32 llroundd64 llroundd128 \
 		log10d32 log10d64 log10d128 \

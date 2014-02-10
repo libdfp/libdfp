@@ -253,6 +253,9 @@ libdfp {
     llogbd32;
     llogbd64;
     llogbd128;
+    llquantexpd32;
+    llquantexpd64;
+    llquantexpd128;
     roundevend32;
     roundevend64;
     roundevend128;

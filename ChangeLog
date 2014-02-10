@@ -1,3 +1,23 @@
+2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* dfp/math.h (llquantumd32): Add prototype.
+	(__llquantumd32): Likewise.
+	(llquantumd64): Likewise.
+	(__llquantumd64): Likewise.
+	(llquantumd128): Likewise.
+	(__llquantumd128): Likewise.
+	* ieee754r/Makefile: Add llquantumd[32|64|128] objects.
+	* ieee754r/Versions (LIBDFP_1.0.9): Add llquantum symbols.
+	* ieee754r/llquantumd128.c: New file llquantumd128 software
+	implementation.
+	* ieee754r/llquantumd64.c: New file llquantumd64 software
+	implementation.
+	* ieee754r/llquantumd32.c: New file llquantumd32 software
+	implementation.
+	* tests/test-llquantum.c: New file: testcases for llquantumd[32|64|128]
+	implementation.
+	* Makefile.in: Add test-llquantum.
+
 2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/quantumd128.c: New file: quantumd128
