@@ -1,3 +1,12 @@
+2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dfpu/quantumd128.c: New file: quantumd128
+	optimized implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/quantumd32.c: New file: quantumd64
+	optimized implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/quantumd64.c: New file: quantumd32
+	optimized implementation for PowerPC.
+
 2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (quantumd32): Add prototype.
