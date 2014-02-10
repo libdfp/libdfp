@@ -24,31 +24,21 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #include <math.h>
+#include <math_private.h>
 #include "convert.h"
 
 extern int __dfp_classify_sf (float a);
 
 int __dfp_classify_sf (float a)
 {
-  union {
-    float x;
-    struct {
-      unsigned int sign:1;
-      unsigned int exp:8;
-      unsigned int sig:23;
-    } e;
-  } u;
-  u.x = a;
-  if (__builtin_expect (a == 0.0f, 0))
+  uint32_t wx;
+
+  if (a == 0.0f)
     return FP_ZERO;
-  
-  if (__builtin_expect (u.e.exp == 0xff, 0))
-    {
-      if (u.e.sig == 0)
-	return FP_INFINITE;
-      else
-	return FP_NAN;
-    }
+  GET_FLOAT_WORD (wx, a);
+  wx = wx & 0x7fffffff;
+  if (wx >= 0x7f800000)
+    return (wx > 0x7f800000) ? FP_NAN : FP_INFINITE;
   return FP_NORMAL;
 }
 
@@ -56,25 +46,13 @@ extern int __dfp_classify_df (double a);
 
 int __dfp_classify_df (double a)
 {
-  union {
-    double x;
-    struct {
-      unsigned int sign:1;
-      unsigned int exp:11;
-      unsigned int sig0:20;
-      unsigned int sig1:32;
-    } e;
-  } u;
-  u.x = a;
-  if (__builtin_expect (a == 0.0, 0))
+  uint64_t wx;
+
+  if (a == 0.0)
     return FP_ZERO;
-  
-  if (__builtin_expect (u.e.exp == 0x7ff, 0))
-    {
-      if (u.e.sig0 == 0 && u.e.sig1 == 0)
-	return FP_INFINITE;
-      else
-	return FP_NAN;
-    }
+  EXTRACT_WORDS64 (wx, a);
+  wx = wx & UINT64_C(0x7fffffffffffffff);
+  if (wx >= UINT64_C(0x7FF0000000000000))
+    return (wx > UINT64_C(0x7FF0000000000000)) ? FP_NAN : FP_INFINITE;
   return FP_NORMAL;
 }

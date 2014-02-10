@@ -1,3 +1,13 @@
+2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* base-math/classify.c (__dfp_classify_sf): Fix code for little
+	endian.
+	(__dfp_classify_df): Likewise.
+	* sysdeps/generic/math_private.h (ieee754_float_shape_type): New
+	union to float conversion to/from unsigned word.
+	(ieee754_double_shape_type): New union to double conversion to/from
+	unsigned doubleword.
+
 2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/roundevend128.c: New file: roundevend128

@@ -115,4 +115,45 @@ do {								\
 #define DEC32_SNAN_MASK		0x7E000000
 #define DEC32_INF_MASK		0x78000000
 
+/* A union which permits us to convert between a float and a 32 bit int.  */
+typedef union
+{
+  float value;
+  uint32_t word;
+} ieee754_float_shape_type;
+
+/* Get a 32 bit int from a float.  */
+#define GET_FLOAT_WORD(i,d)                                     \
+do {                                                            \
+  ieee754_float_shape_type gf_u;                                \
+  gf_u.value = (d);                                             \
+  (i) = gf_u.word;                                              \
+} while (0)
+
+
+/* A union which permits us to convert between a double and two 32 bit ints.  */
+
+typedef union
+{
+  double value;
+  struct
+  {
+#if __FLOAT_WORD_ORDER == BIG_ENDIAN
+    uint32_t msw;
+    uint32_t lsw;
+#else
+    uint32_t lsw;
+    uint32_t msw;
+#endif
+  } parts;
+  uint64_t word;
+} ieee754_double_shape_type;
+
+#define EXTRACT_WORDS64(i,d)                                    \
+do {                                                            \
+  ieee754_double_shape_type gh_u;                               \
+  gh_u.value = (d);                                             \
+  (i) = gh_u.word;                                              \
+} while (0)
+
 #endif
