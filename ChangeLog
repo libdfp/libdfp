@@ -1,3 +1,12 @@
+2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dfpu/llquantumd128.c: New file: llquantumd128
+	optimized implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/llquantumd32.c: New file: llquantumd64
+	optimized implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/llquantumd64.c: New file: llquantumd32
+	optimized implementation for PowerPC.
+
 2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (llquantumd32): Add prototype.
