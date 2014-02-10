@@ -1,5 +1,25 @@
 2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* dfp/math.h (quantumd32): Add prototype.
+	(__quantumd32): Likewise.
+	(quantumd64): Likewise.
+	(__quantumd64): Likewise.
+	(quantumd128): Likewise.
+	(__quantumd128): Likewise.
+	* ieee754r/Makefile: Add quantumd[32|64|128] objects.
+	* ieee754r/Versions (LIBDFP_1.0.9): Add quantum symbols.
+	* ieee754r/quantumd128.c: New file quantumd128 software
+	implementation.
+	* ieee754r/quantumd64.c: New file quantumd64 software
+	implementation.
+	* ieee754r/quantumd32.c: New file quantumd32 software
+	implementation.
+	* tests/test-quantum.c: New file: testcases for quantumd[32|64|128]
+	implementation.
+	* Makefile.in: Add test-quantum.
+
+2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* base-math/classify.c (__dfp_classify_sf): Fix code for little
 	endian.
 	(__dfp_classify_df): Likewise.

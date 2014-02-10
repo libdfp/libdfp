@@ -256,5 +256,8 @@ libdfp {
     roundevend32;
     roundevend64;
     roundevend128;
+    quantumd32;
+    quantumd64;
+    quantumd128;
   }
 }

@@ -325,6 +325,9 @@ extern _Decimal32 __scalbd32 (_Decimal32 __x, _Decimal32 __n) __THROW;
 extern _Decimal32 quantized32 (_Decimal32 __x, _Decimal32 __y) __THROW;
 extern _Decimal32 __quantized32 (_Decimal32 __x, _Decimal32 __y) __THROW;
 
+extern _Decimal32 quantumd32 (_Decimal32 __x) __THROW;
+extern _Decimal32 __quantumd32 (_Decimal32 __x) __THROW;
+
 extern _Bool samequantumd32 (_Decimal32 __x, _Decimal32 __y) __THROW;
 extern _Bool __samequantumd32 (_Decimal32 __x, _Decimal32 __y) __THROW;
 
@@ -576,6 +579,9 @@ extern _Decimal64 __scalbd64 (_Decimal64 __x, _Decimal64 __n) __THROW;
 extern _Decimal64 quantized64 (_Decimal64 __x, _Decimal64 __y) __THROW;
 extern _Decimal64 __quantized64 (_Decimal64 __x, _Decimal64 __y) __THROW;
 
+extern _Decimal64 quantumd64 (_Decimal64 __x) __THROW;
+extern _Decimal64 __quantumd64 (_Decimal64 __x) __THROW;
+
 extern _Bool samequantumd64 (_Decimal64 __x, _Decimal64 __y) __THROW;
 extern _Bool __samequantumd64 (_Decimal64 __x, _Decimal64 __y) __THROW;
 
@@ -826,6 +832,9 @@ extern _Decimal128 __scalbd128 (_Decimal128 __x, _Decimal128 __n) __THROW;
 
 extern _Decimal128 quantized128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 extern _Decimal128 __quantized128 (_Decimal128 __x, _Decimal128 __y) __THROW;
+
+extern _Decimal128 quantumd128 (_Decimal128 __x) __THROW;
+extern _Decimal128 __quantumd128 (_Decimal128 __x) __THROW;
 
 extern _Bool samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 extern _Bool __samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;

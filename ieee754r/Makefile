@@ -55,6 +55,7 @@ libdfp_files +=	acosd32 acosd64 acosd128 \
 		nexttowardd32 nexttowardd64 nexttowardd128 \
 		powd32 powd64 powd128 \
 		quantized32 quantized64 quantized128 \
+		quantumd32 quantumd64 quantumd128 \
 		remainderd32 remainderd64 remainderd128 \
 		rintd32 rintd64 rintd128 \
 		roundd32 roundd64 roundd128 \
