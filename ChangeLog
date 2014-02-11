@@ -1,3 +1,8 @@
+2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* tests/scaffold.c (_AVC_P): Fix comparison with variation.
+	* tests/test-logd: Fix expected values.
+
 2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/llquantumd128.c: New file: llquantumd128

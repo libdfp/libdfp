@@ -30,6 +30,7 @@
 #include <math.h>
 #include <string.h>
 
+#define _WANT_AVC 1		/* Pick up the _AVC_P(x,y,lim,fmt,lfmt)  */
 #define _WANT_VC 1		/* Pick up the _VC_P(x,y,fmt) macro.  */
 #define _WANT_QC 1		/* Pick up the _QC_P(x,y,fmt) macro.  */
 #define _WANT_DC 1		/* Pick up the _DC_P(x,y,fmt) macro.  */
@@ -41,25 +42,25 @@ typedef struct
   int line;
   _Decimal128 x;		/* Value to test  */
   _Decimal128 e;		/* Result should be this.  */
-  const char *format;		/* printf %DfDD */
+  _Decimal128 lim;		/* Maximum variation expected.  */
+  const char *format;		/* printf %DDfDD */
   char vorq;			/* value compare or printf compare (quantize equivalent)  */
 } d128_type;
 
 d128_type printf_d128s[] = {
   {__LINE__, 9.956441e-01DL, -4.3654145721409025130657501205664800e-03DL,
-   "%.34DDeDL", 'v'},
+   0.0DL, "%.34DDeDL", 'v'},
   {__LINE__, 9.828010e-01DL, -1.7348620834613154684590310253185030e-02DL,
-   "%.34DDeDL", 'v'},
+   0.0DL, "%.34DDeDL", 'v'},
   {__LINE__, 1.000000e+00DL, 0.0000000000000000000000000000000000e+00DL,
-   "%.34DDeDL", 'v'},
+   0.0DL, "%.34DDeDL", 'v'},
   {__LINE__, 1.020000e+00DL, 1.9802627296179713026029066885100390e-02DL,
-   "%.34DDeDL", 'v'},
+   0.0DL, "%.34DDeDL", 'v'},
   {__LINE__, 3.140000e+00DL, 1.1442227999201619988056944484929230e+00DL,
-   "%.34DDeDL", 'v'},
-#ifndef _ARCH_PWR6		/* This returns NaN in the hard-DFP case.  */
-  {__LINE__, __DEC64_MAX__, 886.4952608027076DL, "%DeDL", 'v'},
-#endif
-  {0, 0, 0, 0, 0}
+   0.0DL, "%.34DDeDL", 'v'},
+  {__LINE__, __DEC64_MAX__,  8.8649526080270758824692671005348020e+02DL,
+   0.0DL, "%.34DDeDL", 'v'},
+  {0, 0, 0, 0, 0, 0}
 };
 
 typedef struct
@@ -67,20 +68,20 @@ typedef struct
   int line;
   _Decimal64 x;			/* Value to test  */
   _Decimal64 e;			/* Result should be this.  */
+  _Decimal64 lim;		/* Maximum variation expected.  */
   const char *format;		/* printf %DfDD */
   char vorq;			/* value compare or printf compare (quantize equivalent)  */
 } d64_type;
 
 d64_type printf_d64s[] = {
-  {__LINE__, 9.956441e-01DD, -4.365414572140903e-03DD, "%.15DeDD", 'v'},
-  {__LINE__, 9.828010e-01DD, -1.734862083461315e-02DD, "%.15DeDD", 'v'},
-  {__LINE__, 1.000000e+00DD,  0.000000000000000e+00DD, "%.15DeDD", 'v'},
-  {__LINE__, 1.020000e+00DD,  1.980262729617971e-02DD, "%.15DeDD", 'v'},
-  {__LINE__, 3.140000e+00DD,  1.144222799920162e+00DD, "%.15DeDD", 'v'},
-#ifndef _ARCH_PWR6		/* This returns NaN in the hard-DFP case.  */
-  {__LINE__, __DEC64_MAX__, 886.4952608027076DD, "%DeDD", 'v'},
-#endif
-  {0, 0, 0, 0, 0}
+  {__LINE__, 9.956441e-01DD, -4.365414572140903e-03DD, 0.0DD, "%.15DeDD",'v'},
+  {__LINE__, 9.828010e-01DD, -1.734862083461315e-02DD,
+   0.000000000000001e-02DD, "%.15DeDD", 'v'},
+  {__LINE__, 1.000000e+00DD, 0.000000000000000e+00DD, 0.0DD, "%.15DeDD", 'v'},
+  {__LINE__, 1.020000e+00DD, 1.980262729617971e-02DD, 0.0DD, "%.15DeDD", 'v'},
+  {__LINE__, 3.140000e+00DD, 1.144222799920162e+00DD, 0.0DD, "%.15DeDD", 'v'},
+  {__LINE__, __DEC64_MAX__,  8.864952608027075e+02DD, 0.0DD, "%.15DeDD", 'v'},
+  {0, 0, 0, 0, 0, 0}
 };
 
 typedef struct
@@ -88,20 +89,19 @@ typedef struct
   int line;
   _Decimal32 x;			/* Value to test  */
   _Decimal32 e;			/* Result should be this.  */
+  _Decimal32 lim;		/* Maximum variation expected.  */
   const char *format;		/* printf %DfDD */
   char vorq;			/* value compare or printf compare (quantize equivalent)  */
 } d32_type;
 
 d32_type printf_d32s[] = {
-  {__LINE__, 9.956441e-01DF, -4.365415e-03DF, "%.6HeDF", 'v'},
-  {__LINE__, 9.828010e-01DF, -1.734862e-02DF, "%.6HeDF", 'v'},
-  {__LINE__, 1.000000e+00DF, 0.000000e+00DF, "%.6HeDF", 'v'},
-  {__LINE__, 1.020000e+00DF, 1.980263e-02DF, "%.6HeDF", 'v'},
-  {__LINE__, 3.140000e+00DF, 1.144223e+00DF, "%.6HeDF", 'v'},
-#ifndef _ARCH_PWR6		/* This returns NaN in the hard-DFP case.  */
-  {__LINE__, __DEC32_MAX__, 886.4952608027076DD, "%.6HeDF", 'v'},
-#endif
-  {0, 0, 0, 0, 0}
+  {__LINE__, 9.956441e-01DF, -4.365415e-03DF, 0.0DF, "%.6HeDF", 'v'},
+  {__LINE__, 9.828010e-01DF, -1.734862e-02DF, 0.0DF, "%.6HeDF", 'v'},
+  {__LINE__, 1.000000e+00DF, 0.000000e+00DF, 0.0DF, "%.6HeDF", 'v'},
+  {__LINE__, 1.020000e+00DF, 1.980263e-02DF, 0.0DF, "%.6HeDF", 'v'},
+  {__LINE__, 3.140000e+00DF, 1.144223e+00DF, 0.0DF, "%.6HeDF", 'v'},
+  {__LINE__, __DEC32_MAX__,  2.233508e+02DF, 0.0DF, "%.6HeDF", 'v'},
+  {0, 0, 0, 0, 0, 0}
 };
 
 typedef struct
@@ -120,9 +120,7 @@ d64_decode_type decode_d64s[] = {
   /* DEC_NAN is +0,000,000,000,000,000E-398 so test against that
    * since you can't compare DEC_NAN to DEC_NAN.  */
   {__LINE__, -1.0DD, DECLET64_NAN},
-#ifdef _ARCH_PWR6		/* This returns NaN in the hard-DFP case.  */
   {__LINE__, __DEC64_MAX__, DECLET64_NAN},
-#endif
   {0, 0, 0}
 };
 
@@ -139,7 +137,8 @@ main (void)
       _Decimal128 retval = logd128 (d128ptr->x);
       fprintf (stdout, "%.34DDeDL = logd128(%.34DDeDL) in: %s:%d\n", retval,
 	       d128ptr->x, __FILE__, __LINE__ - 1);
-      _VC_P (__FILE__, d128ptr->line, d128ptr->e, retval, d128ptr->format);
+      _AVC_P (__FILE__, d128ptr->line, d128ptr->e, retval, d128ptr->lim,
+	      d128ptr->format, d128ptr->format);
     }
 
   for (d64ptr = printf_d64s; d64ptr->line; d64ptr++)
@@ -147,7 +146,8 @@ main (void)
       _Decimal64 retval = logd64 (d64ptr->x);
       fprintf (stdout, "%.15DeDD = logd64(%.15DeDD) in: %s:%d\n", retval,
 	       d64ptr->x, __FILE__, __LINE__ - 1);
-      _VC_P (__FILE__, d64ptr->line, d64ptr->e, retval, d64ptr->format);
+      _AVC_P (__FILE__, d64ptr->line, d64ptr->e, retval, d64ptr->lim,
+	      d64ptr->format, d64ptr->format);
     }
 
   for (d32ptr = printf_d32s; d32ptr->line; d32ptr++)
@@ -155,7 +155,8 @@ main (void)
       _Decimal32 retval = logd32 (d32ptr->x);
       fprintf (stdout, "%.6HeDF = logd32(%.6HeDF) in: %s:%d\n", retval,
 	       d32ptr->x, __FILE__, __LINE__ - 1);
-      _VC_P (__FILE__, d32ptr->line, d32ptr->e, retval, d32ptr->format);
+      _AVC_P (__FILE__, d32ptr->line, d32ptr->e, retval, d32ptr->lim,
+	      d32ptr->format, d32ptr->format);
     }
 
   for (d64dptr = decode_d64s; d64dptr->line; d64dptr++)
@@ -163,7 +164,7 @@ main (void)
       static char rbuf[CHAR_MAX];
       //_Decimal64 retval = logd64(d64dptr->x);
       _Decimal64 retval = logd64 (DEC_NAN);
-      fprintf (stdout, "%DfDD = logd64(%DfDD) in: %s:%d\n", retval,
+      fprintf (stdout, "%DeDD = logd64(%DeDD) in: %s:%d\n", retval,
 	       d64dptr->x, __FILE__, __LINE__ - 1);
       _DC_P (__FILE__, d64dptr->line, d64dptr->expect, retval);
       if (strcmp (d64dptr->expect, decoded64 (retval, &rbuf[0])))
@@ -176,6 +177,7 @@ main (void)
 		   d64dptr->expect);
 	}
     }
+
   _REPORT ();
 
   /* fail comes from scaffold.c  */

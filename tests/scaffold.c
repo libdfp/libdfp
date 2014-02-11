@@ -198,7 +198,7 @@ static char bufz[CHAR_MAX];
   sprintf(bufx, fmt, x); \
   sprintf(bufy, fmt, y); \
   sprintf(bufz, lfmt, lim); \
-  if(y<(x+lim) && y>(x+lim)) { \
+  if((y < (x-lim)) && (x > (y+lim))) { \
     fprintf(stderr, "%-3d Error: Expected: \"%s\"\n", testnum, bufx); \
     fprintf(stderr, "             Result: \"%s\"\n", bufy); \
     fprintf(stderr, "                lim: \"%s\"\n", bufz); \
