@@ -1,5 +1,14 @@
 2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/roundd128.c: New file: roundd128 optimized
+	implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/roundd32.c: New file: roundd64 optimized
+	implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/roundd64.c: New file: roundd32 optimized
+	implementation for PowerPC.
+
+2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/nearbyintd128.c: New file: nearbyintd128
 	optimized implementation for PowerPC.
 	* sysdeps/powerpc/dfpu/nearbyintd32.c: New file: nearbyintd64
