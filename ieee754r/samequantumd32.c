@@ -54,7 +54,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   if(___decNumberIsInfinite(&dn_x) || ___decNumberIsInfinite(&dn_y))
     return false;
 
-  return (dn_x.exponent + dn_x.digits == dn_y.exponent + dn_y.digits);
+  return (dn_x.exponent == dn_y.exponent);
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

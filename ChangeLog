@@ -1,5 +1,11 @@
 2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* ieee754r/samequantumd32.c (samequantum): Fix quantum exponent
+	compare.
+	* tests/test-samequantum.c: New file: samequantumd[32|64|128] tests.
+
+2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/samequantumd32.c: New file: optimized
 	samequantumd32 implementation for PowerPC.
 	* sysdeps/powerpc/dfpu/samequantumd64.c: New file: optimized
