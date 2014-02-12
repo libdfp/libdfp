@@ -1,0 +1,61 @@
+Decimal Floating Point C Library - history of user-visible changes.
+Copyright (C) 2014 Free Software Foundation, Inc.
+See the end for copyright conditions.
+
+Version 1.0.9
+
+* Support for powerpc64le has beed added.
+
+* Various fixes for LE build.
+
+* Support for configure with --with-cpu=power8 has been added.
+
+* Fix for isinfd[32|64|128]: it now follow GLIBC convention and returns
+  1 for plus infinity and -1 for minus infinity.
+
+* Fix finited result to return a positive argument for any normal
+  number.
+
+* New <math.h> macro named issignaling to check for a signaling NaN (sNaN).
+  It is based on draft TS 18661.
+
+* New llogbd[32|64|128] implementation to return the logb result as
+  long int.
+
+* New roundevend[32|64|128] implementation that rounds its argument to the
+  nearest integer value in floating-point format, rounding halfway cases
+  to even (that is, to the nearest value whose least significant bit 0),
+  regardless of the current rounding direction. 
+  It is based on draft 18661-2.
+
+* Add optimized ceild[32|64|128], truncd[32|64|128], floord[32|64|128],
+  nearbyintd[32|64|128], roundd[32|64|128], and roundevend[32|64|128]
+  for PowerPC with DFP hardware support.
+
+* New quantumd[32|64|128] implementation that compute the quantum of a
+  finite argument.
+  It is based on draft 18661-2.
+
+* Add optimized quantumd[32|64|128] and samequantumd[32|64|128]
+  implementation for PowerPC with DFP hardware support.
+
+----------------------------------------------------------------------
+Copyright information:
+
+Copyright (C) 2007-2014 Free Software Foundation, Inc.
+
+he Decimal Floating Point C Library is free software; you can
+redistribute it and/or modify it under the terms of the GNU Lesser
+General Public License version 2.1.
+
+The Decimal Floating Point C Library is distributed in the hope that
+it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+the GNU Lesser General Public License version 2.1 for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License version 2.1 along with the Decimal Floating Point C Library;
+if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+Suite 330, Boston, MA 02111-1307 USA.
+
+Please see libdfp/COPYING.txt for more information.
