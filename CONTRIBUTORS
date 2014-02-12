@@ -1,7 +1,7 @@
 Maintainers:
 
-	Base:    Ryan S. Arnold <rsa@us.ibm.com>
-	PowerPC: Ryan S. Arnold <rsa@us.ibm.com>
+	Base:    Adhemerval Zanella <azanella@br.ibm.com>
+	PowerPC: Adhemerval Zanella <azanella@br.ibm.com>
 	s390:    Andreas Krebbel <krebbel@linux.vnet.ibm.com>
 	x86(64): (tbd)
 
@@ -13,3 +13,4 @@ Contributors:
 	Andreas Krebbel <krebbel@linux.vnet.ibm.com>
 	Carlos Eduardo Seo <cseo@linux.vnet.ibm.com>
 	Luis Machado <luisgpm@br.ibm.com>
+	Adhemerval Zanella <azanella@br.ibm.com>
