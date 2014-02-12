@@ -1,5 +1,11 @@
 2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/finited32.c: Remove unused file.
+	* sysdeps/powerpc/dfpu/finited64.c: Likewise.
+	* sysdeps/powerpc/dfpu/is_template.h: Likewise.
+
+2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* include/ieee754r_private.h (__isnand32): Add hidden proto.
 	(__isnand64): Likewise.
 	(__isnand128): Likewise.
