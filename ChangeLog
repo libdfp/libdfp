@@ -1,3 +1,12 @@
+2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dfpu/samequantumd32.c: New file: optimized
+	samequantumd32 implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/samequantumd64.c: New file: optimized
+	samequantumd64 implementation for PowerPC.
+	* sysdeps/powerpc/dfpu/samequantumd128.c: New file: optimized
+	samequantumd128 implementation for PowerPC.
+
 2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/scaffold.c (_AVC_P): Fix comparison with variation.
