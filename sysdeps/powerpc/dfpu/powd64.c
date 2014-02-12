@@ -73,7 +73,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 	return 1.DD;
       if (y_class == FP_INFINITE && (x_class != FP_NAN))
 	{
-	  DEC_TYPE x_abs = FUNC_D(fabs) (x);
+	  DEC_TYPE x_abs = FUNC_D(__fabs) (x);
 	  if (x == -1.DD)
 	    return 1.DD;
 	  if (y < 0.DD)
@@ -93,7 +93,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 	}
       if (x_class == FP_INFINITE && (y_class != FP_NAN))
 	{
-	  DEC_TYPE y_int = FUNC_D(trunc) (y);
+	  DEC_TYPE y_int = FUNC_D(__trunc) (y);
 	  if (y_int == y)
 	    { /* y is an int including 0. */
 	      long long int_y = y_int;
@@ -170,7 +170,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 	    { /* pole error */
 	      result = HUGE_VAL_D64;
 	      if ( odd_y )
-		result = FUNC_D(copysign) (result, x);
+		result = FUNC_D(__copysign) (result, x);
 	    }
 	  else
 	    result = 1.DD / intpow(x, -int_y);
@@ -195,7 +195,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 	  DEC_TYPE log_x;
 
 	  log_x = FUNC_D(__log) (x);
-	  result = intpow(x, int_y) * FUNC_D(exp) (y_frac * log_x);
+	  result = intpow(x, int_y) * FUNC_D(__exp) (y_frac * log_x);
 	}
     }
 

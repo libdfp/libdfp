@@ -1,5 +1,11 @@
 2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/logd64.c (logd64): Use internal symbols for
+	functions call.
+	* sysdeps/powerpc/dfpu/powd64.c (expd64): Likewise.
+
+2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/acosd32.c (acosd): Use internal symbols for function calls.
 	* ieee754r/asind32.c (asind): Likewise.
 	* ieee754r/cbrtd32.c (cbrtd): Likewise.
@@ -10,7 +16,6 @@
 	* ieee754r/lgammad32.c (__lgammar_r): Fix isinf/isnan tests using
 	decimal implementations. Also use internal symbols for functions
 	calls.
-	
 
 2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 

@@ -81,7 +81,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE val)
   if (__isinfd64(val))
     return val;
 
-  result = frexpd64 (val, &exp);
+  result = __frexpd64 (val, &exp);
 
   tmp = result * 100.0DD;
   top = tmp;
