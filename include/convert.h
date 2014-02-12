@@ -22,6 +22,7 @@
 
 
 #include <math.h>
+#include <ieee754r_private.h>
 #include <stdlib.h>
 
 /* decimal source */
@@ -55,7 +56,6 @@
 #endif
 
 extern int SIGNBIT (SRC_TYPE);
-extern int CLASSIFY (SRC_TYPE);
 
 
 #define DECIMAL_SIZE SRC

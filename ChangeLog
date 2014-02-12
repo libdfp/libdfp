@@ -1,5 +1,41 @@
 2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* fmt_d32.c (__dfp_adjust_precision): Fix PLT calls for FP classify
+	functions.
+	* ieee754r/acosd32.c: Likewise.
+	* ieee754r/asind32.c: Likewise.
+	* ieee754r/cbrtd32.c: Likewise.
+	* ieee754r/cosd32.c: Likewise.
+	* ieee754r/coshd32.c: Likewise.
+	* ieee754r/exp2d32.c: Likewise.
+	* ieee754r/expd32.c: Likewise.
+	* ieee754r/expm1d32.c: Likewise.
+	* ieee754r/fdimd32.c: Likewise.
+	* ieee754r/fmad32.c: Likewise.
+	* ieee754r/fmodd32.c: Likewise.
+	* ieee754r/frexpd32.c: Likewise.
+	* ieee754r/hypotd32.c: Likewise.
+	* ieee754r/ldexpd32.c: Likewise.
+	* ieee754r/llroundd32.c: Likewise.
+	* ieee754r/nearbyintd32.c: Likewise.
+	* ieee754r/nextafterd32.c: Likewise.
+	* ieee754r/nexttowardd32.c: Likewise.
+	* ieee754r/powd32.c: Likewise.
+	* ieee754r/remainderd32.c: Likewise.
+	* ieee754r/scalblnd32.c: Likewise.
+	* ieee754r/scalbnd32.c: Likewise.
+	* ieee754r/sind32.c: Likewise.
+	* ieee754r/sinhd32.c: Likewise.
+	* ieee754r/tand32.c: Likewise.
+	* ieee754r/tgammad32.c: Likewise.
+	* include/convert.h: Likewise.
+	* sysdeps/powerpc/dfpu/expd64.c: Likewise.
+	* sysdeps/powerpc/dfpu/logd64.c: Likewise.
+	* sysdeps/powerpc/dfpu/powd64.c: Likewise.
+	* sysdeps/soft-dfp/unordsd2.c: Likewise.
+
+2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/finited32.c: Remove unused file.
 	* sysdeps/powerpc/dfpu/finited64.c: Likewise.
 	* sysdeps/powerpc/dfpu/is_template.h: Likewise.

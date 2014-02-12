@@ -32,6 +32,7 @@
 #include <decNumber.h>
 #include <math.h>
 #include <errno.h>
+#include <ieee754r_private.h>
 
 #include <decNumberMath.h>
 
@@ -66,7 +67,7 @@ DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
   DEC_TYPE z = IEEE_FUNCTION_NAME (x);
-  if (FUNC_D(isinf) (x))
+  if (FUNC_D(__isinf) (x))
     DFP_ERRNO (EDOM);
   return z;
 }

@@ -32,6 +32,7 @@
 #include <decNumber.h>
 #include <math.h>
 #include <errno.h>
+#include <ieee754r_private.h>
 
 #include <decNumberMath.h>
 

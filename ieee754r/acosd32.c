@@ -28,7 +28,9 @@
 #  include <decimal32.h>
 #  define _DECIMAL_SIZE 32
 #endif
+#include <math.h>
 #include <errno.h>
+#include <ieee754r_private.h>
 
 /* Portions of this code are:
  * ====================================================

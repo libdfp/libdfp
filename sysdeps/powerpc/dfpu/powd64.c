@@ -24,6 +24,7 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #include <math.h>
+#include <ieee754r_private.h>
 
 #ifndef _DECIMAL_SIZE
 #  define _DECIMAL_SIZE 64

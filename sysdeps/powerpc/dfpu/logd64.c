@@ -28,6 +28,7 @@
 #endif
 
 #include <math.h>
+#include <ieee754r_private.h>
 
 #define FUNCTION_NAME log
 

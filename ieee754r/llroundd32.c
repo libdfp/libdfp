@@ -33,6 +33,7 @@
 #include <math.h>
 #include <errno.h>
 #include <limits.h>
+#include <ieee754r_private.h>
 
 #include <fenv.h>
 
@@ -82,7 +83,7 @@ __ROUND_RETURN_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
   __ROUND_RETURN_TYPE z = IEEE_FUNCTION_NAME (x);
-  if (FUNC_D(isnan) (x) || FUNC_D(isinf) (x)
+  if (FUNC_D(__isnan) (x) || FUNC_D(__isinf) (x)
 	|| x > __MAX_VALUE || x < __MIN_VALUE)
     DFP_ERRNO (EDOM);
   return z;

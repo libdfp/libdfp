@@ -33,6 +33,7 @@
 #include <math.h>
 #include <float.h>
 #include <errno.h>
+#include <ieee754r_private.h>
 
 #define FUNCTION_NAME nextafter
 

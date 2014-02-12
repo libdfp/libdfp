@@ -32,6 +32,7 @@
 #include <decNumber.h>
 #include <math.h>
 #include <errno.h>
+#include <ieee754r_private.h>
 
 #define FUNCTION_NAME remainder
 
@@ -76,7 +77,7 @@ DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
   DEC_TYPE z = IEEE_FUNCTION_NAME (x, y);
-  if (!FUNC_D(isinf) (x) || (!FUNC_D(isnan) (x) && y == DFP_CONSTANT(0.0)))
+  if (!FUNC_D(__isinf) (x) || (!FUNC_D(__isnan) (x) && y == DFP_CONSTANT(0.0)))
     DFP_ERRNO (EDOM);
   return z;
 }

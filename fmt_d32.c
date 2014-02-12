@@ -38,6 +38,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <math.h>
+#include <ieee754r_private.h>
 
 /* DECIMAL128_Pmax + 14 (where '14' represents all the extra characters present
  * in the output string).  Defined here so we avoid including <decimal128.h>.  */
@@ -85,7 +87,7 @@ static _Decimal128 __dfp_adjust_precision(_Decimal128 x, int prec)
   _Decimal128 y = x;
   int powof10 = (34 - prec);
 
-  if (x==0.0DL || __builtin_isnand128(x) || __builtin_isinfd128(x))
+  if (x==0.0DL || __isnand128(x) || __isinfd128(x))
     return x;
 
   /* Get a number which, when added to 'x' causes the bits outside of the

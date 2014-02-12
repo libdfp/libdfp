@@ -31,6 +31,7 @@
 #include <decContext.h>
 #include <decNumber.h>
 #include <math.h>
+#include <ieee754r_private.h>
 
 #include <decNumberMath.h>
 
@@ -50,7 +51,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, int *y)
 #if NUMDIGITS_SUPPORT==1
   int digits, exponent;
 
-  if (FUNC_D (isinf) (x) || FUNC_D (isnan) (x))
+  if (FUNC_D (__isinf) (x) || FUNC_D (__isnan) (x))
     return x+x;
 
   // Given 3.1e0 is encoded as 31e-1 and we want .31e1
