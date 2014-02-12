@@ -24,32 +24,17 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#include <stdio.h>
-
-#ifndef _DECIMAL_SIZE
-#  define _DECIMAL_SIZE 32
-#endif
-
 #include <math.h>
-
-#define FUNCTION_NAME isinf
-
-#include <dfpmacro.h>
+#include <ieee754r_private.h>
 
 int
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
+__isinfd32 (_Decimal32 x)
 {
   int cr0;
-#if _DECIMAL_SIZE == 32 || _DECIMAL_SIZE == 64
-#define DTSTD "dtstdc"
-  _Decimal64 input = x;
-#elif _DECIMAL_SIZE == 128
-# define DTSTD "dtstdcq"
-  register _Decimal128 input asm("fr0") = x;
-#endif
 
-  asm (DTSTD " cr0,%1,0x04\n"
-       "mfcr   %0, 0\n"
+  _Decimal64 input = x;
+  asm ("dtstdc cr0,%1,0x04\n"
+       "mfcr    %0, 0\n"
        : "=r" (cr0)
        : "f" (input)
        : "cr0");
@@ -59,5 +44,5 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
      - 1010 operand negative with math  */
   return (cr0 & 0x20000000) ? (cr0 & 0x80000000 ? -1 : 1) : 0;
 }
-
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+hidden_def (__isinfd32)
+weak_alias (__isinfd32, isinfd32)

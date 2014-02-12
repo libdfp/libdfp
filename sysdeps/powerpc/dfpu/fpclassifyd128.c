@@ -1,6 +1,6 @@
 /* Returns the type of floating point number from a _Decimal32 type
 
-   Copyright (C) 2008, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2008-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -23,24 +23,18 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 128
-
 #include <math.h>
-
-#define FUNCTION_NAME fpclassify
-
-#include <dfpmacro.h>
+#include <ieee754r_private.h>
 
 int
-INTERNAL_FUNCTION_NAME (DEC_TYPE val)
+__fpclassifyd128 (_Decimal128 val)
 {
   int result = FP_NAN;
   register _Decimal128 fr0 asm("fr0") = val;
 
   /* Check in order, FP_NORMAL, FP_ZERO, FP_SUBNORMAL, FP_INFINITE,
      FP_NAN. The thought is the most likely case exits early. */
-
-  __asm__(
+  asm (
    "dtstdcq cr0,%1,0x08;"
    "li %0,4;"
    "beq cr0,1f;"
@@ -54,9 +48,11 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE val)
    "li %0,1;"
    "beq cr0,1f;"
    "li %0,0;"
-  "1:;"
-   : "=r" (result) : "f" (fr0) : "cr0");
+   "1:;"
+   : "=r" (result)
+   : "f" (fr0) : "cr0");
 
   return result;
 }
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+hidden_def (__fpclassifyd128)
+weak_alias (__fpclassifyd128, fpclassifyd128)

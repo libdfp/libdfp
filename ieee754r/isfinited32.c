@@ -26,6 +26,7 @@
 
 #include <math.h>
 #include <math_private.h>
+#include <ieee754r_private.h>
 
 int
 __isfinited32 (_Decimal32 x)
@@ -38,6 +39,7 @@ __isfinited32 (_Decimal32 x)
     return 0;
   return 1;
 }
+hidden_def (__isfinited32)
 weak_alias (__isfinited32, isfinited32)
 
 /* We erroneously published a version of math.h which used 'finite' instead of

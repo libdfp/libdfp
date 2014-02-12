@@ -1,5 +1,7 @@
 /* Returns non-zero if the _Decimal128 is finite
+
    Copyright (C) 2008, 2010 IBM Corporation.
+   Copyright (C) 2014 Free Software Foundation, Inc.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
               Ryan S. Arnold <rsa@us.ibm.com>
@@ -20,14 +22,28 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 128
-#define FUNCTION_NAME isfinite
-#define TEST_CLASS_MASK 0x38
+#include <math.h>
+#include <ieee754r_private.h>
 
-#include "is_template.h"
+int
+__isfinited128 (_Decimal128 val)
+{
+  register _Decimal128 input asm("fr0") = val;
+  int cr0;
+
+  asm ("dtstdcq cr0,%1,0x38\n"
+       "mfcr     %0, 0\n"
+    : "=r" (cr0)
+    : "f" (input)
+    : "cr0");
+
+  return (cr0 & 0x20000000) ? 1 : 0;
+}
+hidden_def (__isfinited128)
+weak_alias (__isfinited128, isfinited128)
 
 /* We erroneously published a version of math.h which used 'finite' instead of
  * 'isfinite' and math.h contained a polymorphic 'isfinite()' function which
  * inlined calles to 'finited*' so we've created aliases for compatability.  */
-strong_alias (INTERNAL_FUNCTION_NAME,FUNC_D(finite))
-strong_alias (INTERNAL_FUNCTION_NAME,FUNC_D(__finite))
+strong_alias (__isfinited128, finited128)
+strong_alias (__isfinited128, __finited128)

@@ -52,9 +52,24 @@ extern _Decimal32 __lgamma_rd32 (_Decimal32, int *);
 extern _Decimal64 __lgamma_rd64 (_Decimal64, int *);
 extern _Decimal128 __lgamma_rd128 (_Decimal128, int *);
 
-
 extern int __isnormald32 (_Decimal32 x);
 extern int __isnormald64 (_Decimal64 x);
 extern int __isnormald128 (_Decimal128 x);
+
+hidden_proto(__isnand32)
+hidden_proto(__isnand64)
+hidden_proto(__isnand128)
+
+hidden_proto(__isinfd32)
+hidden_proto(__isinfd64)
+hidden_proto(__isinfd128)
+
+hidden_proto(__isfinited32)
+hidden_proto(__isfinited64)
+hidden_proto(__isfinited128)
+
+hidden_proto(__fpclassifyd32)
+hidden_proto(__fpclassifyd64)
+hidden_proto(__fpclassifyd128)
 
 #endif /* _IEEE754R_PRIVATE_H  */

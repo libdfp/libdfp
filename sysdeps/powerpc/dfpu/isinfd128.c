@@ -20,5 +20,25 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 128
-#include "isinfd32.c"
+#include <math.h>
+#include <ieee754r_private.h>
+
+int
+__isinfd128 (_Decimal128 x)
+{
+  register _Decimal128 input asm("fr0") = x;
+  int cr0;
+
+  asm ("dtstdcq cr0,%1,0x04\n"
+       "mfcr     %0, 0\n"
+       : "=r" (cr0)
+       : "f" (input)
+       : "cr0");
+
+  /* cr0 bits are 28:31 and:
+     - 0010 operand positive with match
+     - 1010 operand negative with math  */
+  return (cr0 & 0x20000000) ? (cr0 & 0x80000000 ? -1 : 1) : 0;
+}
+hidden_def (__isinfd128)
+weak_alias (__isinfd128, isinfd128)

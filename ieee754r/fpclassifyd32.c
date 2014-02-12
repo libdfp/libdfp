@@ -30,6 +30,7 @@
 
 #include <math.h>
 #include <endian.h>
+#include <ieee754r_private.h>
 
 #define FUNCTION_NAME fpclassify
 
@@ -137,5 +138,5 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   else /* x < DEC_TYPE_MIN  */
     return FP_SUBNORMAL;
 }
-
+hidden_def (INTERNAL_FUNCTION_NAME)
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

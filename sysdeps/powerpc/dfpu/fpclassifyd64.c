@@ -22,5 +22,36 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#include "fpclassifyd32.c"
+#include <math.h>
+#include <ieee754r_private.h>
+
+int
+__fpclassifyd64 (_Decimal64 x)
+{ 
+  int result = 0;
+  /* Check in order, FP_NORMAL, FP_ZERO, FP_SUBNORMAL, FP_INFINITE,
+     FP_NAN.  The most likely case exits early.  */
+  asm (
+    "dtstdc cr0,%1,0x08;"
+    "li %0,4;"
+    "beq cr0,1f;"
+    "dtstdc cr0,%1,0x20;"
+    "li %0,2;"
+    "beq cr0,1f;"
+
+    "dtstdc cr0,%1,0x10;"
+    "li %0,3;"
+    "beq cr0,1f;"
+
+    "dtstdc cr0,%1,0x04;"
+    "li %0,1;"
+    "beq cr0,1f;"
+    "li %0,0;"
+    "1:;"
+    : "=r" (result)
+    : "f" (x)
+    : "cr0");
+  return result;
+}
+hidden_def (__fpclassifyd64)
+weak_alias (__fpclassifyd64, fpclassifyd64)

@@ -1,7 +1,7 @@
 /* _Decimal32 fpclassify classification function.
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -24,50 +24,40 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _DECIMAL_SIZE
-#  define _DECIMAL_SIZE 32
-#endif
-
 #include <math.h>
-
-#define FUNCTION_NAME fpclassify
-
-#include <dfpmacro.h>
+#include <ieee754r_private.h>
 
 int
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
-{
+__fpclassifyd32 (_Decimal32 x)
+{ 
   int result = 0;
-#if _DECIMAL_SIZE == 32
+
   /* Since _Decimal32 is promoted to _Decimal64, __DEC32_SUBNORMAL_MIN__ is well
    * within the bounds of a _Decimal64.  This means that we need to do our range
    * check for __DEC32_SUBNORMAL_MIN__ before dropping into the asm code.  This
    * is crude.  The asm code should probably be broken into two parts with this
    * code in between so the zero, <-1 and > 1 checks aren't redundant.  */
-  if (x != 0 && x > -1 && x < 1 && x <= __DEC32_SUBNORMAL_MIN__)
+  if (x != 0 && x > -1 && x < 1 && x <= 0.000001E-95DF)
     return FP_SUBNORMAL;
-#endif
 
-/* Check in order, FP_NORMAL, FP_ZERO, FP_SUBNORMAL, FP_INFINITE,
-   FP_NAN.  The most likely case exits early.  */
-  __asm__(	"dtstdc cr0,%1,0x08;"
-		"li %0,4;"
-		"beq cr0,1f;"
-		"dtstdc cr0,%1,0x20;"
-		"li %0,2;"
-		"beq cr0,1f;"
-#if _DECIMAL_SIZE != 32 /* This was alread done for _Decimal32 earlier.  */
-		"dtstdc cr0,%1,0x10;"
-		"li %0,3;"
-		"beq cr0,1f;"
-#endif
-		"dtstdc cr0,%1,0x04;"
-		"li %0,1;"
-		"beq cr0,1f;"
-		"li %0,0;"
-	"1:;"
-	: "=r" (result): "f" ((_Decimal64) x): "cr0");
+  /* Check in order, FP_NORMAL, FP_ZERO, FP_SUBNORMAL, FP_INFINITE,
+     FP_NAN.  The most likely case exits early.  */
+  asm (
+    "dtstdc cr0,%1,0x08;"
+    "li %0,4;"
+    "beq cr0,1f;"
+    "dtstdc cr0,%1,0x20;"
+    "li %0,2;"
+    "beq cr0,1f;"
+    "dtstdc cr0,%1,0x04;"
+    "li %0,1;"
+    "beq cr0,1f;"
+    "li %0,0;"
+    "1:;"
+    : "=r" (result)
+    : "f" ((_Decimal64) x)
+    : "cr0");
   return result;
 }
-
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+hidden_def (__fpclassifyd32)
+weak_alias (__fpclassifyd32, fpclassifyd32)

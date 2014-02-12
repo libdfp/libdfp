@@ -1,6 +1,7 @@
 /* Returns non-zero if the _Decimal128 is normalized
 
    Copyright (C) 2008 IBM Corporation.
+   Copyright (C) 2014 Free Software Foundation, Inc.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
 
@@ -18,10 +19,23 @@
    if not, write to the Free Software Foundation, Inc., 59 Temple Place,
    Suite 330, Boston, MA 02111-1307 USA.
 
-   Please see dfp/COPYING.txt for more information.  */
+   Please see dfp/COPYING.txt for more normalormation.  */
 
-#define _DECIMAL_SIZE 128
-#define FUNCTION_NAME isnormal
-#define TEST_CLASS_MASK 0x08
+#include <math.h>
+#include <ieee754r_private.h>
 
-#include "is_template.h"
+int
+__isnormald128 (_Decimal128 x)
+{
+  register _Decimal128 input asm("fr0") = x;
+  int cr0;
+
+  asm ("dtstdcq cr0,%1,0x08\n"
+       "mfcr     %0, 0\n"
+       : "=r" (cr0)
+       : "f" (input)
+       : "cr0");
+
+  return (cr0 & 0x20000000) ? (cr0 & 0x80000000 ? -1 : 1) : 0;
+}
+weak_alias (__isnormald128, isnormald128)

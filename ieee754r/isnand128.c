@@ -24,6 +24,7 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #include <math.h>
+#include <ieee754r_private.h>
 #include <math_private.h>
 
 int
@@ -35,4 +36,5 @@ __isnand128 (_Decimal128 x)
   /* 0 11111 10 ... == sNaN  */
   return (hx & DEC128_NAN_MASK64) == DEC128_NAN_MASK64;
 }
+hidden_def (__isnand128)
 weak_alias (__isnand128, isnand128)

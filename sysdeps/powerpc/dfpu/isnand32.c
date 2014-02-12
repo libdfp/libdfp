@@ -24,27 +24,21 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _DECIMAL_SIZE
-#  define _DECIMAL_SIZE 32
-#endif
-
 #include <math.h>
-
-#define FUNCTION_NAME isnan
-
-#include <dfpmacro.h>
+#include <ieee754r_private.h>
 
 int
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
+__isnand32 (_Decimal32 x)
 {
-  int result = 0;
-  __asm__(	"dtstdc cr0,%1,3;"
-		"li %0,0;"
-		"bne cr0,1f;"
-		"li %0,1;"
-	"1:;"
-	: "=r" (result): "f" ((_Decimal64) x): "cr0");
-  return result;
-}
+  int cr0;
 
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+  asm ("dtstdc 0,%1,3\n"
+       "mfcr   %0, 0\n"
+    : "=r" (cr0)
+    : "f" ((_Decimal64)x)
+    : "cr0");
+
+  return (cr0 & 0x20000000) ? 1 : 0;
+}
+hidden_def (__isnand32)
+weak_alias (__isnand32, isnand32)

@@ -25,6 +25,7 @@
 
 #include <math.h>
 #include <math_private.h>
+#include <ieee754r_private.h>
 
 int
 __isinfd128 (_Decimal128 x)
@@ -36,4 +37,5 @@ __isinfd128 (_Decimal128 x)
   return ((hx & DEC128_NAN_MASK64) == DEC128_INF_MASK64) ?
    ((hx & UINT64_C(0x8000000000000000)) ? -1 : 1) : 0;
 }
+hidden_def (__isinfd128)
 weak_alias (__isinfd128, isinfd128)

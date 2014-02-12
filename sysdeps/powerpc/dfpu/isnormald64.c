@@ -1,6 +1,7 @@
 /* Returns non-zero if the _Decimal64 is normalized
 
    Copyright (C) 2008 IBM Corporation.
+   Copyright (C) 2014 Free Software Foundation, Inc.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
 
@@ -20,8 +21,20 @@
 
    Please see dfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#define FUNCTION_NAME isnormal
-#define TEST_CLASS_MASK 0x08
+#include <math.h>
+#include <ieee754r_private.h>
 
-#include "is_template.h"
+int
+__isnormald64 (_Decimal64 x)
+{
+  int cr0;
+
+  asm ("dtstdc cr0,%1,0x08\n"
+       "mfcr   %0, 0\n"
+    : "=r" (cr0)
+    : "f" (x)
+    : "cr0");
+
+  return (cr0 & 0x20000000) ? 1 : 0;
+}
+weak_alias (__isnormald64, isnormald64)

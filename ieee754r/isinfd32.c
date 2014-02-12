@@ -25,6 +25,7 @@
 
 #include <math.h>
 #include <math_private.h>
+#include <ieee754r_private.h>
 
 int
 __isinfd32 (_Decimal32 x)
@@ -36,4 +37,5 @@ __isinfd32 (_Decimal32 x)
   return ((hx & DEC32_NAN_MASK) == DEC32_INF_MASK) ?
    ((hx & 0x80000000) ? -1 : 1) : 0;
 }
+hidden_def (__isinfd32)
 weak_alias (__isinfd32, isinfd32)

@@ -1,6 +1,6 @@
 /* _Decimal64 isNaN classification function.
 
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -22,5 +22,21 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#include "isnand32.c"
+#include <math.h>
+#include <ieee754r_private.h>
+
+int
+__isnand64 (_Decimal64 x)
+{
+  int cr0;
+
+  asm ("dtstdc 0,%1,3\n"
+       "mfcr   %0, 0\n"
+    : "=r" (cr0)
+    : "f" (x)
+    : "cr0");
+
+  return (cr0 & 0x20000000) ? 1 : 0;
+}
+hidden_def (__isnand64)
+weak_alias (__isnand64, isnand64)

@@ -1,5 +1,46 @@
 2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* include/ieee754r_private.h (__isnand32): Add hidden proto.
+	(__isnand64): Likewise.
+	(__isnand128): Likewise.
+	(__isinfd32): Likewise.
+	(__isinfd64): Likewise.
+	(__isinfd128): Likewise.
+	(__isfinited32): Likewise.
+	(__isfinited64): Likewise.
+	(__isfinited128): Likewise.
+	(__fpclassifyd32): Likewise.
+	(__fpclassifyd64): Likewise.
+	(__fpclassifyd128): Likewise.
+	* sysdeps/powerpc/dfpu/fpclassifyd128.c (__fpclassifyd128): Code
+	refactor and add hidden_def for internal symbol.
+	* sysdeps/powerpc/dfpu/fpclassifyd32.c (__fpclassifyd32): Likewise.
+	* sysdeps/powerpc/dfpu/fpclassifyd64.c (__fpclassifyd64): Likewise.
+	* sysdeps/powerpc/dfpu/isfinited128.c (__isfinited128): Likewise.
+	* sysdeps/powerpc/dfpu/isfinited32.c (__isfinited32): Likewise.
+	* sysdeps/powerpc/dfpu/isfinited64.c (__isfinited64): Likewise.
+	* sysdeps/powerpc/dfpu/isinfd128.c (__isinfd128): Likewise.
+	* sysdeps/powerpc/dfpu/isinfd32.c (__isinfd32): Likewise.
+	* sysdeps/powerpc/dfpu/isinfd64.c (__isinfd64): Likewise.
+	* sysdeps/powerpc/dfpu/isnand128.c (__isnand128): Likewise.
+	* sysdeps/powerpc/dfpu/isnand32.c (__isnand32): Likewise.
+	* sysdeps/powerpc/dfpu/isnand64.c (__isnand64): Likewise.
+	* sysdeps/powerpc/dfpu/isnormald128.c (__isnormald128): Likewise.
+	* sysdeps/powerpc/dfpu/isnormald32.c (__isnormald32): Likewise.
+	* sysdeps/powerpc/dfpu/isnormald64.c (__isnormald64): Likewise.
+	* ieee754r/fpclassifyd32.c (__fpclassify): Add hidden_def.
+	* ieee754r/isfinited128.c (__isfinited128): Likewise.
+	* ieee754r/isfinited32.c (__isfinited32): Likewise.
+	* ieee754r/isfinited64.c (__isfinited64): Likewise.
+	* ieee754r/isinfd128.c (__isinfd64): Likewise.
+	* ieee754r/isinfd32.c (__isinfd64): Likewise.
+	* ieee754r/isinfd64.c (__isinfd64): Likewise.
+	* ieee754r/isnand128.c (__isnand64): Likewise.
+	* ieee754r/isnand32.c (__isnand64): Likewise.
+	* ieee754r/isnand64.c (__isnand64): Likewise.
+
+2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/samequantumd32.c (samequantum): Fix quantum exponent
 	compare.
 	* tests/test-samequantum.c: New file: samequantumd[32|64|128] tests.
