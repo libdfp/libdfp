@@ -76,4 +76,8 @@ hidden_proto(__fabsd32)
 hidden_proto(__fabsd64)
 hidden_proto(__fabsd128)
 
+hidden_proto(__signbitd32)
+hidden_proto(__signbitd64)
+hidden_proto(__signbitd128)
+
 #endif /* _IEEE754R_PRIVATE_H  */

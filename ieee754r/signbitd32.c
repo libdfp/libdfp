@@ -32,6 +32,7 @@
 #include <decContext.h>
 #include <decNumber.h>
 #include <math.h>
+#include <ieee754r_private.h>
 
 #define FUNCTION_NAME signbit
 
@@ -46,5 +47,5 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 
   return ___decNumberIsNegative(&dn_x);
 }
-
+hidden_def (INTERNAL_FUNCTION_NAME)
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
