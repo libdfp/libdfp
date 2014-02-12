@@ -1,5 +1,10 @@
 2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* ieee754r/fabsd32.c (fabsd): Add hidden_def.
+	* include/ieee754r_private.h: Likewise.
+
+2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* fmt_d32.c (__dfp_adjust_precision): Fix PLT calls for FP classify
 	functions.
 	* ieee754r/acosd32.c: Likewise.

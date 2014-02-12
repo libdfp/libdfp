@@ -31,6 +31,7 @@
 #include <decContext.h>
 #include <decNumber.h>
 #include <math.h>
+#include <ieee754r_private.h>
 
 #define FUNCTION_NAME fabs
 
@@ -53,5 +54,5 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 
   return result;
 }
-
+hidden_def (INTERNAL_FUNCTION_NAME)
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

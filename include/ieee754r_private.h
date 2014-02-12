@@ -72,4 +72,8 @@ hidden_proto(__fpclassifyd32)
 hidden_proto(__fpclassifyd64)
 hidden_proto(__fpclassifyd128)
 
+hidden_proto(__fabsd32)
+hidden_proto(__fabsd64)
+hidden_proto(__fabsd128)
+
 #endif /* _IEEE754R_PRIVATE_H  */
