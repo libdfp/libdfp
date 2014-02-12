@@ -164,7 +164,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   flag = 0;
   sign = (x < 0.0DL)?1:0;
 
-  ix = FUNC_D(fabs) (x);
+  ix = FUNC_D(__fabs) (x);
 
   if (ix >= 1.0DL)	/* |x|>= 1 */
     {

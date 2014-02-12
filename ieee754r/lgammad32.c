@@ -34,6 +34,7 @@
 #include <math.h>
 #include <float.h>
 #include <errno.h>
+#include <ieee754r_private.h>
 
 #define FUNCTION_NAME lgamma
 
@@ -791,13 +792,13 @@ FUNC_D (__lgamma_r) (DEC_TYPE x, int *signgamp)
 
   *signgamp = 1;
 
-  if (isinf (x) || isnan(x))
+  if (FUNC_D(__isinf) (x) || FUNC_D(__isnan) (x))
     return x * x;
 
   if (x < 0.0DL)
     {
       q = -x;
-      p = floord128 (q);
+      p = __floord128 (q);
       /*  Argument is a negative Integer: Pole Error */
       if (p == q)
 	{
@@ -813,14 +814,14 @@ FUNC_D (__lgamma_r) (DEC_TYPE x, int *signgamp)
 	  p += 1.0DL;
 	  z = p - q;
 	}
-      z = q * sind128 (M_PIdl * z);
+      z = q * __sind128 (M_PIdl * z);
       if (z == 0.0DL)
 	{
 	  DFP_EXCEPT (FE_OVERFLOW);
 	  return (DEC_TYPE)(*signgamp * huge * huge);
 	}
       w = __lgamma_rd128 (q, &i);
-      z = logd128 (M_PIdl / z) - w;
+      z = __logd128 (M_PIdl / z) - w;
       return (DEC_TYPE)(z);
     }
 
@@ -865,7 +866,7 @@ FUNC_D (__lgamma_r) (DEC_TYPE x, int *signgamp)
 	      z = x - 1.0DL;
 	      p = z * neval (z, RN2, NRN2) / deval (z, RD2, NRD2);
 	    }
-	  p = p - FUNC_D(log) (x);
+	  p = p - FUNC_D(__log) (x);
 	  break;
 
 	case 1:
@@ -893,7 +894,7 @@ FUNC_D (__lgamma_r) (DEC_TYPE x, int *signgamp)
 		  z = x - 1.0DL;
 		  p = z * neval (z, RN2, NRN2) / deval (z, RD2, NRD2);
 		}
-	      p = p - FUNC_D(log) (x);
+	      p = p - FUNC_D(__log) (x);
 	    }
 	  else if (x < 1.0DL)
 	    {
@@ -1056,7 +1057,7 @@ FUNC_D (__lgamma_r) (DEC_TYPE x, int *signgamp)
     }
 
   q = ls2pi - x;
-  q = (x - 0.5DL) * FUNC_D(log) (x) + q;
+  q = (x - 0.5DL) * FUNC_D(__log) (x) + q;
   if (x <= 1.0e18DL)
     {
       p = 1.0DL / (x * x);

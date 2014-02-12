@@ -103,7 +103,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 
   z = x;
  /* extract power of 2, leaving mantissa between 0.5 and 1  */
-  x = FUNC_D(frexp) (x, &e);
+  x = FUNC_D(__frexp) (x, &e);
 
   /* Approximate cube root of number between .5 and 1,
      peak relative error = 1.2e-6  */
@@ -142,7 +142,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
     }
 
   /* multiply by power of 2 */
-  x = FUNC_D(ldexp) (x, e);
+  x = FUNC_D(__ldexp) (x, e);
 
   /* Newton iteration */
   x -= (x - (z / (x * x))) * 0.3333333333333333333333333333333333333333DL;

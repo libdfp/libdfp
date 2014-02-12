@@ -56,14 +56,14 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
 //      return FUNC_D (__builtin_signbit) (x) ? -DFP_HUGE_VAL : DFP_HUGE_VAL;
       return (x<0) ? -DFP_HUGE_VAL : DFP_HUGE_VAL;
     }
-  if (x < DFP_CONSTANT(0.0) && (!FUNC_D (__isinf) (x) && FUNC_D (rint) (x) == x) )
+  if (x < DFP_CONSTANT(0.0) && (!FUNC_D (__isinf) (x) && FUNC_D (__rint) (x) == x) )
     {
       DFP_EXCEPT (FE_INVALID);
       return DFP_NAN;
     }
 
   gamma = FUNC_D(__lgamma_r) (x,&local_signgam);
-  result = local_signgam * FUNC_D(exp) (gamma);
+  result = local_signgam * FUNC_D(__exp) (gamma);
 
   return result;
 }
@@ -75,7 +75,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   DEC_TYPE z = IEEE_FUNCTION_NAME (x);
   if (!FUNC_D(__isfinite) (z) && FUNC_D(__isfinite) (x))
     DFP_ERRNO (ERANGE);
-  if (x < DFP_CONSTANT(0.0) && (FUNC_D (__isinf) (x) && FUNC_D (rint) (x) == x) )
+  if (x < DFP_CONSTANT(0.0) && (FUNC_D (__isinf) (x) && FUNC_D (__rint) (x) == x) )
     DFP_ERRNO (EDOM);
   return z;
 }

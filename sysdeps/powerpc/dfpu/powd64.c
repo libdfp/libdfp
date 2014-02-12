@@ -132,7 +132,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 
   /* Split y into integer and fraction and use the identity:
      x ^ (m+n) == ( x^m ) * (x^n) */
-  y_int = FUNC_D(rint) (y);
+  y_int = FUNC_D(__rint) (y);
   y_frac = y - y_int;
 
 #ifdef __DEBUG_PRINT__
@@ -194,7 +194,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 	  int int_y = y_int; /* convert to int */
 	  DEC_TYPE log_x;
 
-	  log_x = FUNC_D(log) (x);
+	  log_x = FUNC_D(__log) (x);
 	  result = intpow(x, int_y) * FUNC_D(exp) (y_frac * log_x);
 	}
     }

@@ -181,7 +181,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
     return x+x;
 
   sign = (x > 0.0DL)?0:1;
-  ix = FUNC_D(fabs) (x);
+  ix = FUNC_D(__fabs) (x);
 
   if (ix >= 1.0DL)		/* |x| >= 1 */
     {
@@ -296,7 +296,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   else
     {				/* |x| >= .625 */
       z = (one - ix) * 0.5DL;
-      s = sqrtd128 (z);
+      s = __sqrtd128 (z);
       /* Compute an extended precision square root from
 	 the Newton iteration  s -> 0.5 * (s + z / s).
          The change w from s to the improved value is

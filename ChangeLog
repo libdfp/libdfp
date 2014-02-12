@@ -1,5 +1,19 @@
 2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* ieee754r/acosd32.c (acosd): Use internal symbols for function calls.
+	* ieee754r/asind32.c (asind): Likewise.
+	* ieee754r/cbrtd32.c (cbrtd): Likewise.
+	* ieee754r/erfd32.c (erfd): Likewise.
+	* ieee754r/tgammad32.c (tgammad): Likewise.
+	* sysdeps/powerpc/dfpu/expd64.c (expd64): Likewise.
+	* sysdeps/powerpc/dfpu/powd64.c (powd64): Likewise.
+	* ieee754r/lgammad32.c (__lgammar_r): Fix isinf/isnan tests using
+	decimal implementations. Also use internal symbols for functions
+	calls.
+	
+
+2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/signbitd32.c (signbitd): Add hidden_def.
 	* include/ieee754r_private.h: Likewise.
 

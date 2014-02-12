@@ -70,7 +70,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE val)
   if (val < DFP_CONSTANT(0.0))
     {
       neg = 1;
-      val = FUNC_D(fabs) (val);
+      val = FUNC_D(__fabs) (val);
     }
 
   tmp = val;

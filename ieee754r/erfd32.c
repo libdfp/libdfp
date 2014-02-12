@@ -30,6 +30,7 @@
 #endif
 
 #include <math.h>
+#include <ieee754r_private.h>
 
 #define FUNCTION_NAME erf
 
@@ -930,7 +931,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
       z = u.value;
       */
       z = ix;
-      r = expd128 (-z * z - 0.5625DF) * expd128 ((z - x) * (z + x) + p);
+      r = __expd128 (-z * z - 0.5625DF) * __expd128 ((z - x) * (z + x) + p);
       if (!sign)
 	return (DEC_TYPE)(r / x);
       else
