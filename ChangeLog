@@ -1,3 +1,15 @@
+2013-02-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* decNumberMath/decNumberMath.h (___decNumberPow): Define as
+	hidden_proto to avoid intra PLT calls.
+	(___decNumberSinh): Likewise.
+	(___decNumberCosh): Likewise.
+	(___decNumberTanh): Likewise.
+	(___decNumberSin): Likewise.
+	(___decNumberCos): Likewise.
+	(___decNumberTan): Likewise.
+	(___decNumberAtan): Likewise.
+
 2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/logd64.c (logd64): Use internal symbols for

@@ -27,16 +27,24 @@
 #define _DECNUMBERMATH_H
 
 extern decNumber* ___decNumberPow (decNumber *, decNumber *, decNumber *, decContext *);
+hidden_proto (___decNumberPow)
 
 /* Hyperbolic Functions */
 extern decNumber* ___decNumberSinh (decNumber *, decNumber *, decContext *);
+hidden_proto (___decNumberSinh)
 extern decNumber* ___decNumberCosh (decNumber *, decNumber *, decContext *);
+hidden_proto (___decNumberCosh)
 extern decNumber* ___decNumberTanh (decNumber *, decNumber *, decContext *);
+hidden_proto (___decNumberTanh)
 
 /* Trigonometric Functions */
 extern decNumber* ___decNumberSin (decNumber *, decNumber *, decContext *);
+hidden_proto (___decNumberSin)
 extern decNumber* ___decNumberCos (decNumber *, decNumber *, decContext *);
+hidden_proto (___decNumberCos)
 extern decNumber* ___decNumberTan (decNumber *, decNumber *, decContext *);
+hidden_proto (___decNumberTan)
 extern decNumber* ___decNumberAtan (decNumber *, decNumber *, decContext *);
+hidden_proto (___decNumberAtan)
 
 #endif /* _DECNUMBERMATH_H  */
