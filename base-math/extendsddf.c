@@ -28,4 +28,24 @@
 #define DEST 64
 #define NAME extend
 
-#include "truncsdsf.c"
+#include "dfpacc.h"
+#include "convert.h"
+
+CONVERT_WRAPPER(
+// truncsdsf, extendsddf
+	double temp;
+	SRC_TYPE a_norm;
+	long long mant;
+	int	exp, sexp;
+
+	a_norm = FREXPD32 (a, &exp);
+	mant = a_norm * 1E+7DF;		/* 7 digits of mantissa.  */
+	sexp = exp - 7;			/* Exponent adjusted for mantissa.  */
+	temp = mant;
+	if (sexp > 0)
+	  temp *= BINPOWOF10[sexp];
+	else if (sexp < 0)
+	  temp /= BINPOWOF10[-sexp];
+	result = temp;
+)
+hidden_def (PREFIXED_FUNCTION_NAME)

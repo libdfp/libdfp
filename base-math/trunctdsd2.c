@@ -23,9 +23,11 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #include <dfpacc.h>
+#include <convert.h>
 
 _Decimal32
 __BACKEND_(trunctdsd2) (_Decimal128 x)
 {
   return (_Decimal32)x;
 }
+hidden_def (__BACKEND_(trunctdsd2))

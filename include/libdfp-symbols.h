@@ -34,9 +34,16 @@
 #define	MIN(a,b) (((a)<(b))?(a):(b))
 
 /* Define ALIASNAME as a strong alias for NAME.  */
-#define strong_alias(name, aliasname) _strong_alias(name, aliasname)
-#define _strong_alias(name, aliasname) \
+#ifndef __ASSEMBLER__
+# define strong_alias(name, aliasname) _strong_alias(name, aliasname)
+# define _strong_alias(name, aliasname) \
   extern __typeof (name) aliasname __attribute__ ((alias (#name)));
+#else
+# define strong_alias(original, alias) \
+  .globl alias; \
+  .set alias, original
+# define strong_data_alias(original, alias) strong_alias(original, alias)
+#endif
 
 /* Define ALIASNAME as a weak alias for NAME.
    If weak aliases are not available, this defines a strong alias.  */
@@ -66,6 +73,7 @@
 
 /* Macros to avoid PLT calls within libdfp.  */
 #ifdef SHARED
+# ifndef __ASSEMBLER__
 #  define __hidden_proto_hiddenattr(attrs...) \
   __attribute__ ((visibility ("hidden"), ##attrs))
 #  define hidden_proto(name, attrs...) \
@@ -90,6 +98,14 @@
 #  define hidden_weak(name) \
         __hidden_ver1(__GI_##name, name, name) __attribute__((weak));
 #  define hidden_data_weak(name)        hidden_weak(name)
+# else /* __ASSEMBLER__  */
+#  define hidden_def(name)      strong_alias (name, __GI_##name)
+#  define hidden_weak(name)     hidden_def (name)
+#  define hidden_ver(local, name) strong_alias (local, __GI_##name)
+#  define hidden_data_def(name) strong_data_alias (name, __GI_##name)
+#  define hidden_data_weak(name)        hidden_data_def (name)
+#  define hidden_data_ver(local, name) strong_data_alias (local, __GI_##name)
+# endif
 #else
 # define hidden_proto(name, attrs...)
 # define hidden_weak(name)
@@ -100,6 +116,9 @@
 # define hidden_data_ver(local, name)
 #endif /* SHARED */
 
+/* Get some dirty hacks.  */
+#include <symbol-hacks.h>
+
 /* C++ needs to know that types and declarations are C, not C++.  */
 #ifdef	__cplusplus
 # define __BEGIN_DECLS  extern "C" {
@@ -108,6 +127,5 @@
 # define __BEGIN_DECLS
 # define __END_DECLS
 #endif
-
 
 #endif /* _LIBDFP_SYMBOLS_H  */

@@ -357,6 +357,7 @@ $(addsuffix .os, $(libdfp_cxx_tests)): $(top_srcdir)/dfp/decimal/decimal $(top_s
 
 # Explicitly link against the uninstalled GLIBC and the libdfp.so.1 we just
 # built.
+$(libdfp_c_tests): CFLAGS += -DNOT_IN_libdfp
 $(libdfp_c_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .os,$@) -o $@
 	@echo

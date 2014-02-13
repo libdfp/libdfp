@@ -28,4 +28,30 @@
 #define DEST 128
 #define NAME extend
 
-#include "truncdfsd.c"
+#include "dfpacc.h"
+#include "convert.h"
+#include <float.h> /* To pick up __DBL_MANT_DIG__  */
+
+CONVERT_WRAPPER(
+// truncdfsd, extenddfdd, extenddftd
+	_Decimal128 temp; /* Needs to be big enough so that temp = mant doesn't round.  */
+	double a_norm;
+	long long mant;
+	int exp, sexp;
+
+	a_norm = FREXPDF (a, &exp);
+	mant = a_norm * 9007199254740992.0;	/* 53 bits of mantissa.  */
+	//sexp = exp - 53;			/* Exponent adjusted for mantissa.  */
+	sexp = exp - __DBL_MANT_DIG__;		/* Exponent adjusted for mantissa.  */
+	temp = mant;				/* DI -> TD.  */
+	if (sexp > 0)
+		temp *= DECPOWOF2[sexp];
+	else if (sexp < 0)
+		temp /= DECPOWOF2[-sexp];
+	result = (DEST_TYPE)temp; /* Cast to the resultant type.  */
+	/* Clear inexact exception raised by DFP arithmetic.  */
+	if (DFP_EXCEPTIONS_ENABLED
+	    && DFP_TEST_EXCEPTIONS (FE_OVERFLOW|FE_UNDERFLOW) == 0)
+	  DFP_CLEAR_EXCEPTIONS (FE_INEXACT);
+)
+hidden_def (PREFIXED_FUNCTION_NAME)

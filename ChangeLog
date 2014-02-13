@@ -1,5 +1,28 @@
 2013-02-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Add NOT_IN_libdf when building tests.
+	* base-math/extenddfdd.c (extenddfdd): Add hidden_def definition.
+	* base-math/extenddftd.c (extenddftd): Likewise.
+	* base-math/extendsddf.c (extendsddf): Likewise.
+	* base-math/truncdddf.c (truncdddf): Likewise.
+	* base-math/truncdddf.c (truncdddf): Likewise.
+	* base-math/truncdfsd.c (truncdfsd): Likewise.
+	* base-math/trunctddf.c (trunctddf): Likewise.
+	* base-math/trunctdsd2.c (trunctdsd2): Likewise.
+	* sysdeps/powerpc/powerpc64/power6/fpu/trunctdsd2.S (trunctdsd2):
+	Likewise.
+	* include/libdfp-symbols.h (strong_alias): Add macro for assembly.
+	(hidden_def): Likewise.
+	(hidden_weak): Likewise.
+	(hidden_ver): Likewise.
+	(hidden_data_def): Likewise.
+	(hidden_data_weak): Likewise.
+	(hidden_data_ver): Likewise.
+	* sysdeps/powerpc/symbol-hacks.h: New file: add symbol hacks for
+	Decimal convertions to avoid intra library PLT calls.
+
+2013-02-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* decNumberMath/decNumberMath.h (___decNumberPow): Define as
 	hidden_proto to avoid intra PLT calls.
 	(___decNumberSinh): Likewise.
