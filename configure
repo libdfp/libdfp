@@ -1568,6 +1568,11 @@ echo "$as_me: error: --with-cpu requires an argument" >&2;}
   no)
     with_dfp=no
     ;;
+  power8)
+    submachine="$withval"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
+$as_echo "$as_me: configuring for the $submachine processor" >&6;}
+    with_dfp=yes ;;
   power7)
     submachine="$withval"
     { echo "$as_me:$LINENO: configuring for the $submachine processor" >&5
