@@ -1,5 +1,11 @@
 2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* configure.ac (with_dfp): Add power8 cpu target.
+	* configure: Regenerated.
+	* sysdeps/powerpc/powerpc64/power8/fpu/Implies: Fix implie.
+
+2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/powerpc32/power6/fpu/trunctdsd2.S
 	(__dpd_trunctdsd2): Add hidden_def.
 	* sysdeps/powerpc/powerpc64/power6/fpu/trunctdsd2.S: Update Copyright
