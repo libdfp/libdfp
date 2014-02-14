@@ -236,15 +236,8 @@ changequote([,])dnl
 AC_SUBST(base_machine)
 AC_SUBST(machine)
 
-AC_PROG_CC(gcc)
-#AC_PROC_CC checks $PATH for 'gcc' but doesn't prefix $CC with $PATH
-CC=`which $CC`
-echo "CC = $CC"
-
-AC_PROG_CXX(g++)
-#AC_PROC_CXX checks $PATH for 'g++' but doesn't prefix $CXX with $PATH
-CXX=`which $CXX`
-echo "CXX = $CXX"
+AC_PROG_CC
+AC_PROG_CXX
 
 AC_PATH_PROG([OBJDUMP], [objdump])
 AC_ARG_VAR(OBJDUMP,The path to the objdump used by the debug scripts.

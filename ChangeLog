@@ -1,5 +1,12 @@
 2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* configure.ac (AC_PROG_CC): Using withou argument. Also remove hack
+	to use the one specified with PATH.
+	(AC_PROG_CXX): Likewise.
+	* configure: Regenerated.
+
+2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* configure.ac (submachine_opt): Rename to libdfp_cv_submachine_opt to
 	work correctly with AC_CACHE_CHECK.
 	* Makefile.in (submachine_opt): Likewise.
