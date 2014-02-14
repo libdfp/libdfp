@@ -1,5 +1,12 @@
 2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/powerpc32/power6/fpu/trunctdsd2.S
+	(__dpd_trunctdsd2): Add hidden_def.
+	* sysdeps/powerpc/powerpc64/power6/fpu/trunctdsd2.S: Update Copyright
+	years.
+
+2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* dfp/math.h (DEC_NAN): Define __builtin_nan.
 
 2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>

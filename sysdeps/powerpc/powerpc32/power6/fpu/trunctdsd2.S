@@ -1,6 +1,6 @@
 /* Decimal Floating Point truncate 128-bit to 32-bit.
 
-   Copyright (C) 2006, 2008, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2006-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -32,4 +32,5 @@ ENTRY (__dpd_trunctdsd2)
 	drdpq	fp0,fp2	/* Round result to _Decimal64. */
 	drsp	fp1,fp0	/* Round result to _Decimal32. */
 	blr
-	END (__dpd_trunctdsd2)
+END (__dpd_trunctdsd2)
+hidden_def (__dpd_trunctdsd2)
