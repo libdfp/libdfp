@@ -194,15 +194,15 @@ AC_ARG_WITH([cpu],
 
 if test -n "$submachine"; then
   AC_CACHE_CHECK([for compiler option for CPU variant],
-                submachine_opt, [dnl
-  submachine_opt=no
+                libdfp_cv_submachine_opt, [dnl
+  libdfp_cv_submachine_opt=no
   for opt in "-march=$submachine" "-mcpu=$submachine"; do
     if AC_TRY_COMMAND([${CC-cc} $opt -xc /dev/null -S -o /dev/null]); then
-      submachine_opt="$opt"
+      libdfp_cv_submachine_opt="$opt"
       break
     fi
   done])
-  if test "x$submachine_opt" = xno; then
+  if test "x$libdfp_cv_submachine_opt" = xno; then
     AC_MSG_ERROR([${CC-cc} does not support $submachine])
   fi
 fi
@@ -532,7 +532,7 @@ for m in $mach ''; do
 done
 
 AC_SUBST(submachine)
-AC_SUBST(submachine_opt)
+AC_SUBST(libdfp_cv_submachine_opt)
 
 if test "$with_dfp" = no; then
   # Add src/sysdeps/soft-dfp and src/sysdeps/soft-dfp/dpd or

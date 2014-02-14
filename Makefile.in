@@ -74,14 +74,14 @@ machine = @machine@
 # e.g. power6
 submachine = @submachine@
 # e.g. -mcpu=power6
-submachine_opt = @submachine_opt@
+libdfp_cv_submachine_opt = @libdfp_cv_submachine_opt@
 
 # Necessary for z9-ec and z10 s390 platforms.
 mzarch = @mzarch@
 
-ifdef submachine_opt
-cflags-cpu = $(submachine_opt)
-asflags-cpu = $(submachine_opt)
+ifdef libdfp_cv_submachine_opt
+cflags-cpu = $(libdfp_cv_submachine_opt)
+asflags-cpu = $(libdfp_cv_submachine_opt)
 endif
 
 picflag = @picflag@

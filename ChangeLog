@@ -1,3 +1,13 @@
+2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* configure.ac (submachine_opt): Rename to libdfp_cv_submachine_opt to
+	work correctly with AC_CACHE_CHECK.
+	* Makefile.in (submachine_opt): Likewise.
+	* config/override.m4: Remove the need to use autoconf 2.59.
+	* configure: Regenerated using autoconf 2.68.
+	* config.h.in: Likewise.
+	* libdecnumber/configure: Likewise.
+
 2013-02-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add NOT_IN_libdf when building tests.
