@@ -44,7 +44,7 @@
 __BEGIN_DECLS
 
 #define DEC_INFINITY	__builtin_infd32()
-#define DEC_NAN		(0.0DF * DEC_INFINITY)
+#define DEC_NAN		__builtin_nand32("")
 #define HUGE_VAL_D64	__builtin_infd64()
 
 /* #define DEC_INFINITY   (9999999.E96DF + 1.E96df)
