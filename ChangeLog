@@ -1,3 +1,10 @@
+2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* configure.ac (AC_PROG_CC). Remove hack to use to one specified with
+	PATH.
+	(AC_PROG_CXX): Likewise.
+	* configure: Regenerated.
+
 2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* fmt_d32.c (__dfp_adjust_precision): Fix PLT calls for FP classify
