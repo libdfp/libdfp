@@ -1,3 +1,7 @@
+2013-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* ieee754r/logbd32.c (logb): Fix return for negative infinity.
+
 2013-02-16  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (glibc_headers): Remove legacy define no longer used.

@@ -49,8 +49,10 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x2;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsInfinite (&dn_x))
+  if (___decNumberIsNaN (&dn_x))
     return x+x;
+  if (___decNumberIsInfinite (&dn_x))	/* +-Inf: Inf  */
+    return DEC_INFINITY;
   if (___decNumberIsZero (&dn_x))	/*  Pole Error if x==0 */
     {
       DFP_EXCEPT (FE_DIVBYZERO);
