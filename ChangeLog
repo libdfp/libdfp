@@ -1,5 +1,11 @@
 2013-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* dfp/math.h (fpclassifyd32): Add prototype.
+	(fpclassifyd64): Likewise.
+	(fpclassifyd128): Likewise.
+
+2013-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* dfp/math.h (FP_LLOGB0): Define if it is not already defined.
 	(FP_LLOGBNAN): Likewise.
 	* ieee754r/ilogbd32.c (ilogbd32): Add suport for implementation define
