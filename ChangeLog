@@ -1,3 +1,12 @@
+2013-02-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* Makefile.in (libdfp_files): Add libdfp-version object.
+	(SHARED_REALNAME_LIB): Add -Wl,-entry=__libdfp_version.
+	* config.h.in (LIBDFP_RUNTIME_LOADER): Add define.
+	* configure.ac (LIBDFP_RUNTIME_LOADER): Add check to find the used
+	dynamic linker in build.
+	* libdfp-version.c: New file: add library entry point.
+
 2013-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (fpclassifyd32): Add prototype.

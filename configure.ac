@@ -1,9 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-# Autoconf 2.59 required because recursively configured 'libdecnumber' library
-# has a hard-coded 2.59 requirement and Libdfp doesn't really care, but can't
-# control libdecnumber.
 AC_PREREQ(2.59)
 AC_INIT(libdfp, 1.0.9, azanella@br.ibm.com)
 AC_CONFIG_SRCDIR([printf_dfp.c])
@@ -649,6 +646,27 @@ fi
 
 AC_PROG_RANLIB # Required for static archives.
 AC_PROG_AWK
+
+# Check which is the loader
+libdfp_cv_loader=`
+cat > conftest.c <<EOF
+int main () {}
+EOF
+${CC-cc} $CFLAGS $CPPFLAGS -o conftest conftest.c && ldd conftest | $AWK '
+BEGIN {
+  loader=$0 ~ "ld.*so"
+}
+{
+  gsub (/[[[:space:]]]*/, "", $loader)
+  split ($loader, fields, "[[=(]]")
+}
+END {
+  print fields[[1]]
+}'
+rm -f conftest*`
+AC_DEFINE_UNQUOTED([LIBDFP_RUNTIME_LOADER], ["$libdfp_cv_loader"],
+                   [The loader to use in direct DSO call])
+
 
 dnl AC_PROG_INSTALL
 

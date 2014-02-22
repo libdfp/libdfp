@@ -4042,6 +4042,30 @@ fi
 done
 
 
+# Check which is the loader
+libdfp_cv_loader=`
+cat > conftest.c <<EOF
+int main () {}
+EOF
+${CC-cc} $CFLAGS $CPPFLAGS -o conftest conftest.c && ldd conftest | $AWK '
+BEGIN {
+  loader=$0 ~ "ld.*so"
+}
+{
+  gsub (/[[:space:]]*/, "", $loader)
+  split ($loader, fields, "[=(]")
+}
+END {
+  print fields[1]
+}'
+rm -f conftest*`
+
+cat >>confdefs.h <<_ACEOF
+#define LIBDFP_RUNTIME_LOADER "$libdfp_cv_loader"
+_ACEOF
+
+
+
 
 # Checks for libraries.
 

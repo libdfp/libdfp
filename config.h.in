@@ -8,6 +8,9 @@
    `.type' directive */
 #undef ASM_TYPE_DIRECTIVE_PREFIX
 
+/* The loader to use in direct DSO call */
+#undef LIBDFP_RUNTIME_LOADER
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 

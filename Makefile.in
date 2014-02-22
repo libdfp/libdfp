@@ -172,7 +172,7 @@ VPATH := $(subst $(sp),:,$(all_srcdirs))
 # directory Makefiles which are included (not recursively invoked).
 libdfp_files := dfptypeconv mapround decode fmt_d32 fmt_d64 fmt_d128 fe_decround \
 		strtod32 strtod64 strtod128 wcstod32 wcstod64 wcstod128 \
-		printf_dfp init_dfp
+		printf_dfp init_dfp libdfp-version
 
 # The sysdeps subdirs aren't recursively invoked, they're included so that
 # they can add files to the libdfp_files list.
@@ -267,7 +267,7 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 #  calls.
 $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@.
-	$(CC) $(CFLAGS) $(mzarch) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map $(addsuffix .os,$(libdfp_files)) -o $@ -lm
+	$(CC) $(CFLAGS) $(mzarch) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map -Wl,-entry=__libdfp_version $(addsuffix .os,$(libdfp_files)) -o $@ -lm
 	@echo
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
