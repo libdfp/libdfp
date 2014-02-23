@@ -1,5 +1,14 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/fabsd128.c: New file: optimized fabsd128 for
+	PowerPC.
+	* sysdeps/powerpc/dfpu/fabsd64.c: New file: optimized fabsd64 for
+	PowerPC.
+	* sysdeps/powerpc/dfpu/fabsd32.c: New file: optimized fabsd32 for
+	PowerPC.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_tests): Add fabs new tests.
 	* tests/fabs.input: New file: fabs new tests input.
 
