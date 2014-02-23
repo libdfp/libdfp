@@ -1,5 +1,11 @@
 2013-02-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* dfp/math.h (HUGE_VAL_D32): Define as __builtin_infd32.
+	(HUGE_VAL_D64): Define as __builtin_infd64.
+	(HUGE_VAL_D128): Define as __builtin_infd128.
+
+2013-02-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_files): Add libdfp-version object.
 	(SHARED_REALNAME_LIB): Add -Wl,-entry=__libdfp_version.
 	* config.h.in (LIBDFP_RUNTIME_LOADER): Add define.

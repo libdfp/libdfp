@@ -45,14 +45,9 @@ __BEGIN_DECLS
 
 #define DEC_INFINITY	__builtin_infd32()
 #define DEC_NAN		__builtin_nand32("")
+#define HUGE_VAL_D32	__builtin_infd32()
 #define HUGE_VAL_D64	__builtin_infd64()
-
-/* #define DEC_INFINITY   (9999999.E96DF + 1.E96df)
- * #define DEC_NAN (0.0DF * DEC_INFINITY)
- * #define HUGE_VAL_D64   (9.999999999999999E384DD + 1.E384dd) */
-
-#define HUGE_VAL_D32	HUGE_VAL_D64
-#define HUGE_VAL_D128	HUGE_VAL_D64
+#define HUGE_VAL_D128	__builtin_infd128()
 
 /* This method works for both the GCC and the XLC compilers for detecting
  * whether a value is a Decimal Floating Point type.  */
