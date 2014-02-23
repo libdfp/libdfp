@@ -1,5 +1,9 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* tests/test-numdigits.c: Remove bogus testcase.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* tests/test-getexp.c: Fix constant.
 
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>

@@ -123,11 +123,6 @@ d64_type printf_d64s[] =
   /* 0.000000000000001E-383DD  */
   {__LINE__, __DEC64_SUBNORMAL_MIN__, 1, "%d"},
 
-  /* The compiler truncates this and anything with a smaller (more negative)
-   * exponent than 398 to zero when normalizing the constant into DFP
-   * representation.  */
-  {__LINE__, 1E-399DD, 1, "%d"}, 
-
   {0,0,0,0 }
 };
 
