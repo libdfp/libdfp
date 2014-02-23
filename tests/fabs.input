@@ -1,0 +1,14 @@
+# name fabs
+# arg0 decimal
+# ret  decimal
+
+0                                         0
+-0                                        0
+42                                        42
+-42                                       42
+-2.718281828459045235360287471352662      2.718281828459045235360287471352662
+
+Inf                                       Inf
+-Inf                                      Inf
+NaN                                       NaN
+-NaN                                      NaN

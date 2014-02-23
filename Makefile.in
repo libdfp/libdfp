@@ -307,6 +307,7 @@ libdfp_c_tests = test-printf test-amort test-decode \
 		 test-fenv test-bfp-conversions test-wchar \
 		 test-getexp test-left_justify \
 		 test-fpclassify-d32 test-fpclassify-d64 test-fpclassify-d128 \
+		 test-fabs-d32 test-fabs-d64 test-fabs-d128 \
 		 test-quantum-d32 test-quantum-d64 test-quantum-d128 \
 		 test-quantize-d32 test-quantize-d64 test-quantize-d128 \
 		 test-samequantum-d32 test-samequantum-d64 test-samequantum-d128 \
