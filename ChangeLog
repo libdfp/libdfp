@@ -1,5 +1,9 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* tests/test-decode.c: Indent correction.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_tests): Rename test-round to test-fenv.
 	* tests/test-round.c: Move from ...
 	* tests/test-fenv.c: ... to here.
