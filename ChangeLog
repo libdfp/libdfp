@@ -1,5 +1,9 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* configure.ac: Add dfpu in front of fpu in sysdeps selection.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/fabsd128.c: New file: optimized fabsd128 for
 	PowerPC.
 	* sysdeps/powerpc/dfpu/fabsd64.c: New file: optimized fabsd64 for

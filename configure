@@ -3693,6 +3693,8 @@ $as_echo_n "checking sysdep dirs... " >&6; }
 #   ${srcdir}/sysdeps/powerpc/powerpc32/power6/
 #   ${srcdir}/sysdeps/powerpc/powerpc32/
 # [BASE_MACHINE/[FPU|NOFPU]
+#   ${srcdir}/sysdeps/powerpc/dfpu
+#   ${srcdir}/sysdeps/powerpc/dfpu/bits
 #   ${srcdir}/sysdeps/powerpc/fpu
 #   ${srcdir}/sysdeps/powerpc/fpu/bits
 #   ${srcdir}/sysdeps/powerpc/nofpu
@@ -3724,6 +3726,11 @@ tail=$machine${submachine:+/$submachine}
 # Build the list of dfpu|fpu|nofpu directories.
 while m=`echo $tail | sed 's@^\(.*\)/\([^/]*\)$@& \1@'`; test -n "$m"; do
   set $m
+  # Only look for 'dfpu' directory if the system supports hardware dfp.
+  if test "$with_dfp" = yes; then
+    mach="$mach /$1/dfpu/bits /$1/dfpu"
+    #mach="$mach /$1/dfpu"
+  fi
   # Prepend the machine's FPU directory unless --without-fp.
   if test "$with_fp" = yes; then
     mach="$mach /$1/fpu/bits /$1/fpu"
@@ -3731,11 +3738,6 @@ while m=`echo $tail | sed 's@^\(.*\)/\([^/]*\)$@& \1@'`; test -n "$m"; do
   else
     mach="$mach /$1/fpu/bits /$1/nofpu"
     #mach="$mach /$1/nofpu"
-  fi
-  # Only look for 'dfpu' directory if the system supports hardware dfp.
-  if test "$with_dfp" = yes; then
-    mach="$mach /$1/dfpu/bits /$1/dfpu"
-    #mach="$mach /$1/dfpu"
   fi
   mach="$mach /$1"
   tail="$2"
