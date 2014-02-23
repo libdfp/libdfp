@@ -1,5 +1,9 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/libdfp-test-ulps: Update.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* configure.ac: Add dfpu in front of fpu in sysdeps selection.
 
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
