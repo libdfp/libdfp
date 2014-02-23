@@ -32,6 +32,7 @@ static int testnum = 0;
 #ifndef _SC
 #include <string.h>
 #include <stdarg.h>
+#include <math.h>
 #include <limits.h> /* For CHAR_MAX.  */
 
 /* Generally don't invoke this directly unless you already have __LINE__ set in
