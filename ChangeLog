@@ -1,5 +1,14 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/copysignd128.c: New file: optimized copysignd128
+	for PowerPC.
+	* sysdeps/powerpc/dfpu/copysignd64.c: New file: optimized copysignd64
+	for PowerPC.
+	* sysdeps/powerpc/dfpu/copysignd32.c: New file: optimized copysignd32
+	for PowerPC.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_tests): Add copysign new tests.
 	* tests/copysign.input: New file: copysign new tests input.
 
