@@ -26,9 +26,9 @@
 #define __STDC_WANT_DEC_FP__
 #endif
 
-#include <float.h> /* DEC_NAN definition.  */
 #include <stdio.h>
 #include <math.h>
+#include <float.h> /* DEC_NAN definition.  */
 
 #include <get_digits.h>
 #define _DECIMAL_SIZE 32
@@ -88,7 +88,7 @@ d64_type printf_d64s[] =
 {
   {__LINE__, 4e384DD, 369, "%d"},
   {__LINE__, 4000000000000000e369DD, 369, "%d"},
-  {__LINE__, 4000000000000000e370DD, __NAND64__, "%d"},
+  {__LINE__, DEC_INFINITY, __NAND64__, "%d"},
   {__LINE__, __DEC64_MAX__, 369, "%d"},
   {__LINE__, __DEC64_MIN__, -383, "%d" }, 
   {0,0,0,0 }
