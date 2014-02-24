@@ -1,3 +1,11 @@
+2013-02-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dfpu/issignalingd128.c (issignalingd128): Fix DCM
+	constant to avoid detect zero as signaling NaNs.
+	* sysdeps/powerpc/dfpu/issignalingd32.c (issignalingd32): Likewise.
+	* sysdeps/powerpc/dfpu/issignalingd64.c (issingalingd64): Likewise.
+	* tests/test-issignaling.c: Add tests for zero values.
+
 2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* configure.ac (with_dfp): Add power8 cpu target.
