@@ -28,7 +28,7 @@ __issignalingd128 (_Decimal128 x)
   int cr0;
 
   /* DCM bit 5 is signaling NaN  */
-  asm ("dtstdcq cr0,%1,33\n"
+  asm ("dtstdcq cr0,%1,1\n"
        "mfcr   %0, 0\n"
        : "=r" (cr0)
        : "f" (x)

@@ -43,6 +43,8 @@ typedef struct
 } d128_type;
 
 static const d128_type d128s[] = {
+  {__LINE__, {.td = 0.0DL}, 0, "%d"},
+  {__LINE__, {.td = -0.0DL}, 0, "%d"},
   {__LINE__, {.td = 1.20DL}, 0, "%d"},
   {__LINE__, {.td = -1.95DL}, 0, "%d"},
   {__LINE__, {.td = DEC_NAN}, 0, "%d"},
@@ -67,6 +69,8 @@ typedef struct
 } d64_type;
 
 static const d64_type d64s[] = {
+  {__LINE__, {.dd = 0.0DL}, 0, "%d"},
+  {__LINE__, {.dd = -0.0DL}, 0, "%d"},
   {__LINE__, {.dd = 1.20DL}, 0, "%d"},
   {__LINE__, {.dd = -1.95DL}, 0, "%d"},
   {__LINE__, {.dd = DEC_NAN}, 0, "%d"},
@@ -91,6 +95,8 @@ typedef struct
 } d32_type;
 
 static const d32_type d32s[] = {
+  {__LINE__, {.sd = 0.0DL}, 0, "%d"},
+  {__LINE__, {.sd = -0.05DL}, 0, "%d"},
   {__LINE__, {.sd = 1.20DL}, 0, "%d"},
   {__LINE__, {.sd = -1.95DL}, 0, "%d"},
   {__LINE__, {.sd = DEC_NAN}, 0, "%d"},
