@@ -1,5 +1,10 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* fe_decround.c: Move to ...
+	* sysdeps/soft-dfp/fe_decround.c: ... here.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* mapround.c: Move to ...
 	* sysdeps/generic/mapround.c: here.
 
