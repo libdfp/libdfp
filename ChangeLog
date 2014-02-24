@@ -1,5 +1,10 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* mapround.c: Move to ...
+	* sysdeps/generic/mapround.c: here.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/powerpc/dfpu/copysignd128.c: New file: optimized copysignd128
 	for PowerPC.
 	* sysdeps/powerpc/dfpu/copysignd64.c: New file: optimized copysignd64
