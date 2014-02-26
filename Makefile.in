@@ -315,7 +315,7 @@ $(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
 
 GLIBC_LIBS := -lc -lm
 
-libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
+libdfp_c_tests = test-printf test-param test-amort test-decode \
 		 test-logd \
 		 test-log10d test-strtod test-numdigits test-get_digits \
 		 test-round test-bfp-conversions test-stdlib test-wchar \
@@ -323,6 +323,7 @@ libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
 		 test-negate \
 		 test-fpclassify-d32 test-fpclassify-d64 test-fpclassify-d128 \
 		 test-quantum-d32 test-quantum-d64 test-quantum-d128 \
+		 test-quantize-d32 test-quantize-d64 test-quantize-d128 \
 		 test-samequantum-d32 test-samequantum-d64 test-samequantum-d128 \
 		 test-logb-d32 test-logb-d64 test-logb-d128 \
 		 test-llquantexp-d32 test-llquantexp-d64 test-llquantexp-d128 \
