@@ -303,7 +303,7 @@ $(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
 GLIBC_LIBS := -lc -lm
 
 libdfp_c_tests = test-printf test-amort test-decode \
-		 test-log10d test-strtod test-numdigits test-get_digits \
+		 test-strtod test-numdigits test-get_digits \
 		 test-fenv test-bfp-conversions test-wchar \
 		 test-getexp test-left_justify \
 		 test-fpclassify-d32 test-fpclassify-d64 test-fpclassify-d128 \
@@ -313,6 +313,7 @@ libdfp_c_tests = test-printf test-amort test-decode \
 		 test-exp-d32 test-exp-d64 test-exp-d128 \
 		 test-log-d32 test-log-d64 test-log-d128 \
 		 test-logb-d32 test-logb-d64 test-logb-d128 \
+		 test-log10-d32 test-log10-d64 test-log10-d128 \
 		 test-llquantexp-d32 test-llquantexp-d64 test-llquantexp-d128 \
 		 test-isnan-d32 test-isnan-d64 test-isnan-d128 \
 		 test-isinf-d32 test-isinf-d64 test-isinf-d128 \
