@@ -1,5 +1,16 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in: Add local-plt rules to make check.
+	* configure.ac: Add readelf check.
+	* scripts/check-localplt.awk: New file: script to check localplt.awk
+	output.
+	* scripts/localplt.awk: New file: generate local plt calls from shared
+	library.
+	* sysdeps/generic/localplt.data: New file: generic local plt calls
+	allowed.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* sysdeps/soft-dfp/trunctdsd2.c (trunctdsd2): Add missing hidden_def.
 	* sysdeps/powerpc/fpu/libdfp.abilist: Add missing __dpd_trunctdsd2.
 

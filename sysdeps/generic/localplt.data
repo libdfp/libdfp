@@ -1,0 +1,2 @@
+# See scripts/check-localplt.awk for how this file is processed.
+libdfp.so: register_printf_dfp

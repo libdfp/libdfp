@@ -51,6 +51,7 @@ CC = @CC@
 CXX = @CXX@
 LDD = @LDD@
 OBJDUMP = @OBJDUMP@
+READELF = @READELF@
 GDB = @GDB@
 CXXFLAGS = @CXXFLAGS@ # This may be naive
 CPPFLAGS = @CPPFLAGS@
@@ -402,6 +403,24 @@ check-abi-libdfp.out: libdfp.abilist libdfp.symlist
 	LC_ALL=C $(OBJDUMP) --dynamic-syms $< > $@T
 	mv -f $@T $@
 
+# Check local PLT calls
+check-localplt: check-localplt.out
+
+vpath localplt.data $(+sysdep_dirs)
+
+check-localplt.out: $(top_srcdir)/scripts/check-localplt.awk \
+                    $(top_srcdir)/scripts/localplt.awk \
+                    libdfp.so.jmprel \
+                    localplt.data
+	LC_ALL=C $(AWK) -f $(filter-out $< %localplt.data,$^) | \
+	  LC_ALL=C $(AWK) -f $< $(filter %localplt.data,$^) - \
+	  > $@
+
+libdfp.so.jmprel: libdfp.so
+	@rm -f $@T
+	LC_ALL=C $(READELF) -W -S -d -r $< > $@T
+	test -s $@T
+	mv -f $@T $@
 
 # The following rules are defined in Makefile.gdb:
 #	$(top_builddir)/debug-test.conf:
@@ -412,7 +431,7 @@ include $(top_srcdir)/Makefile.gdb
 # We use debug-test.conf as an input file for some debugging utilities.  The
 # .out files are predicated in another rule on the actual test executables, so
 # those are built from those rules.
-check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) check-abi
+check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) check-abi check-localplt
 	@echo +Completed make check
 
 .PHONY: check

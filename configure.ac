@@ -244,6 +244,10 @@ AC_PATH_PROG([OBJDUMP], [objdump])
 AC_ARG_VAR(OBJDUMP,The path to the objdump used by the debug scripts.
 	   Defaults to that found in $$PATH)
 
+AC_PATH_PROG([READELF], [readelf])
+AC_ARG_VAR(READELF,The path to the readelf used by test scripts.
+	   Defaults to that found in $$PATH)
+
 AC_PATH_PROG([GDB], [gdb])
 AC_ARG_VAR(GDB,The path to the gdb used by the debug scripts.
 	   Defaults to that found in $$PATH)
