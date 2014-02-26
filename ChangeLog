@@ -1,5 +1,17 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Add ceil, floor, nearbyint, round,
+	roundeven, and trunc tests.
+	* tests/ceil.input: New file: ceil new test input.
+	* tests/floor.input: New file: floor new test input.
+	* tests/nearbyint.input: New file: nearbyint new test input.
+	* tests/round.input: New file: round new test input.
+	* tests/roundeven.input: New file: roundeven new test input.
+	* tests/trunc.input: New file: trunc new test input.
+	* tests/test-rounding.c: Remove.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_tests): Add quantum new tests.
 	* tests/quantum.input: New file: quantum new tests input.
 	* tests/test-quantum.c: Remove.
