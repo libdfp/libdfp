@@ -1,0 +1,33 @@
+# name quantum
+# arg1 decimal
+# ret  decimal
+
+Inf                    Inf
+-Inf                   Inf
+NaN                    NaN
+sNaN                   sNaN
+
+DEC_MAX                1E+DEC_MAX_EXP
+DEC_MIN                1E-DEC_MIN_EXP
+DEC_SUBNORMAL_MIN      1E-DEC_MIN_EXP_SUB
+
+-DEC_MAX               1E+DEC_MAX_EXP
+-DEC_MIN               1E-DEC_MIN_EXP
+-DEC_SUBNORMAL_MIN     1E-DEC_MIN_EXP_SUB
+
+1E1                    10.0
+1E0                    1.0
+0.25                   0.01
+0.625                  0.001
+97.1525                0.0001
+18.12456               0.00001
+20.971525              0.000001               decimal64 decimal128
+
+3599.6273704955        1e-10                  decimal64 decimal128
+359.962737049625       1e-12                  decimal64 decimal128
+3.5443504567320123     1e-15                  decimal64 decimal128
+      
+4503599627370495.5     0.1                    decimal128
+4503599627370.49625    0.00001                decimal128
+45035996.273704955     1E-9                   decimal128
+4.5698456892345687912  1E-19                  decimal128

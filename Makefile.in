@@ -321,7 +321,7 @@ libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
 		 test-round test-bfp-conversions test-stdlib test-wchar \
 		 test-expd test-GCC-PR52140 test-getexp test-left_justify \
 		 test-negate test-rounding \
-		 test-quantum \
+		 test-quantum-d32 test-quantum-d64 test-quantum-d128 \
 		 test-samequantum-d32 test-samequantum-d64 test-samequantum-d128 \
 		 test-logb-d32 test-logb-d64 test-logb-d128 \
 		 test-llquantexp-d32 test-llquantexp-d64 test-llquantexp-d128 \
