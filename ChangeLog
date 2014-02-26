@@ -1,5 +1,14 @@
 2013-02-16  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (glibc_headers): Remove legacy define no longer used.
+	(glibc_builddir): Likewise.
+	(.c.o): Remove unused glibc_headers and glibc_builddir variables.
+	(.c.os): Likewise.
+	(.S.os): Likewise.
+	(.cpp.os): Likewise.
+
+2013-02-16  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_cxx_tests): Add missing -DNOT_IN_libdfp.
 
 2013-02-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
