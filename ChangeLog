@@ -1,5 +1,11 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Add samequantum new tests.
+	* tests/samequantum.input: New file: samequantum new tests input.
+	* tests/test-samequantum.c: Remove.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in ($(libdfp_c_tests)): Add -I$(top_srcdir)/tests.
 	($(libdfp_cxx_tests)): Likewise.
 	(test-%-d%): New rule: default one to build auto-generated tests.
