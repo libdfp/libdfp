@@ -1,5 +1,11 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Add ilogb new tests.
+	* tests/ilogb.input: New file: ilogb new tests input.
+	* tests/llogb.input: New file: llogb new tests input.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_tests): Add issignaling new tests.
 	* tests/issignaling.input: New file: issignaling new tests input.
 	* tests/test-issignaling.c: Remove.

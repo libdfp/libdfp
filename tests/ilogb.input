@@ -1,0 +1,49 @@
+# name ilogb
+# arg1 decimal
+# ret  int
+
+Inf              INT_MAX
+-Inf             INT_MIN
+NaN              FP_ILOGBNAN
+sNaN             FP_ILOGBNAN
+0                FP_ILOGB0
+0.0              FP_ILOGB0
+0E0              FP_ILOGB0
+
+1.0              0
+10.76            1
+1024.0           3
+20000.001        4
+400032.003       5
+
+1E32             32
+1.56E32          32
+-1.56E32         32
+1E-32            -32
+1.54E-32         -32
+-1.54E-32        -32
+
+156E32           34
+-156E32          34
+154E-32          -30
+-154E-32         -30
+
+1.542332E124     124            decimal64 decimal128
+-1.542332E124    124            decimal64 decimal128
+1.542332E-124    -124           decimal64 decimal128
+-1.542332E-124   -124           decimal64 decimal128
+
+15423.32E124     128            decimal64 decimal128
+-15423.32E124    128            decimal64 decimal128
+15423.32E-124    -120           decimal64 decimal128
+-15423.32E-124   -120           decimal64 decimal128
+
+1.9433E1024      1024           decimal128
+-1.9433E1024     1024           decimal128
+1.9433E-1024     -1024          decimal128
+-1.9433E-1024    -1024          decimal128
+
+194338E1024      1029           decimal128
+-194338E1024     1029           decimal128
+194338E-1024     -1019          decimal128
+-194338E-1024    -1019          decimal128
