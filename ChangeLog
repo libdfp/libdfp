@@ -1,5 +1,20 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in: Remove superfluous echos and add rule to create
+	libdfp-test-ulps.h file.
+	(libdfp_c_tests): Add log tests.
+	* sysdeps/generic/libdfp-test-ulps: New file.
+	* sysdeps/powerpc/dfpu/libdfp-test-ulps: New file.
+	* sysdeps/powerpc/fpu/libdfp-test-ulps: New file.
+	* tests/gen-libdfp-tests.py: Add support to test with ULPs.
+	* tests/gen-libdfp-ulps.py: New file: script to generate the ULP
+	file definitions.
+	* tests/libdfp-test.c: New file: common definitions for tests.
+	* tests/log.input: New file: log test input.
+	* tests/test-logd.c: Remove.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* tests/scaffold.c: Remove compiler warning.
 
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>

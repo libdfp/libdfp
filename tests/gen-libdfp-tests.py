@@ -2,6 +2,7 @@
 
 import sys
 import re
+import os
 from optparse import OptionParser
 
 # Decribes the evaluated function
@@ -10,6 +11,7 @@ class Function:
     self.name = None
     self.args = []
     self.ret = None
+    self.ulp = False
 
   def ret_init_type (self):
     return self.ret.argtype
@@ -200,70 +202,65 @@ DECIMAL = None
 # Each test operation is described by one line:
 # <input> <output> <list of decimal types to apply>
 def parse_file (filename):
-  try:
-    file = open (filename, "r")
-    lines = file.readlines()
-    i = 0;
+  file = open (filename, "r")
+  lines = file.readlines()
+  i = 0;
 
-    # Parse the header with function description
-    func = Function()
+  # Parse the header with function description
+  func = Function()
 
-    for l in range (i, len(lines)):
-      if not lines[l].rstrip().startswith ("#"):
-        break
+  for l in range (i, len(lines)):
+    if not lines[l].rstrip().startswith ("#"):
+      break
 
-      fields = lines[l].split()
-      if fields[1].startswith("name"):
-        func.name = fields[2]
-      if fields[1].startswith("arg"):
-        func.args.append(DecimalTypes[fields[2] + DECIMAL.tname])
-      elif fields[1].startswith("ret"):
-        rettname = fields[2]
-        if rettname == "decimal":
-          rettname += DECIMAL.tname
-        func.ret = DecimalTypes[rettname]
-      i = i + 1
+    fields = lines[l].split()
+    if fields[1].startswith("name"):
+      func.name = fields[2]
+    if fields[1].startswith("arg"):
+      func.args.append(DecimalTypes[fields[2] + DECIMAL.tname])
+    elif fields[1].startswith("ret"):
+      rettname = fields[2]
+      if rettname == "decimal":
+        rettname += DECIMAL.tname
+      func.ret = DecimalTypes[rettname]
+    i = i + 1
 
-    # Parse the inputs and expected result
-    operations = []
-    expected_args = len (func.args)
-    for l in range(i, len(lines)):
-      i = i + 1
-      lines[l] = lines[l].strip()
-      if not lines[l]:
+  # Parse the inputs and expected result
+  operations = []
+  expected_args = len (func.args)
+  for l in range(i, len(lines)):
+    i = i + 1
+    lines[l] = lines[l].strip()
+    if not lines[l]:
+      continue
+    # Ignore commnets
+    if lines[l].startswith ("#"):
+      continue
+
+    fields = lines[l].split()
+    # Check if number of arguments is the expected one
+    if len(fields) - 1 < expected_args:
+      print ("warning: %s:%i: line %s not follow specified function" % \
+        (filename, l, lines[l]))
+      continue
+
+     # Check if the test applies to decimal type being tested
+    if (len(fields) - 1) > expected_args:
+      declist = fields[expected_args+1].split()
+      if DECIMAL.name not in declist:
         continue
-      # Ignore commnets
-      if lines[l].startswith ("#"):
-        continue
 
-      fields = lines[l].split()
-      # Check if number of arguments is the expected one
-      if len(fields) - 1 < expected_args:
-        print ("warning: %s:%i: line %s not follow specified function" % \
-          (filename, l, lines[l]))
-        continue
+    op = Operation(i)
+    for oparg in range (0, expected_args):
+      op.args.append(fields[oparg])
+    op.ret = fields[expected_args]
 
-      # Check if the test applies to decimal type being tested
-      if (len(fields) - 1) > expected_args:
-        declist = fields[expected_args+1].split()
-	if DECIMAL.name not in declist:
-          continue
+    operations.append(op)
 
-      op = Operation(i)
-      for oparg in range (0, expected_args):
-        op.args.append(fields[oparg])
-      op.ret = fields[expected_args]
-
-      operations.append(op)
-
-    return (func, operations)
-
-  except (IOError, OSError) as e:
-    print ("error: open (%s) failed: %s\n" % (filename, e.strerror))
-    exit (1)
+  return (func, operations)
 
 
-def print_header ():
+def print_header (func):
   print ("#ifndef __STDC_WANT_DEC_FP__")
   print ("# define __STDC_WANT_DEC_FP__")
   print ("#endif")
@@ -279,8 +276,14 @@ def print_header ():
   print ("#include <errno.h>")
   print ("#include \"test-common.h\"")
   print ("")
-  print ("#define _WANT_VC 1")
-  print ("#include \"scaffold.c\"")
+  # Macros required for test build
+  print ("#define %s" % DECIMAL.name.upper())
+  print ("#define FLOAT %s" % DECIMAL.type)
+  print ("#define FUNC(function) function ## %s" % ('d' + DECIMAL.tname))
+  print ("")
+  print ("#include \"libdfp-test-ulps.h\"")
+  print ("#include \"libdfp-test.c\"")
+
 
 def print_special_ctes ():
   print ("#ifndef DEC_INFINITY")
@@ -295,8 +298,10 @@ def print_special_ctes ():
   print ("#define   snan_value     DEC_NAN")
   print ("")
 
+
 def print_operations (func, operations):
   print ("typedef struct {")
+  print ("  const char *argname;")
   for i in range(0, len(func.args)):
     print ("  %s arg%i;" % (func.arg_type(i), i))
   print ("  %s e;" % func.ret_init_type())
@@ -306,6 +311,7 @@ def print_operations (func, operations):
   print ("static const operations_t operations[] = {")
   for op in operations:
     print ("  {"),
+    print ("\"%s\", " % ", ".join(op.args)),
     for i in range(0, len(op.args)):
       print ("%s," % func.args[i].parse_arg(op.args[i])),
     print (" %s, " % func.ret.parse_arg(op.ret)),
@@ -321,44 +327,33 @@ def print_func_call(func):
   print ("  int i;")
   print ("  for (i = 0; i < operations_size; ++i) {")
 
-  # ret = function (arg1, ...)
-  print ("    %s ret = %sd%s (" % (func.ret_type(), func.name, DECIMAL.tname)),
+  # <macro> (func.name, arg1, arg2, ..., ret, expected)
+  MACROSUFFIX = {
+    "bool"       : "b",
+    "int"        : "i",
+    "longint"    : "l",
+    "llongint"   : "L",
+    "decimal32"  : "f",
+    "decimal64"  : "f",
+    "decimal128" : "f"
+  }
+  macro = "RUN_TEST_" + ('f' * len(func.args)) + "_" + MACROSUFFIX[func.ret.name]
+  
+  print ("    %s (%s, operations[i].argname, " % (macro, func.name, )),
   for i in range(0, len(func.args)):
-    print ("operations[i].arg%i.%s" % (i, DECIMAL.decfield)),
-    if i is not len(func.args)-1:
-      print (","),
-  print (");")
-
-  # printf ("function (arg1, ...)")
-  print ("    printf (\"%sd%s (" % (func.name, DECIMAL.tname)),
-  for i in range(0, len(func.args)):
-    print ("%s" % (DECIMAL.printf)),
-    if i is not len(func.args)-1:
-      print (","),
-  print (") = %s\\n\"," % (func.ret_printf())),
-  for i in range(0, len(func.args)):
-    print ("operations[i].arg%i.%s" % (i, DECIMAL.decfield)),
-    if i is not len(func.args)-1:
-      print (","),
-  print (", ret);")
-
-  # _VC_P(f,l,x,y,fmt)
-  print ("    _VC_P (__FILE__, operations[i].line, "
-         "operations[i].e%s, ret, \"%s\");" % \
-         (func.ret_field(), func.ret_printf()));
+    print ("operations[i].arg%i.%s, " % (i, DECIMAL.decfield)),
+  print ("operations[i].e%s);" % func.ret_field())
 
   print ("  }")
   print ("")
-  print ("  _REPORT ();")
-  print ("")
-  print ("  return fail;")
+  print ("  return noErrors;");
   print ("}")
 
 
 def print_output (filename):
   (func, operations) = parse_file (filename)
 
-  print_header ()
+  print_header (func)
   print_special_ctes ()
   print_operations (func, operations)
   print_func_call (func)
@@ -366,22 +361,28 @@ def print_output (filename):
 
 if __name__ == "__main__":
   parser = OptionParser ()
-  parser.add_option ("-f", "--file", dest="filename",
+  parser.add_option ("-o", "--output", dest="filename",
                      help="white output to FILE")
   parser.add_option ("-t", "--type", dest="dectype",
                      help="DECIMAL type to use")
   (options, args) = parser.parse_args()
 
-  if options.filename:
-    sys.stdout = open (options.filename, "w")
+  try:
+    if options.filename:
+      sys.stdout = open (options.filename, "w")
 
-  if not args:
-    print ("usage: %s <options> <input file>" % argv[0])
-    exit (0)
-  if not options.dectype:
-    print ("error: you must specify a DECIMAL type: decimal[32|64|128]")
-    exit (0)
+    if not args:
+      sys.stderr.write ("usage: gen-libdfp-tests.py <options> <input file\n>")
+      raise Exception()
+    if not options.dectype:
+      sys.stderr.write ("error: you must specify a type: decimal[32|64|128]")
+      raise Exception()
 
-  DECIMAL = DecimalTypes[options.dectype]
+    DECIMAL = DecimalTypes[options.dectype]
 
-  print_output (args[0])
+    print_output (args[0])
+
+  except:
+    if options.filename:
+      os.remove (options.filename)
+    exit (1)

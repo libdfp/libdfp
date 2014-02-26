@@ -196,7 +196,6 @@ first:
 $(dfp_backend)/$(dfp_backend_lib):
 	@echo "+Building DFP backend $@"
 	DEFS="-D__STDC_DEC_FP__=200704L $(mzarch) $(BACKEND_CFLAGS)" $(MAKE) -C $(dfp_backend)
-	@echo
 
 libdfp: @enable_static@ @enable_shared@
 
@@ -217,24 +216,19 @@ CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 # Build the static object files.
 .c.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
-	@echo
 .S.o:
 	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
-	@echo
 
 # Build the shared object files.
 .c.os:
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
-	@echo
 
 .S.os:
 	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
-	@echo
 
 # C++ compatibility test cases.
 .cpp.os:
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(CXX_DEFINES) $(CXX_WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
-	@echo
 
 # Archive the static library and include all of the .o files from the backend
 # archive.  IF the backend has more than the base directory the .o detection
@@ -245,13 +239,11 @@ $(top_builddir)/$(STATIC_LIB): $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,
 	@ranlibpath=`which $(RANLIB)`; \
 	if test -x "$$ranlibpath"; \
 	then $(RANLIB) $@; fi;
-	@echo
 
 # Create libdfp.so -> libdfp.so.1 symlink.
 $(top_builddir)/$(SHARED_LINKERNAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 	@echo "+Creating linker .so symlink $(notdir $@) -> $(notdir $<)"
 	ln -f -s $< $@
-	@echo
 
 # Create libdfp.so.1 -> libdfp-1.0.1.so symlink.
 # The $(SHARED_SONAME_LIB) -> $(SHARED_REALNAME_LIB) symlink is supposed to
@@ -259,7 +251,6 @@ $(top_builddir)/$(SHARED_LINKERNAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 	@echo "+Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $<)"
 	$(LDCONFIG) -l $(notdir $<)
-	@echo
 
 # Build the version tagged 'realname' shared object.  This requires that the
 # $(dfp_name).map file be composed out of individual Versions files.  The
@@ -268,7 +259,6 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@.
 	$(CC) $(CFLAGS) $(mzarch) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map -Wl,-entry=__libdfp_version $(addsuffix .os,$(libdfp_files)) -o $@ -lm
-	@echo
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
 # script Makefile foo.  Thank you Roland McGrath and Ulrich Drepper!
@@ -279,7 +269,6 @@ $(top_builddir)/Versions.all: $(..)scripts/firstversions.awk \
 	@echo +Creating $@ by running $(word 1,$^) against $(word 2,$^).
 	{ cat $(word 2,$^); } | LC_ALL=C $(AWK) -f $< > $@T
 	mv -f $@T $@
-	@echo
 
 # Versions.sysdeps is a concatenation of all of the sysdep directory Versions
 # files (that accompany a Makefile) and run through sed to strip comments.  We
@@ -290,7 +279,6 @@ $(top_builddir)/Versions.sysdeps: $(top_srcdir)/Versions $(wildcard $(makefile_d
 	@echo +Scrubbing the following Versions files for comments and concatenating into a single $@ file.
 	sed '/^[        ]*%/!s/#.*$$//;/^[      ]*$$/d;s/^[     ]*%/#/' $^ > $@T
 	mv -f $@T $@
-	@echo
 
 move-if-change = $(SHELL) $(top_srcdir)/scripts/move-if-change
 
@@ -307,7 +295,6 @@ $(top_builddir)/sysd-versions: $(top_builddir)/Versions.all \
 			    -f $(word 3,$^) \
 	) > $@T
 	mv $@T $@
-	@echo
 
 # This rule causes sysd-versions to be generated, which in turn invokes
 # versions.awk which generates libdfp.map implicitly.
@@ -316,7 +303,6 @@ $(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
 GLIBC_LIBS := -lc -lm
 
 libdfp_c_tests = test-printf test-amort test-decode \
-		 test-logd \
 		 test-log10d test-strtod test-numdigits test-get_digits \
 		 test-fenv test-bfp-conversions test-wchar \
 		 test-expd test-getexp test-left_justify \
@@ -324,6 +310,7 @@ libdfp_c_tests = test-printf test-amort test-decode \
 		 test-quantum-d32 test-quantum-d64 test-quantum-d128 \
 		 test-quantize-d32 test-quantize-d64 test-quantize-d128 \
 		 test-samequantum-d32 test-samequantum-d64 test-samequantum-d128 \
+		 test-log-d32 test-log-d64 test-log-d128 \
 		 test-logb-d32 test-logb-d64 test-logb-d128 \
 		 test-llquantexp-d32 test-llquantexp-d64 test-llquantexp-d128 \
 		 test-isnan-d32 test-isnan-d64 test-isnan-d128 \
@@ -347,13 +334,20 @@ test-printf.os: $(top_builddir)/printf_dfp.os
 test-strtod.os: $(top_builddir)/strtod32.os $(top_builddir)/strtod64.os $(top_builddir)/strtod128.os
 
 # Empty rule which simply makes the libdfp_tests .so's dependent on
-# tests/scaffold.c so that when the scaffold file changes all of the test .so
+# tests/libdfp-test.c so that when the libdfp-test file changes all of the test .so
 # files are rebuilt since almost all of them depend on the scaffold anyway.
-$(addsuffix .os, $(libdfp_tests)): $(top_srcdir)/tests/scaffold.c
+$(addsuffix .os, $(libdfp_tests)): $(top_srcdir)/tests/libdfp-test.c
 
 # The CPP test rely on the <dfp/decimal> header.  If that changes then they
 # need to be rebuilt.
 $(addsuffix .os, $(libdfp_cxx_tests)): $(top_srcdir)/dfp/decimal/decimal $(top_srcdir)/dfp/float.h
+
+# Add the ULP file generation explicity rule
+$(addprefix $(objpfx), $(libdfp_tests)): $(top_builddir)/libdfp-test-ulps.h
+
+ulps-file = $(shell find $(sysdep_dirs:%=$(top_srcdir)/%/libdfp-test-ulps))
+$(top_builddir)/libdfp-test-ulps.h: $(ulps-file)
+	$(top_srcdir)/tests/gen-libdfp-ulps.py $< -o $@
 
 # Explicitly link against the uninstalled GLIBC and the libdfp.so.1 we just
 # built.
