@@ -318,7 +318,7 @@ GLIBC_LIBS := -lc -lm
 libdfp_c_tests = test-printf test-amort test-decode \
 		 test-logd \
 		 test-log10d test-strtod test-numdigits test-get_digits \
-		 test-round test-bfp-conversions test-wchar \
+		 test-fenv test-bfp-conversions test-wchar \
 		 test-expd test-getexp test-left_justify \
 		 test-fpclassify-d32 test-fpclassify-d64 test-fpclassify-d128 \
 		 test-quantum-d32 test-quantum-d64 test-quantum-d128 \
