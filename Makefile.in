@@ -364,6 +364,7 @@ $(libdfp_c_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
+$(libdfp_cxx_tests): CXXFLAGS += -DNOT_IN_libdfp
 $(libdfp_cxx_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CXX) $(CXXFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .os,$@) -o $@
 	@echo

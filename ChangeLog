@@ -1,3 +1,7 @@
+2013-02-16  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* Makefile.in (libdfp_cxx_tests): Add missing -DNOT_IN_libdfp.
+
 2013-02-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/issignalingd128.c (issignalingd128): Fix DCM
