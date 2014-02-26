@@ -1,0 +1,15 @@
+# name fpclassify
+# arg1 decimal
+# ret  int
+
+Inf                FP_INFINITE
+-Inf               FP_INFINITE
+NaN                FP_NAN
+-NaN               FP_NAN
+sNaN               FP_NAN
+DEC_SUBNORMAL_MIN  FP_SUBNORMAL
+-DEC_SUBNORMAL_MIN FP_SUBNORMAL
+DEC_MIN            FP_NORMAL
+DEC_MAX            FP_NORMAL
+0.1                FP_NORMAL
+10E1               FP_NORMAL

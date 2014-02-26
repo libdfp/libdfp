@@ -1,5 +1,11 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Add fpclassify new tests.
+	* tests/fpclassify.input: New file: fpclassify new tests input.
+	* tests/test-fpclassify.c: Remove.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_tests): Add ceil, floor, nearbyint, round,
 	roundeven, and trunc tests.
 	* tests/ceil.input: New file: ceil new test input.

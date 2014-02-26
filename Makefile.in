@@ -316,11 +316,12 @@ $(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
 GLIBC_LIBS := -lc -lm
 
 libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
-		 test-fpclassify test-logd \
+		 test-logd \
 		 test-log10d test-strtod test-numdigits test-get_digits \
 		 test-round test-bfp-conversions test-stdlib test-wchar \
 		 test-expd test-GCC-PR52140 test-getexp test-left_justify \
 		 test-negate \
+		 test-fpclassify-d32 test-fpclassify-d64 test-fpclassify-d128 \
 		 test-quantum-d32 test-quantum-d64 test-quantum-d128 \
 		 test-samequantum-d32 test-samequantum-d64 test-samequantum-d128 \
 		 test-logb-d32 test-logb-d64 test-logb-d128 \
@@ -359,14 +360,12 @@ $(addsuffix .os, $(libdfp_cxx_tests)): $(top_srcdir)/dfp/decimal/decimal $(top_s
 $(libdfp_c_tests): CFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests
 $(libdfp_c_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .os,$@) -o $@
-	@echo
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
 $(libdfp_cxx_tests): CXXFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests
 $(libdfp_cxx_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CXX) $(CXXFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .os,$@) -o $@
-	@echo
 
 test-%-d%: $(addsuffix .os,$@)
 	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$^ -o $@
@@ -380,7 +379,6 @@ test-%-d128.c: %.input
 # Make check main rule
 $(addsuffix .out,$(libdfp_tests)): %.out:% %.gdb
 	LD_LIBRARY_PATH=$(top_builddir)/:$$LD_LIBRARY_PATH $(top_builddir)/$(patsubst %.out,%,$@) 2> $(top_builddir)/$@ 1> /dev/null
-	@echo
 
 DISTCLEANFILES = $(top_builddir)/debug-test.conf
 
