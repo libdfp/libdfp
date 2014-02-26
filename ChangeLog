@@ -1,5 +1,11 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Add exp new tests.
+	* tests/exp.input: New file: exp new tests input.
+	* tests/test-expd.c: Remove.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in: Remove superfluous echos and add rule to create
 	libdfp-test-ulps.h file.
 	(libdfp_c_tests): Add log tests.
