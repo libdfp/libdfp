@@ -1,5 +1,14 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Remove test-GCC-PR52140, test-negate,
+	test-param, and test-stdlib.
+	* tests/test-GCC-PR52140.c: Remove.
+	* tests/test-negate.c: Remove.
+	* tests/test-param.c: Remove.
+	* tests/test-stdlib.c: Remove.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_tests): Add quantize new tests.
 	* tests/quantize.input: New file: quantize new tests input.
 	* tests/test-quantize.c: Remove.
