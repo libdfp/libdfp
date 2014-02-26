@@ -1,5 +1,10 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Add log1p new tests.
+	* tests/log1p.input: New file: log1p new tests input.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_tests): Add log10 new tests.
 	* tests/log10.input: New file: log10 new tests input.
 	* tests/test-log10d.c: Remove.
