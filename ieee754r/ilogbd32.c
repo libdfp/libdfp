@@ -35,9 +35,15 @@
 #ifndef _MAX_VALUE
 #  define _MAX_VALUE   INT_MAX
 #endif
-
 #ifndef _MIN_VALUE
 #  define _MIN_VALUE   INT_MIN
+#endif
+
+#ifndef _FBLOG0
+#  define _FBLOG0      FP_ILOGB0
+#endif
+#ifndef _FBLOGNAN
+#  define _FBLOGNAN    FP_ILOGBNAN
 #endif
 
 #include <decContext.h>
@@ -69,7 +75,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
     {
       DFP_EXCEPT (FE_INVALID);
       DFP_ERRNO (EDOM);
-      return FP_ILOGB0;
+      return _FBLOG0;
     }
   if (___decNumberIsInfinite (&dn_x))
     {
@@ -81,7 +87,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
     {
       DFP_EXCEPT (FE_INVALID);
       DFP_ERRNO (EDOM);
-      return FP_ILOGBNAN;
+      return _FBLOGNAN;
     }
 
   ___decContextDefault (&context, DEFAULT_CONTEXT);

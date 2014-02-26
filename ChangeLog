@@ -1,5 +1,19 @@
 2013-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* dfp/math.h (FP_LLOGB0): Define if it is not already defined.
+	(FP_LLOGBNAN): Likewise.
+	* ieee754r/ilogbd32.c (ilogbd32): Add suport for implementation define
+	returns for zero and NaN inputs. Also return FP_LLOGB0 and FP_LLOGBNAN
+	for llogbd.
+	* ieee754r/llogbd128.c (llogbd128): Define return for 0 and NaN
+	inputs.
+	* ieee754r/llogbd32.c (llogbd32): Likewise.
+	* ieee754r/llogbd64.c (llogbd64): Likewise.
+	* tests/test-illogb.c: Change return values for llobd for 0 and NaN
+	inputs.
+
+2013-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/logbd32.c (logb): Fix return for negative infinity.
 
 2013-02-16  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>

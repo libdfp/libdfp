@@ -111,8 +111,8 @@ static ld128_type ld128[] =
   { __LINE__, 1024.0DL,                              3, "%ld" },
   { __LINE__, -200000.0DL,                           5, "%ld" },
 
-  { __LINE__, 0.0DL,                         FP_ILOGB0, "%ld" },
-  { __LINE__, DEC_NAN,                     FP_ILOGBNAN, "%ld" },
+  { __LINE__, 0.0DL,                         FP_LLOGB0, "%ld" },
+  { __LINE__, DEC_NAN,                     FP_LLOGBNAN, "%ld" },
   { __LINE__, DEC_INFINITY,                   LONG_MAX, "%ld" },
   { __LINE__, -DEC_INFINITY,                  LONG_MIN, "%ld" },
 };
@@ -133,8 +133,8 @@ static ld64_type ld64[] =
   { __LINE__, 1024.0DL,                              3, "%ld" },
   { __LINE__, -200000.0DL,                           5, "%ld" },
 
-  { __LINE__, 0.0DL,                         FP_ILOGB0, "%ld" },
-  { __LINE__, DEC_NAN,                     FP_ILOGBNAN, "%ld" },
+  { __LINE__, 0.0DL,                         FP_LLOGB0, "%ld" },
+  { __LINE__, DEC_NAN,                     FP_LLOGBNAN, "%ld" },
   { __LINE__, DEC_INFINITY,                   LONG_MAX, "%ld" },
   { __LINE__, -DEC_INFINITY,                  LONG_MIN, "%ld" },
 };
@@ -155,8 +155,8 @@ static ld32_type ld32[] =
   { __LINE__, 1024.0DL,                              3, "%ld" },
   { __LINE__, -200000.0DL,                           5, "%ld" },
 
-  { __LINE__, 0.0DL,                         FP_ILOGB0, "%ld" },
-  { __LINE__, DEC_NAN,                     FP_ILOGBNAN, "%ld" },
+  { __LINE__, 0.0DL,                         FP_LLOGB0, "%ld" },
+  { __LINE__, DEC_NAN,                     FP_LLOGBNAN, "%ld" },
   { __LINE__, DEC_INFINITY,                   LONG_MAX, "%ld" },
   { __LINE__, -DEC_INFINITY,                  LONG_MIN, "%ld" },
 };

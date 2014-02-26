@@ -24,5 +24,7 @@
 #define FUNCTION_NAME  llogb
 #define _MAX_VALUE     LONG_MAX
 #define _MIN_VALUE     LONG_MIN
+#define _FBLOG0        FP_LLOGB0
+#define _FBLOGNAN      FP_LLOGBNAN
 
 #include "ilogbd32.c"
