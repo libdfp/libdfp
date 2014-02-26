@@ -1,3 +1,16 @@
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* Makefile.in ($(libdfp_c_tests)): Add -I$(top_srcdir)/tests.
+	($(libdfp_cxx_tests)): Likewise.
+	(test-%-d%): New rule: default one to build auto-generated tests.
+	(test-%-d32.c): New rule: generate tests for _Decimal32.
+	(test-%-d64.c): New rule: generate tests for _Decimal64.
+	(test-%-d128.c): New rule: generate tests for _Decimal128.
+	* tests/gen-libdfp-tests.py: New file: script to generate tests based
+	on input script.
+	* tests/test-common.h: New file: common definitions used in
+	auto-generated tests.
+
 2013-02-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (HUGE_VAL_D32): Define as __builtin_infd32.

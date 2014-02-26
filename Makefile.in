@@ -341,17 +341,26 @@ $(addsuffix .os, $(libdfp_cxx_tests)): $(top_srcdir)/dfp/decimal/decimal $(top_s
 
 # Explicitly link against the uninstalled GLIBC and the libdfp.so.1 we just
 # built.
-$(libdfp_c_tests): CFLAGS += -DNOT_IN_libdfp
+$(libdfp_c_tests): CFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests
 $(libdfp_c_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .os,$@) -o $@
 	@echo
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
-$(libdfp_cxx_tests): CXXFLAGS += -DNOT_IN_libdfp
+$(libdfp_cxx_tests): CXXFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests
 $(libdfp_cxx_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CXX) $(CXXFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$(addsuffix .os,$@) -o $@
 	@echo
+
+test-%-d%: $(addsuffix .os,$@)
+	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$^ -o $@
+test-%-d32.c: %.input
+	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal32 $^ > $(top_builddir)/$@
+test-%-d64.c: %.input
+	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal64 $^ > $(top_builddir)/$@
+test-%-d128.c: %.input
+	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal128 $^ > $(top_builddir)/$@
 
 # Make check main rule
 $(addsuffix .out,$(libdfp_tests)): %.out:% %.gdb
