@@ -1,0 +1,14 @@
+# name isnan
+# arg1 decimal
+# ret  int
+
+Inf                0
+-Inf               0
+NaN                1
+-NaN               1
+sNaN               1
+DEC_SUBNORMAL_MIN  0
+DEC_MIN            0
+DEC_MAX            0
+0.1                0
+10E1               0

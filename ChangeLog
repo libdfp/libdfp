@@ -1,5 +1,16 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_test): Add isnan, isinf, and isfinite new
+	tests.
+	* tests/isfinite.input: New file: isfinite new test input.
+	* tests/isnan.input: New file: isnan new test input.
+	* tests/isinf.input: New file: isinf new test input.
+	* tests/test-isfinite.c: Remove.
+	* tests/test-isnan.c: Remove.
+	* tests/test-isinf.c: Remove.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_tests): Add llquantexp new tests.
 	* tests/llquantexp.input: New file: llquantexp new tests input.
 	* tests/test-llquantexp.c: Remove.

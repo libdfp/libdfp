@@ -316,7 +316,7 @@ $(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
 GLIBC_LIBS := -lc -lm
 
 libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
-		 test-isnan test-isinf test-isfinite test-fpclassify test-logd \
+		 test-fpclassify test-logd \
 		 test-log10d test-strtod test-numdigits test-get_digits \
 		 test-round test-bfp-conversions test-stdlib test-wchar \
 		 test-expd test-GCC-PR52140 test-getexp test-left_justify \
@@ -324,7 +324,10 @@ libdfp_c_tests = test-printf test-param test-amort test-decode test-quantize \
 		 test-quantum \
 		 test-samequantum-d32 test-samequantum-d64 test-samequantum-d128 \
 		 test-logb-d32 test-logb-d64 test-logb-d128 \
-		 test-llquantexp-d32 test-llquantexp-d64 test-llquantexp-d128
+		 test-llquantexp-d32 test-llquantexp-d64 test-llquantexp-d128 \
+		 test-isnan-d32 test-isnan-d64 test-isnan-d128 \
+		 test-isinf-d32 test-isinf-d64 test-isinf-d128 \
+		 test-isfinite-d32 test-isfinite-d64 test-isfinite-d128
 
 libdfp_cxx_tests = test-ostream test-ostream-g-spec test-istream
 

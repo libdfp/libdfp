@@ -1,0 +1,14 @@
+# name isfinite
+# arg1 decimal
+# ret  int
+
+Inf                0
+-Inf               0
+NaN                0
+-NaN               0
+sNaN               0
+DEC_SUBNORMAL_MIN  1
+DEC_MIN            1
+DEC_MAX            1
+0.1                1
+10E1               1

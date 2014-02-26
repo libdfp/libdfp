@@ -1,0 +1,14 @@
+# name isinf
+# arg1 decimal
+# ret  int
+
+Inf                1
+-Inf               -1
+NaN                0
+-NaN               0
+sNaN               0
+DEC_SUBNORMAL_MIN  0
+DEC_MIN            0
+DEC_MAX            0
+0.1                0
+10E1               0
