@@ -1,5 +1,14 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in: Add check-abi rules.
+	* scripts/abilist.awk: New file: ABI check.
+	* sysdeps/powerpc/dfpu/libdfp.abilist: ABI definition for PowerPC
+	hardware DFP.
+	* sysdeps/powerpc/fpu/libdfp.abilist: ABI definition for PowerPC
+	software DFP.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* fe_decround.c: Move to ...
 	* sysdeps/soft-dfp/fe_decround.c: ... here.
 

@@ -381,6 +381,28 @@ $(addsuffix .out,$(libdfp_tests)): %.out:% %.gdb
 
 DISTCLEANFILES = $(top_builddir)/debug-test.conf
 
+
+# Check ABI rules
+.PRECIOUS: %.symlist
+generated += $(extra-libs:=.symlist)
+
+vpath %.abilist $(+sysdeps_dirs)
+
+check-abi: check-abi-libdfp.out
+	$(warning $@)
+
+check-abi-libdfp.out: libdfp.abilist libdfp.symlist
+	diff -p -U 0 $(filter %.abilist,$^) $(filter %.symlist,$^) > $@
+
+%.symlist: $(top_srcdir)/scripts/abilist.awk %.dynsym
+	LC_ALL=C $(AWK) -f $^ > $@T
+	mv -f $@T $@
+
+%.dynsym: %.so
+	LC_ALL=C $(OBJDUMP) --dynamic-syms $< > $@T
+	mv -f $@T $@
+
+
 # The following rules are defined in Makefile.gdb:
 #	$(top_builddir)/debug-test.conf:
 #	$(addsuffix .conf,$(libdfp_tests)):
@@ -390,7 +412,7 @@ include $(top_srcdir)/Makefile.gdb
 # We use debug-test.conf as an input file for some debugging utilities.  The
 # .out files are predicated in another rule on the actual test executables, so
 # those are built from those rules.
-check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests))
+check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) check-abi
 	@echo +Completed make check
 
 .PHONY: check
