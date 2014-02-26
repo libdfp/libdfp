@@ -1,5 +1,11 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Add llquantexp new tests.
+	* tests/llquantexp.input: New file: llquantexp new tests input.
+	* tests/test-llquantexp.c: Remove.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_tests): Add logb new tests.
 	* tests/logb.input: New file: logb new tests input.
 

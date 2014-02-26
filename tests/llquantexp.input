@@ -1,0 +1,57 @@
+# name llquantexp
+# arg1 decimal
+# ret  llongint
+
+Inf                  LLONG_MIN
+-Inf                 LLONG_MIN
+NaN                  LLONG_MIN
+sNaN                 LLONG_MIN
+DEC_SUBNORMAL_MIN    -DEC_MIN_EXP_SUB
+# DEC32_MIN_EXP  is -94, but DEC32_MIN is 1E-95DF
+# DEC64_MIN_EXP  is -382, but DEC64_MIN is 1E-383DD
+# DEC128_MIN_EXP is -6142, but DEC32_MIN is 1E-6143DL
+DEC_MIN              -DEC_MIN_EXP
+DEC_MAX              DEC_MAX_EXP
+
+0.1                  -1
+0.25                 -2
+0.625                -3
+9.1                  -1
+9.25                 -2
+9.625                -3
+97.1525              -4
+9.15256              -5
+9.152456             -6
+-20.971525           -6            decimal64 decimal128
+-3599.6273704955     -10           decimal64 decimal128
+359.962737049625     -12           decimal64 decimal128
+-4503599627370495.5  -1            decimal128
+4503599627370496.25  -2            decimal128
+45035996.273704955   -9            decimal128
+
+1E1                  1
+1E-1                 -1
+-1E1                 1
+-1E-1                -1
+9.56E28              26
+9.56E-28             -30
+-9.56E28             26
+-9.58E-28            -30
+
+1E-DEC_MIN_EXP       -DEC_MIN_EXP
+1E+DEC_MAX_EXP       DEC_MAX_EXP
+
+9E343                343           decimal64 decimal128
+9.56E343             341           decimal64 decimal128
+-9E343               343           decimal64 decimal128
+-9.56E343            341           decimal64 decimal128
+9.5E-370             -371          decimal64 decimal128
+9.567E-370           -373          decimal64 decimal128
+9.567E-370           -373          decimal64 decimal128
+-9.567E-370          -373          decimal64 decimal128
+-9.5678E-370         -374          decimal64 decimal128
+
+9.56789E6050         6045          decimal128
+9.56789E-6050        -6055         decimal128
+-9E-6050            -6050         decimal128
+-9E-6050            -6050         decimal128
