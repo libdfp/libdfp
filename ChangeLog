@@ -1,5 +1,11 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in (libdfp_c_tests): Add issignaling new tests.
+	* tests/issignaling.input: New file: issignaling new tests input.
+	* tests/test-issignaling.c: Remove.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in (libdfp_c_test): Add isnan, isinf, and isfinite new
 	tests.
 	* tests/isfinite.input: New file: isfinite new test input.
