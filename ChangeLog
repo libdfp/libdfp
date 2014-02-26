@@ -1,5 +1,10 @@
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/soft-dfp/trunctdsd2.c (trunctdsd2): Add missing hidden_def.
+	* sysdeps/powerpc/fpu/libdfp.abilist: Add missing __dpd_trunctdsd2.
+
+2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* Makefile.in: Add check-abi rules.
 	* scripts/abilist.awk: New file: ABI check.
 	* sysdeps/powerpc/dfpu/libdfp.abilist: ABI definition for PowerPC
