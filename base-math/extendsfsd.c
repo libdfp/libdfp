@@ -30,7 +30,6 @@
 #define NAME extend
 #endif
 
-#include "fenv_libdfp.h"
 #include "dfpacc.h"
 #include "convert.h"
 #include <float.h> /* To pick up __FLT_MANT_DIG__  */

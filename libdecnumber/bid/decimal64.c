@@ -21,6 +21,7 @@ a copy of the GCC Runtime Library Exception along with this program;
 see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 <http://www.gnu.org/licenses/>.  */
 
+#if 0
 #define decimal64FromString __dpd64FromString
 #define decimal64ToString __dpd64ToString
 #define decimal64ToEngString __dpd64ToEngString
@@ -34,7 +35,9 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #undef decimal64ToEngString
 #undef decimal64FromNumber
 #undef decimal64ToNumber
+#endif
 
+#include "decimal64.h"
 #include "bid-dpd.h"
 
 #ifdef IN_LIBGCC2
@@ -58,6 +61,7 @@ decimal64 *
 decimal64FromNumber (decimal64 *d64, const decNumber *dn,
 		      decContext *set)
 {
+#if 0
   /* decimal64 and _Decimal64 are different types.  */
   union
     {
@@ -79,6 +83,7 @@ decimal64FromNumber (decimal64 *d64, const decNumber *dn,
 
   /* d64 is returned as a pointer to _Decimal64 here.  */
   *d64 = u.dec;
+#endif
 
   return d64;
 }
@@ -86,6 +91,7 @@ decimal64FromNumber (decimal64 *d64, const decNumber *dn,
 decNumber *
 decimal64ToNumber (const decimal64 *bid64, decNumber *dn)
 {
+#if 0
   /* decimal64 and _Decimal64 are different types.  */
   union
     {
@@ -104,6 +110,8 @@ decimal64ToNumber (const decimal64 *bid64, decNumber *dn)
   __host_to_ieee_64 (u._Dec, &u.dec);
 
   return __dpd64ToNumber (&u.dec, dn);
+#endif
+  return NULL;
 }
 
 char *

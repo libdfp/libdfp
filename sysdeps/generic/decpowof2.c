@@ -1,7 +1,7 @@
 /* Table to ease conversion from binary to decimal formats
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -1108,4 +1108,4 @@ const _Decimal128 decpowof2 [] = {
 	1.619218026458484946819962773751338E+324DL	/* 2**1077 */
 };
 
-weak_alias(decpowof2, __dfp_decpowof2)
+weak_alias(decpowof2, __decpowof2)

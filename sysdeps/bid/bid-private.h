@@ -1,6 +1,6 @@
-/* Number of digits functions.
+/* Data types for BID format output.
 
-   Copyright (C) 2014, Free Software Foundation, Inc.
+   Copyright (C) 2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -20,26 +20,7 @@
 
    Please see dfp/COPYING.txt for more information.  */
 
-#include "bid-private.h"
+#ifndef _BID_PRIVATE_H
+#define _BID_PRIVATE_H 1
 
-void
-__get_digits_d32 (_Decimal32 x, char *str, int *exp_p, int *sign_p, 
-		  int *nan_p, int *inf_p)
-{
-  // TODO
-}
-
-void 
-__get_digits_d64 (_Decimal64 x, char *str, int *exp_p, int *sign_p, 
-		  int *nan_p, int *inf_p)
-{
-  // TODO
-}
-
-void 
-__get_digits_d128 (_Decimal128 x, char *str, int *exp_p, int *sign_p, 
-		   int *nan_p, int *inf_p)
-{
-  // TODO
-}
-
+#endif /* _BID_PRIVATE */

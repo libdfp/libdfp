@@ -21,6 +21,7 @@ a copy of the GCC Runtime Library Exception along with this program;
 see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 <http://www.gnu.org/licenses/>.  */
 
+#if 0
 #define decimal32FromString __dpd32FromString
 #define decimal32ToString __dpd32ToString
 #define decimal32ToEngString __dpd32ToEngString
@@ -34,7 +35,9 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #undef decimal32ToEngString
 #undef decimal32FromNumber
 #undef decimal32ToNumber
+#endif
 
+#include "decimal32.h"
 #include "bid-dpd.h"
 
 #ifdef IN_LIBGCC2
@@ -58,6 +61,7 @@ decimal32 *
 decimal32FromNumber (decimal32 *d32, const decNumber *dn,
 		      decContext *set)
 {
+#if 0
   /* decimal32 and _Decimal32 are different types.  */
   union
     {
@@ -79,6 +83,7 @@ decimal32FromNumber (decimal32 *d32, const decNumber *dn,
 
   /* d32 is returned as a pointer to _Decimal32 here.  */
   *d32 = u.dec;
+#endif
 
   return d32;
 }
@@ -86,6 +91,7 @@ decimal32FromNumber (decimal32 *d32, const decNumber *dn,
 decNumber *
 decimal32ToNumber (const decimal32 *bid32, decNumber *dn)
 {
+#if 0
   /* decimal32 and _Decimal32 are different types.  */
   union
     {
@@ -104,6 +110,8 @@ decimal32ToNumber (const decimal32 *bid32, decNumber *dn)
   __host_to_ieee_32 (u._Dec, &u.dec);
 
   return __dpd32ToNumber (&u.dec, dn);
+#endif
+  return NULL;
 }
 
 char *

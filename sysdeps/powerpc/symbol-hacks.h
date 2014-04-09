@@ -20,6 +20,8 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
+#include_next "symbol-hacks.h"
+
 #if !defined __ASSEMBLER__ && !defined NOT_IN_libdfp && defined SHARED
 /* GCC generates intrisics calls to some functions for _Decimal to/from
    convertions. These bindings avoids intra library  PLT calls generations,

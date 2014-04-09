@@ -1,4 +1,34 @@
-2014-06-03  adhemerval zanella  <azanella@linux.vnet.ibm.com>
+2014-06-03  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* Makefile.in [libdfp_c_tests]: Remove GLIBC_LIBS rule artifact.
+	[libdfp_cxx_tests]: Likewise.
+	* base-math/extendsfsd.c: Remove fenv_libdfp.h include.
+	* configure.ac: Set BID backend to libdecnumber.
+	* include/convert.h: Adjust fenv_libdfp.h include to just if
+	fegetenv_register is set.
+	* libdecnumber/Makefile.in: Add -fPIC flag.
+	* libdecnumber/bid/decimal128.c: Comment out implementation.
+	* libdecnumber/bid/decimal64.c: Likewise.
+	* libdecnumber/bid/decimal32.c: Likewise.
+	* libdecnumber/bid/decimal128.h: Initial defines for BID
+	implementation.
+	* libdecnumber/bid/decimal64.h: Likewise.
+	* libdecnumber/bid/decimal32.h: Likewise.
+	* libdecnumber/bid/decimal32Symbols.h: Likewise.
+	* sysdeps/bid/Makefile: Add binpowof10 and decpowof2 objects.
+	* sysdeps/bid/bid-private.c: Add empty __get_digits implementations.
+	* sysdeps/bid/bid-private.h: Likewise.
+	* sysdeps/dpd/Makefile: Remove binpowof10 comment.
+	* sysdeps/dpd/binpowof10.c: Move to ...
+	* sysdeps/generic/binpowof10.c: ... here.
+	* sysdeps/dpd/decpowof2.c: Move to ...
+	* sysdeps/generic/decpowof2.c: ... here.
+	* sysdeps/generic/symbol-hacks.h: New file: generic symbol hack for
+	BID.
+	* sysdeps/powerpc/symbol-hacks.h: Add generic sysbol hack file.
+	* sysdeps/soft-dfp/bid/numdigits.h: New file: Add empty implementations.
+
+2014-06-03  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/quantize.input: Fix too large decimal128 inputs.
 

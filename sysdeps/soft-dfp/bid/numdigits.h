@@ -20,26 +20,60 @@
 
    Please see dfp/COPYING.txt for more information.  */
 
-#include "bid-private.h"
+/* Allow this file to be included more than once, so don't use the usual
+   include guards.  */
 
-void
-__get_digits_d32 (_Decimal32 x, char *str, int *exp_p, int *sign_p, 
-		  int *nan_p, int *inf_p)
+#define NUMDIGITS_SUPPORT 1
+
+#ifndef DEC_TYPE
+#error DEC_TYPE must be declared
+#endif
+
+#ifndef _DECIMAL_SIZE
+#error _DECIMAL_SIZE must be declared
+#endif
+
+#ifndef PASTE
+# define PASTE(x,y) PASTE2(x,y)
+# define PASTE2(x,y) x##y
+#endif
+
+#ifndef FUNC_D
+# define FUNC_D(x)		PASTE(x,PASTE(d,_DECIMAL_SIZE))
+#endif
+
+static inline int
+FUNC_D (getexp) (DEC_TYPE x)
 {
   // TODO
+  return 0;
 }
+#define SETEXP_NAME	PASTE(setexp,PASTE(d,_DECIMAL_SIZE))
 
-void 
-__get_digits_d64 (_Decimal64 x, char *str, int *exp_p, int *sign_p, 
-		  int *nan_p, int *inf_p)
+static inline DEC_TYPE
+SETEXP_NAME (DEC_TYPE x, int exp)
 {
   // TODO
+  return x;
 }
 
-void 
-__get_digits_d128 (_Decimal128 x, char *str, int *exp_p, int *sign_p, 
-		   int *nan_p, int *inf_p)
+static inline DEC_TYPE
+FUNC_D (setdigits) (DEC_TYPE x, char *str)
 {
   // TODO
+  return x;
 }
 
+static inline int
+FUNC_D (numdigits) (DEC_TYPE x)
+{
+  // TODO
+  return 0;
+}
+
+static inline DEC_TYPE
+FUNC_D (left_justify) (DEC_TYPE x)
+{
+  // TODO
+  return x;
+}

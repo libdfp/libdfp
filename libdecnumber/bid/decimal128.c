@@ -21,6 +21,7 @@ a copy of the GCC Runtime Library Exception along with this program;
 see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 <http://www.gnu.org/licenses/>.  */
 
+#if 0
 #define decimal128FromString __dpd128FromString
 #define decimal128ToString __dpd128ToString
 #define decimal128ToEngString __dpd128ToEngString
@@ -34,7 +35,9 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #undef decimal128ToEngString
 #undef decimal128FromNumber
 #undef decimal128ToNumber
+#endif
 
+#include "decimal128.h"
 #include "bid-dpd.h"
 
 #ifdef IN_LIBGCC2
@@ -58,6 +61,7 @@ decimal128 *
 decimal128FromNumber (decimal128 *d128, const decNumber *dn,
 		      decContext *set)
 {
+#if 0
   /* decimal128 and _Decimal128 are different types.  */
   union
     {
@@ -79,6 +83,7 @@ decimal128FromNumber (decimal128 *d128, const decNumber *dn,
 
   /* d128 is returned as a pointer to _Decimal128 here.  */
   *d128 = u.dec;
+#endif
 
   return d128;
 }
@@ -86,6 +91,7 @@ decimal128FromNumber (decimal128 *d128, const decNumber *dn,
 decNumber *
 decimal128ToNumber (const decimal128 *bid128, decNumber *dn)
 {
+#if 0
   /* decimal128 and _Decimal128 are different types.  */
   union
     {
@@ -104,6 +110,8 @@ decimal128ToNumber (const decimal128 *bid128, decNumber *dn)
   __host_to_ieee_128 (u._Dec, &u.dec);
 
   return __dpd128ToNumber (&u.dec, dn);
+#endif
+  return NULL;
 }
 
 char *

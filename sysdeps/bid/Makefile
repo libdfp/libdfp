@@ -1,1 +1,1 @@
-libdfp_files += bid-private
+libdfp_files += bid-private binpowof10 decpowof2

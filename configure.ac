@@ -107,7 +107,7 @@ case "$enable_decimal_float" in
     default_backend=libdecnumber
     ;;
   bid)
-    default_backend=libbid
+    default_backend=libdecnumber
     ;;
   *)
     default_backend=libdecnumber
