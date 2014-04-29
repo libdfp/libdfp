@@ -1,3 +1,10 @@
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/generic/symbol-hacks.h: Move ...
+	* sysdeps/bid/symbol-hacks.h: ... to here.
+	* sysdeps/powerpc/symbol-hacks.h: Move ...
+	* sysdeps/dpd/symbol-hacks.h: ... to here.
+
 2014-06-03  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
 	* sysdeps/bid/bid-private.c (__get_digits_d32): Add a functional
