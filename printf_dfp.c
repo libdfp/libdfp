@@ -354,7 +354,7 @@ __printf_dfp (FILE *fp,
   /* Locale-dependent representation of decimal point.  */
   const char *decimal;
 
-  union { const char *mb; unsigned int wc; } decimalwc;
+  union { const char *mb; int wc; } decimalwc;
 
   char spec = tolower(info->spec);
 
