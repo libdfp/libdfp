@@ -53,19 +53,19 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   FUNC_CONVERT_TO_DN (&x, &dn_x);
   FUNC_CONVERT_TO_DN (&y, &dn_y);
 
-  if(___decNumberIsNaN (&dn_x) || ___decNumberIsNaN (&dn_y))
+  if(decNumberIsNaN (&dn_x) || decNumberIsNaN (&dn_y))
     return x;
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  ___decNumberSubtract (&dn_diff, &dn_x, &dn_y, &context);
-  ___decNumberSubtract (&dn_result, &dn_x, &dn_x, &context);
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  decNumberSubtract (&dn_diff, &dn_x, &dn_y, &context);
+  decNumberSubtract (&dn_result, &dn_x, &dn_x, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_diff, &temp_diff, &context);
   FUNC_CONVERT_FROM_DN (&dn_result, &temp_result, &context);
   if(temp_diff>temp_result)
-    ___decNumberAdd (&dn_result,&dn_result,&dn_diff,&context);
- /* if(___decCompare (&dn_diff,&dn_result) == 1)
-    ___decNumberAdd (&dn_result,&dn_result,&dn_diff,&context);
+    decNumberAdd (&dn_result,&dn_result,&dn_diff,&context);
+ /* if(decCompare (&dn_diff,&dn_result) == 1)
+    decNumberAdd (&dn_result,&dn_result,&dn_diff,&context);
     */
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);

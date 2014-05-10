@@ -53,15 +53,15 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
   FUNC_CONVERT_TO_DN(&one, &dn_one);
-  if (___decNumberIsNaN (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     return x+x;
 
-  if (___decNumberIsInfinite (&dn_x))
-    return ___decNumberIsNegative (&dn_x) ? DFP_CONSTANT(-1.0) : x;
+  if (decNumberIsInfinite (&dn_x))
+    return decNumberIsNegative (&dn_x) ? DFP_CONSTANT(-1.0) : x;
 
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
-  ___decNumberExp(&dn_exponent, &dn_x, &context);
-  ___decNumberSubtract(&dn_result, &dn_exponent, &dn_one, &context);
+  decContextDefault(&context, DEFAULT_CONTEXT);
+  decNumberExp(&dn_exponent, &dn_x, &context);
+  decNumberSubtract(&dn_result, &dn_exponent, &dn_one, &context);
 
   FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
   if (context.status & DEC_Overflow)

@@ -54,26 +54,26 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   FUNC_CONVERT_TO_DN (&x, &dn_x);
   FUNC_CONVERT_TO_DN (&two, &dn_two);
 
-  if (___decNumberIsNaN (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     return x+x;
-  if (___decNumberIsZero (&dn_x))	/*  If x == 0: Pole Error */
+  if (decNumberIsZero (&dn_x))	/*  If x == 0: Pole Error */
     {
       DFP_EXCEPT (FE_DIVBYZERO);
       return -DFP_HUGE_VAL;
     }
-  if (___decNumberIsNegative (&dn_x))	/*  If x < 0,: Domain Error */
+  if (decNumberIsNegative (&dn_x))	/*  If x < 0,: Domain Error */
     {
       DFP_EXCEPT (FE_INVALID);
       return DFP_NAN;
     }
-  if (___decNumberIsInfinite (&dn_x))
+  if (decNumberIsInfinite (&dn_x))
     return x;
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
+  decContextDefault (&context, DEFAULT_CONTEXT);
   // log_2 (x) = log_10 (x) / log_10 (2)
-  ___decNumberLog10 (&dn_logx, &dn_x, &context);
-  ___decNumberLog10 (&dn_logtwo, &dn_two, &context);
-  ___decNumberDivide (&dn_result, &dn_logx, &dn_logtwo, &context);
+  decNumberLog10 (&dn_logx, &dn_x, &context);
+  decNumberLog10 (&dn_logtwo, &dn_two, &context);
+  decNumberDivide (&dn_result, &dn_logx, &dn_logtwo, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 

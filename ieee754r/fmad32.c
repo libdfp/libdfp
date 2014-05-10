@@ -56,31 +56,31 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y, DEC_TYPE z)
   FUNC_CONVERT_TO_DN (&z, &dn_z);
 
   /*  If x or y is NaN, return NaN */
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsNaN (&dn_y))
+  if (decNumberIsNaN (&dn_x) || decNumberIsNaN (&dn_y))
     return x+y;
 
   /*  Domain error if x or y is Inf, the other is 0 */
-  if (  (___decNumberIsInfinite (&dn_x) && ___decNumberIsZero (&dn_y)) ||
-	(___decNumberIsInfinite (&dn_y) && ___decNumberIsZero (&dn_x))  )
+  if (  (decNumberIsInfinite (&dn_x) && decNumberIsZero (&dn_y)) ||
+	(decNumberIsInfinite (&dn_y) && decNumberIsZero (&dn_x))  )
     {
       DFP_EXCEPT (FE_INVALID);
       return DFP_NAN;
     }
   /* If x and y are not 0,Inf or Inf,0, and z is NaN, return NaN */
-  if (___decNumberIsNaN (&dn_z))
+  if (decNumberIsNaN (&dn_z))
     return z+z;
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  ___decNumberMultiply (&dn_product, &dn_x, &dn_y, &context);
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  decNumberMultiply (&dn_product, &dn_x, &dn_y, &context);
 
   /* Domain error if x*y = Inf and z=Inf (with opposite signs) */
-  if (___decNumberIsInfinite (&dn_product) && ___decNumberIsInfinite (&dn_z) &&
-	(___decNumberIsNegative (&dn_product) != ___decNumberIsNegative (&dn_z)))
+  if (decNumberIsInfinite (&dn_product) && decNumberIsInfinite (&dn_z) &&
+	(decNumberIsNegative (&dn_product) != decNumberIsNegative (&dn_z)))
     {
       DFP_EXCEPT (FE_INVALID);
       return DFP_NAN;
     }
-  ___decNumberAdd (&dn_result, &dn_product, &dn_z, &context);
+  decNumberAdd (&dn_result, &dn_product, &dn_z, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 

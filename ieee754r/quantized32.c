@@ -51,9 +51,9 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   FUNC_CONVERT_TO_DN(&x, &dn_x);
   FUNC_CONVERT_TO_DN(&y, &dn_y);
 
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
+  decContextDefault(&context, DEFAULT_CONTEXT);
   context.round = __dn_getround();
-  ___decNumberQuantize(&dn_result, &dn_x, &dn_y, &context);
+  decNumberQuantize(&dn_result, &dn_x, &dn_y, &context);
 
   FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
 

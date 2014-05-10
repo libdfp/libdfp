@@ -65,13 +65,13 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   FUNC_CONVERT_TO_DN (&y, &dn_y);
   FUNC_CONVERT_TO_DN (&one, &dn_one);
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  if (___decNumberIsZero (&dn_y))
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  if (decNumberIsZero (&dn_y))
     return one;
-  if (___decNumberIsNaN (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     return x+x;
 
-  ___decNumberAbs (&dn_absx, &dn_x, &context);
+  decNumberAbs (&dn_absx, &dn_x, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_absx, &absx, &context);
   if(absx<one)
@@ -81,66 +81,66 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   else
     abs_x_vs_1 = 1;
 
-/*  abs_x_vs_1 = ___decCompare(&dn_absx, &dn_one); */
-  if(abs_x_vs_1 == 0 && !___decNumberIsNegative (&dn_x)) /*  If x == +1 */
+/*  abs_x_vs_1 = decCompare(&dn_absx, &dn_one); */
+  if(abs_x_vs_1 == 0 && !decNumberIsNegative (&dn_x)) /*  If x == +1 */
     return one;
-  if (___decNumberIsNaN (&dn_y))
+  if (decNumberIsNaN (&dn_y))
     return y+y;
 
   /*  Detect if y is odd/an integer */
-  ___decNumberToIntegralValue (&dn_temp, &dn_y, &context);
-  ___decNumberSubtract (&dn_temp2, &dn_temp, &dn_y, &context);
-  y_is_int = ___decNumberIsZero (&dn_temp2);
+  decNumberToIntegralValue (&dn_temp, &dn_y, &context);
+  decNumberSubtract (&dn_temp2, &dn_temp, &dn_y, &context);
+  y_is_int = decNumberIsZero (&dn_temp2);
   if (y_is_int)
     {
       FUNC_CONVERT_TO_DN (&two, &dn_two);
-      ___decNumberDivide (&dn_temp, &dn_y, &dn_two, &context);
-      ___decNumberToIntegralValue (&dn_temp2, &dn_temp, &context);
-      ___decNumberSubtract (&dn_temp3, &dn_temp2, &dn_temp, &context);
-      y_is_oddint = !___decNumberIsZero (&dn_temp3);
+      decNumberDivide (&dn_temp, &dn_y, &dn_two, &context);
+      decNumberToIntegralValue (&dn_temp2, &dn_temp, &context);
+      decNumberSubtract (&dn_temp3, &dn_temp2, &dn_temp, &context);
+      y_is_oddint = !decNumberIsZero (&dn_temp3);
     }
 
   /*  Handle all special cases for which x = +-0 */
-  if (___decNumberIsZero (&dn_x))
+  if (decNumberIsZero (&dn_x))
     {
-      if(___decNumberIsNegative (&dn_y))
+      if(decNumberIsNegative (&dn_y))
 	{
-	  if (___decNumberIsInfinite (&dn_y))	/*  +-0^-Inf = +Inf */
+	  if (decNumberIsInfinite (&dn_y))	/*  +-0^-Inf = +Inf */
 	    return -y;
 	  /*  Pole Error for x = +-0, y < 0 */
 	  DFP_EXCEPT (FE_DIVBYZERO);
-	  return ___decNumberIsNegative(&dn_x) && y_is_oddint ?
+	  return decNumberIsNegative(&dn_x) && y_is_oddint ?
 		-DFP_HUGE_VAL : DFP_HUGE_VAL;
 	}
-      return ___decNumberIsNegative(&dn_x) && y_is_oddint ?
+      return decNumberIsNegative(&dn_x) && y_is_oddint ?
 		-DFP_CONSTANT(0.0) : DFP_CONSTANT(0.0);
     }
 
   /* Handle remaining special cases for x = +-Inf or y = +-Inf */
-  if (___decNumberIsInfinite (&dn_x) || ___decNumberIsInfinite (&dn_y))
+  if (decNumberIsInfinite (&dn_x) || decNumberIsInfinite (&dn_y))
     {
       if (abs_x_vs_1 == 0)	/*  If (-1)^(+-Inf) */
 	return one;
       if (abs_x_vs_1 < 0)	/*  x^(+-Inf), where 0<x<1 */
-	return ___decNumberIsNegative (&dn_y) ? DFP_HUGE_VAL
+	return decNumberIsNegative (&dn_y) ? DFP_HUGE_VAL
 		: DFP_CONSTANT(0.0);
-      if (___decNumberIsNegative (&dn_y))
+      if (decNumberIsNegative (&dn_y))
 	result = DFP_CONSTANT(0.0);
       else
 	result = (DEC_TYPE)DEC_INFINITY;
-      if (y_is_oddint && ___decNumberIsNegative(&dn_x))
+      if (y_is_oddint && decNumberIsNegative(&dn_x))
 	result = -result;
       return result;
     }
 
   /* Domain Error: x < 0 && y is a finite non-int */
-  if (___decNumberIsNegative (&dn_x) && !y_is_int)
+  if (decNumberIsNegative (&dn_x) && !y_is_int)
     {
       DFP_EXCEPT (FE_INVALID);
       return DFP_NAN;
     }
 
-  ___decNumberPower (&dn_result, &dn_x, &dn_y, &context);
+  decNumberPower (&dn_result, &dn_x, &dn_y, &context);
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 
   if (context.status & DEC_Overflow)

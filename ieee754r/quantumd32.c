@@ -47,9 +47,9 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x;
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsZero (&dn_x))
+  if (decNumberIsNaN (&dn_x) || decNumberIsZero (&dn_x))
     return x;
-  if (___decNumberIsInfinite (&dn_x))
+  if (decNumberIsInfinite (&dn_x))
     return DEC_INFINITY;
 
   return FUNC_D(setexp) (ref, dn_x.exponent);

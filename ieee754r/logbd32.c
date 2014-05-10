@@ -49,30 +49,30 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x2;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (___decNumberIsNaN (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     return x+x;
-  if (___decNumberIsInfinite (&dn_x))	/* +-Inf: Inf  */
+  if (decNumberIsInfinite (&dn_x))	/* +-Inf: Inf  */
     return DEC_INFINITY;
-  if (___decNumberIsZero (&dn_x))	/*  Pole Error if x==0 */
+  if (decNumberIsZero (&dn_x))	/*  Pole Error if x==0 */
     {
       DFP_EXCEPT (FE_DIVBYZERO);
       return -DFP_HUGE_VAL;
     }
-  if (___decNumberIsInfinite (&dn_x) && ___decNumberIsNegative (&dn_x))
+  if (decNumberIsInfinite (&dn_x) && decNumberIsNegative (&dn_x))
     return -x;
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  ___decNumberAbs (&dn_x2, &dn_x, &context);
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  decNumberAbs (&dn_x2, &dn_x, &context);
   /*  For DFP, we use radix 10 instead of whatever FLT_RADIX
       happens to be */
-  ___decNumberLog10 (&dn_x, &dn_x2, &context);
+  decNumberLog10 (&dn_x, &dn_x2, &context);
 
   /* Capture the case where truncation will return the wrong result.  */
   if (x < DFP_CONSTANT(1.0) && x > DFP_CONSTANT(-1.0))
     context.round = DEC_ROUND_UP; /* round away from zero  */
   else
     context.round = DEC_ROUND_DOWN; /*  truncate */
-  ___decNumberToIntegralValue (&dn_result, &dn_x, &context);
+  decNumberToIntegralValue (&dn_result, &dn_x, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 

@@ -106,8 +106,6 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   /* decNumber public functions and macros			      */
   /* ---------------------------------------------------------------- */
 
-  #include "decNumberSymbols.h"
-
   #ifdef __cplusplus
   extern "C" {
   #endif

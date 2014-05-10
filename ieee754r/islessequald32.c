@@ -47,10 +47,10 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   FUNC_CONVERT_TO_DN(&x, &dn_x);
   FUNC_CONVERT_TO_DN(&y, &dn_y);
 
-  if(___decNumberIsNaN(&dn_x) || ___decNumberIsNaN(&dn_y))
+  if(decNumberIsNaN(&dn_x) || decNumberIsNaN(&dn_y))
     return 0;
 
-  /*return ___decCompare(&dn_x, &dn_y) != 1; */
+  /*return decCompare(&dn_x, &dn_y) != 1; */
   return x<=y;
 }
 

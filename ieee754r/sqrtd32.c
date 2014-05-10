@@ -48,20 +48,20 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x;
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
-  if (___decNumberIsNaN (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     return x+x;
-  if (___decNumberIsZero (&dn_x))
+  if (decNumberIsZero (&dn_x))
     return x;
-  if (___decNumberIsNegative (&dn_x))
+  if (decNumberIsNegative (&dn_x))
     {
       DFP_EXCEPT (FE_INVALID);
       return DFP_NAN;
     }
-  if (___decNumberIsInfinite (&dn_x))
+  if (decNumberIsInfinite (&dn_x))
     return x;
 
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
-  ___decNumberSquareRoot(&dn_result, &dn_x, &context);
+  decContextDefault(&context, DEFAULT_CONTEXT);
+  decNumberSquareRoot(&dn_result, &dn_x, &context);
 
   FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
 

@@ -45,7 +45,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
 
-  return ___decNumberIsNegative(&dn_x);
+  return decNumberIsNegative(&dn_x);
 }
 hidden_def (INTERNAL_FUNCTION_NAME)
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

@@ -1,5 +1,97 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/decNumberSymbols.h: Remove file.
+	* libdecnumber/decNumber.h: Remove decNumberSymbols.h include.
+	* decNumberMath/Versions (libdfp [LIBDFP_PRIVATE]): Remove symbols
+	prepended '___' string.
+	* decNumberMath/decNumberMath.c (___decNumberFloor): Likewise.
+	(___decNumberIsEqual): Likewise.
+	(___decNumberIsInteger): Likewise.
+	(___decNumberMod): Likewise.
+	(___decNumberPow): Likewise.
+	(___decNumberSquareRoot): Likewise.
+	(___decNumberSinh): Likewise.
+	(___decNumberCosh): Likewise.
+	(___decNumberTanh): Likewise.
+	(___decNumberSin): Likewise.
+	(___decNumberCos): Likewise.
+	(___decNumberTan): Likewise.
+	(___decNumberAtan): Likewise.
+	* decNumberMath/decNumberMath.h (___decNumberPow): Likewise.
+	(___decNumberSinh): Likewise.
+	(___decNumberCosh): Likewise.
+	(___decNumberTanh): Likewise.
+	(___decNumberSin): Likewise.
+	(___decNumberCos): Likewise.
+	(___decNumberTan): Likewise.
+	(___decNumberAtan): Likewise.
+	* ieee754r/acoshd32.c: Likewise.
+	* ieee754r/asinhd32.c: Likewise.
+	* ieee754r/atan2d32.c: Likewise.
+	* ieee754r/atand32.c: Likewise.
+	* ieee754r/atanhd32.c: Likewise.
+	* ieee754r/ceild32.c: Likewise.
+	* ieee754r/copysignd32.c: Likewise.
+	* ieee754r/cosd32.c: Likewise.
+	* ieee754r/coshd32.c: Likewise.
+	* ieee754r/exp2d32.c: Likewise.
+	* ieee754r/expd32.c: Likewise.
+	* ieee754r/expm1d32.c: Likewise.
+	* ieee754r/fabsd32.c: Likewise.
+	* ieee754r/fdimd32.c: Likewise.
+	* ieee754r/floord32.c: Likewise.
+	* ieee754r/fmad32.c: Likewise.
+	* ieee754r/fmaxd32.c: Likewise.
+	* ieee754r/fmind32.c: Likewise.
+	* ieee754r/fmodd32.c: Likewise.
+	* ieee754r/hypotd32.c: Likewise.
+	* ieee754r/ilogbd32.c: Likewise.
+	* ieee754r/isgreaterd32.c: Likewise.
+	* ieee754r/isgreaterequald32.c: Likewise.
+	* ieee754r/islessd32.c: Likewise.
+	* ieee754r/islessequald32.c: Likewise.
+	* ieee754r/islessgreaterd32.c: Likewise.
+	* ieee754r/isnormald32.c: Likewise.
+	* ieee754r/llquantexpd32.c: Likewise.
+	* ieee754r/llroundd32.c: Likewise.
+	* ieee754r/log10d32.c: Likewise.
+	* ieee754r/log1pd32.c: Likewise.
+	* ieee754r/log2d32.c: Likewise.
+	* ieee754r/logbd32.c: Likewise.
+	* ieee754r/logd32.c: Likewise.
+	* ieee754r/modfd32.c: Likewise.
+	* ieee754r/nearbyintd32.c: Likewise.
+	* ieee754r/nextafterd32.c: Likewise.
+	* ieee754r/nexttowardd32.c: Likewise.
+	* ieee754r/powd32.c: Likewise.
+	* ieee754r/quantized32.c: Likewise.
+	* ieee754r/quantumd32.c: Likewise.
+	* ieee754r/remainderd32.c: Likewise.
+	* ieee754r/roundd32.c: Likewise.
+	* ieee754r/roundevend32.c: Likewise.
+	* ieee754r/samequantumd32.c: Likewise.
+	* ieee754r/scalblnd32.c: Likewise.
+	* ieee754r/scalbnd32.c: Likewise.
+	* ieee754r/signbitd32.c: Likewise.
+	* ieee754r/sind32.c: Likewise.
+	* ieee754r/sinhd32.c: Likewise.
+	* ieee754r/sqrtd32.c: Likewise.
+	* ieee754r/tand32.c: Likewise.
+	* ieee754r/tanhd32.c: Likewise.
+	* ieee754r/truncd32.c: Likewise.
+	* sysdeps/soft-dfp/addsd3.c: Likewise.
+	* sysdeps/soft-dfp/divsd3.c: Likewise.
+	* sysdeps/soft-dfp/eqsd2.c: Likewise.
+	* sysdeps/soft-dfp/gesd2.c: Likewise.
+	* sysdeps/soft-dfp/gtsd2.c: Likewise.
+	* sysdeps/soft-dfp/lesd2.c: Likewise.
+	* sysdeps/soft-dfp/ltsd2.c: Likewise.
+	* sysdeps/soft-dfp/mulsd3.c: Likewise.
+	* sysdeps/soft-dfp/nesd2.c: Likewise.
+	* sysdeps/soft-dfp/subsd3.c: Likewise.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* libdecnumber/bid/decimal128Symbols.h: Remove.
 	* libdecnumber/bid/decimal32Symbols.h: Likewise.
 	* libdecnumber/bid/decimal64Symbols.h: Likewise.

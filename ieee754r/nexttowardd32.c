@@ -58,12 +58,12 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, _Decimal128 y)
   __DECIMAL_TO_DECNUMBER(&y, &dn_y, 128);
 
   /*  Early exit for nan's */
-  if (___decNumberIsNaN(&dn_x))
+  if (decNumberIsNaN(&dn_x))
     return x;
-  if (___decNumberIsNaN(&dn_y))
+  if (decNumberIsNaN(&dn_y))
     return y;
 
-  /*comparison = ___decCompare(&dn_x, &dn_y); */
+  /*comparison = decCompare(&dn_x, &dn_y); */
   /*  Early exit for equal values */
   /*if (comparison == 0) */
   if (x==y)
@@ -74,12 +74,12 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, _Decimal128 y)
 
   dn_epsilon.exponent += dn_x.digits+dn_x.exponent-1;
 
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
+  decContextDefault(&context, DEFAULT_CONTEXT);
   /*if (comparison > 0)*/
   if (x>y)
-    ___decNumberSubtract(&dn_result,&dn_x,&dn_epsilon,&context);
+    decNumberSubtract(&dn_result,&dn_x,&dn_epsilon,&context);
   else
-    ___decNumberAdd(&dn_result,&dn_x,&dn_epsilon,&context);
+    decNumberAdd(&dn_result,&dn_x,&dn_epsilon,&context);
 
   FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
   if (context.status & DEC_Overflow)

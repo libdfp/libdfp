@@ -53,41 +53,41 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   FUNC_CONVERT_TO_DN (&x, &dn_x);
 
   /*  Handle NaN and early exit for x==0 */
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsZero (&dn_x))
+  if (decNumberIsNaN (&dn_x) || decNumberIsZero (&dn_x))
     return x + x;
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  ___decNumberAbs (&dn_temp, &dn_x, &context);
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  decNumberAbs (&dn_temp, &dn_x, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_temp, &temp, &context);
   if(temp==one) {
 	/*  |x| == 1 -> Pole Error */
 	DFP_EXCEPT (FE_DIVBYZERO);
-	return ___decNumberIsNegative(&dn_x) ? -DFP_HUGE_VAL:DFP_HUGE_VAL;
+	return decNumberIsNegative(&dn_x) ? -DFP_HUGE_VAL:DFP_HUGE_VAL;
   } else if (temp>one) {
 	/*  |x| > 1 -> Domain Error (this handles +-Inf too) */
 	DFP_EXCEPT (FE_INVALID);
 	return DFP_NAN;
   }
 
-//  comp = ___decCompare (&dn_temp, &dn_one);
+//  comp = decCompare (&dn_temp, &dn_one);
 //  switch (comp)
 //    {
 //      case 0: /*  |x| == 1 -> Pole Error */
 //	DFP_EXCEPT (FE_DIVBYZERO);
-//	return ___decNumberIsNegative(&dn_x) ? -DFP_HUGE_VAL:DFP_HUGE_VAL;
+//	return decNumberIsNegative(&dn_x) ? -DFP_HUGE_VAL:DFP_HUGE_VAL;
 //      case 1: /*  |x| > 1 -> Domain Error (this handles +-Inf too) */
 //	DFP_EXCEPT (FE_INVALID);
 //	return DFP_NAN;
 //    }
 
   /* Using trig identity: atanh(x) = 1/2 * log((1+x)/(1-x)) */
-  ___decNumberAdd (&dn_result, &dn_one, &dn_x, &context);
-  ___decNumberSubtract (&dn_temp, &dn_one, &dn_x, &context);
-  ___decNumberDivide (&dn_result, &dn_result, &dn_temp, &context);
-  ___decNumberLn (&dn_result, &dn_result, &context);
-  ___decNumberAdd (&dn_temp, &dn_one, &dn_one, &context); /* 2 */
-  ___decNumberDivide (&dn_result, &dn_result, &dn_temp, &context);
+  decNumberAdd (&dn_result, &dn_one, &dn_x, &context);
+  decNumberSubtract (&dn_temp, &dn_one, &dn_x, &context);
+  decNumberDivide (&dn_result, &dn_result, &dn_temp, &context);
+  decNumberLn (&dn_result, &dn_result, &context);
+  decNumberAdd (&dn_temp, &dn_one, &dn_one, &context); /* 2 */
+  decNumberDivide (&dn_result, &dn_result, &dn_temp, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 

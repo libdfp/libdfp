@@ -50,16 +50,16 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
 
-  if (___decNumberIsNaN (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     return x+x;
-  if (___decNumberIsZero (&dn_x))
+  if (decNumberIsZero (&dn_x))
     return DFP_CONSTANT(1.0);
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  if (___decNumberIsInfinite (&dn_x))
-      ___decNumberAbs (&dn_result, &dn_x, &context);
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  if (decNumberIsInfinite (&dn_x))
+      decNumberAbs (&dn_result, &dn_x, &context);
   else
-    ___decNumberCosh (&dn_result, &dn_x, &context);
+    decNumberCosh (&dn_result, &dn_x, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 

@@ -51,12 +51,12 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, long y)
 /*  int32_t temp = 0;  */
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
-  if (___decNumberIsNaN (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     return x+x;
-  if (___decNumberIsInfinite (&dn_x) || ___decNumberIsZero (&dn_x) || y==0L)
+  if (decNumberIsInfinite (&dn_x) || decNumberIsZero (&dn_x) || y==0L)
     return x;
 
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
+  decContextDefault(&context, DEFAULT_CONTEXT);
 //  sum = dn_x.exponent + y;
 //  if(sum >= 1000000000LL || sum <= -2000000000LL
 //    || y >= 1000000000L || y <= -2000000000L)
@@ -64,14 +64,14 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, long y)
 //  else
 //    dn_x.exponent = sum;
 //
-//  ___decFinalize(&dn_x, &context, &temp, &temp2);
+//  decFinalize(&dn_x, &context, &temp, &temp2);
 
   if (y >= 1000000000L || y <= -2000000000L)
     context.status |= DEC_Overflow;
   else 
     {
-    ___decNumberFromInt32(&dn_y, (int)y);
-    ___decNumberScaleB(&dn_x, &dn_x, &dn_y, &context);
+    decNumberFromInt32(&dn_y, (int)y);
+    decNumberScaleB(&dn_x, &dn_x, &dn_y, &context);
     }
 
   FUNC_CONVERT_FROM_DN(&dn_x, &result, &context);

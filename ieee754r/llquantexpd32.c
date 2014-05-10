@@ -43,7 +43,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x;
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsInfinite (&dn_x))
+  if (decNumberIsNaN (&dn_x) || decNumberIsInfinite (&dn_x))
     {
       DFP_ERRNO (EDOM);
       return LLONG_MIN;

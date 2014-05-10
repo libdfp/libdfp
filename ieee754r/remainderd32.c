@@ -51,22 +51,22 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
   FUNC_CONVERT_TO_DN (&y, &dn_y);
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsNaN (&dn_y))
+  if (decNumberIsNaN (&dn_x) || decNumberIsNaN (&dn_y))
     return x+y;
 
   /*  Domain Error: x = +-Inf, or y = +-0 and x is non-NaN */
-  if (___decNumberIsInfinite (&dn_x) || ___decNumberIsZero (&dn_y))
+  if (decNumberIsInfinite (&dn_x) || decNumberIsZero (&dn_y))
     {
       DFP_EXCEPT (FE_INVALID);
       return (x - x) / (x - x);
     }
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  ___decNumberDivide (&dn_mult, &dn_x, &dn_y, &context);
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  decNumberDivide (&dn_mult, &dn_x, &dn_y, &context);
   context.round = DEC_ROUND_HALF_EVEN;
-  ___decNumberToIntegralValue (&dn_rounded, &dn_mult, &context);
-  ___decNumberMultiply (&dn_mult, &dn_rounded, &dn_y, &context);
-  ___decNumberSubtract (&dn_result, &dn_x, &dn_mult, &context);
+  decNumberToIntegralValue (&dn_rounded, &dn_mult, &context);
+  decNumberMultiply (&dn_mult, &dn_rounded, &dn_y, &context);
+  decNumberSubtract (&dn_result, &dn_x, &dn_mult, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 

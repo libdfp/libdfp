@@ -47,8 +47,8 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  ___decNumberAbs (&dn_result, &dn_x, &context);
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  decNumberAbs (&dn_result, &dn_x, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 

@@ -71,39 +71,39 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_logx;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (___decNumberIsZero (&dn_x))
+  if (decNumberIsZero (&dn_x))
     {
       DFP_EXCEPT (FE_INVALID);
       DFP_ERRNO (EDOM);
       return _FBLOG0;
     }
-  if (___decNumberIsInfinite (&dn_x))
+  if (decNumberIsInfinite (&dn_x))
     {
       DFP_EXCEPT (FE_INVALID);
       DFP_ERRNO (EDOM);
-      return ___decNumberIsNegative (&dn_x) ? _MIN_VALUE : _MAX_VALUE;
+      return decNumberIsNegative (&dn_x) ? _MIN_VALUE : _MAX_VALUE;
     }
-  if (___decNumberIsNaN (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     {
       DFP_EXCEPT (FE_INVALID);
       DFP_ERRNO (EDOM);
       return _FBLOGNAN;
     }
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
+  decContextDefault (&context, DEFAULT_CONTEXT);
 
-  ___decNumberAbs (&dn_absx, &dn_x, &context);
+  decNumberAbs (&dn_absx, &dn_x, &context);
 
   /*  For DFP, we use radix 10 instead of whatever FLT_RADIX
      happens to be */
-  ___decNumberLog10 (&dn_logx, &dn_absx, &context);
+  decNumberLog10 (&dn_logx, &dn_absx, &context);
 
   /* Capture the case where truncation will return the wrong result.  */
   if (x < DFP_CONSTANT (1.0) && x > DFP_CONSTANT (-1.0))
     context.round = DEC_ROUND_UP;	/* round away from zero  */
   else
     context.round = DEC_ROUND_DOWN;	/*  truncate */
-  ___decNumberToIntegralValue (&dn_result, &dn_logx, &context);
+  decNumberToIntegralValue (&dn_result, &dn_logx, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
   /* Use _Decimal* to int casting.  */

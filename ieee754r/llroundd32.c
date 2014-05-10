@@ -61,22 +61,22 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsInfinite (&dn_x)
+  if (decNumberIsNaN (&dn_x) || decNumberIsInfinite (&dn_x)
 	|| x > __MAX_VALUE || x < __MIN_VALUE)
     {
       DFP_EXCEPT (FE_INVALID);
       return (__ROUND_RETURN_TYPE) x;
     }
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
+  decContextDefault (&context, DEFAULT_CONTEXT);
   context.round = __ROUND_MODE;
-  ___decNumberToIntegralValue (&dn_result,&dn_x,&context);
+  decNumberToIntegralValue (&dn_result,&dn_x,&context);
 
   FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
   /* Use _Decimal* to __ROUND_RETURN_TYPE casting.  */
   return (__ROUND_RETURN_TYPE)result;
 
-/*  return (__ROUND_RETURN_TYPE)___decNumberToInteger (&dn_result); */
+/*  return (__ROUND_RETURN_TYPE)decNumberToInteger (&dn_result); */
 }
 
 __ROUND_RETURN_TYPE

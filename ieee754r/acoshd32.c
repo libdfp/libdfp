@@ -51,7 +51,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   FUNC_CONVERT_TO_DN (&one, &dn_one);
   FUNC_CONVERT_TO_DN (&x, &dn_x);
 
-  if (___decNumberIsNaN (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     return x+x;
 
   if (x<one) {
@@ -63,7 +63,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
     return DFP_CONSTANT(0.0);
   }
 
-//  switch (___decCompare (&dn_x, &dn_one) )
+//  switch (decCompare (&dn_x, &dn_one) )
 //    {
       /*  Domain error (invalid exception) if x < 1 (incl. -Inf) */
 //      case -1:
@@ -75,17 +75,17 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
 //    }
 
   /*  Early exit for the infinite case (-Inf is handled above) */
-  if (___decNumberIsInfinite (&dn_x))
+  if (decNumberIsInfinite (&dn_x))
     return x;
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
+  decContextDefault (&context, DEFAULT_CONTEXT);
 
   /* using trig identity: acosh(x) = log(x+sqrt(x*x-1)) */
-  ___decNumberMultiply (&dn_result, &dn_x, &dn_x, &context);
-  ___decNumberSubtract (&dn_result, &dn_result, &dn_one, &context);
-  ___decNumberSquareRoot (&dn_result, &dn_result, &context);
-  ___decNumberAdd (&dn_result, &dn_result, &dn_x, &context);
-  ___decNumberLn (&dn_result, &dn_result, &context);
+  decNumberMultiply (&dn_result, &dn_x, &dn_x, &context);
+  decNumberSubtract (&dn_result, &dn_result, &dn_one, &context);
+  decNumberSquareRoot (&dn_result, &dn_result, &context);
+  decNumberAdd (&dn_result, &dn_result, &dn_x, &context);
+  decNumberLn (&dn_result, &dn_result, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 

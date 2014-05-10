@@ -48,17 +48,17 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  if (___decNumberIsInfinite (&dn_x))
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  if (decNumberIsInfinite (&dn_x))
     {
-      if (___decNumberIsNegative (&dn_x))
+      if (decNumberIsNegative (&dn_x))
         result = -M_PI_2dl;
       else
         result = M_PI_2dl;
     }
   else
     {
-      ___decNumberAtan (&dn_result, &dn_x, &context);
+      decNumberAtan (&dn_result, &dn_x, &context);
       FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
     }
 

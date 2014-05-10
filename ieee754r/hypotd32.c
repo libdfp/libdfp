@@ -54,18 +54,18 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
   FUNC_CONVERT_TO_DN (&y, &dn_y);
-  if (___decNumberIsInfinite (&dn_x))
+  if (decNumberIsInfinite (&dn_x))
     return x;
-  if (___decNumberIsInfinite (&dn_y))
+  if (decNumberIsInfinite (&dn_y))
     return y;
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsNaN (&dn_y))
+  if (decNumberIsNaN (&dn_x) || decNumberIsNaN (&dn_y))
     return x+y;
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  ___decNumberMultiply (&dn_xx, &dn_x, &dn_x, &context);
-  ___decNumberMultiply (&dn_yy, &dn_y, &dn_y, &context);
-  ___decNumberAdd (&dn_sum, &dn_xx, &dn_yy, &context);
-  ___decNumberSquareRoot (&dn_result, &dn_sum, &context);
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  decNumberMultiply (&dn_xx, &dn_x, &dn_x, &context);
+  decNumberMultiply (&dn_yy, &dn_y, &dn_y, &context);
+  decNumberAdd (&dn_sum, &dn_xx, &dn_yy, &context);
+  decNumberSquareRoot (&dn_result, &dn_sum, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 

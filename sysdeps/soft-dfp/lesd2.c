@@ -42,14 +42,14 @@ PREFIXED_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
   decNumber dn_x, dn_y, result;
   decContext context;
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
+  decContextDefault(&context, DEFAULT_CONTEXT);
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
   FUNC_CONVERT_TO_DN(&y, &dn_y);
 
-  if(___decNumberIsNaN(&dn_x) || ___decNumberIsNaN(&dn_y))
+  if(decNumberIsNaN(&dn_x) || decNumberIsNaN(&dn_y))
     return 1;
 
-  ___decNumberCompare(&result, &dn_x, &dn_y, &context);
-  return !___decNumberIsNegative(&result) && !___decNumberIsZero(&result);
+  decNumberCompare(&result, &dn_x, &dn_y, &context);
+  return !decNumberIsNegative(&result) && !decNumberIsZero(&result);
 }

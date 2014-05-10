@@ -56,22 +56,22 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE y, DEC_TYPE x)
   FUNC_CONVERT_TO_DN (&y, &dn_y);
 
   /*  If either argument is NaN, return NaN */
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsNaN (&dn_y))
+  if (decNumberIsNaN (&dn_x) || decNumberIsNaN (&dn_y))
     return x+y;
 
   /* If  x,y are both non-inf, non-NaN, non-zero, calculate as normal */
-  if (!___decNumberIsInfinite (&dn_x) && !___decNumberIsZero (&dn_y)
-      && !___decNumberIsInfinite (&dn_y) && !___decNumberIsZero (&dn_x))
+  if (!decNumberIsInfinite (&dn_x) && !decNumberIsZero (&dn_y)
+      && !decNumberIsInfinite (&dn_y) && !decNumberIsZero (&dn_x))
     {
-      ___decContextDefault (&context, DEFAULT_CONTEXT);
-      ___decNumberDivide (&dn_temp, &dn_y, &dn_x, &context);
-      ___decNumberAtan (&dn_result, &dn_temp, &context);
+      decContextDefault (&context, DEFAULT_CONTEXT);
+      decNumberDivide (&dn_temp, &dn_y, &dn_x, &context);
+      decNumberAtan (&dn_result, &dn_temp, &context);
       FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
       /* decNumberAtan doesn't quite return the values in the ranges we
        * want for x < 0. So we need to do some correction */
-      if (___decNumberIsNegative (&dn_x))
+      if (decNumberIsNegative (&dn_x))
 	{
-	  if (___decNumberIsNegative (&dn_y))
+	  if (decNumberIsNegative (&dn_y))
 	    return result - M_PIdl;
 	  else
 	    return result + M_PIdl;
@@ -81,26 +81,26 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE y, DEC_TYPE x)
     }
 
   /* If x and y are both inf, the result depends on the sign of x */
-  if (___decNumberIsInfinite (&dn_y) && ___decNumberIsInfinite (&dn_x))
+  if (decNumberIsInfinite (&dn_y) && decNumberIsInfinite (&dn_x))
     {
-      if (___decNumberIsNegative (&dn_x) )
+      if (decNumberIsNegative (&dn_x) )
 	result = (DEC_TYPE)(3.0DL * M_PI_4dl) + generate_inexact;
       else
 	result = (DEC_TYPE) M_PI_4dl + generate_inexact;
     }
   /*  If y is non-zero and x is non-inf, the result is +-pi/2 */
-  else if (!___decNumberIsZero (&dn_y) && !___decNumberIsInfinite (&dn_x) )
+  else if (!decNumberIsZero (&dn_y) && !decNumberIsInfinite (&dn_x) )
     result = (DEC_TYPE)M_PI_2dl;
   else /*  Otherwise it is +0 if x is positive, +pi if x is neg */
     {
-      if (___decNumberIsNegative (&dn_x))
+      if (decNumberIsNegative (&dn_x))
 	result = ((DEC_TYPE) M_PIdl) - generate_inexact;
       else
 	result = DFP_CONSTANT (0.0);
     }
 
   /*  Atan2 will be negative if y<0 */
-  if (___decNumberIsNegative (&dn_y))
+  if (decNumberIsNegative (&dn_y))
     return -result;
   else
     return result;

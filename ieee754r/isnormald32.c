@@ -52,18 +52,18 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 /*  FUNC_CONVERT_TO_DN(&min, &dn_min); */
   FUNC_CONVERT_TO_DN(&x, &dn_x);
 
-  if(___decNumberIsNaN(&dn_x) || ___decNumberIsInfinite(&dn_x) ||
-	___decNumberIsZero(&dn_x))
+  if(decNumberIsNaN(&dn_x) || decNumberIsInfinite(&dn_x) ||
+	decNumberIsZero(&dn_x))
     return 0;
 
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
-  ___decNumberAbs(&dn_result, &dn_x, &context);
+  decContextDefault(&context, DEFAULT_CONTEXT);
+  decNumberAbs(&dn_result, &dn_x, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
   if(result<min)
     return 0;
 
- /* if(___decCompare(&dn_result, &dn_min) == -1)
+ /* if(decCompare(&dn_result, &dn_min) == -1)
     return 0; */
 
   return 1;

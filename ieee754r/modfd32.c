@@ -46,18 +46,18 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE *y)
   decNumber dn_y;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (___decNumberIsNaN (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     {
       *y = x;
       return x+x;
     }
-   if (___decNumberIsInfinite (&dn_x))
+   if (decNumberIsInfinite (&dn_x))
     return DFP_CONSTANT(0.0)/x;
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
+  decContextDefault (&context, DEFAULT_CONTEXT);
   context.round = DEC_ROUND_DOWN;	/* round towards zero */
-  ___decNumberToIntegralValue (&dn_result, &dn_x, &context);
-  ___decNumberSubtract (&dn_y, &dn_x, &dn_result, &context);
+  decNumberToIntegralValue (&dn_result, &dn_x, &context);
+  decNumberSubtract (&dn_y, &dn_x, &dn_result, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, y, &context);
   FUNC_CONVERT_FROM_DN (&dn_y, &result, &context);

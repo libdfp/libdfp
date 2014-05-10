@@ -43,12 +43,12 @@ PREFIXED_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   DEC_TYPE result;
   decNumber dn_x, dn_y, dn_result;
   decContext context;
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
+  decContextDefault(&context, DEFAULT_CONTEXT);
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
   FUNC_CONVERT_TO_DN(&y, &dn_y);
 
-  ___decNumberMultiply(&dn_result, &dn_x, &dn_y, &context);
+  decNumberMultiply(&dn_result, &dn_x, &dn_y, &context);
 
   if (context.status != 0)
     {

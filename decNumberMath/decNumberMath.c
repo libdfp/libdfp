@@ -55,70 +55,70 @@
 // ----------------------------------------------------------------------
 
 // Return the largest integer less than or equal to x
-static decNumber* ___decNumberFloor (decNumber *result, decNumber *x, 
+static decNumber* decNumberFloor (decNumber *result, decNumber *x, 
 			   decContext *set) 
 {
   int round = set->round;
 
   set->round = DEC_ROUND_DOWN;
-  ___decNumberToIntegralValue (result, x, set);
+  decNumberToIntegralValue (result, x, set);
   set->round = round;
   return result;
-} /* ___decNumberFloor  */
+} /* decNumberFloor  */
 
-static int ___decNumberIsEqual (decNumber *x, decNumber *y, decContext *set)
+static int decNumberIsEqual (decNumber *x, decNumber *y, decContext *set)
 {
   decNumber diff;
-  ___decNumberSubtract (&diff, x, y, set);
-  return ___decNumberIsZero (&diff);
-} /* ___decNumberIsEqual  */
+  decNumberSubtract (&diff, x, y, set);
+  return decNumberIsZero (&diff);
+} /* decNumberIsEqual  */
 
-static int ___decNumberIsInteger (decNumber *x, decContext *set)
+static int decNumberIsInteger (decNumber *x, decContext *set)
 {
   decNumber y;
 
-  ___decNumberToIntegralValue (&y, x, set);
-  return ___decNumberIsEqual (x, &y, set);
-} /* ___decNumberIsInteger  */
+  decNumberToIntegralValue (&y, x, set);
+  return decNumberIsEqual (x, &y, set);
+} /* decNumberIsInteger  */
 
 // Modulo function
-static decNumber* ___decNumberMod (decNumber *result, decNumber *x, decNumber *y,
+static decNumber* decNumberMod (decNumber *result, decNumber *x, decNumber *y,
 			 decContext *set)
 {
   // x mod y = x - k*y where k = floor(x/y)
   decNumber k;
 
-  ___decNumberDivide (&k, x, y, set);
-  ___decNumberFloor (&k, &k, set);
-  ___decNumberMultiply (&k, &k, y, set);
-  ___decNumberSubtract (result, x, &k, set);
+  decNumberDivide (&k, x, y, set);
+  decNumberFloor (&k, &k, set);
+  decNumberMultiply (&k, &k, y, set);
+  decNumberSubtract (result, x, &k, set);
   return result;
-} /* ___decNumberMod  */
+} /* decNumberMod  */
 
 // ----------------------------------------------------------------------
 // Exponential Function
 // ----------------------------------------------------------------------
 
-decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y, 
+decNumber* decNumberPow (decNumber *result, decNumber *x, decNumber *y, 
 			 decContext *set)
 {
   decNumber tmp;
 
-  if (___decNumberIsInteger (y, set)) {
-    return ___decNumberPower (result, x, y, set);
+  if (decNumberIsInteger (y, set)) {
+    return decNumberPower (result, x, y, set);
   }
   // y is not an integer.
-  if (___decNumberIsNegative (x)) {
+  if (decNumberIsNegative (x)) {
     // result would be a complex number.
-    ___decNumberFromString (result, "NaN", set);
+    decNumberFromString (result, "NaN", set);
     return result;
   }
   // x^y = exp (y*ln(x))
-  ___decNumberLn(&tmp, x, set);
-  ___decNumberMultiply (&tmp, &tmp, y, set);
-  ___decNumberExp (result, &tmp, set);
+  decNumberLn(&tmp, x, set);
+  decNumberMultiply (&tmp, &tmp, y, set);
+  decNumberExp (result, &tmp, set);
   return result;
-} /* ___decNumberPow  */
+} /* decNumberPow  */
 
 /* ------------------------------------------------------------------ */
 /* decNumberSquareRoot -- square root operator                        */
@@ -189,7 +189,7 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
 /* result setexp(approx, e div 2)  % fix exponent                     */
 /* end sqrt                                                           */
 /* ------------------------------------------------------------------ */
-/*decNumber * ___decNumberSquareRoot(decNumber *res, decNumber *rhs,
+/*decNumber * decNumberSquareRoot(decNumber *res, decNumber *rhs,
                                 decContext *set) {
   decContext workset, approxset;   // work contexts
   decNumber dzero;                 // used for constant zero
@@ -219,7 +219,7 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
   decNumber *t=(decNumber *)buft;  // up-to-3-digit constant or work
 
   #if DECCHECK
-  if (___decCheckOperands(res, DECUNUSED, rhs, set)) return res;
+  if (decCheckOperands(res, DECUNUSED, rhs, set)) return res;
   #endif
 
   do {                             // protect allocated storage
@@ -227,7 +227,7 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
     if (!set->extended) {
       // reduce operand and set lostDigits status, as needed
       if (rhs->digits>set->digits) {
-        allocrhs=___decRoundOperand(rhs, set, &status);
+        allocrhs=decRoundOperand(rhs, set, &status);
         if (allocrhs==NULL) break;
         // [Note: 'f' allocation below could reuse this buffer if
         // used, but as this is rare we keep them separate for clarity.]
@@ -239,11 +239,11 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
 
     // handle infinities and NaNs
     if (rhs->bits & DECSPECIAL) {
-      if (___decNumberIsInfinite(rhs)) {         // an infinity
-        if (___decNumberIsNegative(rhs)) status|=DEC_Invalid_operation;
-         else ___decNumberCopy(res, rhs);        // +Infinity
+      if (decNumberIsInfinite(rhs)) {         // an infinity
+        if (decNumberIsNegative(rhs)) status|=DEC_Invalid_operation;
+         else decNumberCopy(res, rhs);        // +Infinity
         }
-       else ___decNaNs(res, rhs, NULL, &status); // a NaN
+       else decNaNs(res, rhs, NULL, &status); // a NaN
       break;
       }
 
@@ -254,13 +254,13 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
 
     // handle zeros
     if (ISZERO(rhs)) {
-      ___decNumberCopy(res, rhs);          // could be 0 or -0
+      decNumberCopy(res, rhs);          // could be 0 or -0
       res->exponent=ideal;              // use the ideal [safe]
       break;
       }
 
     // any other -x is an oops
-    if (___decNumberIsNegative(rhs)) {
+    if (decNumberIsNegative(rhs)) {
       status|=DEC_Invalid_operation;
       break;
       }
@@ -292,14 +292,14 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
       }
 
     // copy rhs -> f, save exponent, and reduce so 0.1 <= f < 1
-    ___decNumberCopy(f, rhs);
+    decNumberCopy(f, rhs);
     exp=f->exponent+f->digits;               // adjusted to Hull rules
     f->exponent=-(f->digits);                // to range
 
     // set up working contexts (the second is used for Numerical
     // Turing assignment)
-    ___decContextDefault(&workset, DEC_INIT_DECIMAL64);
-    ___decContextDefault(&approxset, DEC_INIT_DECIMAL64);
+    decContextDefault(&workset, DEC_INIT_DECIMAL64);
+    decContextDefault(&approxset, DEC_INIT_DECIMAL64);
     approxset.digits=set->digits;            // approx's length
 
     // [Until further notice, no error is possible and status bits
@@ -341,14 +341,14 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
         a->lsu[0]=9; a->lsu[1]=5; a->lsu[2]=2;
       #endif
       }
-    ___decMultiplyOp(a, a, f, &workset, &ignore);  // a=a*f
-    ___decAddOp(a, a, t, &workset, 0, &ignore);    // ..+t
+    decMultiplyOp(a, a, f, &workset, &ignore);  // a=a*f
+    decAddOp(a, a, t, &workset, 0, &ignore);    // ..+t
     // [a is now the initial approximation for sqrt(f), calculated with
     // currentprecision, which is also a's precision.]
 
     // the main calculation loop
-    ___decNumberZero(&dzero);                      // make 0
-    ___decNumberZero(t);                           // set t = 0.5
+    decNumberZero(&dzero);                      // make 0
+    decNumberZero(t);                           // set t = 0.5
     t->lsu[0]=5;                                  // ..
     t->exponent=-1;                               // ..
     workset.digits=3;                             // initial p
@@ -358,11 +358,11 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
       if (workset.digits>maxp) workset.digits=maxp;
       // a = 0.5 * (a + f/a)
       // [calculated at p then rounded to currentprecision]
-      ___decDivideOp(b, f, a, &workset, DIVIDE, &ignore); // b=f/a
-      ___decAddOp(b, b, a, &workset, 0, &ignore);  // b=b+a
-      ___decMultiplyOp(a, b, t, &workset, &ignore);// a=b*0.5
+      decDivideOp(b, f, a, &workset, DIVIDE, &ignore); // b=f/a
+      decAddOp(b, b, a, &workset, 0, &ignore);  // b=b+a
+      decMultiplyOp(a, b, t, &workset, &ignore);// a=b*0.5
       // assign to approx [round to length]
-      ___decAddOp(a, &dzero, a, &approxset, 0, &ignore);
+      decAddOp(a, &dzero, a, &approxset, 0, &ignore);
       if (workset.digits==maxp) break;            // just did final
       } // loop
 
@@ -372,31 +372,31 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
     // Here workset.digits=maxp and t=0.5
     workset.digits--;                             // maxp-1 is OK now
     t->exponent=-set->digits-1;                   // make 0.5 ulp
-    ___decNumberCopy(b, a);
-    ___decAddOp(b, b, t, &workset, DECNEG, &ignore); // b = a - 0.5 ulp
+    decNumberCopy(b, a);
+    decAddOp(b, b, t, &workset, DECNEG, &ignore); // b = a - 0.5 ulp
     workset.round=DEC_ROUND_UP;
-    ___decMultiplyOp(b, b, b, &workset, &ignore);  // b = mulru(b, b)
-    ___decNumberCompare(b, f, b, &workset); // b ? f, reversed
-    if (___decNumberIsNegative(b)) {               // f < b [i.e., b > f]
+    decMultiplyOp(b, b, b, &workset, &ignore);  // b = mulru(b, b)
+    decNumberCompare(b, f, b, &workset); // b ? f, reversed
+    if (decNumberIsNegative(b)) {               // f < b [i.e., b > f]
       // this is the more common adjustment, though both are rare
       t->exponent++;                              // make 1.0 ulp
       t->lsu[0]=1;                                // ..
-      ___decAddOp(a, a, t, &workset, DECNEG, &ignore); // a = a - 1 ulp
+      decAddOp(a, a, t, &workset, DECNEG, &ignore); // a = a - 1 ulp
       // assign to approx [round to length]
-      ___decAddOp(a, &dzero, a, &approxset, 0, &ignore);
+      decAddOp(a, &dzero, a, &approxset, 0, &ignore);
       }
     else {
-      ___decNumberCopy(b, a);
-      ___decAddOp(b, b, t, &workset, 0, &ignore);  // b = a + 0.5 ulp
+      decNumberCopy(b, a);
+      decAddOp(b, b, t, &workset, 0, &ignore);  // b = a + 0.5 ulp
       workset.round=DEC_ROUND_DOWN;
-      ___decMultiplyOp(b, b, b, &workset, &ignore);// b = mulrd(b, b)
-      ___decNumberCompare(b, b, f, &workset); // b ? f
-      if (___decNumberIsNegative(b)) {             // b < f
+      decMultiplyOp(b, b, b, &workset, &ignore);// b = mulrd(b, b)
+      decNumberCompare(b, b, f, &workset); // b ? f
+      if (decNumberIsNegative(b)) {             // b < f
         t->exponent++;                            // make 1.0 ulp
         t->lsu[0]=1;                              // ..
-        ___decAddOp(a, a, t, &workset, 0, &ignore);// a = a + 1 ulp
+        decAddOp(a, a, t, &workset, 0, &ignore);// a = a + 1 ulp
         // assign to approx [round to length]
-        ___decAddOp(a, &dzero, a, &approxset, 0, &ignore);
+        decAddOp(a, &dzero, a, &approxset, 0, &ignore);
         }
       }
     // [no errors are possible in the above, and rounding/inexact during
@@ -406,11 +406,11 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
     a->exponent+=exp/2;                      // set correct exponent
 
     // Process Subnormals
-    ___decFinalize(a, set, &residue, &status);
+    decFinalize(a, set, &residue, &status);
 
     // count dropable zeros [after any subnormal rounding]
-    ___decNumberCopy(b, a);
-    ___decTrim(b, 1, &dropped);               // [drops trailing zeros]
+    decNumberCopy(b, a);
+    decTrim(b, 1, &dropped);               // [drops trailing zeros]
 
     // Finally set Inexact and Rounded.  The answer can only be exact if
     // it is short enough so that squaring it could fit in set->digits,
@@ -421,12 +421,12 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
       }
      else {                                  // could be exact/unrounded
       uInt mstatus=0;                        // local status
-      ___decMultiplyOp(b, b, b, &workset, &mstatus); // try the multiply
+      decMultiplyOp(b, b, b, &workset, &mstatus); // try the multiply
       if (mstatus!=0) {                      // result won't fit
         status|=DEC_Inexact|DEC_Rounded;
         }
        else {                                // plausible
-        ___decNumberCompare(t, b, rhs, &workset); // b ? rhs
+        decNumberCompare(t, b, rhs, &workset); // b ? rhs
         if (!ISZERO(t)) {
           status|=DEC_Inexact|DEC_Rounded;
           }
@@ -441,7 +441,7 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
            else {                            // unrounded
             if (dropped<todrop) todrop=dropped; // clamp to those available
             if (todrop>0) {                  // OK, some to drop
-              ___decShiftToLeast(a->lsu, D2U(a->digits), todrop);
+              decShiftToLeast(a->lsu, D2U(a->digits), todrop);
               a->exponent+=todrop;           // maintain numerical value
               a->digits-=todrop;             // new length
               }
@@ -449,14 +449,14 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
           }
         }
       }
-    ___decNumberCopy(res, a);                 // assume this is the result
+    decNumberCopy(res, a);                 // assume this is the result
     } while(0);                              // end protected
 
   if (allocbuff!=NULL) free(allocbuff);      // drop any storage we used
   if (allocbufa!=NULL) free(allocbufa);      // ..
   if (allocbufb!=NULL) free(allocbufb);      // ..
   if (allocrhs !=NULL) free(allocrhs);       // ..
-  if (status!=0) ___decStatus(res, status, set);// then report status
+  if (status!=0) decStatus(res, status, set);// then report status
   return res;
 }*/ /* decNumberSquareRoot  */
 
@@ -464,88 +464,88 @@ decNumber* ___decNumberPow (decNumber *result, decNumber *x, decNumber *y,
 // Hyperbolic Functions
 // ----------------------------------------------------------------------
 
-decNumber* ___decNumberSinh (decNumber *result, decNumber *x, decContext *set)
+decNumber* decNumberSinh (decNumber *result, decNumber *x, decContext *set)
 {
   // sinh x = (e^x - e^-x)/2
   decNumber ex, emx, mx, two;
 
-  ___decNumberExp (&ex, x, set);
-  ___decNumberMinus (&mx, x, set);
-  ___decNumberExp (&emx, &mx, set);
-  ___decNumberSubtract (result, &ex, &emx, set);
-  ___decNumberFromString (&two, "2", set);
-  ___decNumberDivide (result, result, &two, set);
+  decNumberExp (&ex, x, set);
+  decNumberMinus (&mx, x, set);
+  decNumberExp (&emx, &mx, set);
+  decNumberSubtract (result, &ex, &emx, set);
+  decNumberFromString (&two, "2", set);
+  decNumberDivide (result, result, &two, set);
   return result;
 }
 
-decNumber* ___decNumberCosh (decNumber *result, decNumber *x, decContext *set)
+decNumber* decNumberCosh (decNumber *result, decNumber *x, decContext *set)
 {
   // cosh x = (e^x + e^-x)/2
   decNumber ex, emx, mx, two;
 
-  ___decNumberExp (&ex, x, set);
-  ___decNumberMinus (&mx, x, set);
-  ___decNumberExp (&emx, &mx, set);
-  ___decNumberAdd (result, &ex, &emx, set);
-  ___decNumberFromString (&two, "2", set);
-  ___decNumberDivide (result, result, &two, set);
+  decNumberExp (&ex, x, set);
+  decNumberMinus (&mx, x, set);
+  decNumberExp (&emx, &mx, set);
+  decNumberAdd (result, &ex, &emx, set);
+  decNumberFromString (&two, "2", set);
+  decNumberDivide (result, result, &two, set);
   return result;
-} /* ___decNumberCosh  */
+} /* decNumberCosh  */
 
-decNumber* ___decNumberTanh (decNumber *result, decNumber *x, decContext *set)
+decNumber* decNumberTanh (decNumber *result, decNumber *x, decContext *set)
 {
   // tanh x = sinh x / cosh x = (e^x - e^-x) / (e^x + e^-x)
   decNumber ex, emx, mx, denominator;
-  ___decNumberExp (&ex, x, set);
-  ___decNumberMinus (&mx, x, set);
-  ___decNumberExp (&emx, &mx, set);
-  ___decNumberSubtract (result, &ex, &emx, set);
-  ___decNumberAdd (&denominator, &ex, &emx, set);
-  ___decNumberDivide (result, result, &denominator, set);
+  decNumberExp (&ex, x, set);
+  decNumberMinus (&mx, x, set);
+  decNumberExp (&emx, &mx, set);
+  decNumberSubtract (result, &ex, &emx, set);
+  decNumberAdd (&denominator, &ex, &emx, set);
+  decNumberDivide (result, result, &denominator, set);
   return result;
-} /* ___decNumberTanh  */
+} /* decNumberTanh  */
 
 // ----------------------------------------------------------------------
 // Trigonometric Functions
 // ----------------------------------------------------------------------
 
-decNumber* ___decNumberSin (decNumber *result, decNumber *y, decContext *set)
+decNumber* decNumberSin (decNumber *result, decNumber *y, decContext *set)
 {
   decNumber pi, pi2, zero, one, two, x, cnt, term, cmp;
   int i;
   int negate = 0;
 
-  ___decNumberFromString (&zero,"0", set);
-  ___decNumberFromString (&one, "1", set);
-  ___decNumberFromString (&two, "2", set);
-  ___decNumberFromString (&pi,  PI , set);
+  decNumberFromString (&zero,"0", set);
+  decNumberFromString (&one, "1", set);
+  decNumberFromString (&two, "2", set);
+  decNumberFromString (&pi,  PI , set);
 
   // Copy the argument y, so we can modify it.
-  ___decNumberCopy (&x, y);
+  decNumberCopy (&x, y);
   // sin -x = - sin x
-  /* if (___decCompare (&x, &zero) < 0) { */
-  if (___decNumberIsNegative (&x)) { // x < 0
-    ___decNumberMinus (&x, &x, set);
+  /* if (decCompare (&x, &zero) < 0) { */
+  if (decNumberIsNegative (&x)) { // x < 0
+    decNumberMinus (&x, &x, set);
     negate = 1;
   }
   // We now have x >= 0
-  ___decNumberMultiply (&pi2, &pi, &two, set); // pi2 = 2*pi
-  ___decNumberMod (&x, &x, &pi2, set);
+  decNumberMultiply (&pi2, &pi, &two, set); // pi2 = 2*pi
+  decNumberMod (&x, &x, &pi2, set);
   // We now have 0 <= x < 2*pi
-  /*if (___decCompare (&x, &pi) >= 0) {*/
-  ___decNumberCompare (&cmp, &x, &pi, set);
-  if (!___decNumberIsNegative (&cmp)) {
+  /*if (decCompare (&x, &pi) >= 0) {*/
+  decNumberCompare (&cmp, &x, &pi, set);
+  if (!decNumberIsNegative (&cmp)) {
     // x >= pi
-    ___decNumberSubtract (&x, &x, &pi, set);
+    decNumberSubtract (&x, &x, &pi, set);
     negate = 1-negate;
   }
   // We now have 0 <= x < pi
-  ___decNumberDivide (&pi2, &pi, &two, set); // pi2 = pi/2
-  /*if (___decCompare (&x, &pi2) >= 0) {*/
-  ___decNumberCompare (&cmp, &x, &pi2, set);
-  if (!___decNumberIsNegative (&cmp)) {
+  decNumberDivide (&pi2, &pi, &two, set); // pi2 = pi/2
+  /*if (decCompare (&x, &pi2) >= 0) {*/
+  decNumberCompare (&cmp, &x, &pi2, set);
+  if (!decNumberIsNegative (&cmp)) {
     // x >= pi/2, so let x = pi-x 
-    ___decNumberSubtract (&x, &pi, &x, set);
+    decNumberSubtract (&x, &pi, &x, set);
   }
   // We now have 0 <= x <= pi/2.
 
@@ -556,64 +556,64 @@ decNumber* ___decNumberSin (decNumber *result, decNumber *y, decContext *set)
   // term(0) = x
   // term(i) = - term(i-1) * x^2 / ((2*i)*(2*i+1))
 
-  ___decNumberCopy (&cnt, &two);
-  ___decNumberCopy (&term, &x);
-  ___decNumberCopy (result, &x);
+  decNumberCopy (&cnt, &two);
+  decNumberCopy (&term, &x);
+  decNumberCopy (result, &x);
   // DECNUMDIGITS+3 terms are enough to achieve the required precision.
   for (i=0; i<DECNUMDIGITS+3; i++) {
     // term = -term * x^2 / (cnt*(cnt+1))
     // cnt = cnt+2
-    ___decNumberMinus (&term, &term, set);
-    ___decNumberMultiply (&term, &term, &x, set);
-    ___decNumberMultiply (&term, &term, &x, set);
-    ___decNumberDivide   (&term, &term, &cnt, set);
-    ___decNumberAdd (&cnt, &cnt, &one, set); 
-    ___decNumberDivide   (&term, &term, &cnt, set);
-    ___decNumberAdd (&cnt, &cnt, &one, set);
+    decNumberMinus (&term, &term, set);
+    decNumberMultiply (&term, &term, &x, set);
+    decNumberMultiply (&term, &term, &x, set);
+    decNumberDivide   (&term, &term, &cnt, set);
+    decNumberAdd (&cnt, &cnt, &one, set); 
+    decNumberDivide   (&term, &term, &cnt, set);
+    decNumberAdd (&cnt, &cnt, &one, set);
     // sum = sum + term
-    ___decNumberAdd (result, result, &term, set);
+    decNumberAdd (result, result, &term, set);
   }
   if (negate) {
-    ___decNumberMinus (result, result, set);
+    decNumberMinus (result, result, set);
   }
   return result;
-} /* ___decNumberSin  */
+} /* decNumberSin  */
 
-decNumber* ___decNumberCos (decNumber *result, decNumber *y, decContext *set)
+decNumber* decNumberCos (decNumber *result, decNumber *y, decContext *set)
 {
   decNumber pi, pi2, zero, one, two, x, cnt, term, cmp;
   int i;
   int negate = 0;
 
-  ___decNumberFromString (&zero,"0", set);
-  ___decNumberFromString (&one, "1", set);
-  ___decNumberFromString (&two, "2", set);
-  ___decNumberFromString (&pi,  PI , set);
+  decNumberFromString (&zero,"0", set);
+  decNumberFromString (&one, "1", set);
+  decNumberFromString (&two, "2", set);
+  decNumberFromString (&pi,  PI , set);
 
   // Copy the argument y, so we can modify it.
-  ___decNumberCopy (&x, y);
+  decNumberCopy (&x, y);
   // cos -y = cos y
-  /*if (___decCompare (&x, &zero) < 0) {*/
-  if (___decNumberIsNegative (&x)) {
-    ___decNumberMinus (&x, &x, set);
+  /*if (decCompare (&x, &zero) < 0) {*/
+  if (decNumberIsNegative (&x)) {
+    decNumberMinus (&x, &x, set);
   }
   // We now have x >= 0
-  ___decNumberMultiply (&pi2, &pi, &two, set); // pi2 = 2*pi
-  ___decNumberMod (&x, &x, &pi2, set);
+  decNumberMultiply (&pi2, &pi, &two, set); // pi2 = 2*pi
+  decNumberMod (&x, &x, &pi2, set);
   // We now have 0 <= x < 2*pi
-  /*if (___decCompare (&x, &pi) >= 0) {*/
-  ___decNumberCompare (&cmp, &x, &pi, set);
-  if (!___decNumberIsNegative (&cmp)) {
+  /*if (decCompare (&x, &pi) >= 0) {*/
+  decNumberCompare (&cmp, &x, &pi, set);
+  if (!decNumberIsNegative (&cmp)) {
     // x >= pi
-    ___decNumberSubtract (&x, &pi2, &x, set);
+    decNumberSubtract (&x, &pi2, &x, set);
   }
   // We now have 0 <= x < pi
-  ___decNumberDivide (&pi2, &pi, &two, set); // pi2 = pi/2
-  /*if (___decCompare (&x, &pi2) >= 0) {*/
-  ___decNumberCompare (&cmp, &x, &pi2, set);
-  if (!___decNumberIsNegative (&cmp)) {
+  decNumberDivide (&pi2, &pi, &two, set); // pi2 = pi/2
+  /*if (decCompare (&x, &pi2) >= 0) {*/
+  decNumberCompare (&cmp, &x, &pi2, set);
+  if (!decNumberIsNegative (&cmp)) {
     // x >= pi/2, so let x = pi-x 
-    ___decNumberSubtract (&x, &pi, &x, set);
+    decNumberSubtract (&x, &pi, &x, set);
     negate = 1;
   }
   // We now have 0 <= x <= pi/2.
@@ -624,44 +624,44 @@ decNumber* ___decNumberCos (decNumber *result, decNumber *y, decContext *set)
   //
   // term(0) = 1
   // term(i) = - term(i-1) * x^2 / ((2*i-1)*(2*i))
-  ___decNumberCopy (&cnt, &one);
-  ___decNumberCopy (&term, &one);
-  ___decNumberCopy (result, &one);
+  decNumberCopy (&cnt, &one);
+  decNumberCopy (&term, &one);
+  decNumberCopy (result, &one);
   // DECNUMDIGITS+3 terms are enough to achieve the required precision.
   for (i=0; i<DECNUMDIGITS+3; i++) {
     // term = -term * x^2 / (cnt*(cnt+1))
     // cnt = cnt+2
-    ___decNumberMinus (&term, &term, set);
-    ___decNumberMultiply (&term, &term, &x, set);
-    ___decNumberMultiply (&term, &term, &x, set);
-    ___decNumberDivide   (&term, &term, &cnt, set);
-    ___decNumberAdd (&cnt, &cnt, &one, set); 
-    ___decNumberDivide   (&term, &term, &cnt, set);
-    ___decNumberAdd (&cnt, &cnt, &one, set);
+    decNumberMinus (&term, &term, set);
+    decNumberMultiply (&term, &term, &x, set);
+    decNumberMultiply (&term, &term, &x, set);
+    decNumberDivide   (&term, &term, &cnt, set);
+    decNumberAdd (&cnt, &cnt, &one, set); 
+    decNumberDivide   (&term, &term, &cnt, set);
+    decNumberAdd (&cnt, &cnt, &one, set);
     // sum = sum + term
-    ___decNumberAdd (result, result, &term, set);
+    decNumberAdd (result, result, &term, set);
   }
   if (negate) {
-    ___decNumberMinus (result, result, set);
+    decNumberMinus (result, result, set);
   }
   return result;
-} /* ___decNumberCos  */
+} /* decNumberCos  */
 
-decNumber* ___decNumberTan (decNumber *result, decNumber *y, decContext *set)
+decNumber* decNumberTan (decNumber *result, decNumber *y, decContext *set)
 {
   // tan x = sin x / cos x
   decNumber denominator;
 
-  ___decNumberSin (result, y, set);
-  ___decNumberCos (&denominator, y, set);
-  if (___decNumberIsZero (&denominator))
-    ___decNumberFromString (result, "NaN", set);
+  decNumberSin (result, y, set);
+  decNumberCos (&denominator, y, set);
+  if (decNumberIsZero (&denominator))
+    decNumberFromString (result, "NaN", set);
   else
-    ___decNumberDivide (result, result, &denominator, set);
+    decNumberDivide (result, result, &denominator, set);
   return result;
-} /* ___decNumberTan  */
+} /* decNumberTan  */
 
-decNumber* ___decNumberAtan (decNumber *result, decNumber *x, decContext *set) 
+decNumber* decNumberAtan (decNumber *result, decNumber *x, decContext *set) 
 {
   //                 x^3   x^5   x^7
   // arctan(x) = x - --- + --- - --- + ...
@@ -682,21 +682,21 @@ decNumber* ___decNumberAtan (decNumber *result, decNumber *x, decContext *set)
   decNumber f, g, mx2, one, two, term;
   int i;
 
-  ___decNumberFromString (&one, "1", set);
-  ___decNumberFromString (&two, "2", set);
+  decNumberFromString (&one, "1", set);
+  decNumberFromString (&two, "2", set);
 
-  if (___decNumberIsZero (x)) {
-    ___decNumberCopy (result, x);
+  if (decNumberIsZero (x)) {
+    decNumberCopy (result, x);
     return result;
   }
 
   for (i=0; i<2; i++) {
     decNumber y;
-    ___decNumberMultiply (&y, x, x, set);     // y = x^2
-    ___decNumberAdd (&y, &y, &one, set);      // y = y+1
-    ___decNumberSquareRoot (&y, &y, set);     // y = sqrt(y)
-    ___decNumberSubtract (&y, &y, &one, set); // y = y-1
-    ___decNumberDivide (x, &y, x, set);       // x = y/x
+    decNumberMultiply (&y, x, x, set);     // y = x^2
+    decNumberAdd (&y, &y, &one, set);      // y = y+1
+    decNumberSquareRoot (&y, &y, set);     // y = sqrt(y)
+    decNumberSubtract (&y, &y, &one, set); // y = y-1
+    decNumberDivide (x, &y, x, set);       // x = y/x
   }
   // f(0) = x
   // f(i) = f(i-1) * (-x^2)
@@ -705,12 +705,12 @@ decNumber* ___decNumberAtan (decNumber *result, decNumber *x, decContext *set)
   // g(i) = g(i-1) + 2
   //
   // term(i) = f(i) / g(i)
-  ___decNumberCopy (&f, x);     // f(0) = x
-  ___decNumberCopy (&g, &one);  // g(0) = 1
-  ___decNumberCopy (&term, x);  // term = x
-  ___decNumberCopy (result, x); // sum  = x 
-  ___decNumberMultiply (&mx2, x, x, set); // mx2 = x^2
-  ___decNumberMinus (&mx2, &mx2, set);    // mx2 = -x^2  
+  decNumberCopy (&f, x);     // f(0) = x
+  decNumberCopy (&g, &one);  // g(0) = 1
+  decNumberCopy (&term, x);  // term = x
+  decNumberCopy (result, x); // sum  = x 
+  decNumberMultiply (&mx2, x, x, set); // mx2 = x^2
+  decNumberMinus (&mx2, &mx2, set);    // mx2 = -x^2  
   // Since x is less than sqrt(2)-1 = 0.4142...,
   // each term is smaller than the previous term by a factor of about 6,
   // so two iterations are more than enough to increase the precision 
@@ -718,16 +718,16 @@ decNumber* ___decNumberAtan (decNumber *result, decNumber *x, decContext *set)
   // 2*DECNUMDIGITS terms are enough to achieve the required precision.
   for (i=0; i<2*DECNUMDIGITS; i++) {
     // f = f * (-x^2)
-    ___decNumberMultiply (&f, &f, &mx2, set);
+    decNumberMultiply (&f, &f, &mx2, set);
     // g = g+2
-    ___decNumberAdd (&g, &g, &two, set); 
+    decNumberAdd (&g, &g, &two, set); 
     // term = f/g
-    ___decNumberDivide (&term, &f, &g, set);
+    decNumberDivide (&term, &f, &g, set);
     // sum = sum + term
-    ___decNumberAdd (result, result, &term, set);
+    decNumberAdd (result, result, &term, set);
   }
   // Multiply result by four.
-  ___decNumberAdd (result, result, result, set);
-  ___decNumberAdd (result, result, result, set);
+  decNumberAdd (result, result, result, set);
+  decNumberAdd (result, result, result, set);
   return result;
-} /* ___decNumberAtan  */
+} /* decNumberAtan  */

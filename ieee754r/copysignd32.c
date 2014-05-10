@@ -36,7 +36,7 @@
 
 #include <dfpmacro.h>
 
-#define ___decNumberNegate(dn)     (((dn)->bits)^=DECNEG)
+#define decNumberNegate(dn)     (((dn)->bits)^=DECNEG)
 
 DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
@@ -49,10 +49,10 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   FUNC_CONVERT_TO_DN (&x, &dn_x);
   FUNC_CONVERT_TO_DN (&y, &dn_y);
 
-  if(___decNumberIsNegative (&dn_x) != ___decNumberIsNegative (&dn_y))
-    ___decNumberNegate (&dn_x);
+  if(decNumberIsNegative (&dn_x) != decNumberIsNegative (&dn_y))
+    decNumberNegate (&dn_x);
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
+  decContextDefault (&context, DEFAULT_CONTEXT);
   FUNC_CONVERT_FROM_DN (&dn_x, &result, &context);
 
   return result;

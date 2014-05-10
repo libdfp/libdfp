@@ -51,8 +51,8 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   FUNC_CONVERT_TO_DN(&x, &dn_x);
   FUNC_CONVERT_TO_DN(&y, &dn_y);
 
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
-  ___decNumberMax(&dn_result, &dn_x, &dn_y, &context);
+  decContextDefault(&context, DEFAULT_CONTEXT);
+  decNumberMax(&dn_result, &dn_x, &dn_y, &context);
 
   FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
 

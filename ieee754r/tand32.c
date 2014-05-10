@@ -49,15 +49,15 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsZero (&dn_x))
+  if (decNumberIsNaN (&dn_x) || decNumberIsZero (&dn_x))
     return x+x;
-  if (___decNumberIsInfinite (&dn_x))
+  if (decNumberIsInfinite (&dn_x))
     {
       DFP_EXCEPT (FE_INVALID);
       return DFP_NAN;
     }
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
-  ___decNumberTan (&dn_result, &dn_x, &context);
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  decNumberTan (&dn_result, &dn_x, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
   if (context.status & DEC_Overflow)

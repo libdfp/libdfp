@@ -54,24 +54,24 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   FUNC_CONVERT_TO_DN (&one, &dn_one);
 
   /*  For NaN, 0, or +Inf, just return x */
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsZero (&dn_x) ||
-	(___decNumberIsInfinite (&dn_x) && !___decNumberIsNegative (&dn_x)))
+  if (decNumberIsNaN (&dn_x) || decNumberIsZero (&dn_x) ||
+	(decNumberIsInfinite (&dn_x) && !decNumberIsNegative (&dn_x)))
     return x+x;
 
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
-  ___decNumberAdd(&dn_sum, &dn_x, &dn_one, &context);
-  if (___decNumberIsZero(&dn_sum)) /*  Pole Error if x was -1 */
+  decContextDefault(&context, DEFAULT_CONTEXT);
+  decNumberAdd(&dn_sum, &dn_x, &dn_one, &context);
+  if (decNumberIsZero(&dn_sum)) /*  Pole Error if x was -1 */
     {
       DFP_EXCEPT (FE_DIVBYZERO);
       return -DFP_HUGE_VAL;
     }
-  if (___decNumberIsNegative(&dn_sum)) /*  Domain Error if x < -1 */
+  if (decNumberIsNegative(&dn_sum)) /*  Domain Error if x < -1 */
     {
       DFP_EXCEPT (FE_INVALID);
       return DFP_NAN;
     }
 
-  ___decNumberLn(&dn_result, &dn_sum, &context);
+  decNumberLn(&dn_result, &dn_sum, &context);
   FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
 
 
