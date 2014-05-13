@@ -47,8 +47,8 @@
 
 
 
-#if !defined( _DECIMAL_SIZE ) || !defined (FUNCTION_NAME)
-#error Including dfpmacro without defining _DECIMAL_SIZE and FUNCTION_NAME is invalid
+#if !defined( _DECIMAL_SIZE )
+#error Including dfpmacro without defining _DECIMAL_SIZE is invalid
 #endif
 
 #if _DECIMAL_SIZE == 128

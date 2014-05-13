@@ -5,8 +5,6 @@
 
    This file is part of the Decimal Floating Point C Library.
 
-   Author(s): Joseph Kerian <jkerian@us.ibm.com>
-
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
    General Public License version 2.1.
@@ -23,120 +21,40 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _DECIMAL_SIZE
-#  define _DECIMAL_SIZE 32
-#  include <decimal32.h>
-#endif
-
 #include <math.h>
-#include <endian.h>
+#include <math_private.h>
 #include <ieee754r_private.h>
 
-#define FUNCTION_NAME fpclassify
-
-#include <float.h>
+#define _DECIMAL_SIZE 32
+#include <decimal32.h>
 #include <dfpmacro.h>
 
-#if __BYTE_ORDER == __BIG_ENDIAN
-#  define END_FIX(i)	i
-#else
-#  define END_FIX(i)	(_DECIMAL_SIZE/8 - 1 - i)
-#endif
-
-#if _DECIMAL_SIZE == 32
-#  define comb_shift		5
-#  define min_normal_exp	5
-#  define getExpCont(array)	((((array)[END_FIX(0)] & 0x03) << 4) |	\
-				((unsigned)(array)[END_FIX(1)]>>4)	)
-#elif _DECIMAL_SIZE == 64
-#  define comb_shift		7
-#  define min_normal_exp	14
-#  define getExpCont(array)	((((array)[END_FIX(0)] & 0x03) << 6) |	\
-				((unsigned)(array)[END_FIX(1)]>>2)	)
-#elif _DECIMAL_SIZE == 128
-#  define comb_shift		11
-#  define min_normal_exp	32
-#  define getExpCont(array)	((((array)[END_FIX(0)] & 0x03) << 10) |	\
-				((unsigned)(array)[END_FIX(1)] << 2)  |	\
-				((unsigned)(array)[END_FIX(2)] >> 6)	)
-#endif
-
 int
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
+__fpclassifyd32 (_Decimal32 x)
 {
-  uint8_t top_byte;
-  union
-  {
-    DEC_TYPE dec;
-    uint8_t bytes[_DECIMAL_SIZE/8];
-  } u_conv;
-  uint8_t comb, msd;
-  uint16_t exp;
+  decNumber dn_x;
+  decContext context;
 
-  u_conv.dec = x;
-  top_byte = u_conv.bytes[END_FIX(0)];
+  FUNC_CONVERT_TO_DN (&x, &dn_x);
 
-  if((top_byte & DECIMAL_NaN) == DECIMAL_NaN)
+  if (decNumberIsNaN (&dn_x))
     return FP_NAN;
-  if((top_byte & DECIMAL_Inf) == DECIMAL_Inf)
+  else if (decNumberIsInfinite (&dn_x))
     return FP_INFINITE;
-
-  /*  It wasn't an easy case, so extract the most significant digit
-   *  and part of the exponant from the combination field*/
-  comb = (top_byte >> 2) & 0x1F; /* Mask off the signbit.  */
-  if (comb >= 0x18)
-    {
-      msd = 8 + (comb & 0x01);
-      exp = (comb & 0x06) << comb_shift;
-    }
-  else
-    {
-      msd = comb & 0x07;
-      exp = (comb & 0x18) << (comb_shift-2);
-    }
-  /* Fetch the rest of the (still biased) exp */
-  exp += getExpCont(u_conv.bytes);
-
-  /* If the Most significant digit !=0, either subnormal or normal */
-  if(msd != 0)
-    return (exp < min_normal_exp) ? FP_SUBNORMAL : FP_NORMAL;
-
-  /* Clean the exponent out of the byte array */
-#if _DECIMAL_SIZE == 32
-  u_conv.bytes[END_FIX(1)] &= 0x0f;
-#elif _DECIMAL_SIZE == 64
-  u_conv.bytes[END_FIX(1)] &= 0x03;
-#elif _DECIMAL_SIZE == 128
-  u_conv.bytes[END_FIX(1)] = 0;
-  u_conv.bytes[END_FIX(2)] &= 0x3f;
-#endif
-
-  /* Run backwards through the array, checking that each one is zero.  If we
-   * don't find a non-zero then the number is FP_ZERO.  If we find non-zero then
-   * we determine whether it is normal or subnormal.
-   *
-   * There is an issue when we receive a value like 10e-96.  Although the number
-   * is representable in the normal range (i.e. 1e-95), the encoding for this
-   * particular number has been given to us in this slightly screwy format.
-   * Techincally -96 exceeds the minimum exponent for _Decimal32 but it is still
-   * 'normal'.  We will rely on the runtime for comparison of 'x' against
-   * __DEC32_MIN__.  The comparison will be correct regardless of how this
-   * boundary case is encoded.
-   */
-
-  /* Hopefully none of these comparisons re-invoke fpclassifyd[32|64|128] */
-  if(x == DFP_CONSTANT(0.0) || x == DFP_CONSTANT(-0.0))
+  else if (decNumberIsZero (&dn_x))
     return FP_ZERO;
-  else if((exp > min_normal_exp) || (x >= DFP_MIN))
-    {
-      /* e.g. (for the examples exp hasn't been unbiased).
-       *   exp == -94
-       *   x (10E-96 -> 1E-95) == DEC32_MIN (1E-95DF)
-       *   x (2300E-96 -> 23E-94) > DEC32_MIN  */
-      return FP_NORMAL;
-    }
-  else /* x < DEC_TYPE_MIN  */
+
+  /* Since DFP value are not normalized, checking the exponent for
+     normal/subnormal is not suffice.  For instance, the value 10e-96 will
+     result in a expoenent below the minimum, however it is still a FP_NORMAL
+     number due implicit normalization.  TO avoid such traps the check relies
+     on runtime comparisons.  */
+  decContextDefault (&context, DEC_INIT_DECIMAL32);
+  if (decNumberIsSubnormal (&dn_x, &context))
     return FP_SUBNORMAL;
+
+  return FP_NORMAL;
 }
-hidden_def (INTERNAL_FUNCTION_NAME)
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+
+hidden_def (__fpclassifyd32)
+weak_alias (__fpclassifyd32, fpclassifyd32)

@@ -74,14 +74,15 @@ FUNC_D (getexp) (DEC_TYPE x)
 # define DECIMAL_DEC_BITS  DECIMAL128_BEC_bits
 #endif
 
-  c_f =  c_decoder[d.ieee.c];
-  exp = c_f.lm_exp << DECIMAL_DEC_BITS;
+  c_f  =  c_decoder[d.ieee.c];
+  /* PowerPC dxex instruction returns -1 for infinity and -2 for NaN.  */
+  if (c_f.is_inf)
+    return -1 - DECIMAL_BIAS;
+  else if (c_f.is_nan)
+    return -2 - DECIMAL_BIAS;
+  exp  = c_f.lm_exp << DECIMAL_DEC_BITS;
   exp += d.ieee.bec;
   exp -= DECIMAL_BIAS;
-
-  /* Hardware DFP returns -2 = DECIMAL*_BIAS for a NaN. Be congruent with that.  */
-  if (exp == -DECIMAL_BIAS)
-    return --exp;
 
   return exp;
 }

@@ -13,3 +13,7 @@ DEC_MIN            FP_NORMAL
 DEC_MAX            FP_NORMAL
 0.1                FP_NORMAL
 10E1               FP_NORMAL
+0.0                FP_ZERO
+0E10               FP_ZERO
+-0.0               FP_ZERO
+-0E-3              FP_ZERO

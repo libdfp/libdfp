@@ -1,3 +1,15 @@
+2013-05-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* ieee754r/fpclassifyd128.c (__fpclassifyd128): Rewrite to use
+	libdecnumber and avoid DPD-specific code.
+	* ieee754r/fpclassifyd32.c (__fpclassifyd32): Likewise.
+	* ieee754r/fpclassifyd64.c (__fpclassifyd64): Likewise.
+	* include/dfpmacro.h: Allow include the header withouth define
+	FUNCTION_NAME.
+	* sysdeps/soft-dfp/dpd/numdigits.h (getexp): Refactor to explicity
+	tell the expected function return based on PPC instruction.
+	* tests/fpclassify.input: Add tests for FP_ZERO.
+
 2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in: Add local-plt rules to make check.
