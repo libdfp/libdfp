@@ -52,11 +52,6 @@ extern const uByte  BIN2CHAR[4001];
 extern void decDigitsFromDPD(decNumber *, const uInt *, Int);
 extern void decDigitsToDPD(const decNumber *, uInt *, Int);
 
-#if DECTRACE || DECCHECK
-void decimal64Show(const decimal64 *);		  /* for debug */
-extern void decNumberShow(const decNumber *);	  /* .. */
-#endif
-
 /* Useful macro */
 /* Clear a structure (e.g., a decNumber) */
 #define DEC_clear(d) memset(d, 0, sizeof(*d))
@@ -478,57 +473,6 @@ decimal64 * decimal64Canonical(decimal64 *result, const decimal64 *d64) {
   return result;
   } /* decimal64Canonical */
 
-#if DECTRACE || DECCHECK
-/* Macros for accessing decimal64 fields.  These assume the
-   argument is a reference (pointer) to the decimal64 structure,
-   and the decimal64 is in network byte order (big-endian) */
-/* Get sign */
-#define decimal64Sign(d)       ((unsigned)(d)->bytes[0]>>7)
-
-/* Get combination field */
-#define decimal64Comb(d)       (((d)->bytes[0] & 0x7c)>>2)
-
-/* Get exponent continuation [does not remove bias] */
-#define decimal64ExpCon(d)     ((((d)->bytes[0] & 0x03)<<6)	      \
-			     | ((unsigned)(d)->bytes[1]>>2))
-
-/* Set sign [this assumes sign previously 0] */
-#define decimal64SetSign(d, b) {				      \
-  (d)->bytes[0]|=((unsigned)(b)<<7);}
-
-/* Set exponent continuation [does not apply bias] */
-/* This assumes range has been checked and exponent previously 0; */
-/* type of exponent must be unsigned */
-#define decimal64SetExpCon(d, e) {				      \
-  (d)->bytes[0]|=(uByte)((e)>>6);				      \
-  (d)->bytes[1]|=(uByte)(((e)&0x3F)<<2);}
-
-/* ------------------------------------------------------------------ */
-/* decimal64Show -- display a decimal64 in hexadecimal [debug aid]    */
-/*   d64 -- the number to show					      */
-/* ------------------------------------------------------------------ */
-/* Also shows sign/cob/expconfields extracted */
-void decimal64Show(const decimal64 *d64) {
-  char buf[DECIMAL64_Bytes*2+1];
-  Int i, j=0;
-
-  if (DECLITEND) {
-    for (i=0; i<DECIMAL64_Bytes; i++, j+=2) {
-      sprintf(&buf[j], "%02x", d64->bytes[7-i]);
-      }
-    printf(" D64> %s [S:%d Cb:%02x Ec:%02x] LittleEndian\n", buf,
-	   d64->bytes[7]>>7, (d64->bytes[7]>>2)&0x1f,
-	   ((d64->bytes[7]&0x3)<<6)| (d64->bytes[6]>>2));
-    }
-   else { /* big-endian */
-    for (i=0; i<DECIMAL64_Bytes; i++, j+=2) {
-      sprintf(&buf[j], "%02x", d64->bytes[i]);
-      }
-    printf(" D64> %s [S:%d Cb:%02x Ec:%02x] BigEndian\n", buf,
-	   decimal64Sign(d64), decimal64Comb(d64), decimal64ExpCon(d64));
-    }
-  } /* decimal64Show */
-#endif
 
 /* ================================================================== */
 /* Shared utility routines and tables				      */

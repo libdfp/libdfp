@@ -179,6 +179,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include "dconfig.h"		   /* for GCC definitions */
 #include "decNumber.h"		   /* base number library */
 #include "decNumberLocal.h"	   /* decNumber local types, etc. */
+#include "decDebug.h"
 
 /* Constants */
 /* Public lookup table used by the D2U macro */
@@ -325,7 +326,6 @@ static void decCheckInexact(const decNumber *, decContext *);
 
 #if DECTRACE || DECCHECK
 /* Optional trace/debugging routines (may or may not be used) */
-void decNumberShow(const decNumber *);	/* displays the components of a number */
 static void decDumpAr(char, const Unit *, Int);
 #endif
 
@@ -7795,59 +7795,6 @@ static Int decGetDigits(Unit *uar, Int len) {
   return digits;
   } /* decGetDigits */
 
-#if DECTRACE | DECCHECK
-/* ------------------------------------------------------------------ */
-/* decNumberShow -- display a number [debug aid]		      */
-/*   dn is the number to show					      */
-/*								      */
-/* Shows: sign, exponent, coefficient (msu first), digits	      */
-/*    or: sign, special-value					      */
-/* ------------------------------------------------------------------ */
-/* this is public so other modules can use it */
-void decNumberShow(const decNumber *dn) {
-  const Unit *up;		   /* work */
-  uInt u, d;			   /* .. */
-  Int cut;			   /* .. */
-  char isign='+';		   /* main sign */
-  if (dn==NULL) {
-    printf("NULL\n");
-    return;}
-  if (decNumberIsNegative(dn)) isign='-';
-  printf(" >> %c ", isign);
-  if (dn->bits&DECSPECIAL) {	   /* Is a special value */
-    if (decNumberIsInfinite(dn)) printf("Infinity");
-     else {				     /* a NaN */
-      if (dn->bits&DECSNAN) printf("sNaN");  /* signalling NaN */
-       else printf("NaN");
-      }
-    /* if coefficient and exponent are 0, no more to do */
-    if (dn->exponent==0 && dn->digits==1 && *dn->lsu==0) {
-      printf("\n");
-      return;}
-    /* drop through to report other information */
-    printf(" ");
-    }
-
-  /* now carefully display the coefficient */
-  up=dn->lsu+D2U(dn->digits)-1; 	/* msu */
-  printf("%ld", (LI)*up);
-  for (up=up-1; up>=dn->lsu; up--) {
-    u=*up;
-    printf(":");
-    for (cut=DECDPUN-1; cut>=0; cut--) {
-      d=u/powers[cut];
-      u-=d*powers[cut];
-      printf("%ld", (LI)d);
-      } /* cut */
-    } /* up */
-  if (dn->exponent!=0) {
-    char esign='+';
-    if (dn->exponent<0) esign='-';
-    printf(" E%c%ld", esign, (LI)abs(dn->exponent));
-    }
-  printf(" [%ld]\n", (LI)dn->digits);
-  } /* decNumberShow */
-#endif
 
 #if DECTRACE || DECCHECK
 /* ------------------------------------------------------------------ */

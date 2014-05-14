@@ -54,7 +54,6 @@ extern void decDigitsToDPD(const decNumber *, uInt *, Int);
 
 #if DECTRACE || DECCHECK
 void decimal128Show(const decimal128 *);	  /* for debug */
-extern void decNumberShow(const decNumber *);	  /* .. */
 #endif
 
 /* Useful macro */
