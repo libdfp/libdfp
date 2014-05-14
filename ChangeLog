@@ -1,5 +1,19 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/dpd/decimal32.h: Move to ...
+	* libdecnumber/decimal32.h: ... here.
+	* libdecnumber/bid/decimal32.h: Remove file.
+	* libdecnumber/dpd/decimal64.h: Move to ...
+	* libdecnumber/decimal64.h: ... here.
+	* libdecnumber/bid/decimal128.h: Remove file.
+	* libdecnumber/dpd/decimal128.h: Move to ...
+	* libdecnumber/decimal128.h: ... here.
+	* libdecnumber/bid/decimal128.h: Remove file.
+	* libdecnumber/dpd/decimal128Local.h: Move to ...
+	* libdecnumber/decimal128Local.h: ... here.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/ilogbd32.c (ilogb): Use libdecnumber compare functions
 	instead of _Decimal compiler generated.
 
