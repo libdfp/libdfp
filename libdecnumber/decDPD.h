@@ -29,8 +29,6 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 /* ------------------------------------------------------------------------ */
 /* For details, see DPDecimal.html on the General Decimal Arithmetic page.  */
 
-#include "decDPDSymbols.h"
-
 /* This include file defines several DPD and BCD conversion tables:	    */
 /*									    */
 /*   uint16_t BCD2DPD[2458];	 -- BCD -> DPD (0x999 => 2457)		    */
