@@ -1,51 +1,32 @@
 /* Copyright (C) 2007-2014 Free Software Foundation, Inc.
 
-This file is part of GCC.
+   This file is part of the Decimal Floating Point C Library.
 
-GCC is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free
-Software Foundation; either version 3, or (at your option) any later
-version.
+   The Decimal Floating Point C Library is free software; you can
+   redistribute it and/or modify it under the terms of the GNU Lesser
+   General Public License version 2.1.
 
-GCC is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-for more details.
+   The Decimal Floating Point C Library is distributed in the hope that
+   it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+   the GNU Lesser General Public License version 2.1 for more details.
 
-Under Section 7 of GPL version 3, you are granted additional
-permissions described in the GCC Runtime Library Exception, version
-3.1, as published by the Free Software Foundation.
+   You should have received a copy of the GNU Lesser General Public
+   License version 2.1 along with the Decimal Floating Point C Library;
+   if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+   Suite 330, Boston, MA 02111-1307 USA.
 
-You should have received a copy of the GNU General Public License and
-a copy of the GCC Runtime Library Exception along with this program;
-see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
-<http://www.gnu.org/licenses/>.  */
+   Please see libdfp/COPYING.txt for more information.  */
 
-#if 0
-#define decimal32FromString __dpd32FromString
-#define decimal32ToString __dpd32ToString
-#define decimal32ToEngString __dpd32ToEngString
-#define decimal32FromNumber __dpd32FromNumber
-#define decimal32ToNumber __dpd32ToNumber
+#include "dconfig.h"          /* GCC definitions */
+#define  DECNUMDIGITS  7      /* make decNumbers with space for 7 */
+#include "decNumber.h"        /* base number library */
+#include "decNumberLocal.h"   /* decNumber local types, etc. */
+#include "decimal32.h"        /* our primary include */
+#include "decDebug.h"
 
-#include "dpd/decimal32.c"
-
-#undef decimal32FromString
-#undef decimal32ToString
-#undef decimal32ToEngString
-#undef decimal32FromNumber
-#undef decimal32ToNumber
-#endif
-
-#include "decimal32.h"
-#include "bid-dpd.h"
-
-#ifdef IN_LIBGCC2
-#define decimal32FromString __decimal32FromString
-#define decimal32ToString __decimal32ToString
-#define decimal32ToEngString __decimal32ToEngString
-#define decimal32FromNumber __decimal32FromNumber
-#define decimal32ToNumber __decimal32ToNumber
+#if DECDPUN != 3
+# error "_Decimal32 BID implementation only support DECDPUN==3"
 #endif
 
 decimal32 *decimal32FromString (decimal32 *, const char *, decContext *);
@@ -54,70 +35,236 @@ char *decimal32ToEngString (const decimal32 *, char *);
 decimal32 *decimal32FromNumber (decimal32 *, const decNumber *, decContext *);
 decNumber *decimal32ToNumber (const decimal32 *, decNumber *);
 
-void __host_to_ieee_32 (_Decimal32 in, decimal32 *out);
-void __ieee_to_host_32 (decimal32 in, _Decimal32 *out);
+static void decDigitsFromBID (decNumber *dn, uInt sour);
+static void decDigitsToBID (const decNumber *dn, uInt *sour);
 
-decimal32 *
-decimal32FromNumber (decimal32 *d32, const decNumber *dn,
-		      decContext *set)
+
+/* ------------------------------------------------------------------ */
+/* BID special encoding definitions.                                  */
+/* ------------------------------------------------------------------ */
+
+#define BID_SIGN_MASK          0x80000000
+#define BID_INF_ENC_MASK       0x78000000
+#define BID_NAN_ENC_MASK       0x7C000000
+#define BID_SNAN_ENC_MASK      0x7E000000
+#define BID_EXPONENT_ENC_MASK  0x60000000
+#define BID_EXP_MASK32         0xff
+#define BID_EXP_SHIFT_LARGE32  21
+#define BID_EXP_SHIFT_SMALL32  23
+
+/* ------------------------------------------------------------------ */
+/* Return required bits to represent a binary uInt (32-bits) value    */
+/* using a fast log2 implementation using Bruijn sequences.           */
+/* ------------------------------------------------------------------ */
+static inline
+Int bid_required_coef_bits (uInt value)
 {
-#if 0
-  /* decimal32 and _Decimal32 are different types.  */
-  union
+  /* This algorithm can be optimized by using compiler builtins:
+      x == 0 ? 0 : 32 - __builtin_clzl (x)  */
+
+  /* Lookup table, more info on how construct it:
+     http://supertech.csail.mit.edu/papers/debruijn.pdf  */
+  static const int tab32[] =
+  {
+     0,  9,  1, 10, 13, 21,  2, 29,
+    11, 14, 16, 18, 22, 25,  3, 30,
+     8, 12, 20, 28, 15, 17, 24,  7, 
+    19, 27, 23,  6, 26,  5,  4, 31
+  };
+  uInt hash;
+
+  value |= value >> 1;
+  value |= value >> 2;
+  value |= value >> 4;
+  value |= value >> 8;
+  value |= value >> 16;
+
+  hash = ((uInt)((value - (value >> 1))*0x077CB531U)) >> 27;
+  return tab32[hash] + 1;
+}
+
+/* ------------------------------------------------------------------ */
+/* Decimal 32-bit format module 				      */
+/* ------------------------------------------------------------------ */
+/* This module comprises the routines for decimal32 format numbers.   */
+/* Conversions are supplied to and from decNumber and String.	      */
+/*								      */
+/* This is used when decNumber provides operations, either for all    */
+/* operations or as a proxy between decNumber and decSingle.	      */
+/*								      */
+/* Error handling is the same as decNumber (qv.).		      */
+/* ------------------------------------------------------------------ */
+decimal32 *
+decimal32FromNumber (decimal32 *d32, const decNumber *dn, decContext *set)
+{
+  uInt status = 0;
+  Int ae;			/* adjusted exponent */
+  decNumber dw;
+  decContext dc;
+  uInt exp;
+  uInt uiwork;
+  uInt targ = 0;
+  Int  shift;
+
+  /* If the number has too many digits, or the exponent could be
+     out of range then reduce the number under the appropriate
+     constraints.  This could push the number to Infinity or zero,
+     so this check and rounding must be done before generating the
+     decimal64.  */
+  ae = dn->exponent + dn->digits - 1;	/* [0 if special] */
+  if (dn->digits > DECIMAL32_Pmax	/* too many digits */
+      || ae > DECIMAL32_Emax		/* likely overflow */
+      || ae < DECIMAL32_Emin)
+    {					/* likely underflow */
+      decContextDefault (&dc, DEC_INIT_DECIMAL32);
+      dc.round = set->round;
+      decNumberPlus (&dw, dn, &dc);	/* (round and check) */
+      /* [this changes -0 to 0, so enforce the sign...] */
+      dw.bits |= dn->bits & DECNEG;
+      status = dc.status;
+      dn = &dw;
+    }
+
+  if (dn->bits & DECSPECIAL)
     {
-      _Decimal32 _Dec;
-      decimal32 dec;
-    } u;
+      if (dn->bits & DECINF)
+	targ = DECIMAL_Inf << 24;
+      else
+	{
+	  /* sNaN or qNaN */
+	  if ((*dn->lsu != 0 || dn->digits > 1)	/* non-zero coefficient */
+	      && (dn->digits < DECIMAL32_Pmax))
+	    decDigitsToBID (dn, &targ);
+	  if (dn->bits & DECNAN)
+	    targ |= DECIMAL_NaN << 24;
+	  else
+	    targ |= DECIMAL_sNaN << 24;
+	}
+    }
+  else
+    {
+      /* is finite */
+      if (decNumberIsZero (dn))
+	{
+	  /* set and clamp exponent */
+	  if (dn->exponent < -DECIMAL32_Bias)
+	    {
+	      exp = 0;
+	      status |= DEC_Clamped;
+	    }
+	  else
+	    {
+	      exp = dn->exponent + DECIMAL32_Bias;
+	      if (exp > DECIMAL32_Ehigh)
+		{
+		  exp = DECIMAL32_Ehigh;
+		  status |= DEC_Clamped;
+		}
+	    }
+	}
+      else
+	{
+	  /* non-zero finite number  */
+	  exp = (uInt) (dn->exponent + DECIMAL32_Bias);
+	  if (exp > DECIMAL32_Ehigh)
+	    {
+	      exp = DECIMAL32_Ehigh;
+	      status |= DEC_Clamped;
+	    }
+	  decDigitsToBID (dn, &targ);
+        }
 
-  __dpd32FromNumber (d32, dn, set);
+      /* Exponent is enconded as:
+         - If coefficient fits in 23 bits:
+           | sign - 1bit | exponent - 8 bits | coefficient - 23 bits |
+	 - Otherwise:
+           | sign - 1bit | 11 | exponent - 8 bits | coefficient - 21 bits |
 
-  /* __dpd32FromNumber returns in big endian. But _dpd_to_bid32 takes
-     host endian. */
-  __ieee_to_host_32 (*d32, &u._Dec);
+	 Since decDigitsToBID will set '11' mask if coefficient does not fit
+	 53 bits, we check it to adjust the exponent shift in higher word.  */
+      if ((targ & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK)
+	shift = BID_EXP_SHIFT_LARGE32;
+      else
+	shift = BID_EXP_SHIFT_SMALL32;
 
-  /* Convert DPD to BID.  */
-  _dpd_to_bid32 (&u._Dec, &u._Dec);
+      targ |= (exp & BID_EXP_MASK32) << shift;
+    }
 
-  /* dfp.c is in bid endian. */
-  __host_to_ieee_32 (u._Dec, &u.dec);
+  if (dn->bits & DECNEG)
+    targ |= BID_SIGN_MASK;
 
-  /* d32 is returned as a pointer to _Decimal32 here.  */
-  *d32 = u.dec;
-#endif
+  /* now write to storage; this is now always endian */
+  UBFROMUIBW (d32->bytes, targ);
 
+  if (status != 0)
+    decContextSetStatus (set, status);
+  /*decimal64Show(d64);*/
   return d32;
 }
 
+/* ------------------------------------------------------------------ */
+/* decimal64ToNumber -- convert decimal64 to decNumber		      */
+/*   d64 is the source decimal64				      */
+/*   dn is the target number, with appropriate space		      */
+/* No error is possible.					      */
+/* ------------------------------------------------------------------ */
 decNumber *
-decimal32ToNumber (const decimal32 *bid32, decNumber *dn)
+decimal32ToNumber (const decimal32 *d32, decNumber *dn)
 {
-#if 0
-  /* decimal32 and _Decimal32 are different types.  */
-  union
+  uInt uiwork;
+  uInt sour;
+  Int  shift;
+
+  /* load source from storage; this is endian */
+  sour = UBTOUIBW(d32->bytes);
+
+  decNumberZero(dn);
+  if (sour & BID_SIGN_MASK)
+    dn->bits |= DECNEG;
+
+  /* Infinities and NaN are encoded just like DPD:
+     s 11 110 0.... 0    00 ...                 00    -> canonical infinites
+     s 11 110  any                 any                -> infinites
+
+     s 11 1110 0 .... 0         payloads              -> canonical qNaN
+     s 11 1110  any                any                -> qNaN
+
+     s 11 1111 0 .... 0         payloads              -> canonical sNaN
+     s 11 1111   any               any                -> sNaN  */
+  if ((sour & BID_SNAN_ENC_MASK) == BID_SNAN_ENC_MASK)
+    dn->bits |= DECSNAN;
+  else if ((sour & BID_NAN_ENC_MASK) == BID_NAN_ENC_MASK)
+    dn->bits |= DECNAN;
+  else if ((sour & BID_INF_ENC_MASK) == BID_INF_ENC_MASK)
     {
-      _Decimal32 _Dec;
-      decimal32 dec;
-    } u;
+      dn->bits |= DECINF;
+      return dn;		   /* no coefficient needed */
+    }
+  else
+    {
+      /* The exponent is decoded as:
+         E = binary decode (bL−2 bL−3 · · · bL−w−1 ) if (bL−2 bL−3 ) != 11
+                           \_ decimal64 (w=10) -> bL-2 bL-3 ...  bL-11
+             binary decode (bL−4 bL−5 · · · bL−w−3 ) if (bL−2 bL−3 ) == 11
+	                   \_ decimal64 (w=10) -> bl-4 bl-5 ...  bl-13
 
-  /* bid32 is a pointer to _Decimal32 in bid endian. But _bid_to_dpd32
-     takes host endian.  */
-  __ieee_to_host_32 (*bid32, &u._Dec);
+         The 0x60000000 is binary mask to check if bL-2, bL-3 are set.  */
+      if ((sour & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK)
+	shift = BID_EXP_SHIFT_LARGE32;
+      else
+	shift = BID_EXP_SHIFT_SMALL32;
+      dn->exponent = ((sour >> shift) & BID_EXP_MASK32) - DECIMAL32_Bias;
+    }
 
-  /* Convert BID to DPD.  */
-  _bid_to_dpd32 (&u._Dec, &u._Dec);
-
-  /* __dpd32ToNumber is in bid endian.  */
-  __host_to_ieee_32 (u._Dec, &u.dec);
-
-  return __dpd32ToNumber (&u.dec, dn);
-#endif
-  return NULL;
+  decDigitsFromBID(dn, sour);
+  /*decNumberShow (dn);*/
+  return dn;
 }
 
 char *
 decimal32ToString (const decimal32 *d32, char *string)
 {
-  decNumber dn;			/* work */
+  decNumber dn;
   decimal32ToNumber (d32, &dn);
   decNumberToString (&dn, string);
   return string;
@@ -126,27 +273,127 @@ decimal32ToString (const decimal32 *d32, char *string)
 char *
 decimal32ToEngString (const decimal32 *d32, char *string)
 {
-  decNumber dn;			/* work */
+  decNumber dn;
   decimal32ToNumber (d32, &dn);
   decNumberToEngString (&dn, string);
   return string;
 }
 
 decimal32 *
-decimal32FromString (decimal32 *result, const char *string,
-		      decContext *set)
+decimal32FromString (decimal32 *result, const char *string, decContext *set)
 {
-  decContext dc;		/* work */
-  decNumber dn;			/* .. */
+  decContext dc;
+  decNumber dn;
 
-  decContextDefault (&dc, DEC_INIT_DECIMAL32);	/* no traps, please */
-  dc.round = set->round;	/* use supplied rounding */
+  decContextDefault (&dc, DEC_INIT_DECIMAL32);
+  dc.round = set->round;
 
-  decNumberFromString (&dn, string, &dc);	/* will round if needed */
+  decNumberFromString (&dn, string, &dc);
   decimal32FromNumber (result, &dn, &dc);
   if (dc.status != 0)
-    {				/* something happened */
-      decContextSetStatus (set, dc.status);	/* .. pass it on */
-    }
+    decContextSetStatus (set, dc.status);
   return result;
+}
+
+/* ------------------------------------------------------------------ */
+/* decDigitsToBID -- pack coefficient into BID form		      */
+/*								      */
+/*   dn   is the source number (assumed valid, max DECMAX754 digits)  */
+/*   sour is the word in binary form                                  */
+/* ------------------------------------------------------------------ */
+static void
+decDigitsToBID (const decNumber *dn, uInt *sour)
+{
+  const Unit *uin=dn->lsu;	   /* -> current output unit (uint16_t)  */
+  uInt coeff = 0;
+  uInt mult;
+  Int digits;
+  Int n;
+
+  /* Convert the decNumber internal format to binary representation.  The
+     number -2.718281, for instance, will be represented internally
+     as:
+
+     dn::lsu = [ 281, 718, 2 ]
+
+     and to transform to a binary representation it just need to calculate:
+
+     (281 * 1) +
+     (718 * 1000) +
+     (  2 * 1000000)
+  */
+  for (n = 0, mult = 1, digits = 1;
+       digits <= dn->digits;
+       ++n, mult *= 1000, digits += 3)
+    {
+      coeff += uin[n] * mult;
+    }
+
+  /* BID coefficient encoding is defined as:
+     - If it fits on 23 bits (10*J + 3, with J=2):
+     | 1bit (sign) | 8bits binary_encode(exp) | 23bits binary_encode (coeff) |
+
+     - Otherwise:
+     | 1bit (sign) | 2bits - 11 | 8bits binary_encode(exp) |
+       21 bits lsbs binary_encode (coeff) |  */
+  if (bid_required_coef_bits (coeff) <= 23)
+    *sour = coeff & 0x007FFFFF;
+  else
+    *sour = coeff & 0x607FFFFF;
+}
+
+/* ------------------------------------------------------------------ */
+/* decDigitsFromDPD -- unpack a format's coefficient		      */
+/*								      */
+/*   dn is the target number, with 7, 16, or 34-digit space.	      */
+/*   sour is the word in binary form                                  */
+/*								      */
+/* dn->digits is set, but not the sign or exponent.		      */
+/* ------------------------------------------------------------------ */
+static void
+decDigitsFromBID (decNumber *dn, uInt sour)
+{
+  Int  n;
+  Unit *uout = dn->lsu;		   /* -> current output unit (uint16_t)  */
+  Unit *last = uout;		   /* will be unit containing msd */
+  uInt bin;
+
+  /* The BID coefficient is defined as:
+     y = binary decode(b10J+2 b10J+1 ... b0 )     if (bL−2 bL−3 ) != (11)
+                       \_ decimal64 (j=5): 22 ... 0
+         binary decode(1 0 0 b10J b10J-1 ... b0 ) if (bL−2 bL−3 ) == (11)
+                       \_ decimal64 (j=5): 20 ... 0
+
+     And for _Decimal32:
+     | 1 bit (sign) | 8 bits (exponent) |  23 bits (coefficient) |
+   */
+
+  if ((sour & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK)
+    sour = 0x800000 | (sour & 0x1FFFFF);
+  else
+    sour &= 0x7FFFFF;
+
+  bin = sour;
+  for (n = 3; (bin != 0) && (n >= 0); n--)
+    {
+      *uout = bin % 1000;
+      bin /= 1000;
+      last = uout;
+      uout++;
+    }
+
+  /* 'last' points to the most significant unit with digits.  Inspect it to
+     get the final digit count.  */
+  dn->digits = (last-dn->lsu) * DECDPUN +1;	/* floor of digits, plus 1  */
+
+  if (*last < 10) 				/* common odd digit or 0 */
+    return;
+  dn->digits++; 				/* must be 2 at least */
+  if (*last < 100)				/* 10-99 */
+    return;
+  dn->digits++; 				/* must be 3 at least */
+  if (*last < 1000)				/* 100-999 */
+    return;
+  dn->digits++; 				/* must be 4 at least */
+  return;
 }

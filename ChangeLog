@@ -1,5 +1,13 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/bid/decimal32.c (decimal32FromNumber): Add BID support.
+	(decimal32ToNumber): Likewise.
+	(decimal32FromString): Cleanup comments.
+	* libdecnumber/bid/decimal64.c (decimal64FromNumber): Use
+	BID_EXP_MASK64.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/truncd32.c (truncd): Remove duplicated function calls.
 
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>

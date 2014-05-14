@@ -192,7 +192,7 @@ decimal64FromNumber (decimal64 * d64, const decNumber *dn, decContext *set)
       else
 	shift = BID_EXP_SHIFT_SMALL64;
 
-      targhi |= (exp & 0x3ff) << shift;
+      targhi |= (exp & BID_EXP_MASK64) << shift;
     }
 
   if (dn->bits & DECNEG)
