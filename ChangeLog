@@ -1,5 +1,9 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* ieee754r/truncd32.c (truncd): Remove duplicated function calls.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* libdecnumber/bid/decimal64.c (decimal64FromNumber): Add BID support.
 	(decimal64ToNumber): Likewise.
 	(decimal64FromString): Cleanup comments.
