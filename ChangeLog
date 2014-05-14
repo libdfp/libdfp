@@ -1,5 +1,13 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* ieee754r/quantumd32.c (quantumd32): Use decnumber interfaces to set
+	the exponent instead of setexp.
+	* ieee754r/quantumd64.c (quantumd64): Refactor to avoid to include
+	quantumd32.c.
+	* ieee754r/quantumd128.c (quantumd128): Likewise.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* libdecnumber/bid/decimal32.c (decimal32FromNumber): Add BID support.
 	(decimal32ToNumber): Likewise.
 	(decimal32FromString): Cleanup comments.

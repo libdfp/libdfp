@@ -20,8 +20,38 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
 #include <decimal64.h>
 
-#define _REF_VALUE    1e-398DD
-#include "quantumd32.c"
+#include <decContext.h>
+#include <decNumber.h>
+#include <math.h>
+
+#define _DECIMAL_SIZE 64
+#include <dfpmacro.h>
+
+_Decimal64
+__quantumd64 (_Decimal64 x)
+{
+  decNumber dn_x;
+  decNumber dn_result;
+  decContext context;
+  _Decimal64 result;
+
+  FUNC_CONVERT_TO_DN (&x, &dn_x);
+  if (decNumberIsNaN (&dn_x) || decNumberIsZero (&dn_x))
+    return x;
+  if (decNumberIsInfinite (&dn_x))
+    return DEC_INFINITY;
+
+  /* The quantum of a finite number is defined as 1 x 10^exponent, so
+     first get input absolute value and then sets its coefficient to 1.  */
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  decNumberAbs (&dn_result, &dn_x, &context);
+  dn_result.digits = 1;
+  dn_result.lsu[0] = 1;
+
+  FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
+
+  return result;
+}
+weak_alias (__quantumd64, quantumd64)

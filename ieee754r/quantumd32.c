@@ -20,39 +20,38 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _DECIMAL_SIZE
-# define _DECIMAL_SIZE 32
-# include <decimal32.h>
-#endif
+#include <decimal32.h>
 
 #include <decContext.h>
 #include <decNumber.h>
 #include <math.h>
 
-#include <decNumberMath.h>
-
-#define FUNCTION_NAME quantum
-
+#define _DECIMAL_SIZE 32
 #include <dfpmacro.h>
-#include <numdigits.h>
 
-#ifndef _REF_VALUE
-# define _REF_VALUE 1e-101DF;
-#endif
-
-DEC_TYPE
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
+_Decimal32
+__quantumd32 (_Decimal32 x)
 {
-  DEC_TYPE ref = _REF_VALUE;
   decNumber dn_x;
+  decNumber dn_result;
+  decContext context;
+  _Decimal32 result;
 
-  FUNC_CONVERT_TO_DN(&x, &dn_x);
+  FUNC_CONVERT_TO_DN (&x, &dn_x);
   if (decNumberIsNaN (&dn_x) || decNumberIsZero (&dn_x))
     return x;
   if (decNumberIsInfinite (&dn_x))
     return DEC_INFINITY;
 
-  return FUNC_D(setexp) (ref, dn_x.exponent);
-}
+  /* The quantum of a finite number is defined as 1 x 10^exponent, so
+     first get input absolute value and then sets its coefficient to 1.  */
+  decContextDefault (&context, DEFAULT_CONTEXT);
+  decNumberAbs (&dn_result, &dn_x, &context);
+  dn_result.digits = 1;
+  dn_result.lsu[0] = 1;
 
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+  FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
+
+  return result;
+}
+weak_alias (__quantumd32, quantumd32)
