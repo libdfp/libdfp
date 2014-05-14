@@ -69,6 +69,9 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x;
   decNumber dn_absx;
   decNumber dn_logx;
+  decNumber dn_one;
+  decNumber dn_cmp;
+  enum rounding round;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
   if (decNumberIsZero (&dn_x))
@@ -94,15 +97,23 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 
   decNumberAbs (&dn_absx, &dn_x, &context);
 
-  /*  For DFP, we use radix 10 instead of whatever FLT_RADIX
-     happens to be */
+  /* For DFP, we use radix 10 instead of whatever FLT_RADIX happens to be */
   decNumberLog10 (&dn_logx, &dn_absx, &context);
 
-  /* Capture the case where truncation will return the wrong result.  */
-  if (x < DFP_CONSTANT (1.0) && x > DFP_CONSTANT (-1.0))
-    context.round = DEC_ROUND_UP;	/* round away from zero  */
-  else
-    context.round = DEC_ROUND_DOWN;	/*  truncate */
+  /* Capture the case where truncation will return the wrong result,
+     by rounding up if -1.0 < x < 1.0  */
+  round = DEC_ROUND_DOWN;
+  decNumberFromInt32 (&dn_one, 1);
+  decNumberCompare (&dn_cmp, &dn_x, &dn_one, &context);
+  if (-decNumberIsNegative(&dn_cmp))
+    {
+      decNumberFromInt32 (&dn_one, -1);
+      decNumberCompare (&dn_cmp, &dn_x, &dn_one, &context);
+      if (!decNumberIsNegative(&dn_cmp) && !decNumberIsZero(&dn_cmp))
+	round = DEC_ROUND_UP;
+    }
+  context.round = round;
+
   decNumberToIntegralValue (&dn_result, &dn_logx, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
