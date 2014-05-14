@@ -1,5 +1,11 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/bid/decimal64.c (decimal64FromNumber): Add BID support.
+	(decimal64ToNumber): Likewise.
+	(decimal64FromString): Cleanup comments.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* libdecnumber/dpd/decimal128.c [decNumberShow]: Remove prototype.
 	* libdecnumber/dpd/decimal32.c [decNumberShow]: Likewise.
 	* libdecnumber/dpd/decimal64.c [decNumberShow]: Likewise.
