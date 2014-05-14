@@ -69,7 +69,7 @@ libdecnumber_a_OBJS = decNumber.$(objext) decContext.$(objext) \
 
 libdecnumber_a_SOURCES = decContext.c decContext.h decDPD.h \
 	decNumber.c decNumber.h decNumberLocal.h \
-	decContextSymbols.h decDPDSymbols.h \
+	decDPDSymbols.h \
 	dpd/decimal128.c dpd/decimal128.h \
 	dpd/decimal32.c dpd/decimal32.h \
 	dpd/decimal64.c dpd/decimal64.h  \
@@ -121,8 +121,7 @@ $(srcdir)/config.in: @MAINT@ $(srcdir)/configure
 
 # Dependencies.
 
-decContext.$(objext): decContext.c decContext.h decNumberLocal.h \
-	decContextSymbols.h
+decContext.$(objext): decContext.c decContext.h decNumberLocal.h
 decNumber.$(objext):  decNumber.c decNumber.h decContext.h decNumberLocal.h
 decimal32.$(objext):  $(srcdir)/$(enable_decimal_float)/decimal32.c \
    $(srcdir)/$(enable_decimal_float)/decimal32.h \

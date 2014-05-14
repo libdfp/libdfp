@@ -43,7 +43,7 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
 	IEEE_SRC_TYPE e;
 	IEEE_DEST_TYPE r;
 	
-	___decContextDefault(&context, CONTEXT_INIT);
+	decContextDefault(&context, CONTEXT_INIT);
 	context.round = __dn_getround();
 	
 	PASTE(___host_to_ieee_,SRC) ((&a), &e);

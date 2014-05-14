@@ -1,5 +1,17 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/decContextSymbols.h: Remove file.
+	* libdecnumber/decContext.h: Remove decContextSymbols.h include.
+	* libdecnumber/Makefile.in: remove decContextSymbols.h associate
+	rules.
+	* ieee754r/frexpd32.c (frexp): Call decContextDefault instead of
+	___decContextDefault.
+	* ieee754r/ldexpd32.c (ldexp): Likewise.
+	* sysdeps/soft-dfp/extendsddd2.c (extend): Likewise.
+	* sysdeps/soft-dfp/floatsisd.c (float): Likewise.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* libdecnumber/decNumberSymbols.h: Remove file.
 	* libdecnumber/decNumber.h: Remove decNumberSymbols.h include.
 	* decNumberMath/Versions (libdfp [LIBDFP_PRIVATE]): Remove symbols

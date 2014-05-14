@@ -81,7 +81,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, int y)
     newexp = -INT_MAX;
   dn_x.exponent = newexp;
 
-  ___decContextDefault (&context, DEFAULT_CONTEXT);
+  decContextDefault (&context, DEFAULT_CONTEXT);
   FUNC_CONVERT_FROM_DN (&dn_x, &result, &context);
 
   if (context.status & DEC_Overflow)

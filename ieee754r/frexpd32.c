@@ -94,7 +94,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, int *y)
   *y = dn_x.digits + dn_x.exponent;
   dn_x.exponent = -dn_x.digits;
 
-  ___decContextDefault(&context, DEFAULT_CONTEXT);
+  decContextDefault(&context, DEFAULT_CONTEXT);
   FUNC_CONVERT_FROM_DN (&dn_x, &result, &context);
 #endif 
 

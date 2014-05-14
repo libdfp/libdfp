@@ -44,7 +44,7 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
   decContext context;
   IEEE_DEST_TYPE e;
 
-  ___decContextDefault (&context, CONTEXT_INIT);
+  decContextDefault (&context, CONTEXT_INIT);
   context.round = DEC_ROUND_HALF_EVEN;
 
   /* Use a C library function to get a floating point string.  */
