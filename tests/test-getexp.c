@@ -31,25 +31,24 @@
 #include <float.h> /* DEC_NAN definition.  */
 
 #include <get_digits.h>
+
 #define _DECIMAL_SIZE 32
 #define DEC_TYPE _Decimal32
 #include <numdigits.h>
 #undef _DECIMAL_SIZE
 #undef DEC_TYPE
-#undef ADJUST
-#undef Q
-#undef DECIMAL_BIAS
+
 #define _DECIMAL_SIZE 64
 #define DEC_TYPE _Decimal64
 #include <numdigits.h>
 #undef _DECIMAL_SIZE
 #undef DEC_TYPE
-#undef ADJUST
-#undef Q
-#undef DECIMAL_BIAS
+
 #define _DECIMAL_SIZE 128
 #define DEC_TYPE _Decimal128
 #include <numdigits.h>
+#undef _DECIMAL_SIZE
+#undef DEC_TYPE
 
 #define _WANT_VC 1 /* Pick up the _VC_P(x,y,fmt) macro.  */
 #include "scaffold.c" /* Pick up the _VC_P(x,y,fmt) macro.  */
@@ -57,100 +56,123 @@
 /* We're going to be comparing fields so we need to extract the data.  This is a
  * sneaky way to get around the fact that get_digits_d* isn't exported from
  * libdfp.  */
-#include "../sysdeps/dpd/dpd-private.c"
+#ifdef __DECIMAL_BID_FORMAT__
+# include "../sysdeps/bid/bid-private.c"
+#else
+# include "../sysdeps/dpd/dpd-private.c"
+#endif
 
-/* Inspired by GLIBC stdio-common/tfformat.c  */
 typedef struct{
   int line;
-  _Decimal128 x;  /* Value to test  */
-  int e;  /* Result should be this.  */
-  const char *format; /* printf %d */
+  _Decimal128 x;
+  int e;
+  const char *format;
 } d128_type;
 
-d128_type printf_d128s[] =
-{
-  {0,0,0,0 }
-};
+#define RET128_MAX                     6111
+#define RET128_MIN                    -6143
+#define RET128_MIN_SUB                -6176
 
-typedef struct{
+static const
+d128_type d128[] =
+{
+  {__LINE__, __DEC128_MAX__,                           RET128_MAX, "%d"},
+  {__LINE__, __DEC128_MIN__,                           RET128_MIN, "%d"},
+  {__LINE__, __DEC128_SUBNORMAL_MIN__,             RET128_MIN_SUB, "%d"},
+  {__LINE__, 1E200DL,                                         200, "%d"},
+  {__LINE__, 12131E2000DL,                                   2000, "%d"},
+  {__LINE__, 1E-200DL,                                       -200, "%d"},
+  {__LINE__, 12131E-2000DL,                                 -2000, "%d"},
+  {__LINE__, 9999999999999999999999999999999999E0DL,            0, "%d"},
+  {__LINE__, 9999999999999999999999999999999999E10DL,          10, "%d"},
+  {__LINE__, 9999999999999999999999999999999999E100DL,        100, "%d"},
+  {__LINE__, 9999999999999999999999999999999999E1000DL,      1000, "%d"},
+};
+static const int d128_len = sizeof (d128) / sizeof (d128[0]);
+
+
+typedef struct {
   int line;
-  _Decimal64 x;  /* Value to test  */
-  int e;  /* Result should be this.  */
-  const char *format; /* printf %d */
+  _Decimal64 x;
+  int e;
+  const char *format;
 } d64_type;
 
-/* getexpd* will return __NAND*__ if the input is a NAN.  */
-#define __NAND32__ -399
-#define __NAND64__ -399
-#define __NAND128__ -399
 
-d64_type printf_d64s[] =
+#define RET64_MAX                       369
+#define RET64_MIN                      -383
+#define RET64_MIN_SUB                  -398
+
+d64_type d64[] =
 {
-  {__LINE__, 4e384DD, 369, "%d"},
-  {__LINE__, 4000000000000000e369DD, 369, "%d"},
-  {__LINE__, DEC_INFINITY, __NAND64__, "%d"},
-  {__LINE__, __DEC64_MAX__, 369, "%d"},
-  {__LINE__, __DEC64_MIN__, -383, "%d" }, 
-  {0,0,0,0 }
-};
+  {__LINE__, __DEC64_MAX__,                 RET64_MAX, "%d"},
+  {__LINE__, __DEC64_MIN__,                 RET64_MIN, "%d"},
+  {__LINE__, __DEC64_SUBNORMAL_MIN__,   RET64_MIN_SUB, "%d"},
+  {__LINE__, 1E20DD,                               20, "%d"},
+  {__LINE__, 12131E200DD,                         200, "%d"},
+  {__LINE__, 1E-20DD,                             -20, "%d"},
+  {__LINE__, 12131E-200DD,                       -200, "%d"},
+  {__LINE__, 9999999999999999E0DD,                  0, "%d"},
+  {__LINE__, 9999999999999999E10DD,                10, "%d"},
+  {__LINE__, 9999999999999999E100DD,              100, "%d"},
 
-typedef struct{
+};
+static const int d64_len = sizeof (d64) / sizeof (d64[0]);
+
+
+typedef struct {
   int line;
-  _Decimal32 x;  /* Value to test  */
-  int e;  /* Result should be this.  */
-  const char *format; /* printf %d */
+  _Decimal32 x;
+  int e;
+  const char *format;
 } d32_type;
 
-d32_type printf_d32s[] =
+
+#define RET32_MAX                        90
+#define RET32_MIN                       -95
+#define RET32_MIN_SUB                  -101
+
+d32_type d32[] =
 {
-  {0,0,0,0 }
+  {__LINE__, __DEC32_MAX__,                 RET32_MAX, "%d"},
+  {__LINE__, __DEC32_MIN__,                 RET32_MIN, "%d"},
+  {__LINE__, __DEC32_SUBNORMAL_MIN__,   RET32_MIN_SUB, "%d"},
+  {__LINE__, 1E2DF,                                 2, "%d"},
+  {__LINE__, 12131E20DF,                           20, "%d"},
+  {__LINE__, 1E-2DF,                               -2, "%d"},
+  {__LINE__, 12131E-20DF,                         -20, "%d"},
+  {__LINE__, 9999999E0DF,                           0, "%d"},
+  {__LINE__, 9999999E10DF,                         10, "%d"},
 };
+static const int d32_len = sizeof (d32) / sizeof (d32[0]);
 
-int ged128 (_Decimal128 d);
-int ged64 (_Decimal64 d);
-int ged32 (_Decimal32 d);
-
-/* Use these so that the inline function is inlined into a wrapper function
- * for easier debugging.  */
-int ged128(_Decimal128 d)
-{
-	return getexpd128(d);
-}
-int ged64(_Decimal64 d)
-{
-	return getexpd64(d);
-}
-
-int ged32(_Decimal32 d)
-{
-	return getexpd32(d);
-}
 
 int main (void)
 {
-  d128_type *d128ptr;
-  d64_type *d64ptr;
-  d32_type *d32ptr;
+  int i;
 
-  for (d128ptr = printf_d128s; d128ptr->line; d128ptr++)
+  for (i=0; i<d128_len; ++i)
     {
-      int retval = ged128(d128ptr->x);
-      fprintf(stdout,"getexpd128(%DDfDL) in: %s:%d\n", d128ptr->x,__FILE__,__LINE__-1);
-      _VC_P(__FILE__,d128ptr->line, d128ptr->e,retval,d128ptr->format);
+      int retval = getexpd128 (d128[i].x);
+      fprintf (stdout, "getexpd128 (%DDeDL) in: %s:%d\n", d128[i].x,
+	       __FILE__,__LINE__-1);
+      _VC_P (__FILE__, d128[i].line, d128[i].e, retval, d128[i].format);
     }
 
-  for (d64ptr = printf_d64s; d64ptr->line; d64ptr++)
+  for (i=0; i<d64_len; ++i)
     {
-      int retval = ged64(d64ptr->x);
-      fprintf(stdout,"getexpd64(%DfDD) in: %s:%d\n", d64ptr->x,__FILE__,__LINE__-1);
-      _VC_P(__FILE__,d64ptr->line, d64ptr->e,retval,d64ptr->format);
+      int retval = getexpd64 (d64[i].x);
+      fprintf (stdout, "getexpd64 (%DeDD) in: %s:%d\n", d64[i].x,
+	       __FILE__,__LINE__-1);
+      _VC_P (__FILE__, d64[i].line, d64[i].e, retval, d64[i].format);
     }
 
-  for (d32ptr = printf_d32s; d32ptr->line; d32ptr++)
+  for (i=0; i<d32_len; ++i)
     {
-      int retval = ged32(d32ptr->x);
-      fprintf(stdout,"getexpd32(%HfDF) in: %s:%d\n", d32ptr->x,__FILE__,__LINE__-1);
-      _VC_P(__FILE__,d32ptr->line, d32ptr->e,retval,d32ptr->format);
+      int retval = getexpd32 (d32[i].x);
+      fprintf (stdout, "getexpd32 (%HeDF) in: %s:%d\n", d32[i].x,
+	       __FILE__,__LINE__-1);
+      _VC_P (__FILE__, d32[i].line, d32[i].e, retval, d32[i].format);
     }
 
   _REPORT();

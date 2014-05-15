@@ -43,6 +43,7 @@
 
 #undef DECIMAL_BIAS
 #undef DECIMAL_BIAS_DOUBLE
+#undef Q
 #if _DECIMAL_SIZE == 32
 // DECIMAL32 gets widened to DECIMAL64, so it ought to use DECIMAL64 bias
 # define DECIMAL_BIAS         (101+297)
@@ -157,6 +158,7 @@ FUNC_D (numdigits) (DEC_TYPE x)
 static inline DEC_TYPE
 FUNC_D (left_justify) (DEC_TYPE x)
 {
+#undef ADJUST
 #if _DECIMAL_SIZE == 32
 # define ADJUST 6
   _Decimal64 tmp = x;
