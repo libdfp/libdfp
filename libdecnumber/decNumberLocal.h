@@ -57,6 +57,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #if !defined(DECUSE64)
   #define DECUSE64  1	      /* 1=use int64s, 0=int32 & smaller only */
   #endif
+  /*#define DECUSE128  1*/    /* 1=use int128s                        */
 
   /* Conditional check flags -- set these to 0 for best performance   */
   #if !defined(DECCHECK)
@@ -94,6 +95,11 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #if DECUSE64
   #define Long	 int64_t
   #define uLong  uint64_t
+  #endif
+  #if DECUSE128
+  /* Note: these are GCC extension are required for current BID       */
+  #define Quad	 __int128_t
+  #define uQuad  __uint128_t
   #endif
 
   /* Development-use definitions				      */

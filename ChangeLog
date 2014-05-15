@@ -1,5 +1,24 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/bid/bid-coeffbits.h: New file: function to calculate
+	required bits to express BID coefficient.
+	* libdecnumber/bid/decimal128.c (decimal128FromNumber): Add BID
+	support.
+	(decimal128ToNumber): Likewise.
+	(decimal128FromString): Cleanup comments.
+	* libdecnumber/bid/decimal32.c (bid_required_coef_bits): Move to
+	specific bid-coeffbits.h file.
+	(decimal32FromNumber): Cleanup comments.
+	(decimal32ToNumber): Likewise.
+	* libdecnumber/bid/decimal64.c (bid_required_coef_bits): Move to
+	specific bid-coeffbits.h file.
+	(decimal64FromNumber): Cleanup comments.
+	(decimal64ToNumber): Likewise.
+	* libdecnumber/decNumberLocal.h [DECUSE128]: Add define to use 128
+	bits integers.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/quantumd32.c (quantumd32): Use decnumber interfaces to set
 	the exponent instead of setexp.
 	* ieee754r/quantumd64.c (quantumd64): Refactor to avoid to include

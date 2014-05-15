@@ -23,7 +23,7 @@
 #include "decNumber.h"        /* base number library */
 #include "decNumberLocal.h"   /* decNumber local types, etc. */
 #include "decimal32.h"        /* our primary include */
-#include "decDebug.h"
+#include "bid-coeffbits.h"    /* for bid_required_bits  */
 
 #if DECDPUN != 3
 # error "_Decimal32 BID implementation only support DECDPUN==3"
@@ -53,37 +53,6 @@ static void decDigitsToBID (const decNumber *dn, uInt *sour);
 #define BID_EXP_SHIFT_SMALL32  23
 
 /* ------------------------------------------------------------------ */
-/* Return required bits to represent a binary uInt (32-bits) value    */
-/* using a fast log2 implementation using Bruijn sequences.           */
-/* ------------------------------------------------------------------ */
-static inline
-Int bid_required_coef_bits (uInt value)
-{
-  /* This algorithm can be optimized by using compiler builtins:
-      x == 0 ? 0 : 32 - __builtin_clzl (x)  */
-
-  /* Lookup table, more info on how construct it:
-     http://supertech.csail.mit.edu/papers/debruijn.pdf  */
-  static const int tab32[] =
-  {
-     0,  9,  1, 10, 13, 21,  2, 29,
-    11, 14, 16, 18, 22, 25,  3, 30,
-     8, 12, 20, 28, 15, 17, 24,  7, 
-    19, 27, 23,  6, 26,  5,  4, 31
-  };
-  uInt hash;
-
-  value |= value >> 1;
-  value |= value >> 2;
-  value |= value >> 4;
-  value |= value >> 8;
-  value |= value >> 16;
-
-  hash = ((uInt)((value - (value >> 1))*0x077CB531U)) >> 27;
-  return tab32[hash] + 1;
-}
-
-/* ------------------------------------------------------------------ */
 /* Decimal 32-bit format module 				      */
 /* ------------------------------------------------------------------ */
 /* This module comprises the routines for decimal32 format numbers.   */
@@ -110,7 +79,7 @@ decimal32FromNumber (decimal32 *d32, const decNumber *dn, decContext *set)
      out of range then reduce the number under the appropriate
      constraints.  This could push the number to Infinity or zero,
      so this check and rounding must be done before generating the
-     decimal64.  */
+     decimal32.  */
   ae = dn->exponent + dn->digits - 1;	/* [0 if special] */
   if (dn->digits > DECIMAL32_Pmax	/* too many digits */
       || ae > DECIMAL32_Emax		/* likely overflow */
@@ -198,13 +167,13 @@ decimal32FromNumber (decimal32 *d32, const decNumber *dn, decContext *set)
 
   if (status != 0)
     decContextSetStatus (set, status);
-  /*decimal64Show(d64);*/
+  /*decimal32Show(d32);*/
   return d32;
 }
 
 /* ------------------------------------------------------------------ */
-/* decimal64ToNumber -- convert decimal64 to decNumber		      */
-/*   d64 is the source decimal64				      */
+/* decimal32ToNumber -- convert decimal32 to decNumber		      */
+/*   d32 is the source decimal32				      */
 /*   dn is the target number, with appropriate space		      */
 /* No error is possible.					      */
 /* ------------------------------------------------------------------ */
@@ -244,9 +213,9 @@ decimal32ToNumber (const decimal32 *d32, decNumber *dn)
     {
       /* The exponent is decoded as:
          E = binary decode (bL−2 bL−3 · · · bL−w−1 ) if (bL−2 bL−3 ) != 11
-                           \_ decimal64 (w=10) -> bL-2 bL-3 ...  bL-11
+                           \_ decimal32 (w=10) -> bL-2 bL-3 ...  bL-11
              binary decode (bL−4 bL−5 · · · bL−w−3 ) if (bL−2 bL−3 ) == 11
-	                   \_ decimal64 (w=10) -> bl-4 bl-5 ...  bl-13
+	                   \_ decimal32 (w=10) -> bl-4 bl-5 ...  bl-13
 
          The 0x60000000 is binary mask to check if bL-2, bL-3 are set.  */
       if ((sour & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK)
@@ -336,7 +305,7 @@ decDigitsToBID (const decNumber *dn, uInt *sour)
      - Otherwise:
      | 1bit (sign) | 2bits - 11 | 8bits binary_encode(exp) |
        21 bits lsbs binary_encode (coeff) |  */
-  if (bid_required_coef_bits (coeff) <= 23)
+  if (bid_required_bits_32 (coeff) <= 23)
     *sour = coeff & 0x007FFFFF;
   else
     *sour = coeff & 0x607FFFFF;
@@ -360,21 +329,21 @@ decDigitsFromBID (decNumber *dn, uInt sour)
 
   /* The BID coefficient is defined as:
      y = binary decode(b10J+2 b10J+1 ... b0 )     if (bL−2 bL−3 ) != (11)
-                       \_ decimal64 (j=5): 22 ... 0
+                       \_ decimal32 (j=2): 22 ... 0
          binary decode(1 0 0 b10J b10J-1 ... b0 ) if (bL−2 bL−3 ) == (11)
-                       \_ decimal64 (j=5): 20 ... 0
+                       \_ decimal32 (j=2): 20 ... 0
 
      And for _Decimal32:
      | 1 bit (sign) | 8 bits (exponent) |  23 bits (coefficient) |
    */
 
   if ((sour & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK)
-    sour = 0x800000 | (sour & 0x1FFFFF);
+    sour  = 0x00800000 | (sour & 0x001FFFFF);
   else
-    sour &= 0x7FFFFF;
+    sour &= 0x007FFFFF;
 
   bin = sour;
-  for (n = 3; (bin != 0) && (n >= 0); n--)
+  for (n = DECNUMUNITS; (bin != 0) && (n >= 0); n--)
     {
       *uout = bin % 1000;
       bin /= 1000;

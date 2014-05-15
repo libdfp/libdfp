@@ -23,7 +23,7 @@
 #include "decNumber.h"		/* base number library */
 #include "decNumberLocal.h"	/* decNumber local types, etc. */
 #include "decimal64.h"		/* our primary include */
-#include "decDebug.h"
+#include "bid-coeffbits.h"	/* for bid_required_bits  */
 
 #if DECDPUN != 3
 # error "_Decimal64 BID implementation only support DECDPUN==3"
@@ -37,42 +37,6 @@ decNumber *decimal64ToNumber (const decimal64 *, decNumber *);
 
 static void decDigitsFromBID (decNumber *dn, uInt sourhi, uInt sourlo);
 static void decDigitsToBID (const decNumber *dn, uInt *sourhi, uInt *sourlo);
-
-/* ------------------------------------------------------------------ */
-/* Return required bits to represent a binary uLong (64-bits) value   */
-/* using a fast log2 implementation using Bruijn sequences.           */
-/* ------------------------------------------------------------------ */
-static inline
-Int bid_required_coef_bits (uLong value)
-{
-  /* This algorithm can be optimized by using compiler builtins:
-      x == 0 ? 0 : 64 - __builtin_clzll (x)  */
-
-  /* Lookup table, more info on how construct it:
-     http://supertech.csail.mit.edu/papers/debruijn.pdf  */
-  static const int tab64[64] =
-  {
-    63,  0, 58,  1, 59, 47, 53,  2,
-    60, 39, 48, 27, 54, 33, 42,  3,
-    61, 51, 37, 40, 49, 18, 28, 20,
-    55, 30, 34, 11, 43, 14, 22,  4,
-    62, 57, 46, 52, 38, 26, 32, 41,
-    50, 36, 17, 19, 29, 10, 13, 21,
-    56, 45, 25, 31, 35, 16,  9, 12,
-    44, 24, 15,  8, 23,  7,  6,  5
-  };
-  uLong hash;
-
-  value |= value >> 1;
-  value |= value >> 2;
-  value |= value >> 4;
-  value |= value >> 8;
-  value |= value >> 16;
-  value |= value >> 32;
-
-  hash = ((uLong)((value - (value >> 1))*0x07EDD5E59A4E28C2UL)) >> 58;
-  return tab64[hash] + 1;
-}
 
 /* ------------------------------------------------------------------ */
 /* BID special encoding definitions.                                  */
@@ -377,10 +341,10 @@ decDigitsToBID (const decNumber *dn, uInt *sourhi, uInt *sourlo)
      - Otherwise:
      | 1bit (sign) | 2bits - 11 | 10bits binary_encode(exp) |
        51 bits lsbs binary_encode (coeff) |  */
-  if (bid_required_coef_bits (coeff) <= 53)
+  if (bid_required_bits_64 (coeff) <= 53)
     *sourhi = (coeff >> 32) & 0x001FFFFF;
   else
-    *sourhi = (coeff >> 32) & 0x601FFFFF;
+    *sourhi = (coeff >> 32) & 0x6007FFFF;
   *sourlo = coeff & 0xFFFFFFFFUL;
 }
 
@@ -412,12 +376,12 @@ decDigitsFromBID (decNumber *dn, uInt sourhi, uInt sourlo)
    */
 
   if ((sourhi & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK)
-    sourhi = 0x200000 | (sourhi & 0x7FFFF);
+    sourhi  = 0x00200000 | (sourhi & 0x0007FFFF);
   else
-    sourhi &= 0x1FFFFF;
+    sourhi &= 0x001FFFFF;
 
   bin = ((uLong)sourhi << 32) | sourlo;
-  for (n = 6; (bin != 0) && (n >= 0); n--)
+  for (n = DECNUMUNITS; (bin != 0) && (n >= 0); n--)
     {
       *uout = bin % 1000;
       bin /= 1000;
