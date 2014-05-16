@@ -1,5 +1,9 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* tests/test-numdigits.c: Cleanup.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* tests/test-setexp.c: New file: setexpd[32|64|128] testcase.
 	* Makefile.in: Add setexp testcase rules.
 

@@ -1,6 +1,6 @@
 /* Unit test the internal numdigitsd[32|64|128]() functions.
 
-   Copyright (C) 2010-2012 Free Software Foundation, Inc.
+   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -31,25 +31,24 @@
 #include <math.h>
 
 #include <get_digits.h>
+
 #define _DECIMAL_SIZE 32
 #define DEC_TYPE _Decimal32
 #include <numdigits.h>
 #undef _DECIMAL_SIZE
 #undef DEC_TYPE
-#undef ADJUST
-#undef Q
-#undef DECIMAL_BIAS
+
 #define _DECIMAL_SIZE 64
 #define DEC_TYPE _Decimal64
 #include <numdigits.h>
 #undef _DECIMAL_SIZE
 #undef DEC_TYPE
-#undef ADJUST
-#undef Q
-#undef DECIMAL_BIAS
+
 #define _DECIMAL_SIZE 128
 #define DEC_TYPE _Decimal128
 #include <numdigits.h>
+#undef _DECIMAL_SIZE
+#undef DEC_TYPE
 
 #define _WANT_VC 1 /* Pick up the _VC_P(x,y,fmt) macro.  */
 #include "scaffold.c" /* Pick up the _VC_P(x,y,fmt) macro.  */
@@ -57,17 +56,22 @@
 /* We're going to be comparing fields so we need to extract the data.  This is a
  * sneaky way to get around the fact that get_digits_d* isn't exported from
  * libdfp.  */
-#include "../sysdeps/dpd/dpd-private.c"
+#ifdef __DECIMAL_BID_FORMAT__
+# include "../sysdeps/bid/bid-private.c"
+#else
+# include "../sysdeps/dpd/dpd-private.c"
+#endif
 
-/* Inspired by GLIBC stdio-common/tfformat.c  */
-typedef struct{
+typedef struct
+{
   int line;
   _Decimal128 x;  /* Value to test  */
   int e;  /* Result should be this.  */
   const char *format; /* printf %d */
 } d128_type;
 
-d128_type printf_d128s[] =
+static
+d128_type d128[] =
 {
   {__LINE__, 0.02E-2DL, 1,  "%d"},
   {__LINE__, 0.0200E-2DL, 3,  "%d"},
@@ -80,8 +84,8 @@ d128_type printf_d128s[] =
   {__LINE__, 123456.000E-6DL, 9,  "%d"},
   {__LINE__, 123456.00000000000000E-18DL, 20,  "%d"},
   {__LINE__, 123.456E-6DL, 6, "%d"},
-  {0,0,0,0 }
 };
+static int d128_s = sizeof (d128) / sizeof (d128[0]);
 
 typedef struct{
   int line;
@@ -90,7 +94,8 @@ typedef struct{
   const char *format; /* printf %d */
 } d64_type;
 
-d64_type printf_d64s[] =
+static
+d64_type d64[] =
 {
   {__LINE__, 0.02E-2DD, 1,  "%d"},
   {__LINE__, 0.0200E-2DD, 3,  "%d"},
@@ -112,19 +117,16 @@ d64_type printf_d64s[] =
 
   /* The normalized exponent is '369' so the right justified encoding has two
    * digits, '90', in the mantissa.  */
-
   {__LINE__, 9E370DD, 2, "%d"},
 
-  /* Fails the same way since the absolute value of the exponent exceeds 369.
-   */
+  /* Fails the same way: the absolute value of the exponent exceeds 369. */
   {__LINE__, __DEC64_MIN__, 1, "%d"},
   {__LINE__, 1E-398DD, 1, "%d"},
 
   /* 0.000000000000001E-383DD  */
   {__LINE__, __DEC64_SUBNORMAL_MIN__, 1, "%d"},
-
-  {0,0,0,0 }
 };
+static int d64_s = sizeof (d64) / sizeof (d64[0]);
 
 typedef struct{
   int line;
@@ -133,7 +135,7 @@ typedef struct{
   const char *format; /* printf %d */
 } d32_type;
 
-d32_type printf_d32s[] =
+d32_type d32[] =
 {
   {__LINE__, 0.02E-2DF, 1,  "%d"},
   {__LINE__, 0.0200E-2DF, 3,  "%d"},
@@ -164,55 +166,35 @@ d32_type printf_d32s[] =
   {__LINE__, 0e2DF, 1, "%d"},
   {__LINE__, 0.0e2DF, 1, "%d"},
   {__LINE__, 0.0e10DF, 1, "%d"},
-
-  {0,0,0,0 }
 };
-
-int nd128 (_Decimal128 d);
-int nd64 (_Decimal64 d);
-int nd32 (_Decimal32 d);
-
-/* Use these so that the inline function is inlined into a wrapper function
- * for easier debugging.  */
-int nd128(_Decimal128 d)
-{
-	return numdigitsd128(d);
-}
-int nd64(_Decimal64 d)
-{
-	return numdigitsd64(d);
-}
-
-int nd32(_Decimal32 d)
-{
-	return numdigitsd32(d);
-}
+static int d32_s = sizeof (d32) / sizeof (d32[0]);
 
 int main (void)
 {
-  d128_type *d128ptr;
-  d64_type *d64ptr;
-  d32_type *d32ptr;
+  int i;
 
-  for (d128ptr = printf_d128s; d128ptr->line; d128ptr++)
+  for (i=0; i<d128_s; ++i)
     {
-      int retval = nd128(d128ptr->x);
-      fprintf(stdout,"numdigitsd128(%DDfDL) in: %s:%d\n", d128ptr->x,__FILE__,__LINE__-1);
-      _VC_P(__FILE__,d128ptr->line, d128ptr->e,retval,d128ptr->format);
+      int retval = numdigitsd128 (d128[i].x);
+      fprintf(stdout,"numdigitsd128 (%DDgDL) in: %s:%d\n",
+		      d128[i].x, __FILE__, __LINE__-1);
+      _VC_P(__FILE__, d128[i].line, d128[i].e, retval, d128[i].format);
     }
 
-  for (d64ptr = printf_d64s; d64ptr->line; d64ptr++)
+  for (i=0; i<d64_s; ++i)
     {
-      int retval = nd64(d64ptr->x);
-      fprintf(stdout,"numdigitsd64(%DfDD) in: %s:%d\n", d64ptr->x,__FILE__,__LINE__-1);
-      _VC_P(__FILE__,d64ptr->line, d64ptr->e,retval,d64ptr->format);
+      int retval = numdigitsd64 (d64[i].x);
+      fprintf(stdout,"numdigitsd64 (%DgDD) in: %s:%d\n",
+		      d64[i].x, __FILE__, __LINE__-1);
+      _VC_P(__FILE__, d64[i].line, d64[i].e, retval, d64[i].format);
     }
 
-  for (d32ptr = printf_d32s; d32ptr->line; d32ptr++)
+  for (i=0; i<d32_s; ++i)
     {
-      int retval = nd32(d32ptr->x);
-      fprintf(stdout,"numdigitsd32(%HfDF) in: %s:%d\n", d32ptr->x,__FILE__,__LINE__-1);
-      _VC_P(__FILE__,d32ptr->line, d32ptr->e,retval,d32ptr->format);
+      int retval = numdigitsd32 (d32[i].x);
+      fprintf (stdout,"numdigitsd32 (%HgDF) in: %s:%d\n",
+		       d32[i].x, __FILE__, __LINE__-1);
+      _VC_P (__FILE__, d32[i].line, d32[i].e, retval, d32[i].format);
     }
 
   _REPORT();
