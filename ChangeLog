@@ -1,5 +1,14 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/bid/bid-coeffbits.h (bid_required_bits_32: Fix lookup
+	table values.
+	(bid_required_bits_64): Use bid_required_bits_32 instead.
+	* libdecnumber/bid/decimal128.c (decDigitsToBID): Fix BID encoding.
+	* libdecnumber/bid/decimal32.c (decDigitstoBID): Likewise.
+	* libdecnumber/bid/decimal64.c (decDigitstoBID): Likewise.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* ieee754r/logbd32.c: Cleanup implementation to use only libdecnumber
 	operations.
 

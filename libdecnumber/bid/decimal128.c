@@ -353,13 +353,13 @@ decDigitsToBID (const decNumber *dn, uInt *sourhi, uInt *sourmh,
      - Otherwise:
      | 1bit (sign) | 2bits - 11 | 14bits binary_encode(exp) |
        113 bits lsbs binary_encode (coeff) |  */
-  if (bid_required_bits_128 (coeff) <= 133)
+  if (bid_required_bits_128 (coeff) <= 113)
     *sourhi = (coeff >> 96) & 0x0001FFFF;
   else
-    *sourhi = (coeff >> 96) & 0x60007FFF;
-  *sourmh = (coeff >> 64) & 0xFFFFFFFFUL;
-  *sourml = (coeff >> 32) & 0xFFFFFFFFUL;
-  *sourlo = coeff & 0xFFFFFFFFUL;
+    *sourhi = 0x60020000U | ((coeff >> 96) & 0x00007FFFU);
+  *sourmh = (coeff >> 64) & 0xFFFFFFFFU;
+  *sourml = (coeff >> 32) & 0xFFFFFFFFU;
+  *sourlo = coeff & 0xFFFFFFFFU;
 }
 
 /* ------------------------------------------------------------------ */

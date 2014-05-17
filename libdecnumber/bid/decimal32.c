@@ -306,9 +306,9 @@ decDigitsToBID (const decNumber *dn, uInt *sour)
      | 1bit (sign) | 2bits - 11 | 8bits binary_encode(exp) |
        21 bits lsbs binary_encode (coeff) |  */
   if (bid_required_bits_32 (coeff) <= 23)
-    *sour = coeff & 0x007FFFFF;
+    *sour = coeff & 0x007FFFFFU;
   else
-    *sour = coeff & 0x607FFFFF;
+    *sour = 0x60800000U | (coeff & 0x001FFFFFU);
 }
 
 /* ------------------------------------------------------------------ */
