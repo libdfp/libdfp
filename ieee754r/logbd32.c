@@ -39,14 +39,18 @@
 
 #include <dfpmacro.h>
 
-static DEC_TYPE
-IEEE_FUNCTION_NAME (DEC_TYPE x)
+DEC_TYPE
+INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
   decContext context;
   decNumber dn_result;
   DEC_TYPE result;
   decNumber dn_x;
-  decNumber dn_x2;
+  decNumber dn_tmp;
+  decNumber dn_log10;
+  decNumber dn_one;
+  decNumber dn_cmp;
+  enum rounding round;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
   if (decNumberIsNaN (&dn_x))
@@ -55,6 +59,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
     return DEC_INFINITY;
   if (decNumberIsZero (&dn_x))	/*  Pole Error if x==0 */
     {
+      DFP_ERRNO (ERANGE);
       DFP_EXCEPT (FE_DIVBYZERO);
       return -DFP_HUGE_VAL;
     }
@@ -62,30 +67,30 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
     return -x;
 
   decContextDefault (&context, DEFAULT_CONTEXT);
-  decNumberAbs (&dn_x2, &dn_x, &context);
+  decNumberAbs (&dn_tmp, &dn_x, &context);
   /*  For DFP, we use radix 10 instead of whatever FLT_RADIX
       happens to be */
-  decNumberLog10 (&dn_x, &dn_x2, &context);
+  decNumberLog10 (&dn_log10, &dn_tmp, &context);
 
-  /* Capture the case where truncation will return the wrong result.  */
-  if (x < DFP_CONSTANT(1.0) && x > DFP_CONSTANT(-1.0))
-    context.round = DEC_ROUND_UP; /* round away from zero  */
-  else
-    context.round = DEC_ROUND_DOWN; /*  truncate */
-  decNumberToIntegralValue (&dn_result, &dn_x, &context);
+  /* Capture the case where truncation will return the wrong result,
+     by rounding up if -1.0 < x < 1.0  */
+  round = DEC_ROUND_DOWN;
+  decNumberFromInt32 (&dn_one, 1);
+  decNumberCompare (&dn_cmp, &dn_x, &dn_one, &context);
+  if (-decNumberIsNegative(&dn_cmp))
+    {
+      decNumberFromInt32 (&dn_one, -1);
+      decNumberCompare (&dn_cmp, &dn_x, &dn_one, &context);
+      if (!decNumberIsNegative(&dn_cmp) && !decNumberIsZero(&dn_cmp))
+	round = DEC_ROUND_UP;
+    }
+  context.round = round;
+
+  decNumberToIntegralValue (&dn_result, &dn_log10, &context);
 
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
 
   return result;
-}
-
-DEC_TYPE
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
-{
-  DEC_TYPE z = IEEE_FUNCTION_NAME (x);
-  if (x == DFP_CONSTANT(0.0))
-    DFP_ERRNO (ERANGE);
-  return z;
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
