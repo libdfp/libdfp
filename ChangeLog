@@ -5,6 +5,7 @@
 	* ieee754r/isgreaterd32.c (isgreater): Likewise.
 	* ieee754r/isgreaterequald32.c (isgreaterequal): Likewise.
 	* ieee754r/islessequald32.c (islessequal): Likewise.
+	* ieee754r/islessd32.c (isless): Likewise.
 
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
