@@ -43,6 +43,8 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
   decNumber dn_x;
   decNumber dn_y;
+  decNumber result;
+  decContext context;
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
   FUNC_CONVERT_TO_DN(&y, &dn_y);
@@ -50,8 +52,9 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   if(decNumberIsNaN(&dn_x) || decNumberIsNaN(&dn_y))
     return 0;
 
-  /*return decCompare(&dn_x, &dn_y) != 1; */
-  return x<=y;
+  decContextDefault(&context, DEFAULT_CONTEXT);
+  decNumberCompare(&result, &dn_x, &dn_y, &context);
+  return decNumberIsNegative(&result) || decNumberIsZero(&result);
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
