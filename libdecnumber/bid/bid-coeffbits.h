@@ -28,9 +28,9 @@
 static inline
 Int bid_required_bits_32 (uInt value)
 {
-  /* This algorithm can be optimized by using compiler builtins:
-      x == 0 ? 0 : 32 - __builtin_clzl (x)  */
-
+#if __GNUC__ >=3 && __GNUC_MINOR__ >= 2
+  return value == 0 ? 0 : (32 - __builtin_clz (value));
+#else
   /* Lookup table to count leading zeros. More info on how to construct it:
      http://supertech.csail.mit.edu/papers/debruijn.pdf  */
   static const Int tab32[] =
@@ -50,6 +50,7 @@ Int bid_required_bits_32 (uInt value)
 
   hash = ((value * 0x07c4acddU) & 0xffffffffU) >> 27;
   return 32 - tab32[hash];
+#endif
 }
 
 /* -------------------------------------------------------------------- */
@@ -59,6 +60,9 @@ Int bid_required_bits_32 (uInt value)
 static inline
 Int bid_required_bits_64 (uLong value)
 {
+#if __GNUC__ >=3 && __GNUC_MINOR__ >= 2
+  return (value == 0UL ? 0 : 64 - __builtin_clzll (value));
+#else
   Int ret;
   uInt hi = (value >> 32);
   if ((ret = bid_required_bits_32 (hi)) == 0)
@@ -67,6 +71,7 @@ Int bid_required_bits_64 (uLong value)
       return bid_required_bits_32 (lo);
     }
   return ret + 32;
+#endif
 }
 
 # ifdef DECUSE128

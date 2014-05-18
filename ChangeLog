@@ -1,5 +1,11 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/bid/bid-coeffbits.h (bid_required_bits_32): Use
+	__builtin_clz if possible.
+	(bid_required_bits_64): Likewise.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* tests/test-left_justify.c: Cleanup.
 	* tests/test-decode.c: Add _Decimal64 and _Decimal128 tests and some
 	cleanup.
