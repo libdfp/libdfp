@@ -1,5 +1,24 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/soft-dfp/bid/numdigits.h (getexpd32): Add funcional
+	implementation.
+	(getexpd64): Likewise.
+	(getexpd128): Likewise.
+	(setexpd32): Likewise.
+	(setexpd64): Likewise.
+	(setexpd128): Likewise.
+	(numdigitsd32): Likewise.
+	(numdigitsd64): Likewise.
+	(numdigitsd128): Likewise.
+	(setdigitsd32): Likewise.
+	(setdigitsd64): Likewise.
+	(setdigitsd128): Likewise.
+	(left_justifyd32): Likewise.
+	(left_justifyd64): Likewise.
+	(left_justifyd128): Likewise.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* decode.c: Remove file.
 
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
