@@ -1,6 +1,6 @@
 /* Unit test the internal left_justifyd[32|64|128]() functions.
 
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010-2104 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -29,44 +29,49 @@
 #include <float.h> /* DEC_NAN definition.  */
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include <get_digits.h>
+
 #define _DECIMAL_SIZE 32
 #define DEC_TYPE _Decimal32
 #include <numdigits.h>
 #undef _DECIMAL_SIZE
 #undef DEC_TYPE
-#undef ADJUST
-#undef Q
-#undef DECIMAL_BIAS
+
 #define _DECIMAL_SIZE 64
 #define DEC_TYPE _Decimal64
 #include <numdigits.h>
 #undef _DECIMAL_SIZE
 #undef DEC_TYPE
-#undef ADJUST
-#undef Q
-#undef DECIMAL_BIAS
+
 #define _DECIMAL_SIZE 128
 #define DEC_TYPE _Decimal128
 #include <numdigits.h>
+#undef _DECIMAL_SIZE
+#undef DEC_TYPE
 
 #include "scaffold.c" /* Pick up the _SC_P(x,y,fmt) macro.  */
 
 /* We're going to be comparing fields so we need to extract the data.  This is a
  * sneaky way to get around the fact that get_digits_d* isn't exported from
  * libdfp.  */
-#include "../sysdeps/dpd/dpd-private.c"
+#ifdef __DECIMAL_BID_FORMAT__
+# include "../sysdeps/bid/bid-private.c"
+#else
+# include "../sysdeps/dpd/dpd-private.c"
+#endif
 
-/* Inspired by GLIBC stdio-common/tfformat.c  */
-typedef struct{
+typedef struct
+{
   int line;
   _Decimal32 d;
   const char *expect;
   const char *format;
 } d32_type;
 
-d32_type printf_d32s[] =
+static const
+d32_type d32[] =
 {
   {__LINE__, 0.0004E-4DF, "+4000000e-14", "%s"},
   {__LINE__, 0.0004E-0DF, "+4000000e-10", "%s"},
@@ -91,8 +96,8 @@ d32_type printf_d32s[] =
   {__LINE__, 10.0000000E-95DF, "+1000000e-100", "%s"},
   /* Notice 1000000e-101 is the answer.  */
   {__LINE__, 10.0000000E-96DF,"+1000000e-101", "%s"},
-  {0,0,0,0 }
 };
+static const int d32_s = sizeof (d32) / sizeof (d32[0]);
 
 /* Inspired by GLIBC stdio-common/tfformat.c  */
 typedef struct{
@@ -102,7 +107,8 @@ typedef struct{
   const char *format;
 } d64_type;
 
-d64_type printf_d64s[] =
+static const
+d64_type d64[] =
 {
   {__LINE__, 1.0E+2DD, "+1000000000000000e-13", "%s"},
   {__LINE__, 123456789.123456E+300DD, "+1234567891234560e+293", "%s"},
@@ -110,6 +116,12 @@ d64_type printf_d64s[] =
   {__LINE__, -2.0E-2DD, "-2000000000000000e-17", "%s"},
   {__LINE__, 0.0000000000000001E-365DD, "+1000000000000000e-396", "%s"},
   {__LINE__, 0.0000000000000001E-366DD, "+1000000000000000e-397", "%s"},
+
+  {__LINE__, 0.0000100E-383DD, "+0000000000000001e-398", "%s"},
+  {__LINE__, 0.0001000E-383DD, "+0000000000000001e-398", "%s"},
+  {__LINE__, 0.0010000E-383DD, "+0000000000000001e-398", "%s"},
+  {__LINE__, 0.0100000E-383DD, "+0000000000000001e-398", "%s"},
+
   /* The minimum exponent we can left-justify if the mantissa is full.  */
   {__LINE__, 0.0000000000000001E-367DD, "+1000000000000000e-398", "%s"},
   /* Notice the 15 digit mantissa.  */
@@ -120,10 +132,10 @@ d64_type printf_d64s[] =
   {__LINE__, 0.1E-382DD, "+1000000000000000e-398", "%s"},
   /* Notice the 1 digit mantissa.  */
   {__LINE__, 1.E-383DD, "+1000000000000000e-398", "%s"},
-  {0,0,0,0 }
 };
+static const int d64_s = sizeof (d64) / sizeof (d64[0]);
 
-/* Inspired by GLIBC stdio-common/tfformat.c  */
+
 typedef struct{
   int line;
   _Decimal128 d;
@@ -131,7 +143,8 @@ typedef struct{
   const char *format;
 } d128_type;
 
-d128_type printf_d128s[] =
+static const
+d128_type d128[] =
 {
   {__LINE__, 1.0E+2DL, "+1000000000000000000000000000000000e-31", "%s"},
   {__LINE__, 123456789.123456E+300DL, "+1234567891234560000000000000000000e+275", "%s"},
@@ -140,76 +153,77 @@ d128_type printf_d128s[] =
   {__LINE__, 0.0000000000000001E-365DL, "+1000000000000000000000000000000000e-414", "%s"},
   {__LINE__, 0.0000000000000001E-366DL, "+1000000000000000000000000000000000e-415", "%s"},
   {__LINE__, 0.0000000000000001E-367DL, "+1000000000000000000000000000000000e-416", "%s"},
-  {0,0,0,0 }
 };
+static const int d128_s = sizeof (d128) / sizeof (d128[0]);
 
 
-#define DECIMAL_PRINTF_BUF_SIZE 65 /* ((DECIMAL128_PMAX + 14) * 2) + 1 */
+static inline void
+out_digits (char *digits, int is_neg, int exp)
+{
+  int i;
 
-#define OUT_DIGITS() \
-  do \
-    { \
-      int i; \
-      if(is_neg) \
-	digits[0] = '-'; \
-      else \
-	digits[0] = '+'; \
-      i = 1; \
-      while (digits[i] != '\0') \
-        i++; \
-      digits[i++] = 'e'; \
-      if (exp < 0) \
-	  digits[i++] = '-'; \
-      else \
-	digits[i++] = '+'; \
-      if (__builtin_abs(exp) >= 1000) \
-	      digits[i++] = '0'+((__builtin_abs(exp)/1000)%10); \
-      if (__builtin_abs(exp) >= 100) \
-	      digits[i++] = '0'+((__builtin_abs(exp)/100)%10); \
-      if (__builtin_abs(exp) >= 10) \
-	      digits[i++] = '0'+((__builtin_abs(exp)/10)%10); \
-      digits[i++] = '0'+(__builtin_abs(exp)%10); \
-      digits[i] = '\0'; \
-    } while(0);
+  if (is_neg)
+    digits[0] = '-';
+  else
+    digits[0] = '+';
+  i = 1;
+  while (digits[i] != '\0')
+    i++;
+  digits[i++] = 'e';
+  if (exp < 0)
+    digits[i++] = '-';
+  else
+    digits[i++] = '+';
+
+  if (abs (exp) >= 1000)
+    digits[i++] = '0' + ((abs (exp)/1000) % 10);
+  if (abs(exp) >= 100)
+    digits[i++] = '0' + ((abs (exp)/100) % 10);
+  if (abs(exp) >= 10)
+    digits[i++] = '0' + ((abs (exp)/10) % 10);
+  digits[i++] = '0' + (abs (exp) % 10);
+  digits[i] = '\0';
+}
 
 
 int main (void)
 {
-  d32_type *d32ptr;
-  d64_type *d64ptr;
-  d128_type *d128ptr;
-
+#define DECIMAL_PRINTF_BUF_SIZE 65 /* ((DECIMAL128_PMAX + 14) * 2) + 1 */
   char digits[DECIMAL_PRINTF_BUF_SIZE];
-  int exp, /* the exponent */
-   is_neg, /* is negative */
-   is_nan, /* is not a number */
-   is_inf; /* is infinite */
+  int exp;    /* the exponent */
+  int is_neg; /* is negative */
+  int is_nan; /* is not a number */
+  int is_inf; /* is infinite */
+  int i;
 
-  for (d32ptr = printf_d32s; d32ptr->line; d32ptr++)
+  for (i=0; i<d32_s; ++i)
     {
-      _Decimal32 d32 = left_justifyd32(d32ptr->d);
-      __get_digits_d32 (d32, digits+1, &exp, &is_neg, &is_nan, &is_inf);
-      OUT_DIGITS();
-      fprintf(stdout,"left_justifyd32(%HeDF) in: %s:%d\n", d32ptr->d,__FILE__,__LINE__-1);
-      _SC_P(__FILE__,d32ptr->line, d32ptr->expect,&digits[0]);
+      _Decimal32 ret = left_justifyd32 (d32[i].d);
+      __get_digits_d32 (ret, digits+1, &exp, &is_neg, &is_nan, &is_inf);
+      fprintf (stdout, "left_justifyd32 (%HeDF) in: %s:%d\n", d32[i].d,
+		       __FILE__, __LINE__-1);
+      out_digits (digits, is_neg, exp);
+      _SC_P (__FILE__, d32[i].line, d32[i].expect, &digits[0]);
     }
 
-  for (d64ptr = printf_d64s; d64ptr->line; d64ptr++)
+  for (i=0; i<d64_s; ++i)
     {
-      _Decimal64 d64 = left_justifyd64(d64ptr->d);
-      __get_digits_d64 (d64, digits+1, &exp, &is_neg, &is_nan, &is_inf);
-      OUT_DIGITS();
-      fprintf(stdout,"left_justifyd64(%DeDD) in: %s:%d\n", d64ptr->d,__FILE__,__LINE__-1);
-      _SC_P(__FILE__,d64ptr->line, d64ptr->expect,&digits[0]);
+      _Decimal64 ret = left_justifyd64 (d64[i].d);
+      __get_digits_d64 (ret, digits+1, &exp, &is_neg, &is_nan, &is_inf);
+      fprintf(stdout, "left_justifyd64 (%DeDD) in: %s:%d\n", d64[i].d,
+		       __FILE__, __LINE__ -1);
+      out_digits (digits, is_neg, exp);
+      _SC_P(__FILE__, d64[i].line, d64[i].expect, &digits[0]);
     }
 
-  for (d128ptr = printf_d128s; d128ptr->line; d128ptr++)
+  for (i=0; i<d128_s; ++i)
     {
-      _Decimal128 d128 = left_justifyd128(d128ptr->d);
-      __get_digits_d128 (d128, digits+1, &exp, &is_neg, &is_nan, &is_inf);
-      OUT_DIGITS();
-      fprintf(stdout,"left_justifyd128(%DDeDL) in: %s:%d\n", d128ptr->d,__FILE__,__LINE__-1);
-      _SC_P(__FILE__,d128ptr->line, d128ptr->expect,&digits[0]);
+      _Decimal128 ret = left_justifyd128(d128[i].d);
+      __get_digits_d128 (ret, digits+1, &exp, &is_neg, &is_nan, &is_inf);
+      fprintf(stdout, "left_justifyd128 (%DDeDL) in: %s:%d\n", d128[i].d,
+		      __FILE__, __LINE__-1);
+      out_digits (digits, is_neg, exp);
+      _SC_P(__FILE__, d128[i].line, d128[i].expect,&digits[0]);
     }
 
   _REPORT();
