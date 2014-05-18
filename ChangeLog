@@ -1,5 +1,6 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/bid/decode.c: New file: functional BID implementation.
 	* sysdeps/soft-dfp/bid/numdigits.h (getexpd32): Add funcional
 	implementation.
 	(getexpd64): Likewise.
