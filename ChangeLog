@@ -3,6 +3,7 @@
 	* ieee754r/islessgreaterd32.c (islessgreater): clean ups implementation
 	to use only libdecnumber operations.
 	* ieee754r/isgreaterd32.c (isgreater): Likewise.
+	* ieee754r/isgreaterequald32.c (isgreaterequal): Likewise.
 
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
