@@ -381,10 +381,8 @@ test-%-d128.c: %.input
 	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal128 $^ > $(top_builddir)/$@
 
 # Make check main rule
-$(addsuffix .out,$(libdfp_tests)): %.out:% %.gdb
+$(addsuffix .out,$(libdfp_tests)): %.out:%
 	LD_LIBRARY_PATH=$(top_builddir)/:$$LD_LIBRARY_PATH $(top_builddir)/$(patsubst %.out,%,$@) 2> $(top_builddir)/$@ 1> /dev/null
-
-DISTCLEANFILES = $(top_builddir)/debug-test.conf
 
 
 # Check ABI rules
@@ -426,16 +424,9 @@ libdfp.so.jmprel: libdfp.so
 	test -s $@T
 	mv -f $@T $@
 
-# The following rules are defined in Makefile.gdb:
-#	$(top_builddir)/debug-test.conf:
-#	$(addsuffix .conf,$(libdfp_tests)):
-#	$(addsuffix .gdb,$(libdfp_tests)):
-include $(top_srcdir)/Makefile.gdb
-
-# We use debug-test.conf as an input file for some debugging utilities.  The
-# .out files are predicated in another rule on the actual test executables, so
+# The .out files are predicated in another rule on the actual test executables, so
 # those are built from those rules.
-check: $(top_builddir)/debug-test.conf $(addsuffix .conf,$(libdfp_tests)) $(addsuffix .out,$(libdfp_tests)) check-abi check-localplt
+check: $(addsuffix .out,$(libdfp_tests)) check-abi check-localplt
 	@echo +Completed make check
 
 .PHONY: check
@@ -452,10 +443,8 @@ clean:
 	rm -f libdfp.map
 	rm -f Versions.tmp
 	rm -f sysd-versions
-	rm -f debug-test.conf
 	rm -f $(addsuffix .out,$(libdfp_tests))
 	rm -f $(addsuffix .conf,$(libdfp_tests))
-	rm -f $(addsuffix .gdb,$(libdfp_tests))
 	rm -f $(libdfp_tests)
 	rm -f $(top_builddir)/$(dfp_backend)/*.o
 	rm -f $(top_builddir)/$(dfp_backend)/*.a
