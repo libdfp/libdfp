@@ -1,6 +1,8 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/test-left_justify.c: Cleanup.
+	* tests/test-decode.c: Add _Decimal64 and _Decimal128 tests and some
+	cleanup.
 
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
