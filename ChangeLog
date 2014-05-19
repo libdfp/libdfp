@@ -1,5 +1,6 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/bid/libdfp.abilist: New file: BID abilist.
 	* sysdeps/soft-dfp/libdfp-test-ulps: Add software implementation
 	ULP file.
 	* sysdeps/bid/decode.c: New file: functional BID implementation.
