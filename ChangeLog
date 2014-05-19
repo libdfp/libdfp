@@ -1,5 +1,10 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/bid/symbol-hacks.h: BID symbol hacks to avoid internal PLT
+	calls.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* include/dfpacc.h: Add hidden_proto_enc for all symbols.
 	* base-math/extendddtf.c: Add hidden_def.
 	* base-math/extendsdtf.c: Likewise.
