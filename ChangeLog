@@ -1,5 +1,9 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/Makefile.in: Remove unrequired BID objects and rules.
+	* libdecnumber/bid/host-ieee128.c: Remove file.
+	* libdecnumber/bid/host-ieee32.c: Remove file.
+	* libdecnumber/bid/host-ieee64.c: Remove file.
 	* Makefile.in: Linking libgcc as shared.
 	* sysdeps/bid/libdfp.abilist: New file: BID abilist.
 	* sysdeps/soft-dfp/libdfp-test-ulps: Add software implementation
