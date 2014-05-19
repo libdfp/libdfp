@@ -74,4 +74,5 @@ L(noadjust):
 	drsp	fp1,fp0		/* Round result to __dpd_Decimal32.  */
 	addi	r1,r1,16
 	blr
-	END (__dpd_floatunsdisd)
+END (__dpd_floatunsdisd)
+hidden_def (__dpd_floatunsdisd)

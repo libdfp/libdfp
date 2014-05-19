@@ -30,4 +30,5 @@
 ENTRY (__dpd_subtd3)
 	dsubq	fp2,fp2,fp4
 	blr
-	END (__dpd_subtd3)
+END (__dpd_subtd3)
+hidden_def (__dpd_subtd3)

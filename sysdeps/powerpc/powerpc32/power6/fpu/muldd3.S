@@ -25,10 +25,10 @@
 
 #include <sysdep.h>
 
-
 	.machine	"power6"
 /* _Decimal64 __dpd_muldd3 (_Decimal64 x, _Decimal64 y)  */
 ENTRY (__dpd_muldd3)
 	dmul	fp1,fp1,fp2
 	blr
-	END (__dpd_muldd3)
+END (__dpd_muldd3)
+hidden_def (__dpd_muldd3)

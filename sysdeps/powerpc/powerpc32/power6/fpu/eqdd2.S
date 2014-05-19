@@ -25,7 +25,6 @@
 
 #include <sysdep.h>
 
-
 	.machine	"power6"
 /* int __dpd_eqdd2 (_Decimal64 x, _Decimal64 y)  */
 ENTRY (__dpd_eqdd2)
@@ -34,4 +33,5 @@ ENTRY (__dpd_eqdd2)
 	beqlr	cr0		/* else	 */
 	li	r3, 1		/*   return 1  */
 	blr
-	END (__dpd_eqdd2)
+END (__dpd_eqdd2)
+hidden_def (__dpd_eqdd2)

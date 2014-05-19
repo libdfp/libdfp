@@ -30,4 +30,5 @@
 ENTRY (__dpd_multd3)
 	dmulq	fp2,fp2,fp4
 	blr
-	END (__dpd_multd3)
+END (__dpd_multd3)
+hidden_def (__dpd_multd3)

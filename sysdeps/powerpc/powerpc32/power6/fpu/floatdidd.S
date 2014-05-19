@@ -40,4 +40,5 @@ ENTRY (__dpd_floatdidd)
 	fmr	fp1,fp0
 	addi	r1,r1,16
 	blr
-	END (__dpd_floatdidd)
+END (__dpd_floatdidd)
+hidden_def (__dpd_floatdidd)

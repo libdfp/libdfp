@@ -55,4 +55,5 @@ L(negative):
 L(done):
 	addi	r1,r1,16
 	blr
-	END (__dpd_fixunssdsi)
+END (__dpd_fixunssdsi)
+hidden_def (__dpd_fixunssdsi)

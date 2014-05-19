@@ -33,4 +33,5 @@ ENTRY (__dpd_floatsitd)
 	lfd	fp0,-8(r1)
 	dcffixq	fp2,fp0 /* Convert x to _Decimal128 float.  */
 	blr
-	END (__dpd_floatsitd)
+END (__dpd_floatsitd)
+hidden_def (__dpd_floatsitd)

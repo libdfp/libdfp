@@ -25,7 +25,6 @@
 
 #include <sysdep.h>
 
-
 	.machine	"power6"
 /* _Decimal32 __dpd_subsd3 (_Decimal32 x, _Decimal32 y)  */
 ENTRY (__dpd_subsd3)
@@ -34,4 +33,5 @@ ENTRY (__dpd_subsd3)
 	dsub	fp1,fp1,fp2
 	drsp	fp1,fp1	/* Round result to _Decimal32. */
 	blr
-	END (__dpd_subsd3)
+END (__dpd_subsd3)
+hidden_def (__dpd_subsd3)

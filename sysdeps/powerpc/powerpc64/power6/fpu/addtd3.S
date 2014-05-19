@@ -30,4 +30,5 @@
 ENTRY (__dpd_addtd3)
 	daddq	fp2,fp2,fp4
 	blr
-	END (__dpd_addtd3)
+END (__dpd_addtd3)
+hidden_def (__dpd_addtd3)

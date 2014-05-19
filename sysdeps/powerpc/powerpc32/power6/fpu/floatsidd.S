@@ -46,4 +46,5 @@ L(negative):
 	fmr	fp1,fp0
 	addi	r1,r1,16
 	blr
-	END (__dpd_floatsidd)
+END (__dpd_floatsidd)
+hidden_def (__dpd_floatsidd)

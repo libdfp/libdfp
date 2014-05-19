@@ -36,4 +36,5 @@ ENTRY (__dpd_lttd2)
 	beqlr	cr0		/* else	 */
 	li	r3, 1		/*   return 1  */
 	blr
-	END (__dpd_lttd2)
+END (__dpd_lttd2)
+hidden_def (__dpd_lttd2)

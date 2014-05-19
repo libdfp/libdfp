@@ -34,4 +34,5 @@ ENTRY (__dpd_netd2)
 	bunlr	cr0
 	li	r3, 1		/*   return 1  */
 	blr
-	END (__dpd_netd2)
+END (__dpd_netd2)
+hidden_def (__dpd_netd2)

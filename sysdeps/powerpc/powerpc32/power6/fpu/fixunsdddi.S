@@ -96,5 +96,5 @@ L(done):
 	mr	r4,r3
 	addi	r1,r1,16
 	blr
-	END (__dpd_fixunsdddi)
-
+END (__dpd_fixunsdddi)
+hidden_def (__dpd_fixunsdddi)

@@ -60,3 +60,4 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
 
 	return result;
 }
+hidden_def (PREFIXED_FUNCTION_NAME)

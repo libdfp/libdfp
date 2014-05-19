@@ -60,4 +60,5 @@ L(negoverflow):
 L(done):
 	addi	r1,r1,16
 	blr
-	END (__dpd_fixsdsi)
+END (__dpd_fixsdsi)
+hidden_def (__dpd_fixsdsi)

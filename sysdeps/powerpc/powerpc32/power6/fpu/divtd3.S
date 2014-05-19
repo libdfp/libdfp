@@ -25,10 +25,10 @@
 
 #include <sysdep.h>
 
-
 	.machine	"power6"
 /* _Decimal128 __dpd_divtd3 (_Decimal128 x, _Decimal128 y)  */
 ENTRY (__dpd_divtd3)
 	ddivq	fp2,fp2,fp4
 	blr
-	END (__dpd_divtd3)
+END (__dpd_divtd3)
+hidden_def (__dpd_divtd3)

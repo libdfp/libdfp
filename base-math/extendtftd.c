@@ -28,6 +28,4 @@
 #define DEST 128
 #define NAME extend
 
-extern _Decimal128	__extenddftd(double);
-
 #include "trunctfsd.c"

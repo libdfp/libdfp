@@ -28,9 +28,6 @@
 #define SRC 128
 #define DEST 32
 #define NAME trunc
-
-extern _Decimal32 __truncdfsd(double);
-
 #endif
 
 #include "dfpacc.h"
@@ -54,3 +51,4 @@ CONVERT_WRAPPER(
 	    && DFP_TEST_EXCEPTIONS (FE_OVERFLOW|FE_UNDERFLOW) == 0)
 	  DFP_CLEAR_EXCEPTIONS (FE_INEXACT);
 )
+hidden_def (PREFIXED_FUNCTION_NAME)

@@ -76,3 +76,4 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
   /* Use a C library function to convert to the integral type.  */
   return STR_TO_INT (buf, NULL, 10);
 }
+hidden_def (PREFIXED_FUNCTION_NAME)

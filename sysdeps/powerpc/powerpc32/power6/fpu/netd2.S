@@ -25,7 +25,6 @@
 
 #include <sysdep.h>
 
-
 	.machine	"power6"
 /* int __dpd_netd2 (_Decimal128 x, _Decimal128 y)  */
 ENTRY (__dpd_netd2)
@@ -35,4 +34,5 @@ ENTRY (__dpd_netd2)
 	bunlr	cr0
 	li	r3, 1		/*   return 1  */
 	blr
-	END (__dpd_netd2)
+END (__dpd_netd2)
+hidden_def (__dpd_netd2)

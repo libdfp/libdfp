@@ -25,7 +25,6 @@
 
 #include <sysdep.h>
 
-
 	.machine	"power6"
 /* _Decimal32 __dpd_trunctdsd2 (_Decimal128 x)  */
 ENTRY (__dpd_trunctdsd2)

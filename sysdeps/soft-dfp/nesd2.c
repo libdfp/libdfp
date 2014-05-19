@@ -53,3 +53,4 @@ PREFIXED_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   decNumberCompare(&result, &dn_x, &dn_y, &context);
   return !decNumberIsZero(&result);
 }
+hidden_def (PREFIXED_FUNCTION_NAME)

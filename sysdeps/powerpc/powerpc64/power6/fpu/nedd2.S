@@ -34,4 +34,5 @@ ENTRY (__dpd_nedd2)
 	bunlr	cr0
 	li	r3, 1		/*   return 1  */
 	blr
-	END (__dpd_nedd2)
+END (__dpd_nedd2)
+hidden_def (__dpd_nedd2)

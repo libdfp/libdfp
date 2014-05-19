@@ -53,4 +53,5 @@ L(negative):
 	dcffixq	fp2,fp0 /* Convert x to decimal float.  */
 	daddq	fp2,fp2,fp10
 	blr
-	END (__dpd_floatunsditd)
+END (__dpd_floatunsditd)
+hidden_def (__dpd_floatunsditd)

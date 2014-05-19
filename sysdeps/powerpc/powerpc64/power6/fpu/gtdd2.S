@@ -35,4 +35,5 @@ ENTRY (__dpd_gtdd2)
 	beqlr	cr0		/* else	 */
 	li	r3, -1		/*   return -1  */
 	blr
-	END (__dpd_gtdd2)
+END (__dpd_gtdd2)
+hidden_def (__dpd_gtdd2)

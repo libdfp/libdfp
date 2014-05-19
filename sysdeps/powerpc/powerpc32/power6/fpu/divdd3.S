@@ -31,4 +31,5 @@
 ENTRY (__dpd_divdd3)
 	ddiv	fp1,fp1,fp2
 	blr
-	END (__dpd_divdd3)
+END (__dpd_divdd3)
+hidden_def (__dpd_divdd3)

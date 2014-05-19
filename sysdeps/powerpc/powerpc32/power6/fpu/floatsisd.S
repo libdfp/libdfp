@@ -46,4 +46,5 @@ L(negative):
 	drsp	fp1,fp0	/* Round result to _Decimal32. */
 	addi	r1,r1,16
 	blr
-	END (__dpd_floatsisd)
+END (__dpd_floatsisd)
+hidden_def (__dpd_floatsisd)

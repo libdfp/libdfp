@@ -35,4 +35,5 @@ ENTRY (__dpd_floatsidd)
 	drdpq	fp0,fp2 /* Round result to _Decimal64.  */
 	fmr	fp1,fp0
 	blr
-	END (__dpd_floatsidd)
+END (__dpd_floatsidd)
+hidden_def (__dpd_floatsidd)

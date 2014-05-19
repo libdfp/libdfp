@@ -29,4 +29,3 @@
 #define NAME trunc
 
 #include "extendsddd2.c"
-hidden_def (PREFIXED_FUNCTION_NAME)

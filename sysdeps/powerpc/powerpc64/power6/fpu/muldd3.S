@@ -30,4 +30,5 @@
 ENTRY (__dpd_muldd3)
 	dmul	fp1,fp1,fp2
 	blr
-	END (__dpd_muldd3)
+END (__dpd_muldd3)
+hidden_def (__dpd_muldd3)

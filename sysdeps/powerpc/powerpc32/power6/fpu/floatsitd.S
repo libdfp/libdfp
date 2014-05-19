@@ -45,4 +45,5 @@ L(negative):
 L(done):
 	addi	r1,r1,16
 	blr
-	END (__dpd_floatsitd)
+END (__dpd_floatsitd)
+hidden_def (__dpd_floatsitd)

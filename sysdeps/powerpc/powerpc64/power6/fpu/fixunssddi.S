@@ -65,5 +65,5 @@ L(poslong):
 L(negative):
 	li	r3,0	/* return 0 for negative floats.  */
 	blr
-	END (__dpd_fixunssddi)
-
+END (__dpd_fixunssddi)
+hidden_def (__dpd_fixunssddi)

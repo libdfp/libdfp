@@ -33,4 +33,5 @@ ENTRY (__dpd_unordtd2)
 	bnulr+	cr0		/* else	 */
 	li	r3, 1		/*   return 1  */
 	blr
-	END (__dpd_unordtd2)
+END (__dpd_unordtd2)
+hidden_def (__dpd_unordtd2)

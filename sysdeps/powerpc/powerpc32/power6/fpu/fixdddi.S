@@ -25,7 +25,6 @@
 
 #include <sysdep.h>
 
-
 	.machine	"power6"
 /* long __dpd_fixdddi (_Decimal64 x)  */
 ENTRY (__dpd_fixdddi)
@@ -39,4 +38,5 @@ ENTRY (__dpd_fixdddi)
 	lwz	r4,12(r1)
 	addi	r1,r1,16
 	blr
-	END (__dpd_fixdddi)
+END (__dpd_fixdddi)
+hidden_def (__dpd_fixdddi)

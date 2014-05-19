@@ -48,4 +48,5 @@ L(posoverflow):
 L(negative):
 	li	r3,0	/* return 0 for negative floats.  */
 	blr
-	END (__dpd_fixunstdsi)
+END (__dpd_fixunstdsi)
+hidden_def (__dpd_fixunstdsi)

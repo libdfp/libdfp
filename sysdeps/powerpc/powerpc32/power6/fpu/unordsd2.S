@@ -25,7 +25,6 @@
 
 #include <sysdep.h>
 
-
 	.machine	"power6"
 /* int __dpd_unordsd2 (_Decimal32 x, _Decimal32 y)  */
 ENTRY (__dpd_unordsd2)
@@ -36,4 +35,5 @@ ENTRY (__dpd_unordsd2)
 	bnulr+	cr0		/* else	 */
 	li	r3, 1		/*   return 1  */
 	blr
-	END (__dpd_unordsd2)
+END (__dpd_unordsd2)
+hidden_def (__dpd_unordsd2)

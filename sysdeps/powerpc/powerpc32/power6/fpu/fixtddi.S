@@ -39,4 +39,5 @@ ENTRY (__dpd_fixtddi)
 	lwz	r4,12(r1)
 	addi	r1,r1,16
 	blr
-	END (__dpd_fixtddi)
+END (__dpd_fixtddi)
+hidden_def (__dpd_fixtddi)

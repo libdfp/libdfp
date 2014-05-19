@@ -30,4 +30,5 @@
 ENTRY (__dpd_truncddsd2)
 	drsp	fp1,fp1	/* Round result to _Decimal32. */
 	blr
-	END (__dpd_truncddsd2)
+END (__dpd_truncddsd2)
+hidden_def (__dpd_truncddsd2)

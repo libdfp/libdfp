@@ -33,4 +33,5 @@ ENTRY (__dpd_addsd3)
 	dadd	fp1,fp1,fp2
 	drsp	fp1,fp1	/* Round result to _Decimal32. */
 	blr
-	END (__dpd_addsd3)
+END (__dpd_addsd3)
+hidden_def (__dpd_addsd3)

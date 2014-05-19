@@ -28,10 +28,6 @@
 #define SRC 32
 #define DEST 128
 #define NAME extend
-
-extern double __extendsddf (_Decimal32);
-extern _Decimal32 __truncdfsd (double);
-
 #endif
 
 #include "dfpacc.h"
@@ -48,3 +44,4 @@ CONVERT_WRAPPER(
 	result = df_part1;
 	result += df_part2;
 )
+hidden_def (PREFIXED_FUNCTION_NAME)

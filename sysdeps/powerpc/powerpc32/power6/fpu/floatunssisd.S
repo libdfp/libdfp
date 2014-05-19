@@ -42,4 +42,5 @@ ENTRY (__dpd_floatunssisd)
 	drsp	fp1,fp0	/* Round result to _Decimal32.  */
 	addi	r1,r1,16
 	blr
-	END (__dpd_floatunssisd)
+END (__dpd_floatunssisd)
+hidden_def (__dpd_floatunssisd)

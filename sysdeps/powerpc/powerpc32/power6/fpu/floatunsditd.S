@@ -72,4 +72,5 @@ ENTRY (__dpd_floatunsditd)
 L(noadjust):
 	addi	r1,r1,16
 	blr
-	END (__dpd_floatunsditd)
+END (__dpd_floatunsditd)
+hidden_def (__dpd_floatunsditd)

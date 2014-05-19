@@ -25,10 +25,10 @@
 
 #include <sysdep.h>
 
-
 	.machine	"power6"
 /* _Decimal128 __dpd_extendddtd2 (_Decimal64 x)  */
 ENTRY (__dpd_extendddtd2)
 	dctqpq	fp2,fp1	/* Convert x to _Decimal128. */
 	blr
-	END (__dpd_extendddtd2)
+END (__dpd_extendddtd2)
+hidden_def (__dpd_extendddtd2)

@@ -41,4 +41,5 @@ ENTRY (__dpd_floatunssitd)
 L(done):
 	addi	r1,r1,16
 	blr
-	END (__dpd_floatunssitd)
+END (__dpd_floatunssitd)
+hidden_def (__dpd_floatunssitd)

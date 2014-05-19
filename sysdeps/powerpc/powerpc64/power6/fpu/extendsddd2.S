@@ -30,4 +30,5 @@
 ENTRY (__dpd_extendsddd2)
 	dctdp	fp1,fp1	/* Convert x to _Decimal64. */
 	blr
-	END (__dpd_extendsddd2)
+END (__dpd_extendsddd2)
+hidden_def (__dpd_extendsddd2)

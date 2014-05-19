@@ -52,4 +52,5 @@ L(negative):		/* If (result >= min negative int */
 L(negoverflow):		/* else */
 	mr	r3,r5	/* return min negative int.  */
 	blr
-	END (__dpd_fixtdsi)
+END (__dpd_fixtdsi)
+hidden_def (__dpd_fixtdsi)

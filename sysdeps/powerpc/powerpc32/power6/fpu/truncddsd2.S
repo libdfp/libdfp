@@ -25,10 +25,10 @@
 
 #include <sysdep.h>
 
-
 	.machine	"power6"
 /* _Decimal32 __dpd_truncddsd2 (_Decimal64 x)  */
 ENTRY (__dpd_truncddsd2)
 	drsp	fp1,fp1	/* Round result to _Decimal32. */
 	blr
-	END (__dpd_truncddsd2)
+END (__dpd_truncddsd2)
+hidden_def (__dpd_truncddsd2)

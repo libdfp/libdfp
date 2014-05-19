@@ -70,3 +70,4 @@ PREFIXED_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
   return result;
 }
+hidden_def (PREFIXED_FUNCTION_NAME)

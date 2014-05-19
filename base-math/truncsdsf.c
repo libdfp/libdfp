@@ -50,3 +50,4 @@ CONVERT_WRAPPER(
 	  temp /= BINPOWOF10[-sexp];
 	result = temp;
 )
+hidden_def (PREFIXED_FUNCTION_NAME)

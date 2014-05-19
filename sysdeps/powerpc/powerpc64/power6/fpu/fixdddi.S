@@ -35,4 +35,5 @@ ENTRY (__dpd_fixdddi)
 	ori	r1,r1,0		/* Special group ending nop.  */
 	ld	r3,-8(r1)
 	blr
-	END (__dpd_fixdddi)
+END (__dpd_fixdddi)
+hidden_def (__dpd_fixdddi)

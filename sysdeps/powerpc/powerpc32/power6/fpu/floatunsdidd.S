@@ -74,4 +74,5 @@ L(noadjust):
 	fmr	fp1,fp0
 	addi	r1,r1,16
 	blr
-	END (__dpd_floatunsdidd)
+END (__dpd_floatunsdidd)
+hidden_def (__dpd_floatunsdidd)

@@ -30,4 +30,5 @@
 ENTRY (__dpd_adddd3)
 	dadd	fp1,fp1,fp2
 	blr
-	END (__dpd_adddd3)
+END (__dpd_adddd3)
+hidden_def (__dpd_adddd3)

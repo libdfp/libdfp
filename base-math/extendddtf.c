@@ -28,10 +28,6 @@
 #define SRC 64
 #define DEST 128
 #define NAME extend
-
-extern double __truncdddf (_Decimal64);
-extern _Decimal64 __extenddfdd (double);
-
 #endif
 
 #include "dfpacc.h"
@@ -53,3 +49,4 @@ CONVERT_WRAPPER(
 	    && DFP_TEST_EXCEPTIONS (FE_OVERFLOW|FE_UNDERFLOW) == 0)
 	  DFP_CLEAR_EXCEPTIONS (FE_INEXACT);
 )
+hidden_def (PREFIXED_FUNCTION_NAME)
