@@ -1,5 +1,11 @@
 2014-06-03  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
+	* sysdeps/bid/bid-private.c (__get_digits_d32): Add a functional
+	implementation.
+	(__get_digits_d64): Likewise.
+	(__get_digits_d128): Likewise.
+	* sysdeps/bid/bid-private.h: Add BID decimal types descriptions.
+
 	* tests/test-get_digits.c: Add _Decimal32 and _Decimal64 testcases.
 
 2014-06-03  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
