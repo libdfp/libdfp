@@ -112,7 +112,7 @@ __decoded128 (_Decimal128 a, char *str)
   union ieee754r_Decimal128 d = { .td = a };
   int exp = -DECIMAL128_Bias;
   char sign;
-  __uint128_t coeff;
+  u128_t coeff;
   unsigned int decunits[12]  = { 0 };
   unsigned int hi;
   int n;
@@ -124,15 +124,15 @@ __decoded128 (_Decimal128 a, char *str)
 	hi = 0x00020000UL | (d.ti[3] & 0x00007FFFUL);
       else
 	hi = d.ti[3] & 0x0001FFFFUL;
-      coeff = ((__uint128_t)hi      << 96) |
-	      ((__uint128_t)d.ti[2] << 64) |
-	      ((__uint128_t)d.ti[1] << 32) |
-	      ((__uint128_t)d.ti[0]);
+      u128_init_from_u32 (coeff, hi, d.ti[2], d.ti[1], d.ti[0]);
 
-      for (n = 0; (coeff != 0) && (n < 12); ++n)
+      for (n = 0; u128_ne_u32 (coeff, 0) && (n < 12); ++n)
 	{
-	  decunits[n] = coeff % 1000;
-	  coeff /= 1000;
+	  u128_t tmp;
+	  u128_init (tmp);
+	  u128_mod_u32 (coeff, 1000, tmp);
+	  u128_to_u32 (tmp, decunits[n]);
+	  u128_div_u32 (coeff, 1000, coeff);
         }
 
       exp = getexpd128 (a);

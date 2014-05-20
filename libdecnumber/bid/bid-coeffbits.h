@@ -79,15 +79,15 @@ Int bid_required_bits_64 (uLong value)
 /* Return required bits to represent a binary uQuad (128-bits) value. */
 /* ------------------------------------------------------------------ */
 static inline
-Int bid_required_bits_128 (Quad value)
+Int bid_required_bits_128 (uQuad value)
 {
   /* Use 64-bits operations to keep it simple, another solution would
    * be to construct a lookup table for int128.  */
   Int ret;
-  uLong hi = (value >> 64);
+  uLong hi = uQuadHi64 (value);
   if ((ret = bid_required_bits_64 (hi)) == 0)
     {
-      uLong lo = (value & 0xFFFFFFFFFFFFFFFFULL);
+      uLong lo = uQuadLo64 (value);
       return bid_required_bits_64 (lo);
     }
   return ret + 64;

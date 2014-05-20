@@ -103,7 +103,7 @@ void
 __get_digits_d64 (_Decimal64 x, char *str, int *exp_p, int *sign_p,
 		  int *nan_p, int *inf_p)
 {
-  unsigned long int result;
+  unsigned long long int result;
   int i, size, exp = 0;
 
   struct ieee754r_c_field c_f;
@@ -138,11 +138,11 @@ __get_digits_d64 (_Decimal64 x, char *str, int *exp_p, int *sign_p,
 
   exp -= DECIMAL64_Bias;
 
-  sprintf (str, "%lu", result);
+  sprintf (str, "%llu", result);
   size = (16 - strlen (str));
   for (i = 0; i < size; i++)
     str[i] = '0';
-  sprintf (str + i, "%lu", result);
+  sprintf (str + i, "%llu", result);
   str[16] = '\0';
 
   if (sign_p)
@@ -164,7 +164,7 @@ __get_digits_d128 (_Decimal128 x, char *str, int *exp_p, int *sign_p,
 
   struct ieee754r_c_field c_f;
   union ieee754r_Decimal128 d;
-  unsigned long int result[2];
+  unsigned long long int result[2];
 
   d.td = x;
   c_f = c_decoder[d.nan.nan];

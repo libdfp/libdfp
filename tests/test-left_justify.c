@@ -57,9 +57,14 @@
  * sneaky way to get around the fact that get_digits_d* isn't exported from
  * libdfp.  */
 #ifdef __DECIMAL_BID_FORMAT__
-# include "../sysdeps/bid/bid-private.c"
+# include "sysdeps/bid/bid-private.c"
+# ifndef __SIZEOF_INT128__
+/* BID required int 128 bits and for system that does not define the type
+   the mini-gmp is required.  */
+#  include "libdecnumber/mini-gmp.c"
+# endif
 #else
-# include "../sysdeps/dpd/dpd-private.c"
+# include "sysdeps/dpd/dpd-private.c"
 #endif
 
 typedef struct

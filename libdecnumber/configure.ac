@@ -40,7 +40,7 @@ AC_CHECK_PROGS([AUTOHEADER], [autoheader], [$MISSING autoheader])
 
 ACX_PROG_CC_WARNING_OPTS([-W -Wall -Wwrite-strings -Wstrict-prototypes \
 			  -Wmissing-prototypes -Wold-style-definition \
-			  -Wmissing-format-attribute -Wcast-qual])
+			  -Wmissing-format-attribute])
 ACX_PROG_CC_WARNING_ALMOST_PEDANTIC([-Wno-long-long])
 
 # Only enable with --enable-werror-always until existing warnings are

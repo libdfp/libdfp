@@ -32,6 +32,7 @@
 
 #include <bid-private.h>
 #include <get_digits.h>
+#include <bid-uint128.h>
 
 #define BID_SIG_MASK            0x80000000u
 #define BID_EXPONENT_ENC_MASK   0x60000000u
@@ -290,79 +291,19 @@ setdigitsd64 (_Decimal64 x, char *str)
   return d.dd;
 }
 
-static inline __uint128_t
-get_number128 (char* sz)
-{
-  // make some reasonable assumptions
-  int radix = 10, size, i;
-  char ch;
-  __uint128_t a;
-  unsigned int n;
-  int minus = 0;
-
-  size = strlen (sz);
-
-  a = 0;
-  i = 0;
-
-  // Check for minus sign.
-  if (sz[i] == '-')
-    {
-      ++i;
-      minus = 1;
-    }
-
-  while (i < size)
-    {
-      ch = sz[i];
-
-      if (ch >= 'A' && ch <= 'Z')
-	{
-	  if (((ch - 'A') + 10) < radix)
-	    n = (ch - 'A') + 10;
-	  else
-	    break;
-	}
-      else if (ch >= 'a' && ch <= 'z')
-        {
-	  if (((ch - 'a') + 10) < radix)
-	    n = (ch - 'a') + 10;
-	  else
-	    break;
-	}
-      else if (ch >= '0' && ch <= '9')
-	{
-	  if ((ch - '0') < radix)
-	    n = (ch - '0');
-	  else
-	    break;
-	}
-      else
-	/* Completely invalid character  */
-	break;
-
-      a *= radix;
-      a += n;
-      ++i;
-    }
-
-  /* If this was a negative number, do that two's compliment  */
-  if (minus)
-    a = -a;
-
-  return a;
-}
 
 static inline
-int __bid_required_bits_128 (__uint128_t value)
+int __bid_required_bits_128 (u128_t value)
 {
   /* Use 64-bits operations to keep it simple, another solution would
    * be to construct a lookup table for int128.  */
+  uint64_t hi;
   int ret;
-  unsigned long long int hi = (value >> 64);
+
+  hi = u128_hi (value);
   if ((ret = __bid_required_bits_64 (hi)) == 0)
     {
-      unsigned long long int lo = (value & 0xFFFFFFFFFFFFFFFFULL);
+      uint64_t lo = u128_lo (value);
       return __bid_required_bits_64 (lo);
     }
   return ret + 64;
@@ -371,23 +312,23 @@ int __bid_required_bits_128 (__uint128_t value)
 static inline _Decimal128
 setdigitsd128 (_Decimal128 x, char *str)
 {
-  __uint128_t number;
+  u128_t number;
   union ieee754r_Decimal128 d;
   unsigned int sign;
   int exp;
 
   d.td = x;
-  number = get_number128 (str);
+  u128_init_from_str (number, str);
 
   exp = getexpd128 (x);
   sign = (d.ti[3] & BID_SIG_MASK);
   if (__bid_required_bits_128 (number) <= 113)
-    d.ti[3] = sign | ((number >> 96) & 0x0001FFFF);
+    d.ti[3] = sign | (u128_hi(number) & 0x0001FFFF);
   else
-    d.ti[3] = (sign | (0x60004000U) | ((number >> 96) & 0x00007FFFU));
-  d.ti[2] = (number >> 64) & 0xFFFFFFFFU;
-  d.ti[1] = (number >> 32) & 0xFFFFFFFFU;
-  d.ti[0] = number & 0xFFFFFFFFU;
+    d.ti[3] = sign | (0x60020000U | (u128_hi(number) & 0x00007FFFU));
+  d.ti[2] = u128_mh(number);
+  d.ti[1] = u128_ml(number);
+  d.ti[0] = u128_lo(number);
   d.td = setexpd128 (d.td, exp);
 
   return d.td;

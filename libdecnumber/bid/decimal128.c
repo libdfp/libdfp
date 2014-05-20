@@ -319,8 +319,8 @@ decDigitsToBID (const decNumber *dn, uInt *sourhi, uInt *sourmh,
 		uInt *sourml, uInt *sourlo)
 {
   const Unit *uin=dn->lsu;	   /* -> current output unit (uint16_t)  */
-  Quad coeff = 0;
-  Quad mult;
+  uQuad coeff;
+  uQuad mult;
   Int digits;
   Int n;
 
@@ -339,11 +339,21 @@ decDigitsToBID (const decNumber *dn, uInt *sourhi, uInt *sourmh,
      (718 * 1000000000000) +
      (  2 * 1000000000000000)
   */
-  for (n = 0, mult = 1, digits = 1;
+  uQuadInit (coeff);
+  uQuadSetUInt (coeff, 0);
+  uQuadInit (mult);
+  uQuadSetUInt (mult, 1);
+  for (n = 0, digits = 1;
        digits <= dn->digits;
-       ++n, mult *= 1000, digits += 3)
+       ++n, digits += 3)
     {
-      coeff += uin[n] * mult;
+      /* coeff += uin[n] * mult;  */
+      uQuad tmp;
+      uQuadInit (tmp);
+      uQuadMulUInt (mult, uin[n], tmp);
+      uQuadAddQuad (coeff, tmp, coeff);
+      /* mult = mult * 1000;  */
+      uQuadMulUInt (mult, 1000, mult);
     }
 
   /* BID coefficient encoding is defined as:
@@ -354,12 +364,12 @@ decDigitsToBID (const decNumber *dn, uInt *sourhi, uInt *sourmh,
      | 1bit (sign) | 2bits - 11 | 14bits binary_encode(exp) |
        113 bits lsbs binary_encode (coeff) |  */
   if (bid_required_bits_128 (coeff) <= 113)
-    *sourhi = (coeff >> 96) & 0x0001FFFF;
+    *sourhi = uQuadHi(coeff) & 0x0001FFFF;
   else
-    *sourhi = 0x60020000U | ((coeff >> 96) & 0x00007FFFU);
-  *sourmh = (coeff >> 64) & 0xFFFFFFFFU;
-  *sourml = (coeff >> 32) & 0xFFFFFFFFU;
-  *sourlo = coeff & 0xFFFFFFFFU;
+    *sourhi = 0x60020000U | (uQuadHi(coeff) & 0x00007FFFU);
+  *sourmh = uQuadMh(coeff);
+  *sourml = uQuadMl(coeff);
+  *sourlo = uQuadLo(coeff);
 }
 
 /* ------------------------------------------------------------------ */
@@ -395,14 +405,19 @@ decDigitsFromBID (decNumber *dn, uInt sourhi, uInt sourmh, uInt sourml,
   else
     sourhi &= 0x0001FFFF;
 
-  bin = ((uQuad)sourhi << 96) |
-	((uQuad)sourmh << 64) |
-        ((uQuad)sourml << 32) |
-	 (uQuad)sourlo;
-  for (n = DECNUMUNITS; (bin != 0) && (n >= 0); n--)
+  uQuadInit (bin);
+  uQuadInitFromUInt (bin, sourhi, sourmh, sourml, sourlo);
+  for (n = DECNUMUNITS;
+       uQuadNEUInt(bin, 0) && (n >= 0);
+       n--)
     {
-      *uout = bin % 1000;
-      bin /= 1000;
+      uQuad tmp;
+      uQuadInit (tmp);
+      /* *uout = bin % 1000;  */
+      uQuadModUInt (bin, 1000, tmp);
+      uQuadToUInt (tmp, *uout);
+      /* bin /= 1000;  */
+      uQuadDivUInt (bin, 1000, bin);
       last = uout;
       uout++;
     }

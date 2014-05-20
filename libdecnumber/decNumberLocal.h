@@ -97,9 +97,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #define uLong  uint64_t
   #endif
   #if DECUSE128
-  /* Note: these are GCC extension are required for current BID       */
-  #define Quad	 __int128_t
-  #define uQuad  __uint128_t
+  #include "decUInt128.h"
   #endif
 
   /* Development-use definitions				      */
