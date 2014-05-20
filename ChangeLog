@@ -1,5 +1,9 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* Makefile.in [C_DEFINES]: Remove -D_POSIX_C_SOURCE=200809L and
+	-D_SVID_SOURCE and add -D_ISOC99_SOURCE.
+	[CXX_DEFINES]: Remove -D_POSIX_C_SOURCE=200809L and add
+	-D_ISOC99_SOURCE.
 	* sysdeps/bid/symbol-hacks.h: BID symbol hacks to avoid internal PLT
 	calls.
 	* sysdeps/dpd/symbol-hacks.h: Fix symbol definitions.
