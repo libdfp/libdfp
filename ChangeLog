@@ -1,3 +1,7 @@
+2014-06-03  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
+
+	* tests/test-get_digits.c: Add _Decimal32 and _Decimal64 testcases.
+
 2014-06-03  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in [libdfp_c_tests]: Remove GLIBC_LIBS rule artifact.
