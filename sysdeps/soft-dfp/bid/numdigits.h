@@ -382,10 +382,13 @@ left_justifyd32 (_Decimal32 x)
   len = strlen (digits + firstdigit);
   if (len)
     {
+      int exp = getexpd32 (x);
       /* pad the significant digits with enough trailing zeroes */
-      memset(digits + firstdigit + len, '0', firstdigit);
+      if ((exp - firstdigit) < -DECIMAL32_Bias)
+	firstdigit = DECIMAL32_Bias + exp;
+      memset (digits + firstdigit + len, '0', firstdigit);
       x = setdigitsd32 (x, digits + firstdigit);
-      x = setexpd32 (x, getexpd32 (x) - firstdigit);
+      x = setexpd32 (x, exp - firstdigit);
     }
 
   return x;
@@ -403,10 +406,13 @@ left_justifyd64 (_Decimal64 x)
   len = strlen (digits + firstdigit);
   if (len)
     {
+      int exp = getexpd64 (x);
       /* pad the significant digits with enough trailing zeroes */
-      memset(digits + firstdigit + len, '0', firstdigit);
+      if ((exp - firstdigit) < -DECIMAL64_Bias)
+	firstdigit = DECIMAL64_Bias + exp;
+      memset (digits + firstdigit + len, '0', firstdigit);
       x = setdigitsd64 (x, digits + firstdigit);
-      x = setexpd64 (x, getexpd64 (x) - firstdigit);
+      x = setexpd64 (x, exp - firstdigit);
     }
 
   return x;
@@ -424,10 +430,13 @@ left_justifyd128 (_Decimal128 x)
   len = strlen (digits + firstdigit);
   if (len)
     {
+      int exp = getexpd128 (x);
       /* pad the significant digits with enough trailing zeroes */
+      if ((exp - firstdigit) < -DECIMAL128_Bias)
+	firstdigit = DECIMAL128_Bias + exp;
       memset(digits + firstdigit + len, '0', firstdigit);
       x = setdigitsd128 (x, digits + firstdigit);
-      x = setexpd128 (x, getexpd128 (x) - firstdigit);
+      x = setexpd128 (x, exp - firstdigit);
     }
 
   return x;
