@@ -69,7 +69,7 @@ libdecnumber_a_SOURCES = decContext.c decContext.h decDPD.h \
 	decimal32.h decimal64.h decimal128.h \
 	dpd/decimal32.c dpd/decimal64.c dpd/decimal128.c \
 	bid/decimal32.c bid/decimal64.c bid/decimal128.c \
-	decDebug64.c
+	decDebug64.h
 
 all: libdecnumber.a
 
