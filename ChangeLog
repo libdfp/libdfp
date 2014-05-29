@@ -1,5 +1,10 @@
 2013-05-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/powerpc/dfpu/quantized32.c (quantized32): Add a todo comment
+	to fix the cases where the coefficient overflows.
+	* tests/quantize.input: Set the correct output for some tests in
+	_Decimal32 mode.
+
 	* sysdeps/powerpc/dfpu/numdigits.h (numdigits): Refactor to remove
 	_Decimal to integer cast using assembly load/store.
 

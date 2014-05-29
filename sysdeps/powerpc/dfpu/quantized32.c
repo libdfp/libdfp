@@ -45,6 +45,9 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 #else
   /* Always use _Decimal64 asm insns for _Decimal32 since there are no
    * _Decimal32 insns.  */
+
+  // TODO: check if adjusted coefficient will definitely not fit in
+  // _Decimal32 and return NaN in case it is not.
   _Decimal64 result;
 
   __asm__("dqua %0,%1,%2,3;"
