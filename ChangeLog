@@ -1,3 +1,8 @@
+2013-05-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/dfpu/numdigits.h (numdigits): Refactor to remove
+	_Decimal to integer cast using assembly load/store.
+
 2013-05-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/fpclassifyd128.c (__fpclassifyd128): Rewrite to use

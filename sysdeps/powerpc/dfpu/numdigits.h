@@ -116,45 +116,42 @@ FUNC_D (numdigits) (DEC_TYPE x)
 {
 #if _DECIMAL_SIZE == 32
   register _Decimal64 tmp = x;
+  _Decimal64 f3, f4;
 #else
   register DEC_TYPE tmp = x;
+  DEC_TYPE f3, f4;
 #endif
   double f1, f2;
-  DEC_TYPE f3, f4;
-  long long i1, i2;
-  static union
+  union _ld_t
   {
     long long int l;
     double f;
-  } u = { .f = 0x0.0000000000001p-1022 },
-    v = { .f = DECIMAL_BIAS_DOUBLE };
+  };
+  static union _ld_t u = { .f = 0x0.0000000000001p-1022 };
+  static union _ld_t v = { .f = DECIMAL_BIAS_DOUBLE };
+  union _ld_t t;
 
   asm (
-    /* Prep for a NAN test.  */
-    "dxex" Q " %0,%4\n\t"
-    "stfd %0,%3\n\t"
-    /* We don't care what the exponent actually is, as long at it's less than
-     * '369'.  Set the exponent to zero in preparation for the reround.  Biased
-     * exponent equals zero.*/
-    "diex" Q " %2,%5,%4\n\t"
-  : "=&d"(f1), "=&d"(f2), "=&d"(f3), "=m"(i1)
-  : "d"(tmp), "d"(v.f));
+    "dxex" Q " %0,%3\n\t"
+    "diex" Q " %2,%4,%3\n\t"
+    : "=&d"(f1), "=&d"(f2), "=&d"(f3)
+    : "d"(tmp), "d"(v.f));
 
-  /* check for NaN and infinity.  dxex returns < 0 for qnan, snan, and inf.  */
-  if (i1 < 0)
-    return i1;
+  /* Check for NaN and infinity, dxex returns < 0 for qnan, snan, and inf.  */
+  t.f = f1;
+  if (t.l < 0)
+    return t.l;
 
   asm (
-    "drrnd" Q " %0,%3,%4,1\n\t" 
+    "drrnd" Q " %0,%2,%3,1\n\t"
     "dxex" Q " %1,%0\n\t"
-    "stfd %1,%2\n\t"
-    : "=&d"(f4), "=&d"(f2), "=m"(i2)
+    : "=&d"(f4), "=&d"(f2)
     : "d"(u.f), "d"(f3));
 
   /* v.l holds the normalized reference exponent.
-     i2 holds the computed exponent after reround.  */
-
-  return i2 - v.l + 1;
+     f2 holds the computed exponent after reround.  */
+  t.f = f2;
+  return t.l - v.l + 1;
 }
 
 static inline DEC_TYPE
