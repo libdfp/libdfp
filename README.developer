@@ -4,7 +4,7 @@
 	 The "Decimal Floating Point C Library" Developer's Guide
 		    for the GNU/Linux OS and GLIBC 2.10
 		      Contributed by IBM Corporation
-	     Copyright (C) 2009, 2010 Free Software Foundation
+	     Copyright (C) 2009-2014 Free Software Foundation
 
 ===========================================================================
 NOTE:Eight space tabs are the optimum editor setting for reading this file.
@@ -69,6 +69,10 @@ A rationale can be found here:
 
 	http://www.open-std.org/JTC1/SC22/wg14/www/docs/n1242.pdf
 
+And the last draft for new standard can be found at:
+
+	http://www.open-std.org/JTC1/SC22/wg14/www/docs/n1775.pdf
+
 ---------------------------------------------------------------------------
 1.2. IEEE754-2008 (DPD & BID Encodings)
 
@@ -80,6 +84,17 @@ point data types.  These are DPD and BID.
 
 	BID (Binary Integer Decimal) - Intel sponsored encoding.
 
+A simple explanation of the general overview of Decimal Floaing Point
+can be found at
+
+	http://speleotrove.com/decimal/decbits.pdf
+
+The BID format encoding general explanation can be found at
+
+	BID - Binary-Integer Decimal Encoding for Decimal Floating Point
+	| Ping Tak Peter Tang
+	http://m1.archiveorange.com/m/att/KGyKy/ArchiveOrange_Ps0PWkD0ZgCLBVQYnJEcnXblPpEa.pdf
+
 Both encodings can be investigated in the draft IEEE754r:
 
 	http://754r.ucbtest.org/drafts/archive/2006-10-04.pdf
@@ -87,8 +102,7 @@ Both encodings can be investigated in the draft IEEE754r:
 ---------------------------------------------------------------------------
 1.3. Backends (libdecnumber & libbid)
 
-Libdfp can make use of two backend libraries for software emulation.  These
-are "libdecnumber" and "libbid".
+Libdfp use of "libdecnumber" backend library for software emulation.
 
 Libdecnumber was written by Mike Cowlishaw (IBM) and a form of the library
 was donated to the FSF where it was subsumed into GCC.  The Free Software
@@ -99,8 +113,6 @@ trees.  All patches to libdecnumber should be sent to GCC.
 This library's copy of libdecnumber should be periodically synced with
 upstream GCC's version.  This syncing is the responsibility of the Libdfp
 maintainer.
-
-Libbid was written by <TODO> (Intel).
 
 ---------------------------------------------------------------------------
 2. Availability
@@ -124,11 +136,16 @@ S/390 z10	HW	libdecnumber	DPD
 TODO:
 -------------------------------------------------
 x86		SW	libdecnumber	DPD | BID
-x86_64		SW	libbid		BID
+x86_64		SW	libdecnumber	DPD | BID
 
 The selection of a backend and/or an encoding is made at configuration time
 by the distro maintainer or person building libdfp using configuration
 flags described in the section entitled "Configuration".
+
+A summary with information regarding "libdecnumber" and Decimal Floating
+Point in general can be found at:
+
+	http://speleotrove.com/decimal/
 
 ---------------------------------------------------------------------------
 3. Compliance With ISO/IEC TR 24732
@@ -161,6 +178,9 @@ addition of scanf in support of decimal floating point data types.  The
 strtod[32|64|128] functions can be used for the same purpose without the
 implications of scanf.
 
+This is main due the fact GLIBC does not support scanf hooks as it does
+for printf.
+
 ---------------------------------------------------------------------------
 3.3 printf
 
@@ -185,24 +205,6 @@ Libdfp is only enabled to work on the GNU/Linux OS.
 Libdfp version 1.0.0 relies upon a minimum GLIBC 2.10 for printf-hooks
 support.  The libdfp configure stage will check the libc that it is linked
 against for the printf-hook support and will warn if it is not found.
-
----------------------------------------------------------------------------
-4.3 GLIBC Headers
-
-Libdfp must be built against the GLIBC 2.10 headers due to the printf-hooks
-mechanism being described there.  Due to a problem with GLIBC's "make
-install-headers" not installing all of the necessary headers (such as
-feature.h) the developer building libdfp must:
-
-	- `configure' GLIBC for the target
-	- `make'
-	- `make install_root="<some-path>" install'.
-	- tar the headers out of "<some-path>/include".
-	- unpack the archive close to the libdfp sources, e.g.
-		/home/$USER/stage_libdfp/glibc-2.10-includes/
-
-The resultant headers should be pointed to when Libdfp `configure' is run
-(as described in the section on Configuration).
 
 ---------------------------------------------------------------------------
 4.4 libdecnumber

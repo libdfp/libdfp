@@ -4,7 +4,7 @@
 	    The "Decimal Floating Point C Library" User's Guide
 		   for the GNU/Linux OS and GLIBC 2.10+
 		      Contributed by IBM Corporation
-	    Copyright (C) 2010 - 2012 Free Software Foundation
+	    Copyright (C) 2010 - 2014 Free Software Foundation
 
 ===========================================================================
 NOTE:Eight space tabs are the optimum editor setting for reading this file.
@@ -69,6 +69,10 @@ A rationale can be found here:
 
 	http://www.open-std.org/JTC1/SC22/wg14/www/docs/n1242.pdf
 
+And the last draft for new standard can be found at:
+
+	http://www.open-std.org/JTC1/SC22/wg14/www/docs/n1775.pdf
+
 ---------------------------------------------------------------------------
 1.2.  ISO/IEC DTR 24733
 
@@ -91,6 +95,17 @@ point data types.  These are DPD and BID.
 
 	BID (Binary Integer Decimal) - Intel sponsored encoding.
 
+A simple explanation of the general overview of Decimal Floaing Point
+can be found at
+
+	http://speleotrove.com/decimal/decbits.pdf
+
+The BID format encoding general explanation can be found at
+
+	BID - Binary-Integer Decimal Encoding for Decimal Floating Point
+	| Ping Tak Peter Tang
+	http://m1.archiveorange.com/m/att/KGyKy/ArchiveOrange_Ps0PWkD0ZgCLBVQYnJEcnXblPpEa.pdf
+
 Both encodings can be investigated in the draft IEEE754r:
 
 	http://754r.ucbtest.org/drafts/archive/2006-10-04.pdf
@@ -98,16 +113,12 @@ Both encodings can be investigated in the draft IEEE754r:
 ---------------------------------------------------------------------------
 1.4. Backends (libdecnumber & libbid)
 
-Libdfp can make use of two backend libraries for software emulation.  These
-are "libdecnumber" and "libbid".
-
-For the most part, a user of libdfp should not have to be concerned with
-the libdfp backends.
+Libdfp use of "libdecnumber" backend library for software emulation. And
+for the most part, a user of libdfp should not have to be concerned with
+the libdfp backend.
 
 The user's interface is that defined by ISO/IEC TR 24732, i.e. the Decimal
 Floating Point addition to the C Language specification.
-
-Currently Libdfp only supports the libdecnumber backend.
 
 ---------------------------------------------------------------------------
 2. Availability
@@ -243,6 +254,9 @@ Libdfp does not, and will not comply with the TR 24732 requirement for the
 addition of scanf in support of decimal floating point data types.  The
 strtod[32|64|128] functions can be used for the same purpose without the
 implications of scanf.
+
+This is main due the fact GLIBC does not support scanf hooks as it does
+for printf.
 
 ---------------------------------------------------------------------------
 3.6 printf Support
@@ -638,6 +652,3 @@ Notice the difference with soft-dfp:
 
 Namely the negative sign of the exponent with soft-dfp for int to _Decimal
 conversions.
-
-
-

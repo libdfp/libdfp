@@ -1,5 +1,11 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* NEWS: Update with version 1.0.10
+	* README.developer: Add more documentation and update BID information.
+	* README.maintainer: Likewise.
+	* README.user: Likewise.
+	* CONTRIBUTORS: Update.
+
 	* include/libdfp-symbols.h: Add weak_alias for assembler code.
 
 	* Makefile.in [C_DEFINES]: Remove -D_POSIX_C_SOURCE=200809L and

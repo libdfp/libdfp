@@ -4,7 +4,7 @@
 	  The "Decimal Floating Point C Library" Maintainer's Guide
 		     for the GNU/Linux OS and GLIBC 2.10+
 			Contributed by IBM Corporation
-		 Copyright (C) 2011 Free Software Foundation
+		 Copyright (C) 2011-2014 Free Software Foundation
 
 ===========================================================================
 NOTE:Eight space tabs are the optimum editor setting for reading this file.
@@ -17,29 +17,48 @@ NOTE:Eight space tabs are the optimum editor setting for reading this file.
 Table of Contents:
 
 	1.  Introduction
-	2.  Specification
-	  2.1  DFP Spec
-	  2.2  Spec Changes
-	3.  Libdfp API Changes
-	4.  Libdfp ABI Changes
-	5.  Versioning
-	6.  Mailing Lists
-	7.  ChangeLog
-	8.  Backends
-	9.  Bugs
-	10.  Contributions
-	11. Commit Access
-
+	2.  Libdfp API Changes
+	3.  Libdfp ABI Changes
+	4.  Versioning
+	5.  Contributing
 
 ---------------------------------------------------------------------------
-3.  Libdfp API Changes
+2.  Libdfp API Changes
 
 When new functions or interfaces are added to Libdfp then the API has changed
 and the library version must change.  For guidelines on adding new symbols to
 a particular version see README.developer.
 
 ---------------------------------------------------------------------------
-10.  Commit Access
+3.  Libdfp API Changes
 
-commit-access@eglibc.org
+TODO
 
+---------------------------------------------------------------------------
+4.  Versioning
+
+TODO
+
+---------------------------------------------------------------------------
+5.  Contributing
+
+Libdfp is developed now using GIT SCM at github.  Main site is:
+
+	https://github.com/libdfp/libdfp
+
+General developement follows the simple guideline:
+
+	1. Make sure you have a GitHub account
+
+	2. Fork the repository to your account.
+
+	3. Make the changes and run the testcases. We only take pull requests
+	   with passing tests.
+
+	4. If it is applicable, improve or add the current testcases to cover
+	   for the new functionality.
+
+	5. Libdfp also uses the ChangeLog with the same format and rules as
+	   the GLIBC one.
+
+	6. Push to your fork and submit a pull request.
