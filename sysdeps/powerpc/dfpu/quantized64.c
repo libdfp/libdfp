@@ -1,10 +1,8 @@
 /* Set the exponent of x to the exp of y, trying to preserve the value of x
 
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
-
-   Author(s): Ryan S. Arnold  <rsa@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -22,5 +20,16 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 64
-#include "quantized32.c"
+#include <math.h>
+
+_Decimal64
+__quantized64 (_Decimal64 x, _Decimal64 y)
+{
+  _Decimal64 result;
+
+  asm ("dqua %0,%1,%2,3;"
+	: "=f" (result)
+	: "f" (y), "f" (x));
+  return result;
+}
+weak_alias (__quantized64, quantized64)

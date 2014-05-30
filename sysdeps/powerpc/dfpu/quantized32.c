@@ -1,12 +1,9 @@
 /* Set the exponent of x to the exp of y, trying to preserve the value of x
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2010 Free Software Foundation, Inc.
+   Copyright (C) 2010-2014 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
-
-   Author(s): Steven Munroe <munroesj@us.ibm.com>
-              Ryan S. Arnold <rsa@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -24,36 +21,48 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#ifndef _DECIMAL_SIZE
-#  define _DECIMAL_SIZE 32
-#endif
-
 #include <math.h>
 
-#define FUNCTION_NAME quantize
-
-#include <dfpmacro.h>
-
-DEC_TYPE
-INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
+_Decimal32
+__quantized32 (_Decimal32 x, _Decimal32 y)
 {
-#if _DECIMAL_SIZE == 128
-  _Decimal128 result;
-
-  __asm__("dquaq %0,%1,%2,3;"
-	: "=f" (result): "f" ((_Decimal128) y), "f" ((_Decimal128) x));
-#else
   /* Always use _Decimal64 asm insns for _Decimal32 since there are no
    * _Decimal32 insns.  */
-
-  // TODO: check if adjusted coefficient will definitely not fit in
-  // _Decimal32 and return NaN in case it is not.
   _Decimal64 result;
+  register _Decimal64 tmp;
+  _Decimal64 f3, f4;
+
+  double f2;
+  union _ld_t
+  {
+    long long int l;
+    double f;
+  };
+  static union _ld_t u = { .f = 0x0.0000000000001p-1022 };
+  static union _ld_t v = { .f = 0x0.000000000018ep-1022 };
+  union _ld_t t;
 
   __asm__("dqua %0,%1,%2,3;"
 	: "=f" (result): "f" ((_Decimal64) y), "f" ((_Decimal64) x));
-#endif
-  return (DEC_TYPE) result;
-}
 
-weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
+  /* Get the number of digits.
+     Based on numdigits.h.  */
+  tmp = result;
+  asm (
+    "diex %0,%4,%3\n\t"
+    "drrnd %2,%5,%0,1\n\t"
+    "dxex %1,%2\n\t"
+    : "=&d"(f3), "=&d"(f2), "=&d"(f4)
+    : "d"(tmp), "d"(v.f), "d"(u.f));
+
+  /* v.l holds the normalized reference exponent.
+     f2 holds the computed exponent after reround.  */
+  t.f = f2;
+  /* Verify if the result don't causes overflow when converted to 32 bits.
+     If yes return NaN  */
+  if (t.l - v.l + 1 > 7)
+    return (_Decimal32) DEC_NAN;
+
+  return (_Decimal32) result;
+}
+weak_alias (__quantized32, quantized32)
