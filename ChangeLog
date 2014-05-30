@@ -1,5 +1,7 @@
 2014-06-02  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
+	* tests/quantize.input: Add inputs to test the overflow.
+
 	* sysdeps/powerpc/dfpu/quantized32.c (__quantized32): Refactor and
 	add a check to see if the adjusted coefficient will fit in _Decimal32.
 	* sysdeps/powerpc/dfpu/quantized128.c (__quantized128): Refactor to

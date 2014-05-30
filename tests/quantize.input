@@ -4,8 +4,6 @@
 # ret  decimal
 
 # TODO: add subnormal rounding testes
-# TODO: add the decimal32 tests ofr shifting overflow when powerpc32
-# 	hardware version is correct.
 
 0       1e0    0
 1       1e0    1
@@ -185,9 +183,9 @@
 1E+5   1e+1   1.0000E+5
 1E+6   1e+1   1.00000E+6
 1E+7   1e+1   1.000000E+7
-#1E+8   1e+1   qNaN		decimal32
+1E+8   1e+1   qNaN		decimal32
 1E+8   1e+1   1.0000000E+8	decimal64 decimal128
-#1E+9   1e+1   qNaN		decimal32
+1E+9   1e+1   qNaN		decimal32
 1E+9   1e+1   1.00000000E+9	decimal64 decimal128
 
 # 1E+10 1e+1    NaN
@@ -210,9 +208,9 @@
   1E+6  1e+2    1.0000E+6
   1E+7  1e+2    1.00000E+7
   1E+8  1e+2    1.000000E+8
-#  1E+9  1e+2    qNaN		decimal32
+  1E+9  1e+2    qNaN		decimal32
   1E+9  1e+2    1.0000000E+9	decimal64 decimal128
-#  1E+10 1e+2    qNaN		decimal32
+  1E+10 1e+2    qNaN		decimal32
   1E+10 1e+2    1.00000000E+10	decimal64 decimal128
   1E-10 1e+2    0E+2
   1E-2  1e+2    0E+2
@@ -230,7 +228,7 @@
   1E+7  1e+3    1.0000E+7
   1E+8  1e+3    1.00000E+8
   1E+9  1e+3    1.000000E+9
-#  1E+10 1e+3    qNaN		decimal32
+  1E+10 1e+3    qNaN		decimal32
   1E+10 1e+3    1.0000000E+10	decimal64 decimal128
   1E-10 1e+3    0E+3
   1E-2  1e+3    0E+3
@@ -311,13 +309,13 @@
  -7.8 1e+3  -0E+3
 
 
-#  352364.506 1e-2  qNaN		decimal32
+  352364.506 1e-2  qNaN		decimal32
   352364.506 1e-2  352364.51	decimal64 decimal128
-#  3523645.06 1e-2  qNaN		decimal32
+  3523645.06 1e-2  qNaN		decimal32
   3523645.06 1e-2  3523645.06	decimal64 decimal128
-# -352364.506 1e-2  qNaN	decimal32
+ -352364.506 1e-2  qNaN	decimal32
  -352364.506 1e-2  -352364.51	decimal64 decimal128
-# -3523645.06 1e-2  qNaN		decimal32
+ -3523645.06 1e-2  qNaN		decimal32
  -3523645.06 1e-2  -3523645.06	decimal64 decimal128
 
  12.34567  1e-3  12.346
@@ -365,38 +363,38 @@
   0.000999      1e0    0
   0.000999      1e1   0E+1
 
-#12345678000 1e+3  qNaN			decimal32
+12345678000 1e+3  qNaN			decimal32
 12345678000 1e+3  1.2345678E+10		decimal64 decimal128
-#1234567800  1e+1  qNaN			decimal32
+1234567800  1e+1  qNaN			decimal32
 1234567800  1e+1  1.23456780E+9		decimal64 decimal128
-#1234567890  1e+1  qNaN			decimal32
+1234567890  1e+1  qNaN			decimal32
 1234567890  1e+1  1.23456789E+9		decimal64 decimal128
-#1234567891  1e+1  qNaN			decimal32
+1234567891  1e+1  qNaN			decimal32
 1234567891  1e+1  1.23456789E+9		decimal64 decimal128
-#12345678901 1e+2  qNaN			decimal32
+12345678901 1e+2  qNaN			decimal32
 12345678901 1e+2  1.23456789E+10	decimal64 decimal128
-#1234567896  1e+1  qNaN			decimal32
+1234567896  1e+1  qNaN			decimal32
 1234567896  1e+1  1.23456790E+9		decimal64 decimal128
-#1234.987643 1e-4  qNaN			decimal32
+1234.987643 1e-4  qNaN			decimal32
 1234.987643 1e-4  1234.9876		decimal64 decimal128
-#1234.987647 1e-4  qNaN			decimal32
+1234.987647 1e-4  qNaN			decimal32
 1234.987647 1e-4  1234.9876		decimal64 decimal128
 
-#12345678000 1e+3  qNaN			decimal32
+12345678000 1e+3  qNaN			decimal32
 12345678000 1e+3  1.2345678E+10		decimal64 decimal128
-#1234567800  1e+1  qNaN			decimal32
+1234567800  1e+1  qNaN			decimal32
 1234567800  1e+1  1.23456780E+9		decimal64 decimal128
-#1234567890  1e+1  qNaN			decimal32
+1234567890  1e+1  qNaN			decimal32
 1234567890  1e+1  1.23456789E+9		decimal64 decimal128
-#1234567891  1e+1  qNaN			decimal32
+1234567891  1e+1  qNaN			decimal32
 1234567891  1e+1  1.23456789E+9		decimal64 decimal128
-#12345678901 1e+2  qNaN			decimal32
+12345678901 1e+2  qNaN			decimal32
 12345678901 1e+2  1.23456789E+10	decimal64 decimal128
-#1234567896  1e+1  qNaN			decimal32
+1234567896  1e+1  qNaN			decimal32
 1234567896  1e+1  1.23456790E+9		decimal64 decimal128
-#1234.987643 1e-4  qNaN			decimal32
+1234.987643 1e-4  qNaN			decimal32
 1234.987643 1e-4  1234.9876		decimal64 decimal128
-#1234.987647 1e-4  qNaN			decimal32
+1234.987647 1e-4  qNaN			decimal32
 1234.987647 1e-4  1234.9876		decimal64 decimal128
 
   0.0   1e1   0E+1
@@ -501,44 +499,69 @@
 8.666666666666000E+323     1E+31     NaN                                    decimal64 decimal128
 8.66666666E+3              1E+10     0E10                                   decimal64 decimal128
 8.66666666E+3              1E+3      9E+3                                   decimal64 decimal128
+1E+17                      1e+1      qNaN                                   decimal64
+1E+16			   1e+1      1.0000000E+16                          decimal64 decimal128
+1E+18                      1e+2      qNaN                                   decimal64
+1E+19			   1e+2      qNaN                                   decimal64 decimal128
+
+  352364567289012.506  1e-2  qNaN                          decimal64
+  35236458901.06       1e-2   3.52364589010600000000e+10   decimal64 decimal128
+ -352364567289012.506  1e-2  qNaN                          decimal64
+ -35236458901.06       1e-2  -3.52364589010600000000e+10   decimal64 decimal128
+  2147483646819039764   0    qNaN                          decimal64
+ -2147483646819039764   0    qNaN                          decimal64
+ 
+
+# decimal128
+1E+34			   1e+1      1.0000000E+34                          decimal128
+1E+35			   1e+1      qNaN                                   decimal128
+1E+35			   1e+2      1.00000000000000000000e+35             decimal128
+1E+36			   1e+2      qNaN                                   decimal128
+
+  35236456728901291950093363223832.506  1e-2   3.5236456728901291950093363223832510e+31    decimal128
+  3523645672890129195009336322383.06    1e-2   3.5236456728901291950093363223830600e+30    decimal128
+ -35236456728901291950093363223832.506  1e-2  -3.5236456728901291950093363223832510e+31    decimal128
+ -3523645672890129195009336322383.06    1e-2  -3.5236456728901291950093363223830600e+30    decimal128
+  2147483646819039764880028933478190777  0    2147483646819039764880028933478190777        decimal128
+ -2147483646819039764880028933478190777  0    -2147483646819039764880028933478190777       decimal128
 
 # Int and uInt32 edge values for testing conversions
-#-2147483646     0   qNaN		decimal32
+-2147483646     0   qNaN		decimal32
 -2147483646     0  -2147483646		decimal64 decimal128
-#-2147483647     0   qNaN		decimal32
+-2147483647     0   qNaN		decimal32
 -2147483647     0  -2147483647		decimal64 decimal128
-#-2147483648     0   qNaN		decimal32
+-2147483648     0   qNaN		decimal32
 -2147483648     0  -2147483648		decimal64 decimal128
-#-2147483649     0   qNaN		decimal32
+-2147483649     0   qNaN		decimal32
 -2147483649     0  -2147483649		decimal64 decimal128
-# 2147483646     0   qNaN		decimal32
+ 2147483646     0   qNaN		decimal32
  2147483646     0   2147483646		decimal64 decimal128
-# 2147483647     0   qNaN		decimal32
+ 2147483647     0   qNaN		decimal32
  2147483647     0   2147483647		decimal64 decimal128
-# 2147483648     0   qNaN		decimal32
+ 2147483648     0   qNaN		decimal32
  2147483648     0   2147483648		decimal64 decimal128
-# 2147483649     0   qNaN		decimal32
+ 2147483649     0   qNaN		decimal32
  2147483649     0   2147483649		decimal64 decimal128
-# 4294967294     0   qNaN		decimal32
+ 4294967294     0   qNaN		decimal32
  4294967294     0   4294967294		decimal64 decimal128
-# 4294967295     0   qNaN		decimal32
+ 4294967295     0   qNaN		decimal32
  4294967295     0   4294967295		decimal64 decimal128
-# 4294967296     0   qNaN		decimal32
+ 4294967296     0   qNaN		decimal32
  4294967296     0   4294967296		decimal64 decimal128
-# 4294967297     0   qNaN		decimal32
+ 4294967297     0   qNaN		decimal32
  4294967297     0   4294967297		decimal64 decimal128
 # and powers of ten for same
-# 5000000000     0   qNaN		decimal32
+ 5000000000     0   qNaN		decimal32
  5000000000     0   5000000000		decimal64 decimal128
-# 4000000000     0   qNaN		decimal32
+ 4000000000     0   qNaN		decimal32
  4000000000     0   4000000000		decimal64 decimal128
-# 2000000000     0   qNaN		decimal32
+ 2000000000     0   qNaN		decimal32
  2000000000     0   2000000000		decimal64 decimal128
-# 1000000000     0   qNaN		decimal32
+ 1000000000     0   qNaN		decimal32
  1000000000     0   1000000000		decimal64 decimal128
-# 100000000      0   qNaN		decimal32
+ 100000000      0   qNaN		decimal32
  100000000      0   100000000		decimal64 decimal128
-# 10000000       0   qNaN		decimal32
+ 10000000       0   qNaN		decimal32
  10000000       0   10000000		decimal64 decimal128
  1000000        0   1000000
  100000         0   100000
@@ -549,17 +572,17 @@
  1              0   1
  0              0   0
 # and powers of ten for same
-#-5000000000     0  qNaN		decimal32
+-5000000000     0  qNaN		decimal32
 -5000000000     0  -5000000000		decimal64 decimal128
-#-4000000000     0   qNaN		decimal32
+-4000000000     0   qNaN		decimal32
 -4000000000     0  -4000000000		decimal64 decimal128
-#-2000000000     0   qNaN		decimal32
+-2000000000     0   qNaN		decimal32
 -2000000000     0  -2000000000		decimal64 decimal128
-#-1000000000     0   qNaN		decimal32
+-1000000000     0   qNaN		decimal32
 -1000000000     0  -1000000000		decimal64 decimal128
-#-100000000      0   qNaN		decimal32
+-100000000      0   qNaN		decimal32
 -100000000      0  -100000000		decimal64 decimal128
-#-10000000       0   qNaN		decimal32
+-10000000       0   qNaN		decimal32
 -10000000       0  -10000000		decimal64 decimal128
 -1000000        0  -1000000
 -100000         0  -100000
