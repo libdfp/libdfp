@@ -1,3 +1,9 @@
+2014-06-02  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* tests/isgreater.input: New file: isgreater testcase.
+	* Makefile.in: Add isgreater testcase.
+	* tests/libdfp-test.c [RUN_TEST_ff_i]: Add macro.
+
 2014-06-02  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
 	* tests/quantize.input: Add inputs to test the overflow.

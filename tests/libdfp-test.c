@@ -73,6 +73,12 @@
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
+#define RUN_TEST_ff_i(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED)        \
+  do {                                                                  \
+   COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
+   check_int (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED);	\
+   COMMON_TEST_CLEANUP;                                                 \
+  } while (0)
 
 
 #define MANT_DIG CHOOSE ((DEC128_MANT_DIG-1), (DEC64_MANT_DIG-1), (DEC32_MANT_DIG-1))

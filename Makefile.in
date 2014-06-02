@@ -330,7 +330,8 @@ libdfp_c_tests = test-printf test-amort test-decode \
 		 test-nearbyint-d32 test-nearbyint-d64 test-nearbyint-d128 \
 		 test-round-d32 test-round-d64 test-round-d128 \
 		 test-roundeven-d32 test-roundeven-d64 test-roundeven-d128 \
-		 test-trunc-d32 test-trunc-d64 test-trunc-d128
+		 test-trunc-d32 test-trunc-d64 test-trunc-d128 \
+		 test-isgreater-d32 test-isgreater-d64 test-isgreater-d128
 
 libdfp_cxx_tests = test-ostream test-ostream-g-spec test-istream
 
