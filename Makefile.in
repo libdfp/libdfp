@@ -333,7 +333,8 @@ libdfp_c_tests = test-printf test-amort test-decode \
 		 test-trunc-d32 test-trunc-d64 test-trunc-d128 \
 		 test-isgreater-d32 test-isgreater-d64 test-isgreater-d128 \
 		 test-isgreaterequal-d32 test-isgreaterequal-d64 test-isgreaterequal-d128 \
-		 test-isless-d32 test-isless-d64 test-isless-d128
+		 test-isless-d32 test-isless-d64 test-isless-d128 \
+		 test-islessequal-d32 test-islessequal-d64 test-islessequal-d128
 
 libdfp_cxx_tests = test-ostream test-ostream-g-spec test-istream
 
