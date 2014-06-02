@@ -1,5 +1,8 @@
 2014-06-02  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* tests/isgreaterequal.input: New file: isgreaterequal testcase.
+	* Makefile.in: Add isgreaterequal testcase.
+
 	* tests/isgreater.input: New file: isgreater testcase.
 	* Makefile.in: Add isgreater testcase.
 	* tests/libdfp-test.c [RUN_TEST_ff_i]: Add macro.
