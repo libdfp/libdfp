@@ -1,4 +1,4 @@
-2013-05-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-05-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/quantized32.c (quantized32): Add a todo comment
 	to fix the cases where the coefficient overflows.
@@ -8,7 +8,7 @@
 	* sysdeps/powerpc/dfpu/numdigits.h (numdigits): Refactor to remove
 	_Decimal to integer cast using assembly load/store.
 
-2013-05-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-05-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/fpclassifyd128.c (__fpclassifyd128): Rewrite to use
 	libdecnumber and avoid DPD-specific code.
@@ -20,7 +20,7 @@
 	tell the expected function return based on PPC instruction.
 	* tests/fpclassify.input: Add tests for FP_ZERO.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in: Add local-plt rules to make check.
 	* configure.ac: Add readelf check.
@@ -31,12 +31,12 @@
 	* sysdeps/generic/localplt.data: New file: generic local plt calls
 	allowed.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/soft-dfp/trunctdsd2.c (trunctdsd2): Add missing hidden_def.
 	* sysdeps/powerpc/fpu/libdfp.abilist: Add missing __dpd_trunctdsd2.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in: Add check-abi rules.
 	* scripts/abilist.awk: New file: ABI check.
@@ -45,17 +45,17 @@
 	* sysdeps/powerpc/fpu/libdfp.abilist: ABI definition for PowerPC
 	software DFP.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* fe_decround.c: Move to ...
 	* sysdeps/soft-dfp/fe_decround.c: ... here.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* mapround.c: Move to ...
 	* sysdeps/generic/mapround.c: here.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/copysignd128.c: New file: optimized copysignd128
 	for PowerPC.
@@ -64,24 +64,24 @@
 	* sysdeps/powerpc/dfpu/copysignd32.c: New file: optimized copysignd32
 	for PowerPC.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add copysign new tests.
 	* tests/copysign.input: New file: copysign new tests input.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/fpu/libdfp-test-ulps: Update.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/libdfp-test-ulps: Update.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* configure.ac: Add dfpu in front of fpu in sysdeps selection.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/fabsd128.c: New file: optimized fabsd128 for
 	PowerPC.
@@ -90,29 +90,29 @@
 	* sysdeps/powerpc/dfpu/fabsd32.c: New file: optimized fabsd32 for
 	PowerPC.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add fabs new tests.
 	* tests/fabs.input: New file: fabs new tests input.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add log1p new tests.
 	* tests/log1p.input: New file: log1p new tests input.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add log10 new tests.
 	* tests/log10.input: New file: log10 new tests input.
 	* tests/test-log10d.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add exp new tests.
 	* tests/exp.input: New file: exp new tests input.
 	* tests/test-expd.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in: Remove superfluous echos and add rule to create
 	libdfp-test-ulps.h file.
@@ -127,29 +127,29 @@
 	* tests/log.input: New file: log test input.
 	* tests/test-logd.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/scaffold.c: Remove compiler warning.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/test-numdigits.c: Remove bogus testcase.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/test-getexp.c: Fix constant.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/test-decode.c: Indent correction.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Rename test-round to test-fenv.
 	* tests/test-round.c: Move from ...
 	* tests/test-fenv.c: ... to here.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Remove test-GCC-PR52140, test-negate,
 	test-param, and test-stdlib.
@@ -158,19 +158,19 @@
 	* tests/test-param.c: Remove.
 	* tests/test-stdlib.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add quantize new tests.
 	* tests/quantize.input: New file: quantize new tests input.
 	* tests/test-quantize.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add fpclassify new tests.
 	* tests/fpclassify.input: New file: fpclassify new tests input.
 	* tests/test-fpclassify.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add ceil, floor, nearbyint, round,
 	roundeven, and trunc tests.
@@ -182,25 +182,25 @@
 	* tests/trunc.input: New file: trunc new test input.
 	* tests/test-rounding.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add quantum new tests.
 	* tests/quantum.input: New file: quantum new tests input.
 	* tests/test-quantum.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add ilogb new tests.
 	* tests/ilogb.input: New file: ilogb new tests input.
 	* tests/llogb.input: New file: llogb new tests input.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add issignaling new tests.
 	* tests/issignaling.input: New file: issignaling new tests input.
 	* tests/test-issignaling.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_test): Add isnan, isinf, and isfinite new
 	tests.
@@ -211,24 +211,24 @@
 	* tests/test-isnan.c: Remove.
 	* tests/test-isinf.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add llquantexp new tests.
 	* tests/llquantexp.input: New file: llquantexp new tests input.
 	* tests/test-llquantexp.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add logb new tests.
 	* tests/logb.input: New file: logb new tests input.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add samequantum new tests.
 	* tests/samequantum.input: New file: samequantum new tests input.
 	* tests/test-samequantum.c: Remove.
 
-2013-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in ($(libdfp_c_tests)): Add -I$(top_srcdir)/tests.
 	($(libdfp_cxx_tests)): Likewise.
@@ -241,13 +241,13 @@
 	* tests/test-common.h: New file: common definitions used in
 	auto-generated tests.
 
-2013-02-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (HUGE_VAL_D32): Define as __builtin_infd32.
 	(HUGE_VAL_D64): Define as __builtin_infd64.
 	(HUGE_VAL_D128): Define as __builtin_infd128.
 
-2013-02-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_files): Add libdfp-version object.
 	(SHARED_REALNAME_LIB): Add -Wl,-entry=__libdfp_version.
@@ -256,13 +256,13 @@
 	dynamic linker in build.
 	* libdfp-version.c: New file: add library entry point.
 
-2013-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (fpclassifyd32): Add prototype.
 	(fpclassifyd64): Likewise.
 	(fpclassifyd128): Likewise.
 
-2013-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (FP_LLOGB0): Define if it is not already defined.
 	(FP_LLOGBNAN): Likewise.
@@ -276,11 +276,11 @@
 	* tests/test-illogb.c: Change return values for llobd for 0 and NaN
 	inputs.
 
-2013-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/logbd32.c (logb): Fix return for negative infinity.
 
-2013-02-16  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-16  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (glibc_headers): Remove legacy define no longer used.
 	(glibc_builddir): Likewise.
@@ -289,11 +289,11 @@
 	(.S.os): Likewise.
 	(.cpp.os): Likewise.
 
-2013-02-16  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-16  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_cxx_tests): Add missing -DNOT_IN_libdfp.
 
-2013-02-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/issignalingd128.c (issignalingd128): Fix DCM
 	constant to avoid detect zero as signaling NaNs.
@@ -301,31 +301,31 @@
 	* sysdeps/powerpc/dfpu/issignalingd64.c (issingalingd64): Likewise.
 	* tests/test-issignaling.c: Add tests for zero values.
 
-2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* configure.ac (with_dfp): Add power8 cpu target.
 	* configure: Regenerated.
 	* sysdeps/powerpc/powerpc64/power8/fpu/Implies: Fix implie.
 
-2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/powerpc32/power6/fpu/trunctdsd2.S
 	(__dpd_trunctdsd2): Add hidden_def.
 	* sysdeps/powerpc/powerpc64/power6/fpu/trunctdsd2.S: Update Copyright
 	years.
 
-2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (DEC_NAN): Define __builtin_nan.
 
-2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* configure.ac (AC_PROG_CC): Using withou argument. Also remove hack
 	to use the one specified with PATH.
 	(AC_PROG_CXX): Likewise.
 	* configure: Regenerated.
 
-2013-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* configure.ac (submachine_opt): Rename to libdfp_cv_submachine_opt to
 	work correctly with AC_CACHE_CHECK.
@@ -335,7 +335,7 @@
 	* config.h.in: Likewise.
 	* libdecnumber/configure: Likewise.
 
-2013-02-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* Makefile.in (libdfp_c_tests): Add NOT_IN_libdf when building tests.
 	* base-math/extenddfdd.c (extenddfdd): Add hidden_def definition.
@@ -358,7 +358,7 @@
 	* sysdeps/powerpc/symbol-hacks.h: New file: add symbol hacks for
 	Decimal convertions to avoid intra library PLT calls.
 
-2013-02-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* decNumberMath/decNumberMath.h (___decNumberPow): Define as
 	hidden_proto to avoid intra PLT calls.
@@ -370,13 +370,13 @@
 	(___decNumberTan): Likewise.
 	(___decNumberAtan): Likewise.
 
-2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/logd64.c (logd64): Use internal symbols for
 	functions call.
 	* sysdeps/powerpc/dfpu/powd64.c (expd64): Likewise.
 
-2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/acosd32.c (acosd): Use internal symbols for function calls.
 	* ieee754r/asind32.c (asind): Likewise.
@@ -389,17 +389,17 @@
 	decimal implementations. Also use internal symbols for functions
 	calls.
 
-2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/signbitd32.c (signbitd): Add hidden_def.
 	* include/ieee754r_private.h: Likewise.
 
-2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/fabsd32.c (fabsd): Add hidden_def.
 	* include/ieee754r_private.h: Likewise.
 
-2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* fmt_d32.c (__dfp_adjust_precision): Fix PLT calls for FP classify
 	functions.
@@ -435,13 +435,13 @@
 	* sysdeps/powerpc/dfpu/powd64.c: Likewise.
 	* sysdeps/soft-dfp/unordsd2.c: Likewise.
 
-2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/finited32.c: Remove unused file.
 	* sysdeps/powerpc/dfpu/finited64.c: Likewise.
 	* sysdeps/powerpc/dfpu/is_template.h: Likewise.
 
-2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* include/ieee754r_private.h (__isnand32): Add hidden proto.
 	(__isnand64): Likewise.
@@ -482,13 +482,13 @@
 	* ieee754r/isnand32.c (__isnand64): Likewise.
 	* ieee754r/isnand64.c (__isnand64): Likewise.
 
-2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/samequantumd32.c (samequantum): Fix quantum exponent
 	compare.
 	* tests/test-samequantum.c: New file: samequantumd[32|64|128] tests.
 
-2013-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/samequantumd32.c: New file: optimized
 	samequantumd32 implementation for PowerPC.
@@ -497,12 +497,12 @@
 	* sysdeps/powerpc/dfpu/samequantumd128.c: New file: optimized
 	samequantumd128 implementation for PowerPC.
 
-2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/scaffold.c (_AVC_P): Fix comparison with variation.
 	* tests/test-logd: Fix expected values.
 
-2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/llquantumd128.c: New file: llquantumd128
 	optimized implementation for PowerPC.
@@ -511,7 +511,7 @@
 	* sysdeps/powerpc/dfpu/llquantumd64.c: New file: llquantumd32
 	optimized implementation for PowerPC.
 
-2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (llquantumd32): Add prototype.
 	(__llquantumd32): Likewise.
@@ -531,7 +531,7 @@
 	implementation.
 	* Makefile.in: Add test-llquantum.
 
-2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/quantumd128.c: New file: quantumd128
 	optimized implementation for PowerPC.
@@ -540,7 +540,7 @@
 	* sysdeps/powerpc/dfpu/quantumd64.c: New file: quantumd32
 	optimized implementation for PowerPC.
 
-2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (quantumd32): Add prototype.
 	(__quantumd32): Likewise.
@@ -560,7 +560,7 @@
 	implementation.
 	* Makefile.in: Add test-quantum.
 
-2013-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-10  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* base-math/classify.c (__dfp_classify_sf): Fix code for little
 	endian.
@@ -570,7 +570,7 @@
 	(ieee754_double_shape_type): New union to double conversion to/from
 	unsigned doubleword.
 
-2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/roundevend128.c: New file: roundevend128
 	optimized implementation for PowerPC.
@@ -579,7 +579,7 @@
 	* sysdeps/powerpc/dfpu/roundevend64.c: New file: roundevend32
 	optimized implementation for PowerPC.
 
-2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (roundeven32): Add prototype.
 	(__roundevend32): Likewise.
@@ -597,7 +597,7 @@
 	implementation.
 	* tests/test-rounding.c: Add roundeven tests.
 
-2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/roundd128.c: New file: roundd128 optimized
 	implementation for PowerPC.
@@ -606,7 +606,7 @@
 	* sysdeps/powerpc/dfpu/roundd64.c: New file: roundd32 optimized
 	implementation for PowerPC.
 
-2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/nearbyintd128.c: New file: nearbyintd128
 	optimized implementation for PowerPC.
@@ -615,7 +615,7 @@
 	* sysdeps/powerpc/dfpu/nearbyintd64.c: New file: nearbyintd32
 	optimized implementation for PowerPC.
 
-2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/floord128.c: New file: floord128 optimized
 	implementation for PowerPC.
@@ -624,7 +624,7 @@
 	* sysdeps/powerpc/dfpu/floord64.c: New file: floord32 optimized
 	implementation for PowerPC.
 
-2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/truncd128.c: New file: truncd128 optimized
 	implementation for PowerPC.
@@ -633,7 +633,7 @@
 	* sysdeps/powerpc/dfpu/truncd64.c: New file: truncd32 optimized
 	implementation for PowerPC.
 
-2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/ceild128.c: New file: ceild128 optimized
 	implementation for PowerPC.
@@ -642,7 +642,7 @@
 	* sysdeps/powerpc/dfpu/ceild64.c: New file: ceild32 optimized
 	implementation for PowerPC.
 
-2013-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/scaffold.c (_ICS_P): Use _VC_P_CPP macro instead of _VC_P.
 	(_VC_P): Add isnan test for the inputs.
@@ -651,7 +651,7 @@
 	round, and trunc.
 	* Makefile.in: Add test-rounding.
 
-2013-02-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/acosd32.c: Remove _IEEE_LIBDFP and _LIB_VERSION defines
 	check.
@@ -692,7 +692,7 @@
 	* sysdeps/powerpc/dfpu/logd64.c: Likewise.
 	* sysdeps/powerpc/dfpu/powd64.c: Likewise.
 
-2013-02-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfp/math.h (llogbd32): Add prototype.
 	(__llogbd32): Likewise.
@@ -712,13 +712,13 @@
 	* tests/test-illogb.c: New file: testcases for [i|l]logbd[32|64|128].
 	* Makefile.in: Add test-illogb.
 
-2013-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/isfinited128.c (__isfinited128): Refactor using generic code.
 	* ieee754r/isfinited32.c (__isfinited32): Likewise.
 	* ieee754r/isfinited64.c (__isfinited64): Likewise.
 
-2013-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/isinfd128.c (__isinfd128): Refactor using generic code.
 	* ieee754r/isinfd32.c (__isinfd32): Likewise.
@@ -728,7 +728,7 @@
 	(DEC64_INF_MASK64): New define: _Decimal64 Inf mask.
 	(DEC32_INF_MASK): New define: _Decimal32 Inf mask.
 
-2013-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/isnand128.c (__isnand128): Refactor using generic code.
 	* ieee754r/isnand32.c (__isnand32): Likewise.
@@ -738,14 +738,14 @@
 	(DEC64_NAN_MASK64): New define: _Decimal64 NaN mask.
 	(DEC32_NAN_MASK): New define: _Decimal32 NaN mask.
 
-2013-02-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/test-bfp-conversions.c (sfdd_tests): Fix expected conversion
 	value.
 	(sftd_tests): Likewise.
 	(dftd_tests): Likewise.
 
-2013-02-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-02-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* config/dfp.m4: New file: m4 macro to select the decimal floating
 	point format.
@@ -799,7 +799,7 @@
 	* libdecnumber/dpd/decimal64.c: Likewise.
 	* libdecnumber/dpd/decimal64.h: Likewise.
 
-2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* ieee754r/Makefile: Add issignaling objects.
 	* ieee754r/Versions: Likewise.
@@ -819,20 +819,20 @@
 	* Makefile.in: Add test-issignaling.
 	* dfp/math.h: Add issignaling definitions and polymorphic macro.
 
-2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* configure.ac: Add sysdeps/generic as default sysdep directory.
 	* configure: Regenerated.
 	* sysdeps/generic/math_private.h: New file: helper macros and
 	functions to manipulate IEEE 754 bitwise
 
-2013-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* configure.ac: Incremented the version number to 1.0.9.
 	* configure: Regenerated.
 	* Versions.def: Incremented the version number to 1.0.9.
 
-2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/numdigits.h (left_justify): Fix for LE targets and
 	cleanup VSX code.
@@ -840,12 +840,12 @@
 	multiple file inclusions.
 	(DECIMAL_BIAS_DOUBLE): Likewise.
 
-2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/numdigits.h (setexp): Fix endianess when setting
 	the exponent.
 
-2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* libdecnumber/dpd/decimal128.c (decimal128FromNumber): Fix LE internal
 	data handling.
@@ -855,12 +855,12 @@
 	* libdecnumber/dpd/decimal64.c (decimal64FromNumber): Likewise.
 	(decimal64ToNumber): Likewise.
 
-2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/test-logd.c: Add more coverage with tests for logd32 and logd128.
 	Also fix file indentation.
 
-2013-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-29  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* dfptypeconv.c (___ieee_32_to_host): Optimize to use word or doublewords
 	loads store by using compiler builtins.
@@ -870,18 +870,18 @@
 	(___ieee_64_to_host): Likewise.
 	(___ieee_128_to_host): Likewise.
 
-2013-01-28  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-28  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* tests/test-amort.c (main): Fix compile warnings.
 	* tests/test-param.c (param_test): Likewise.
 	(main): Likewise.
 
-2013-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/numdigits.h (numdigits): Define the decimal bias
 	masks in an endianess neutral way.
 
-2013-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/dfpu/fe_decround.c (__fe_dec_getround): Fix endianess
 	issues when getting the rounding mode.
@@ -890,7 +890,7 @@
 	* include/convert.h (DFP_TEST_EXCEPTIONS): Likewise.
 	(DFP_CLEAR_EXCEPTIONS): Likewise.
 
-2013-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-01-24  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/powerpc/powerpc32/power8/Implies: New file: POWER8 support.
 	* sysdeps/powerpc/powerpc32/power8/fpu/Implies: New file:
