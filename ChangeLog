@@ -1,5 +1,8 @@
 2014-06-02  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* tests/isless.input: New file: isless testcase.
+	* Makefile.in: Add isless testcase.
+
 	* tests/isgreaterequal.input: New file: isgreaterequal testcase.
 	* Makefile.in: Add isgreaterequal testcase.
 
