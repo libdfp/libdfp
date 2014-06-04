@@ -77,8 +77,6 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   /* Routines							      */
   /* ---------------------------------------------------------------- */
 
-#include "decimal128Symbols.h"
-
   #ifdef __cplusplus
   extern "C" {
   #endif

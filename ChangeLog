@@ -1,5 +1,32 @@
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/bid/decimal128Symbols.h: Remove.
+	* libdecnumber/bid/decimal32Symbols.h: Likewise.
+	* libdecnumber/bid/decimal64Symbols.h: Likewise.
+	* libdecnumber/dpd/decimal128Symbols.h: Likewise.
+	* libdecnumber/dpd/decimal32Symbols.h: Likewise.
+	* libdecnumber/dpd/decimal64Symbols.h: Likewise.
+	* libdecnumber/dpd/decimal128.h: Remove decimal128Symbols.h include.
+	* libdecnumber/dpd/decimal64.h: Remove decimal64Symbols.h include.
+	* libdecnumber/dpd/decimal32.h: Remove decimal32Symbols.h include.
+	* libdecnumber/Makefile.in [libdecnumber_a_SOURCES]: Remove
+	dpd/decimal128Symbols.h, dpd/decimal64Symbols.h,
+	dpd/decimal32Symbols.h rule.
+	[decNumber.$(objext)]: Remove decNumberSymbols.h dependency.
+	[decimal32.$(objext)]: Remove decimal32Symbols.h dependency.
+	[decimal64.$(objext)]: Remove decimal64Symbols.h dependency.
+	[decimal128.$(objext)]: Remove decimal128Symbols.h dependency.
+	* include/dfpmacro.h (__DECIMAL_TO_DECNUMBER): Use decimalXXX function
+	intead of __decimalXXX one.
+	(FUNC_CONVERT_FROM_DN): Likewise.
+	(IEEE_DECIMAL_TO_STRING): Likewise.
+	(IEEE_DECIMAL_TO_ENG_STRING): Likewise.
+	* sysdeps/soft-dfp/extendsddd2.c: Likewise.
+	* sysdeps/soft-dfp/fixsdsi.c: Likewise.
+	* sysdeps/soft-dfp/floatsisd.c: Likewise.
+
+2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
 	* printf_dfp.c (__printf_dfp) [decimalwc]: Remove compiler warning by
 	mismatch sign compare.
 

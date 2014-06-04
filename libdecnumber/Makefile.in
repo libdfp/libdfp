@@ -69,10 +69,10 @@ libdecnumber_a_OBJS = decNumber.$(objext) decContext.$(objext) \
 
 libdecnumber_a_SOURCES = decContext.c decContext.h decDPD.h \
 	decNumber.c decNumber.h decNumberLocal.h \
-	decContextSymbols.h decDPDSymbols.h decNumberSymbols.h \
-	dpd/decimal128.c dpd/decimal128.h dpd/decimal128Symbols.h \
-	dpd/decimal32.c dpd/decimal32.h dpd/decimal32Symbols.h \
-	dpd/decimal64.c dpd/decimal64.h dpd/decimal64Symbols.h \
+	decContextSymbols.h decDPDSymbols.h \
+	dpd/decimal128.c dpd/decimal128.h \
+	dpd/decimal32.c dpd/decimal32.h \
+	dpd/decimal64.c dpd/decimal64.h  \
 	bid/decimal128.c bid/decimal128.h \
 	bid/decimal32.c bid/decimal32.h \
 	bid/decimal64.c bid/decimal64.h
@@ -123,21 +123,17 @@ $(srcdir)/config.in: @MAINT@ $(srcdir)/configure
 
 decContext.$(objext): decContext.c decContext.h decNumberLocal.h \
 	decContextSymbols.h
-decNumber.$(objext):  decNumber.c decNumber.h decContext.h decNumberLocal.h \
-	decNumberSymbols.h
+decNumber.$(objext):  decNumber.c decNumber.h decContext.h decNumberLocal.h
 decimal32.$(objext):  $(srcdir)/$(enable_decimal_float)/decimal32.c \
    $(srcdir)/$(enable_decimal_float)/decimal32.h \
-   $(srcdir)/$(enable_decimal_float)/decimal32Symbols.h \
    decNumber.h decContext.h decNumberLocal.h
 	$(COMPILE) $(srcdir)/$(enable_decimal_float)/decimal32.c
 decimal64.$(objext):  $(srcdir)/$(enable_decimal_float)/decimal64.c \
    $(srcdir)/$(enable_decimal_float)/decimal64.h \
-   $(srcdir)/$(enable_decimal_float)/decimal64Symbols.h \
    decNumber.h decContext.h decNumberLocal.h
 	$(COMPILE) $(srcdir)/$(enable_decimal_float)/decimal64.c
 decimal128.$(objext):  $(srcdir)/$(enable_decimal_float)/decimal128.c \
    $(srcdir)/$(enable_decimal_float)/decimal128.h \
-   $(srcdir)/$(enable_decimal_float)/decimal128Symbols.h\
    $(srcdir)/$(enable_decimal_float)/decimal128Local.h\
    decNumber.h decContext.h decNumberLocal.h 
 	$(COMPILE) $(srcdir)/$(enable_decimal_float)/decimal128.c

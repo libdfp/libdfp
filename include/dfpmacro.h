@@ -71,13 +71,13 @@
 do {								\
 	PASTE(decimal,SIZE)	decimal;			\
 	PASTE(___host_to_ieee_,SIZE) ((dec), &decimal);		\
-	PASTE(PASTE(___decimal,SIZE),ToNumber) (&decimal,(dn));	\
+	PASTE(PASTE(decimal,SIZE),ToNumber) (&decimal,(dn));	\
 }while (0)
 
 #define FUNC_CONVERT_FROM_DN(dn,dec,context)				\
 do {									\
 	PASTE(decimal,_DECIMAL_SIZE)	decimal;			\
-	PASTE(PASTE(___decimal,_DECIMAL_SIZE),FromNumber)		\
+	PASTE(PASTE(decimal,_DECIMAL_SIZE),FromNumber)		\
 		(&decimal, (dn), (context));				\
 	PASTE(PASTE(___ieee_,_DECIMAL_SIZE),_to_host) (&decimal, (dec));\
 }while(0)
@@ -86,7 +86,7 @@ do {									\
 do {									\
 	PASTE(decimal, _DECIMAL_SIZE)	decimal;			\
 	PASTE(___host_to_ieee_,_DECIMAL_SIZE)(host, &decimal);		\
-	PASTE(___decimal, PASTE(_DECIMAL_SIZE,ToString))		\
+	PASTE(decimal, PASTE(_DECIMAL_SIZE,ToString))		\
 		(&decimal, str);					\
 }while(0)
 
@@ -94,7 +94,7 @@ do {									\
 do {									\
 	PASTE(decimal, _DECIMAL_SIZE)	decimal;			\
 	PASTE(___host_to_ieee_,_DECIMAL_SIZE)(host, &decimal);		\
-	PASTE(___decimal, PASTE(_DECIMAL_SIZE,ToEngString))		\
+	PASTE(decimal, PASTE(_DECIMAL_SIZE,ToEngString))		\
 		(&decimal, str);						\
 }while(0)
 

@@ -53,22 +53,22 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
   IEEE_SRC_TYPE e;
 
   /* Use a large context to avoid losing precision.  */
-  ___decContextDefault (&context, DEC_INIT_DECIMAL128);
+  decContextDefault (&context, DEC_INIT_DECIMAL128);
   /* Need non-default rounding mode here.  */
   context.round = DEC_ROUND_DOWN;
 
   PASTE(___host_to_ieee_,SRC) ((&a), &e);
-  PASTE(___decimal,PASTE(SRC,ToNumber))(&e, &n1);
-  /* PASTE(___decimal,PASTE(SRC,ToNumber))(&a, &n1); */
+  PASTE(decimal,PASTE(SRC,ToNumber))(&e, &n1);
+  /* PASTE(decimal,PASTE(SRC,ToNumber))(&a, &n1); */
 
   /* Rescale if the exponent is less than zero.  */
-  ___decNumberToIntegralValue (&n2, &n1, &context);
+  decNumberToIntegralValue (&n2, &n1, &context);
   /* Get a value to use for the quantize call.  */
-  ___decNumberFromString (&qval, (char *) "1.0", &context);
+  decNumberFromString (&qval, (char *) "1.0", &context);
   /* Force the exponent to zero.  */
-  ___decNumberQuantize (&n1, &n2, &qval, &context);
+  decNumberQuantize (&n1, &n2, &qval, &context);
   /* Get a string, which at this point will not include an exponent.  */
-  ___decNumberToString (&n1, buf);
+  decNumberToString (&n1, buf);
   /* Ignore the fractional part.  */
   pos = strchr (buf, '.');
   if (pos)

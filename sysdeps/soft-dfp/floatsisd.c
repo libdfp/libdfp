@@ -44,21 +44,21 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
   decContext context;
   IEEE_DEST_TYPE e;
 
-        ___decContextDefault (&context, CONTEXT_INIT);
-        context.round = DEC_ROUND_HALF_EVEN;
+  ___decContextDefault (&context, CONTEXT_INIT);
+  context.round = DEC_ROUND_HALF_EVEN;
 
   /* Use a C library function to get a floating point string.  */
   sprintf (buf, INT_FMT "", CAST_FOR_FMT(a));
   /* Convert from the floating point string to a decimal* type.  */
   /* PASTE(___decimal,PASTE(DEST,FromString))(&f, buf, &context);  */
-  PASTE(___decimal,PASTE(DEST,FromString))(&e, buf, &context);
+  PASTE(decimal,PASTE(DEST,FromString))(&e, buf, &context);
   PASTE(PASTE(___ieee_,DEST),_to_host) (&e, (&f));
 
-        if (context.status != 0) {
-          int dec_flags = context.status & 
-            (DEC_IEEE_854_Inexact|DEC_IEEE_854_Invalid_operation|DEC_IEEE_854_Overflow);
-          DFP_HANDLE_EXCEPTIONS(DFP_IEEE_FLAGS(dec_flags));
-        }
+  if (context.status != 0) {
+    int dec_flags = context.status & 
+    (DEC_IEEE_854_Inexact|DEC_IEEE_854_Invalid_operation|DEC_IEEE_854_Overflow);
+    DFP_HANDLE_EXCEPTIONS(DFP_IEEE_FLAGS(dec_flags));
+  }
 
   return f;
 }

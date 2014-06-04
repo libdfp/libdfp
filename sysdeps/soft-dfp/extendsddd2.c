@@ -47,10 +47,10 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
 	context.round = __dn_getround();
 	
 	PASTE(___host_to_ieee_,SRC) ((&a), &e);
-	PASTE(___decimal,PASTE(SRC,ToNumber))(&e, &d);
+	PASTE(decimal,PASTE(SRC,ToNumber))(&e, &d);
 	/* PASTE(___decimal,PASTE(SRC,ToNumber))(&a, &d); */
 	/* PASTE(___decimal,PASTE(DEST,FromNumber))(&result, &d, &context);  */
-	PASTE(___decimal,PASTE(DEST,FromNumber))(&r, &d, &context);
+	PASTE(decimal,PASTE(DEST,FromNumber))(&r, &d, &context);
 	PASTE(PASTE(___ieee_,DEST),_to_host) (&r, (&result));
 
 	if (context.status != 0) {
