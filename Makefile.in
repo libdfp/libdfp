@@ -361,13 +361,13 @@ $(top_builddir)/libdfp-test-ulps.h: $(ulps-file)
 
 # Explicitly link against the uninstalled GLIBC and the libdfp.so.1 we just
 # built.
-$(libdfp_c_tests): CFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests
+$(libdfp_c_tests): CFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests -Wl,--no-as-needed
 $(libdfp_c_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CC) $(CFLAGS) $(mzarch) $(top_builddir)/$(addsuffix .os,$@) -o $@ $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
-$(libdfp_cxx_tests): CXXFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests
+$(libdfp_cxx_tests): CXXFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests -Wl,--no-as-needed
 $(libdfp_cxx_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CXX) $(CXXFLAGS) $(mzarch) $(top_builddir)/$(addsuffix .os,$@) -o $@ $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp
 

@@ -1,3 +1,9 @@
+2014-06-05  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* Makefile.in [libdfp_c_tests]: Add -Wl,--no-as-needed to avoid tests
+	not linking against libdfp.
+	[libdfp_cxx_tests]: Likewise.
+
 2014-06-04  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* NEWS: Update with version 1.0.10
