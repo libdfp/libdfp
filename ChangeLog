@@ -1,5 +1,8 @@
 2014-06-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* tests/scaffold.c (buf): Increase size to 1024 to avoid potentially
+	buffer overflows in tests.
+
 	* sysdeps/bid/symbol-hacks.h: Add __bid_ne[d|s|t]d2 symbols alias.
 
 2014-06-13  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>

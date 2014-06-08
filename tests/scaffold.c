@@ -153,7 +153,7 @@ static int testnum = 0;
 
 
 #ifdef _WANT_PC
-static char buf[CHAR_MAX];
+static char buf[1024];
 #ifndef _PC
 
 /* _PC == Printf_dfp Compare with Position  */
