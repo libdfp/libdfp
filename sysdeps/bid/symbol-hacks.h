@@ -83,6 +83,10 @@ asm ("__bid_eqdd2 = __GI___bid_eqdd2");
 asm ("__bid_eqsd2 = __GI___bid_eqsd2");
 asm ("__bid_eqtd2 = __GI___bid_eqtd2");
 
+asm ("__bid_nedd2 = __GI___bid_nedd2");
+asm ("__bid_nesd2 = __GI___bid_nesd2");
+asm ("__bid_netd2 = __GI___bid_netd2");
+
 asm ("__bid_letd2 = __GI___bid_letd2");
 asm ("__bid_getd2 = __GI___bid_getd2");
 

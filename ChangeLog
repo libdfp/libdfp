@@ -1,3 +1,7 @@
+2014-06-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/bid/symbol-hacks.h: Add __bid_ne[d|s|t]d2 symbols alias.
+
 2014-06-13  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
 	* sysdeps/bid/bid-private.c (__get_digits_d32): Fix to handle NaN.
