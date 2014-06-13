@@ -1,5 +1,9 @@
 2014-06-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* sysdeps/soft-dfp/dpd/numdigits.h (left_justify): Fix NaN1 mask
+	definition little endian and a compiler warning for memset being
+	called with 0 size.
+
 	* tests/scaffold.c (buf): Increase size to 1024 to avoid potentially
 	buffer overflows in tests.
 

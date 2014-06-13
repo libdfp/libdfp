@@ -214,12 +214,23 @@ FUNC_D (left_justify) (DEC_TYPE x)
   __get_digits_d32(x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 64
 # define decfield dd
-  union ieee754r_Decimal64 mask = { .di = { 0x7c000000, 0x00000001 } };
+  union ieee754r_Decimal64 mask = { .di = {
+#  if __BYTE_ORDER == __LITTLE_ENDIAN
+    0x00000001, 0x7c000000
+#  else
+    0x7c000000, 0x00000001
+#endif
+  } };
   char digits[17+16];
   __get_digits_d64(x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 128
 # define decfield td
-  union ieee754r_Decimal128 mask = { .ti = { 0x7c000000, 0x0, 0x0, 0x00000001 } };
+  union ieee754r_Decimal128 mask = { .ti = {
+#  if __BYTE_ORDER == __LITTLE_ENDIAN
+    0x00000001, 0x0, 0x0, 0x7c000000 } };
+#  else
+    0x7c000000, 0x0, 0x0, 0x00000001 } };
+#endif
   char digits[35+34];
   __get_digits_d128(x, digits, NULL, NULL, NULL, NULL);
 #endif
@@ -236,7 +247,8 @@ FUNC_D (left_justify) (DEC_TYPE x)
          if ((exp - firstdigit) <= -DECIMAL_BIAS && (firstdigit != 0))
            return mask.decfield;
        }
-      memset(digits + firstdigit + len, '0', firstdigit);
+      if (firstdigit)
+	memset (digits + firstdigit + len, '0', firstdigit);
       x = FUNC_D (setdigits) (x, digits + firstdigit);
       x = FUNC_D(setexp) (x, FUNC_D (getexp) (x) - firstdigit);
       x = FUNC_D(setexp) (x, exp - firstdigit);
