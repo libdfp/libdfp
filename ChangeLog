@@ -1,3 +1,12 @@
+2014-06-13  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
+
+	* sysdeps/bid/bid-private.c (__get_digits_d32): Fix to handle NaN.
+	(__get_digits_d64): Likewise.
+	(__get_digits_d128): Likewise.
+	* sysdeps/soft-dfp/bid/numdigits.h (left_justifyd32): Likewise.
+	(left_justifyd64): Likewise.
+	(left_justifyd128): Likewise.
+
 2014-06-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* libdecnumber/decNumber.c (decGetInt): Fix compiler warning where an

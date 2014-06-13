@@ -385,8 +385,17 @@ left_justifyd32 (_Decimal32 x)
       int exp = getexpd32 (x);
       /* pad the significant digits with enough trailing zeroes */
       if ((exp - firstdigit) < -DECIMAL32_Bias)
-	firstdigit = DECIMAL32_Bias + exp;
-      memset (digits + firstdigit + len, '0', firstdigit);
+	{
+	  firstdigit = DECIMAL32_Bias + exp;
+	  /* If the number overflows the data it will become a NaN1. */
+	  if ((exp - firstdigit) <= -DECIMAL32_Bias && firstdigit != 0)
+	    {
+	      union ieee754r_Decimal32 mask = { .si = 0x7c000001 };
+	      return mask.sd;
+	    }
+        }
+      if (firstdigit)
+	memset (digits + firstdigit + len, '0', firstdigit);
       x = setdigitsd32 (x, digits + firstdigit);
       x = setexpd32 (x, exp - firstdigit);
     }
@@ -409,8 +418,18 @@ left_justifyd64 (_Decimal64 x)
       int exp = getexpd64 (x);
       /* pad the significant digits with enough trailing zeroes */
       if ((exp - firstdigit) < -DECIMAL64_Bias)
-	firstdigit = DECIMAL64_Bias + exp;
-      memset (digits + firstdigit + len, '0', firstdigit);
+	{
+	  firstdigit = DECIMAL64_Bias + exp;
+	  /* If the number overflows the data it will become a NaN1. */
+	  if ((exp - firstdigit) <= -DECIMAL64_Bias && firstdigit != 0)
+	    {
+	      union ieee754r_Decimal64 mask = { .di = { 0x00000001,
+                                                        0x7c000000 } };
+	      return mask.dd;
+	    }
+	}
+      if (firstdigit)
+	memset (digits + firstdigit + len, '0', firstdigit);
       x = setdigitsd64 (x, digits + firstdigit);
       x = setexpd64 (x, exp - firstdigit);
     }
@@ -433,8 +452,18 @@ left_justifyd128 (_Decimal128 x)
       int exp = getexpd128 (x);
       /* pad the significant digits with enough trailing zeroes */
       if ((exp - firstdigit) < -DECIMAL128_Bias)
-	firstdigit = DECIMAL128_Bias + exp;
-      memset(digits + firstdigit + len, '0', firstdigit);
+        {
+	  firstdigit = DECIMAL128_Bias + exp;
+	  /* If the number overflows the data it will become a NaN1. */
+	  if ((exp - firstdigit) <= -DECIMAL128_Bias && firstdigit != 0)
+	    {
+	      union ieee754r_Decimal128 mask = { .ti = { 0x00000001, 0x0, 0x0,
+                                                         0x7c000000 } };
+	      return mask.td;
+	    }
+	}
+      if (firstdigit)
+	memset(digits + firstdigit + len, '0', firstdigit);
       x = setdigitsd128 (x, digits + firstdigit);
       x = setexpd128 (x, exp - firstdigit);
     }
