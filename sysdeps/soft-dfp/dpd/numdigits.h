@@ -206,13 +206,20 @@ static inline DEC_TYPE
 FUNC_D (left_justify) (DEC_TYPE x)
 {
   int firstdigit = 0, len;
+#undef decfield
 #if _DECIMAL_SIZE == 32
+# define decfield sd
+  union ieee754r_Decimal32 mask = { .si = 0x7c000001 };
   char digits[8+7];
   __get_digits_d32(x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 64
+# define decfield dd
+  union ieee754r_Decimal64 mask = { .di = { 0x7c000000, 0x00000001 } };
   char digits[17+16];
   __get_digits_d64(x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 128
+# define decfield td
+  union ieee754r_Decimal128 mask = { .ti = { 0x7c000000, 0x0, 0x0, 0x00000001 } };
   char digits[35+34];
   __get_digits_d128(x, digits, NULL, NULL, NULL, NULL);
 #endif
@@ -220,10 +227,19 @@ FUNC_D (left_justify) (DEC_TYPE x)
   len = strlen(digits + firstdigit);
   if (len)
     {
+      int exp = FUNC_D (getexp) (x);
       /* pad the significant digits with enough trailing zeroes */
+      if ((exp - firstdigit) < -DECIMAL_BIAS)
+       {
+         firstdigit = DECIMAL_BIAS + exp;
+         /* If the number overflows the data it will become a NaN. */
+         if ((exp - firstdigit) <= -DECIMAL_BIAS && (firstdigit != 0))
+           return mask.decfield;
+       }
       memset(digits + firstdigit + len, '0', firstdigit);
       x = FUNC_D (setdigits) (x, digits + firstdigit);
       x = FUNC_D(setexp) (x, FUNC_D (getexp) (x) - firstdigit);
+      x = FUNC_D(setexp) (x, exp - firstdigit);
     }
 
   return x;
