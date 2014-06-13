@@ -7585,7 +7585,7 @@ static Int decGetInt(const decNumber *dn) {
   /* tricky code now, to accumulate up to 9.3 digits */
   if (got==0) {theInt=*up; got+=DECDPUN; up++;} /* ensure lsu is there */
 
-  if (ilength<11) {
+  if (ilength<10) {
     Int save=theInt;
     /* collect any remaining unit(s) */
     for (; got<ilength; up++) {

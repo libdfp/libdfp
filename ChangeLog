@@ -1,3 +1,8 @@
+2014-06-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* libdecnumber/decNumber.c (decGetInt): Fix compiler warning where an
+	array is potentially accessed out of the bounds.
+
 2014-06-13  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
 	* sysdeps/soft-dfp/dpd/numdigits.h (left_justifyd32): Fix to handle
