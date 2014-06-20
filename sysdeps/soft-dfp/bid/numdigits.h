@@ -103,54 +103,77 @@ getexpd128 (_Decimal128 x)
 static inline _Decimal32
 setexpd32 (_Decimal32 x, int exp)
 {
-  unsigned int shift;
+  unsigned int shift, large;
   union ieee754r_Decimal32 d;
 
   d.sd = x;
+  large = (d.si & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK;
 
-  if ((d.si & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK)
+  if (large)
     shift = BID_EXP_SHIFT_LARGE32;
   else
     shift = BID_EXP_SHIFT_SMALL32;
 
   d.si &= ~((BID_EXP_MASK32) << shift);
   d.si |= ((exp + DECIMAL32_Bias) & BID_EXP_MASK32) << shift;
+  /* Verify if a small number did not overflow. */
+  if (d.divided.c == 3 && !large)
+    d.si = 0x7c000000;
+
   return d.sd;
 }
 
 static inline _Decimal64
 setexpd64 (_Decimal64 x, int exp)
 {
-  unsigned int shift;
+  unsigned int shift, large;
   union ieee754r_Decimal64 d;
 
   d.dd = x;
+  large = (d.di[1] & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK;
 
-  if ((d.di[1] & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK)
+  if (large)
     shift = BID_EXP_SHIFT_LARGE64;
   else
     shift = BID_EXP_SHIFT_SMALL64;
 
   d.di[1] &= ~((BID_EXP_MASK64) << shift);
   d.di[1] |= ((exp + DECIMAL64_Bias) & BID_EXP_MASK64) << shift;
+  /* Verify if a small number did not overflow. */
+  if (d.divided.c == 3 && !large)
+    {
+      d.di[0] = 0x0;
+      d.di[1] = 0x7c000000;
+    }
+
   return d.dd;
 }
 
 static inline _Decimal128
 setexpd128 (_Decimal128 x, int exp)
 {
-  unsigned int shift;
+  unsigned int shift, large;
   union ieee754r_Decimal128 d;
 
   d.td = x;
+  large = (d.ti[3] & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK;
 
-  if ((d.ti[3] & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK)
+  if (large)
     shift = BID_EXP_SHIFT_LARGE128;
   else
     shift = BID_EXP_SHIFT_SMALL128;
 
   d.ti[3] &= ~((BID_EXP_MASK128) << shift);
   d.ti[3] |= ((exp + DECIMAL128_Bias) & BID_EXP_MASK128) << shift;
+  /* Verify if a small number did not overflow. */
+  if (d.divided.c == 3 && !large)
+    {
+      d.ti[0] = 0x0;
+      d.ti[1] = 0x0;
+      d.ti[2] = 0x0;
+      d.ti[3] = 0x7c000000;
+    }
+
   return d.td;
 }
 
