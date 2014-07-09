@@ -1,5 +1,8 @@
 2014-07-22  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
+	* tests/test-bfp-conversions.c : Change tests to address the precision
+	difference between Intel and PowerPC long double.
+
 	* include/get_digits.h : Added definitions for the number of digits in
 	strings with _Decimal32|63|128.
 	* sysdeps/bid/bid-private.c (__get_digits_d128): Changed to use the

@@ -139,6 +139,35 @@ sddf_type sddf_tests[] =
   {0,0,0,0 }
 };
 
+#if __LDBL_MANT_DIG__ == 64
+/* Test extendsdxf () - Single decimal to long double float conversions,
+ * i.e., _Decimal32 -> long double.  */
+typedef struct{
+  int line;
+  _Decimal32 x;	/* sd 'single decimal' value to convert.  */
+  const char *e;/* string with expected converted value.  */
+} sdxf_type;
+
+sdxf_type sdxf_tests[] =
+{
+  {__LINE__, 12.345DF, "12.345000000000000000242861286636753"},
+  {0,0,0 }
+};
+#
+/* Test extendddxf () - Double decimal to long double float conversions,
+ * i.e., _Decimal64 -> long double.  */
+typedef struct{
+  int line;
+  _Decimal64 x;	/* dd 'double decimal' value to convert.  */
+  const char *e;/* string with expected converted value.  */
+} ddxf_type;
+ddxf_type ddxf_tests[] =
+{
+  {__LINE__, 12.3456789DD, "12.345678899999999999885502699470408"},
+  {0,0,0 }
+};
+
+#elif __LDBL_MANT_DIG__ == 106
 /* Test extendsdtf () - Single decimal to long double float conversions,
  * i.e., _Decimal32 -> long double.  */
 typedef struct{
@@ -168,6 +197,7 @@ ddtf_type ddtf_tests[] =
   {__LINE__, 12.3456789DD, 12.3456789,  "%Le"},
   {0,0,0,0 }
 };
+#endif
 
 int main (void)
 {
@@ -178,8 +208,13 @@ int main (void)
   dftd_type *dftdp;
   tftd_type *tftdp;
   sddf_type *sddfp;
+#if defined(__DECIMAL_BID_FORMAT__) && __LDBL_MANT_DIG__ == 64
+  sdxf_type *sdxfp;
+  ddxf_type *ddxfp;
+#else
   sdtf_type *sdtfp;
   ddtf_type *ddtfp;
+#endif
 
 #include "decode.h"
   char decodebuf[256];
@@ -280,6 +315,38 @@ int main (void)
       _VC_P(__FILE__,sddfp->line, sddfp->e, retval, sddfp->format);
     }
 
+/* Intel long double has a different precision than PowerPC long double.
+ * Intel converts to xf (80 bits) and PowerPC converts to tf (128 bits).*/
+#if defined(__DECIMAL_BID_FORMAT__) && __LDBL_MANT_DIG__ == 64
+#define DECIMAL_PRINTF_BUF_SIZE 65	/* ((DECIMAL128_PMAX + 14) * 2) + 1 */
+  for (sdxfp = sdxf_tests; sdxfp->line; sdxfp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __bid_extendsdxf ().  */
+      long double retval = sdxfp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      char value[DECIMAL_PRINTF_BUF_SIZE];
+      sprintf(value, "%.33Lf", retval);
+      fprintf(stdout, "%Le = (long double) ", retval);
+      fprintf(stdout, "%He; /* _Decimal32 */ in: %s: %d\n", sdxfp->x,__FILE__,__LINE__-4);
+      _SC_P (__FILE__,sdxfp->line, sdxfp->e, &value[0]);
+    }
+
+  for (ddxfp = ddxf_tests; ddxfp->line; ddxfp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __bid_extendddxf ().  */
+      long double retval = ddxfp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      char value[DECIMAL_PRINTF_BUF_SIZE];
+      sprintf(value, "%.33Lf", retval);
+      fprintf(stdout, "%Le = (long double) ", retval);
+      fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", ddxfp->x,__FILE__,__LINE__-4);
+      _SC_P (__FILE__,ddxfp->line, ddxfp->e, &value[0]);
+    }
+#else
   for (sdtfp = sdtf_tests; sdtfp->line; sdtfp++)
     {
       /* This will force the conversion and result in the hidden call to
@@ -303,6 +370,7 @@ int main (void)
       fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", ddtfp->x,__FILE__,__LINE__-4);
       _VC_P(__FILE__,ddtfp->line, ddtfp->e, retval, ddtfp->format);
     }
+#endif
 
   _REPORT();
 
