@@ -58,7 +58,7 @@
  * libdfp.  */
 #ifdef __DECIMAL_BID_FORMAT__
 # include "sysdeps/bid/bid-private.c"
-# ifndef __SIZEOF_INT128__
+# ifndef HAVE_UINT128_T
 /* BID required int 128 bits and for system that does not define the type
    the mini-gmp is required.  */
 #  include "libdecnumber/mini-gmp.c"

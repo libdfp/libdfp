@@ -56,6 +56,21 @@ AC_TYPE_OFF_T
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
 
+# Check for __uint128_t compiler support
+AC_CACHE_CHECK(for __uint128_t, libdecnumber_cv_uint128_t,
+    AC_TRY_COMPILE([ ], [
+      __uint128_t u = 0;
+      return 0;
+    ], [
+      libdecnumber_cv_uint128_t=yes
+    ], [
+      libdecnumber_cv_uint128_t=no
+    ])
+)
+if test x$libdecnumber_cv_uint128_t = xyes; then
+  AC_DEFINE_UNQUOTED([HAVE_UINT128_T], [1], ["Have __uint128_t type"])
+fi
+
 # Checks for library functions.
 AC_HEADER_STDC
 

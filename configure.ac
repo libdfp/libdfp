@@ -144,6 +144,7 @@ esac],
 	    [dfp_backend=$default_backend])
 AC_SUBST(dfp_backend)
 
+
 # This will invoke the sysdeps/$machine/<processor>/ machinery.
 mzarch=
 submachine=
@@ -313,6 +314,23 @@ if test x$have_glibc_2_10_headers != xyes; then
   fi
   exit 1;
 fi
+
+
+# Check for __uint128_t compiler support
+AC_CACHE_CHECK(for __uint128_t, libdfp_cv_uint128_t,
+    AC_TRY_COMPILE([ ], [
+      __uint128_t u = 0;
+      return 0;
+    ], [
+      libdfp_cv_uint128_t=yes
+    ], [
+      libdfp_cv_uint128_t=no
+    ])
+)
+if test x$libdfp_cv_uint128_t = xyes; then
+  AC_DEFINE_UNQUOTED([HAVE_UINT128_T], [1], ["Have __uint128_t type"])
+fi
+
 
 AC_ARG_ENABLE([static],
 	      AS_HELP_STRING([--enable-static],

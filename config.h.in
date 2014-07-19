@@ -29,6 +29,9 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* "Defined if compiler supports __uint128_t. " */
+#undef HAVE_UINT128_T
+
 /* "Defined if BID is the backend designated by configure." */
 #undef _BID_BACKEND
 
