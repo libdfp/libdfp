@@ -26,6 +26,11 @@
 #ifndef _GET_DIGITS_H
 #define _GET_DIGITS_H 1
 
+/* Define the number of digits necessary to store a DEC_TYPE in a string. */
+#define NDIGITS_32   8
+#define NDIGITS_64  17
+#define NDIGITS_128 35
+
 void __get_digits_d32 (_Decimal32, char*, int*, int*, int *, int *);
 void __get_digits_d64 (_Decimal64, char*, int*, int*, int *, int *);
 void __get_digits_d128 (_Decimal128, char*, int*, int*, int *, int *);

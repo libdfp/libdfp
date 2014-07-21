@@ -160,7 +160,7 @@ __get_digits_d128 (_Decimal128 x, char *str, int *exp_p, int *sign_p,
 		   int *nan_p, int *inf_p)
 {
   int i, j, exp = 0;
-  unsigned int digits[35] = { 0 };
+  unsigned int digits[NDIGITS_128] = { 0 };
 
   struct ieee754r_c_field c_f;
   union ieee754r_Decimal128 d;

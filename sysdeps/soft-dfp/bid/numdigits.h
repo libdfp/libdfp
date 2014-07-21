@@ -184,7 +184,7 @@ numdigitsd32 (_Decimal32 x)
 {
   int firstdigit = 0;
   int len = 0;
-  char digits[8] = { 0 };
+  char digits[NDIGITS_32] = { 0 };
 
   __get_digits_d32 (x, digits, NULL, NULL, NULL, NULL);
 
@@ -202,7 +202,7 @@ numdigitsd64 (_Decimal64 x)
 {
   int firstdigit = 0;
   int len = 0;
-  char digits[17] = { 0 };
+  char digits[NDIGITS_64] = { 0 };
 
   __get_digits_d64 (x, digits, NULL, NULL, NULL, NULL);
 
@@ -220,7 +220,7 @@ numdigitsd128 (_Decimal128 x)
 {
   int firstdigit = 0;
   int len = 0;
-  char digits[34] = { 0 };
+  char digits[NDIGITS_128] = { 0 };
 
   __get_digits_d128 (x, digits, NULL, NULL, NULL, NULL);
 
@@ -338,7 +338,7 @@ static inline _Decimal32
 left_justifyd32 (_Decimal32 x)
 {
   int firstdigit = 0, len;
-  char digits[8+7] = { 0 };
+  char digits[NDIGITS_32+NDIGITS_32-1] = { 0 };
 
   __get_digits_d32 (x, digits, NULL, NULL, NULL, NULL);
   while (digits[firstdigit] == '0')
@@ -371,7 +371,7 @@ static inline _Decimal64
 left_justifyd64 (_Decimal64 x)
 {
   int firstdigit = 0, len;
-  char digits[16+17] = { 0 };
+  char digits[NDIGITS_64+NDIGITS_64-1] = { 0 };
 
   __get_digits_d64 (x, digits, NULL, NULL, NULL, NULL);
   while (digits[firstdigit] == '0')
@@ -405,7 +405,7 @@ static inline _Decimal128
 left_justifyd128 (_Decimal128 x)
 {
   int firstdigit = 0, len;
-  char digits[35+34] = { 0 };
+  char digits[NDIGITS_128+NDIGITS_128-1] = { 0 };
 
   __get_digits_d128 (x, digits, NULL, NULL, NULL, NULL);
   while (digits[firstdigit] == '0')

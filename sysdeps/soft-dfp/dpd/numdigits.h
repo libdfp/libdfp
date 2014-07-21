@@ -185,13 +185,13 @@ FUNC_D (numdigits) (DEC_TYPE x)
   int firstdigit = 0;
   int len = 0;
 #if _DECIMAL_SIZE == 32
-  char digits[8];
+  char digits[NDIGITS_32];
   __get_digits_d32(x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 64
-  char digits[17];
+  char digits[NDIGITS_64];
   __get_digits_d64(x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 128
-  char digits[35];
+  char digits[NDIGITS_128];
   __get_digits_d128(x, digits, NULL, NULL, NULL, NULL);
 #endif
   while (digits[firstdigit] == '0') firstdigit++;
@@ -210,7 +210,7 @@ FUNC_D (left_justify) (DEC_TYPE x)
 #if _DECIMAL_SIZE == 32
 # define decfield sd
   union ieee754r_Decimal32 mask = { .si = 0x7c000001 };
-  char digits[8+7];
+  char digits[NDIGITS_32+NDIGITS_32-1];
   __get_digits_d32(x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 64
 # define decfield dd
@@ -221,7 +221,7 @@ FUNC_D (left_justify) (DEC_TYPE x)
     0x7c000000, 0x00000001
 #endif
   } };
-  char digits[17+16];
+  char digits[NDIGITS_64+NDIGITS_64-1];
   __get_digits_d64(x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 128
 # define decfield td
@@ -231,7 +231,7 @@ FUNC_D (left_justify) (DEC_TYPE x)
 #  else
     0x7c000000, 0x0, 0x0, 0x00000001 } };
 #endif
-  char digits[35+34];
+  char digits[NDIGITS_128+NDIGITS_128-1];
   __get_digits_d128(x, digits, NULL, NULL, NULL, NULL);
 #endif
   while (digits[firstdigit] == '0') firstdigit++;
