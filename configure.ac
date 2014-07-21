@@ -332,6 +332,24 @@ if test x$libdfp_cv_uint128_t = xyes; then
 fi
 
 
+# Check for std::decimal compiler support
+AC_CACHE_CHECK(for std::decimal, libdfp_cv_cxxdecimal,
+  [AC_LANG_SAVE
+    AC_LANG_CPLUSPLUS
+    AC_TRY_COMPILE(
+      [ #include <decimal/decimal> ], [
+        std::decimal::decimal64 x = 0.0000006E-90DD;
+      ], [
+        libdfp_cv_cxxdecimal=yes
+      ], [
+        libdfp_cv_cxxdecimal=no
+      ])
+    AC_LANG_RESTORE]
+)
+cxxdecimal="$libdfp_cv_cxxdecimal"
+AC_SUBST(cxxdecimal)
+
+
 AC_ARG_ENABLE([static],
 	      AS_HELP_STRING([--enable-static],
 			     [build static library @<:@default@:>@]),
