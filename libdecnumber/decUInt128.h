@@ -31,14 +31,12 @@ typedef __uint128_t uQuad;
 
 #define uQuadInit(__x)
 #define uQuadInitFromUInt(__ret, __hi, __mh, __ml, __lo)   \
-  ({                                                       \
     __ret = ((__uint128_t)__hi << 96) |                    \
 	    ((__uint128_t)__mh << 64) |                    \
 	    ((__uint128_t)__ml << 32) |                    \
-	     (__uint128_t)__lo;                            \
-  })
+	     (__uint128_t)__lo
 #define uQuadSetUInt(__x, __i)        ((__x) = (__i))
-#define uQuadToUInt(__x, __i)         ({ (__i) = (__x); })
+#define uQuadToUInt(__x, __i)         (__i) = (__x)
 #define uQuadHi(__x)                  (__x >> 96)
 #define uQuadMh(__x)                  ((__x >> 64) & 0xFFFFFFFFU)
 #define uQuadMl(__x)                  ((__x >> 32) & 0xFFFFFFFFU)
@@ -46,10 +44,10 @@ typedef __uint128_t uQuad;
 #define uQuadHi64(__x)                (__x >> 64)
 #define uQuadLo64(__x)                ((__x) & 0xFFFFFFFFFFFFFFFFULL)
 #define uQuadNEUInt(__x, __y)         ( __x != __y)
-#define uQuadAddQuad(__x, __y, __z)   ({ __z = __x + __y; })
-#define uQuadMulUInt(__x, __y, __z)   ({ __z = __x * __y; })
-#define uQuadModUInt(__x, __y, __z)   ({ __z = __x % __y; })
-#define uQuadDivUInt(__x, __y, __z)   ({ __z = __x / __y; })
+#define uQuadAddQuad(__x, __y, __z)   __z = __x + __y
+#define uQuadMulUInt(__x, __y, __z)   __z = __x * __y
+#define uQuadModUInt(__x, __y, __z)   __z = __x % __y
+#define uQuadDivUInt(__x, __y, __z)   __z = __x / __y
 
 #else
 /* Multiprecision int 128 bits based on int 32 limbs.  */
@@ -103,7 +101,7 @@ __dec_extract_doubleword (mpz_t x, int word)
 
 #define uQuadInit(__x)                mpz_init2 (__x, 128)
 #define uQuadSetUInt(__x, __i)        mpz_set_ui (__x, __i)
-#define uQuadToUInt(__x, __i)         ({ __i = mpz_get_ui (__x); })
+#define uQuadToUInt(__x, __i)         __i = mpz_get_ui (__x)
 #define uQuadHi(__x)                  __dec_extract_word (__x, 3)
 #define uQuadMh(__x)                  __dec_extract_word (__x, 2)
 #define uQuadMl(__x)                  __dec_extract_word (__x, 1)
@@ -111,10 +109,10 @@ __dec_extract_doubleword (mpz_t x, int word)
 #define uQuadHi64(__x)                __dec_extract_doubleword (__x, 1)
 #define uQuadLo64(__x)                __dec_extract_doubleword (__x, 0)
 #define uQuadNEUInt(__x, __y)         (mpz_cmp_ui (__x, __y) != 0)
-#define uQuadAddQuad(__x, __y, __z)   ({ mpz_add (__z, __x, __y); })
-#define uQuadMulUInt(__x, __y, __z)   ({ mpz_mul_ui (__z, __x, __y); })
-#define uQuadModUInt(__x, __y, __z)   ({ mpz_mod_ui (__z, __x, __y); })
-#define uQuadDivUInt(__x, __y, __z)   ({ mpz_fdiv_q_ui (__z, __x, __y); })
+#define uQuadAddQuad(__x, __y, __z)   mpz_add (__z, __x, __y)
+#define uQuadMulUInt(__x, __y, __z)   mpz_mul_ui (__z, __x, __y)
+#define uQuadModUInt(__x, __y, __z)   mpz_mod_ui (__z, __x, __y)
+#define uQuadDivUInt(__x, __y, __z)   mpz_fdiv_q_ui (__z, __x, __y)
 #endif
 
 #endif
