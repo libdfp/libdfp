@@ -3775,34 +3775,13 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 if test x$have_glibc_2_10_headers != xyes; then
-  if test x$user_headers = xyes; then
-    { { $as_echo "$as_me:$LINENO: error: Building Libdfp requires a GLIBC printf.h header that
-		  provides the register_printf_type() function which is
-		  available in GLIBC Version 2.10 or later.  The headers you
-		  provided in $glibc_headers do not provide this." >&5
+  { { $as_echo "$as_me:$LINENO: error: Building Libdfp requires a GLIBC printf.h header that
+		provides the register_printf_type() function which is
+		available in GLIBC Version 2.10 or later." >&5
 $as_echo "$as_me: error: Building Libdfp requires a GLIBC printf.h header that
-		  provides the register_printf_type() function which is
-		  available in GLIBC Version 2.10 or later.  The headers you
-		  provided in $glibc_headers do not provide this." >&2;}
+		provides the register_printf_type() function which is
+		available in GLIBC Version 2.10 or later." >&2;}
    { (exit 1); exit 1; }; }
-  else
-    { { $as_echo "$as_me:$LINENO: error: Building Libdfp requires a GLIBC printf.h header that
-		  provides the register_printf_type() function which is
-		  available in GLIBC Version 2.10 or later.  The default
-		  headers that this build is using don't provide this
-		  functionality.  Use --with-glibc-header=<path>/include to
-		  direct configure to a set of GLIBC Version 2.10 or later
-		  headers. " >&5
-$as_echo "$as_me: error: Building Libdfp requires a GLIBC printf.h header that
-		  provides the register_printf_type() function which is
-		  available in GLIBC Version 2.10 or later.  The default
-		  headers that this build is using don't provide this
-		  functionality.  Use --with-glibc-header=<path>/include to
-		  direct configure to a set of GLIBC Version 2.10 or later
-		  headers. " >&2;}
-   { (exit 1); exit 1; }; }
-  fi
-  exit 1;
 fi
 
 

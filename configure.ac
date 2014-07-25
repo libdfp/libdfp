@@ -298,21 +298,9 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "printf.h"]], [[
  ]])],[AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no]); have_glibc_2_10_headers=no])
 
 if test x$have_glibc_2_10_headers != xyes; then
-  if test x$user_headers = xyes; then
-    AC_MSG_ERROR([Building Libdfp requires a GLIBC printf.h header that
-		  provides the register_printf_type() function which is
-		  available in GLIBC Version 2.10 or later.  The headers you
-		  provided in $glibc_headers do not provide this.])
-  else
-    AC_MSG_ERROR([Building Libdfp requires a GLIBC printf.h header that
-		  provides the register_printf_type() function which is
-		  available in GLIBC Version 2.10 or later.  The default
-		  headers that this build is using don't provide this
-		  functionality.  Use --with-glibc-header=<path>/include to
-		  direct configure to a set of GLIBC Version 2.10 or later
-		  headers. ])
-  fi
-  exit 1;
+  AC_MSG_ERROR([Building Libdfp requires a GLIBC printf.h header that
+		provides the register_printf_type() function which is
+		available in GLIBC Version 2.10 or later.])
 fi
 
 

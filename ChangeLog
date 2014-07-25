@@ -1,3 +1,30 @@
+2015-07-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* libdecnumber/decUInt128.h: New file: support header to set compiler
+	support for 128-bits integer or multiprecision support.
+	* sysdeps/bid/bid-uint128.h: New file: likewise.
+	* libdecnumber/mini-gmp.c: New file: multiprecision implementation to
+	enable 128-bits integer operation for toolchain that does not support
+	compiler builtins.
+	* libdecnumber/mini-gmp.h: New file: likewise.
+	* libdecnumber/decNumberLocal.h (Quad): Remove definition.
+	(uQuad): Likewise.
+	* libdecnumber/bid/bid-coeffbits.h (bid_required_bits_128): Use macros
+	on 128-bits operations to select over multiprecision or compiler
+	builtin support.
+	* libdecnumber/bid/decimal128.c (decDigitsToBID): Likewise.
+	(decDigitsFromBID): Likewise.
+	* sysdeps/bid/decode.c (__decoded128): Likewise.
+	* sysdeps/soft-dfp/bid/numdigits.h (get_number128): Remove function.
+	(__bid_required_bits_128): Adjust to use 128-bit wrapper.
+	* tests/test-left_justify.c: Likewise.
+	* libdecnumber/configure.ac: Remove -Wcast-qual flag.
+	* sysdeps/bid/bid-private.c (__get_digits_d64): Fix some compiler
+	warning in 32 bits due wrong variable size.
+
+	* libdecnumber/Makefile.in [libdecnumber_a_SOURCES]: Correct
+	decDebug64 extension.
+
 2014-07-22  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
 	* tests/test-bfp-conversions.c : Change tests to address the precision
