@@ -1,5 +1,10 @@
 2015-07-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* configure.ac (cxxdecimal): Add check for std::decimal compiler
+	support.
+	* Makefile.in (cxxdecimal): Only run C++ tests if std::decimal
+	compiler supports is present.
+
 	* libdecnumber/decUInt128.h (uQuadInitFromUInt): Remove braced-groups
 	to avoid compile wwarnings with -pedantic.
 	(uQuadToUInt): Likewise.
