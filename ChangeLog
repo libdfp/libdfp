@@ -1,5 +1,13 @@
 2015-07-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* libdecnumber/decUInt128.h (uQuadInitFromUInt): Remove braced-groups
+	to avoid compile wwarnings with -pedantic.
+	(uQuadToUInt): Likewise.
+	(uQuadAddQuad): Likewise.
+	(uQuadMulUInt): Likewise.
+	(uQuadModUInt): Likewise.
+	(uQuadDivUInt): Likewise.
+
 	* config.h.in [HAVE_UINT128_T]: Add to define if compiler supports
 	128-bits integer types.
 	* libdecnumber/config.in [HAVE_UINT128_T]: Likewise.
