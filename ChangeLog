@@ -1,5 +1,16 @@
 2015-07-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* config.h.in [HAVE_UINT128_T]: Add to define if compiler supports
+	128-bits integer types.
+	* libdecnumber/config.in [HAVE_UINT128_T]: Likewise.
+	* configure.ac: Add check to find if compiler supports 128-bits
+	integer types.
+	* libdecnumber/configure.ac: Likewise.
+	* libdecnumber/decUInt128.h [__SIZEOF_INT128__]: Use HAVE_UINT128_T
+	instead.
+	* sysdeps/bid/bid-uint128.h [__SIZEOF_INT128__]: Likewise.
+	* tests/test-left_justify.c [__SIZEOF_INT128__]: Likewise.
+
 	* configure.ac [AC_PREREQ]: Remove definition.
 	[user_headers]: Likewise.
 	[glibc_headers]: Likewise.
