@@ -75,6 +75,13 @@
 	digits definition.
 	(left_justify): Likewise.
 
+2014-07-20  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
+
+	* sysdeps/soft-dfp/bid/numdigits.h (setexpd32): Fix to handle overflow
+	in small numbers.
+	(setexpd64): Likewise.
+	(setexpd128): Likewise.
+
 2014-06-13  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* sysdeps/soft-dfp/dpd/numdigits.h (left_justify): Fix NaN1 mask
