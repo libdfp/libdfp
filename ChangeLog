@@ -1,5 +1,10 @@
 2015-07-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* configure.ac [AC_PREREQ]: Remove definition.
+	[user_headers]: Likewise.
+	[glibc_headers]: Likewise.
+	* libdecnumber/configure.ac [AC_PREREQ]: Likewise.
+
 	* libdecnumber/decUInt128.h: New file: support header to set compiler
 	support for 128-bits integer or multiprecision support.
 	* sysdeps/bid/bid-uint128.h: New file: likewise.
