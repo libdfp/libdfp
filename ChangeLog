@@ -1,5 +1,8 @@
 2014-09-02  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
+	* tests/test-bfp-conversions.c : Added more tests and included tests
+	for extendxftd, extenddddf and extendtdtf.
+
 	* base-math/extendsfsd.c : Started to use _Decimal32 in the division
 	of the mantissa to fix extendsfsd in x86.
 
