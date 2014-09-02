@@ -1,5 +1,8 @@
 2014-09-02  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
+	* base-math/extendsfsd.c : Started to use _Decimal32 in the division
+	of the mantissa to fix extendsfsd in x86.
+
 	* base-math/truncdddf.c : Fixed the comparison for overflow.
 
 2014-07-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>

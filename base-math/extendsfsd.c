@@ -53,10 +53,9 @@ CONVERT_WRAPPER(
 	sexp = exp - __FLT_MANT_DIG__;	/* Exponent adjusted for mantissa.  */
 	temp = mant;
 	if (sexp > 0)
-		temp *= DECPOWOF2[sexp];
+		result = temp * DECPOWOF2[sexp];
 	else if (sexp < 0)
-		temp /= DECPOWOF2[-sexp];
-	result = temp;
+		result = temp / DECPOWOF2[-sexp];
 	/* Clear inexact exception raised by DFP arithmetic.  */
 	if (DFP_EXCEPTIONS_ENABLED
 	    && DFP_TEST_EXCEPTIONS (FE_OVERFLOW|FE_UNDERFLOW) == 0)
