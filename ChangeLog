@@ -1,4 +1,8 @@
-2015-07-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+2014-09-02  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
+
+	* base-math/truncdddf.c : Fixed the comparison for overflow.
+
+2014-07-22  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* configure.ac (cxxdecimal): Add check for std::decimal compiler
 	support.
