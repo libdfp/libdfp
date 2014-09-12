@@ -65,20 +65,21 @@ uQuadInitFromUInt (uQuad ret, uInt hi, uInt mh, uInt ml, uInt lo)
   /* mpn_z::_mp_size is total number of mpz_z::_mp_d being used to represent
      the number (for instance, if mpz_z::_mp_size of 2 the number can be
      represented in a 64-bits variable.  */
-  ret->_mp_size = 4;
+  ret->_mp_size = 0;
 
   ret->_mp_d[3] = hi;
-  if (hi == 0)
-    ret->_mp_size--;
   ret->_mp_d[2] = mh;
-  if (mh == 0)
-    ret->_mp_size--;
   ret->_mp_d[1] = ml;
-  if (ml == 0)
-    ret->_mp_size--;
   ret->_mp_d[0] = lo;
-  if (lo == 0)
-    ret->_mp_size--;
+  
+  if (hi != 0)
+    ret->_mp_size = 4;
+  else if (mh != 0)
+    ret->_mp_size = 3;
+  else if (ml != 0)
+    ret->_mp_size = 2;
+  else if (lo != 0)
+    ret->_mp_size = 1;
 }
 
 static inline

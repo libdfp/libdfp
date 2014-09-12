@@ -1,3 +1,9 @@
+2014-09-12  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
+
+	* libdecnumber/decUInt128.h (uQuadInitFromUInt) : Fixed the
+	initialization of int 128 bits for systems that use the mini GMP
+	implementation
+
 2014-09-02  Raphael Moreira Zinsly  <rzinsly@linux.vnet.ibm.com>
 
 	* tests/test-bfp-conversions.c : Added more tests and included tests
