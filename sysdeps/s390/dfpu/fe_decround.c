@@ -1,6 +1,6 @@
 /* Return current rounding direction.
 
-   Copyright (C) 2000, 2008, 2009, 2011 Free Software Foundation, Inc.
+   Copyright (C) 2000-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

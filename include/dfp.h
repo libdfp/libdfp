@@ -1,6 +1,6 @@
 /* Prototypes for libdfp specific functions not defined by any standard.
 
-   Copyright (C) 2008, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2008-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

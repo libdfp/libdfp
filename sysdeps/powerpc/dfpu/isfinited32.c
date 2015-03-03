@@ -1,7 +1,7 @@
 /* Returns non-zero if the _Decimal32 is finite
 
    Copyright (C) 2008, 2010 IBM Corporation.
-   Copyright (C) 2014 Free Software Foundation, Inc.
+   Copyright (C) 2014-2015 Free Software Foundation, Inc.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
               Ryan S. Arnold <rsa@us.ibm.com>

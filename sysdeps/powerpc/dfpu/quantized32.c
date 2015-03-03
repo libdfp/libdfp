@@ -1,7 +1,7 @@
 /* Set the exponent of x to the exp of y, trying to preserve the value of x
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2010-2014 Free Software Foundation, Inc.
+   Copyright (C) 2010-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

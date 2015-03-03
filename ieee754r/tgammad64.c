@@ -1,7 +1,7 @@
 /* Returns the result of integral[0->inf, t**(x-1) * e**(-t) dt]
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

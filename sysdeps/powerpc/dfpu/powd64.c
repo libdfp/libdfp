@@ -1,6 +1,6 @@
 /* Decimal Floating Point 64-bit x^y.  POWER6 PowerPC64 version.
 
-   Copyright (C) 2008 Free Software Foundation, Inc.
+   Copyright (C) 2008-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

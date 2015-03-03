@@ -1,7 +1,7 @@
 /* Prototype for getting the number of digits in a _Decimal[32|64|128]
 
    Copyright (C) 2009 IBM Corporation.
-   Copyright (C) 2009 Free Software Foundation, Inc.
+   Copyright (C) 2009-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

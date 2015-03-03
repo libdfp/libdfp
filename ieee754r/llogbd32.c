@@ -1,6 +1,6 @@
 /* Returns the unbiased exponent of the passed _Decimal32 value as an long int.
 
-   Copyright (C) 2014 Free Software Foundation, Inc.
+   Copyright (C) 2014-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

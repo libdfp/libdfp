@@ -1,6 +1,6 @@
 /* Raise given exceptions (soft-float edition).
 
-   Copyright (C) 2002, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2002-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

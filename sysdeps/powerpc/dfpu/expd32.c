@@ -1,6 +1,6 @@
 /* Decimal Floating Point 32-bit e^x.  POWER6 PowerPC32 version.
 
-   Copyright (C) 2008, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2008-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

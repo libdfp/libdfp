@@ -1,6 +1,6 @@
 /* Unit test the internal left_justifyd[32|64|128]() functions.
 
-   Copyright (C) 2010-2104 Free Software Foundation, Inc.
+   Copyright (C) 2010-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

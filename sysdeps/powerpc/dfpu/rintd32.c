@@ -1,6 +1,6 @@
 /* Decimal Floating Point 32-bit round to integer.  POWER6 PowerPC32 version.
 
-   Copyright (C) 2008 Free Software Foundation, Inc.
+   Copyright (C) 2008-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or

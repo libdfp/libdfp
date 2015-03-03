@@ -1,7 +1,7 @@
 /* Number of digits functions, optimized for S/390 z9-ec.
 
    Copyright (C) 2008 IBM Corporation.
-   Copyright (C) 2009 Free Software Foundation.
+   Copyright (C) 2009-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

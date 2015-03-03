@@ -1,5 +1,7 @@
 /* Decimal Float Rounding Mode accessor function prototype
+ 
    Copyright (C) 2006 IBM Corporation.
+   Copyright (C) 2009-2015 Free Software Foundation, Inc.
 
    Author(s): Ryan S. Arnold <rsa@us.ibm.com>
 

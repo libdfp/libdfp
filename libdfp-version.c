@@ -1,6 +1,6 @@
 /* Entry point for shared-libraries.
 
-   Copyright (C) 20124 Free Software Foundation.
+   Copyright (C) 2012-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

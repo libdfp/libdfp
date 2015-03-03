@@ -1,6 +1,6 @@
 # Autoconf include file defining macros related to compile-time warnings.
 
-# Copyright 2004, 2005, 2007, 2009 Free Software Foundation, Inc.
+# Copyright 2004-2015 Free Software Foundation, Inc.
 
 #This file is part of GCC.
 

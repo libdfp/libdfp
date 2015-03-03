@@ -1,6 +1,6 @@
 /* Decimal Floating Point truncate 128-bit to 32-bit.
 
-   Copyright (C) 2006-2014 Free Software Foundation, Inc.
+   Copyright (C) 2006-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

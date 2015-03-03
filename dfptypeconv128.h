@@ -1,7 +1,7 @@
 /* DFP_C_TYPE to/from IEEE DFP type conversion routine prototypes
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2009 Free Software Foundation.
+   Copyright (C) 2009-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

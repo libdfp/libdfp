@@ -1,6 +1,6 @@
 /* Test strtod[32|64|128] facility.
 
-   Copyright (C) 2010, 2012 Free Software Foundation, Inc.
+   Copyright (C) 2010-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

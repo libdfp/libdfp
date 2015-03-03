@@ -1,7 +1,6 @@
 /* Inline floating-point environment handling functions for powerpc.
 
-   Copyright (C) 1995, 1996, 1997, 1998, 1999, 2006, 2009
-   Free Software Foundation, Inc.
+   Copyright (C) 1995-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

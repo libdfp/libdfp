@@ -1,6 +1,6 @@
 /* Prototypes for decode functions, which output the DPD declets.
 
-   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2009-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 

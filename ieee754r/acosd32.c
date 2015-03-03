@@ -2,7 +2,7 @@
 
    Copyright (C) 2001 Stephen L. Moshier <moshier@na-net.ornl.gov>
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2001, 2007, 2009 Free Software Foundation, Inc.
+   Copyright (C) 2001-2015 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
