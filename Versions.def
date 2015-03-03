@@ -8,5 +8,6 @@ libdfp {
   LIBDFP_1.0.7
   LIBDFP_1.0.8
   LIBDFP_1.0.9
+  LIBDFP_1.0.10
   LIBDFP_PRIVATE
 }

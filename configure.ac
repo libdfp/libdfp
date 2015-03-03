@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([libdfp],[1.0.9],[azanella@br.ibm.com])
+AC_INIT([libdfp],[1.0.10],[azanella@br.ibm.com])
 AC_CONFIG_SRCDIR([printf_dfp.c])
 
 # We don't use Automake so this is necessary.
