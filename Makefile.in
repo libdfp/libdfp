@@ -74,6 +74,9 @@ base_machine = @base_machine@
 machine = @machine@
 # e.g. power6
 submachine = @submachine@
+# e.g. yes/no
+cross_compiling = @cross_compiling@
+
 # e.g. -mcpu=power6
 libdfp_cv_submachine_opt = @libdfp_cv_submachine_opt@
 
@@ -204,10 +207,15 @@ libdfp: @enable_static@ @enable_shared@
 
 static: $(top_builddir)/$(STATIC_LIB)
 
+ifeq ($(cross_compiling),no)
+	shared_reqs += $(top_builddir)/$(SHARED_SONAME_LIB)
+endif
+
 # Create the actual file with the version and the .so linker symlink.  The
 # $(SHARED_SONAME_LIB) symlink is created by ldconfig be reading the `soname'
 # from the SHARED_REALNAME_LIB.
-shared: $(top_builddir)/$(SHARED_REALNAME_LIB) $(top_builddir)/$(SHARED_LINKERNAME_LIB) $(top_builddir)/$(SHARED_SONAME_LIB)
+shared: $(top_builddir)/$(SHARED_REALNAME_LIB) \
+    $(top_builddir)/$(SHARED_LINKERNAME_LIB) $(shared_reqs)
 	@echo +Building shared lib and symlinks: $(notdir $^)
 
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long

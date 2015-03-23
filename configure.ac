@@ -20,8 +20,7 @@ fi
 # code will run.
 AC_CANONICAL_HOST
 config_os=$host_os
-#machine=$host_cpu
-machine=$build_cpu
+machine=$host_cpu
 
 # Only allow a Linux host OS.  We don't support building libdfp on non-Linux
 # systems.
