@@ -8,6 +8,9 @@
    `.type' directive */
 #undef ASM_TYPE_DIRECTIVE_PREFIX
 
+/* "Have __uint128_t type" */
+#undef HAVE_UINT128_T
+
 /* The loader to use in direct DSO call */
 #undef LIBDFP_RUNTIME_LOADER
 
@@ -28,9 +31,6 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* "Defined if compiler supports __uint128_t. " */
-#undef HAVE_UINT128_T
 
 /* "Defined if BID is the backend designated by configure." */
 #undef _BID_BACKEND

@@ -10,12 +10,6 @@ AC_CONFIG_HEADER([config.h])
 # are used by the AC_CANONICAL_* macros to determine platform specific data.
 AC_CONFIG_AUX_DIR([scripts])
 
-# Like GLIBC we want to prevent building/configuration in the source
-# directory.
-if test "`cd $srcdir; /bin/pwd`" = "`/bin/pwd`"; then
-  AC_MSG_ERROR([you must configure in a separate build directory])
-fi
-
 # Defines host_cpu, host_vendor, and host_os variables.  This is where the
 # code will run.
 AC_CANONICAL_HOST

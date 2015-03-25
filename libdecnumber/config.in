@@ -36,6 +36,9 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
+/* "Have __uint128_t type" */
+#undef HAVE_UINT128_T
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
@@ -71,9 +74,6 @@
 
 /* The size of `void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
-#
-/* Defined if compiler supports __uint128_t. */
-#undef HAVE_UINT128_T
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
@@ -95,4 +95,3 @@
 
 /* Define to `long int' if <sys/types.h> does not define. */
 #undef off_t
-#
