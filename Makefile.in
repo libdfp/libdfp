@@ -58,6 +58,7 @@ CPPFLAGS = @CPPFLAGS@
 RANLIB = @RANLIB@
 AWK = @AWK@
 LDCONFIG = /sbin/ldconfig
+LDFLAGS = @LDFLAGS@
 
 INSTALL := install
 
@@ -269,7 +270,7 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 #  calls.
 $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@.
-	$(CC) $(CFLAGS) $(mzarch) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map -Wl,-entry=__libdfp_version $(addsuffix .os,$(libdfp_files)) -o $@ -lm -shared-libgcc
+	$(CC) $(CFLAGS) $(LDFLAGS) $(mzarch) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map -Wl,-entry=__libdfp_version $(addsuffix .os,$(libdfp_files)) -o $@ -lm -shared-libgcc
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
 # script Makefile foo.  Thank you Roland McGrath and Ulrich Drepper!
