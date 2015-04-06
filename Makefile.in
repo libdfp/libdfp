@@ -455,9 +455,10 @@ clean:
 	rm -f $(SHARED_REALNAME_LIB)
 	rm -f Versions.all
 	rm -f Versions.sysdeps
-	rm -f libdfp.map
+	rm -f libdfp.map $(SHARED_LINKERNAME_LIB).jmprel libdfp.symlist
 	rm -f Versions.tmp
 	rm -f sysd-versions
+	rm -f check-abi-libdfp.out check-localplt.out
 	rm -f $(addsuffix .out,$(libdfp_tests))
 	rm -f $(addsuffix .conf,$(libdfp_tests))
 	rm -f $(libdfp_tests)
