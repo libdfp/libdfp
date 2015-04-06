@@ -461,6 +461,7 @@ clean:
 	rm -f $(addsuffix .out,$(libdfp_tests))
 	rm -f $(addsuffix .conf,$(libdfp_tests))
 	rm -f $(libdfp_tests)
+	rm -f libdfp-test-ulps.h
 	rm -f $(top_builddir)/$(dfp_backend)/*.o
 	rm -f $(top_builddir)/$(dfp_backend)/*.a
 
