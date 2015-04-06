@@ -621,6 +621,7 @@ with_dfp
 mzarch
 dfp_backend
 enable_decimal_float
+cross_compiling
 host_os
 host_vendor
 host_cpu
@@ -1979,6 +1980,9 @@ fi
 #if test "$host_cpi" != "$target_cpu"; then
 #  AC_MSG_ERROR([${PACKAGE_NAME} does not yet support cross-compliation.])
 #fi
+
+# Cross-compilation detection variable substitution
+
 
 # PowerPC[64] defaults to DPD encoded DFP.  x86[_64] defaults to BID encoded DFP.
 default_encoding=
