@@ -57,7 +57,6 @@ CXXFLAGS = @CXXFLAGS@ # This may be naive
 CPPFLAGS = @CPPFLAGS@
 RANLIB = @RANLIB@
 AWK = @AWK@
-LDCONFIG = /sbin/ldconfig
 LDFLAGS = @LDFLAGS@
 
 INSTALL := install
@@ -75,8 +74,6 @@ base_machine = @base_machine@
 machine = @machine@
 # e.g. power6
 submachine = @submachine@
-# e.g. yes/no
-cross_compiling = @cross_compiling@
 
 # e.g. -mcpu=power6
 libdfp_cv_submachine_opt = @libdfp_cv_submachine_opt@
@@ -208,15 +205,11 @@ libdfp: @enable_static@ @enable_shared@
 
 static: $(top_builddir)/$(STATIC_LIB)
 
-ifeq ($(cross_compiling),no)
-	shared_reqs += $(top_builddir)/$(SHARED_SONAME_LIB)
-endif
-
-# Create the actual file with the version and the .so linker symlink.  The
-# $(SHARED_SONAME_LIB) symlink is created by ldconfig be reading the `soname'
-# from the SHARED_REALNAME_LIB.
+# Create the actual file with the version, the .so linker symlink and its
+# SONAME symlink.
 shared: $(top_builddir)/$(SHARED_REALNAME_LIB) \
-    $(top_builddir)/$(SHARED_LINKERNAME_LIB) $(shared_reqs)
+    $(top_builddir)/$(SHARED_LINKERNAME_LIB) \
+    $(top_builddir)/$(SHARED_SONAME_LIB)
 	@echo +Building shared lib and symlinks: $(notdir $^)
 
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
@@ -258,11 +251,9 @@ $(top_builddir)/$(SHARED_LINKERNAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 	ln -f -s $< $@
 
 # Create libdfp.so.1 -> libdfp-1.0.1.so symlink.
-# The $(SHARED_SONAME_LIB) -> $(SHARED_REALNAME_LIB) symlink is supposed to
-# be created by ldconfig be reading the `soname' from the SHARED_REALNAME_LIB.
 $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
-	@echo "+Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $<)"
-	$(LDCONFIG) -l $(notdir $<)
+	@echo "+Create the library compat symlink $(notdir $@) -> $(notdir $<)"
+	ln -f -s $(notdir $<) $@
 
 # Build the version tagged 'realname' shared object.  This requires that the
 # $(dfp_name).map file be composed out of individual Versions files.  The
@@ -490,7 +481,7 @@ ifeq ("@enable_static@","static")
 endif
 	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(SHARED_REALNAME_LIB)
 	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_LINKERNAME_LIB)
-	$(LDCONFIG) -l $(inst_libdir)/$(SHARED_REALNAME_LIB)
+	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_SONAME_LIB)
 .PHONY: install
 
 install-headers:
