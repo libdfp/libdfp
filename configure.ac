@@ -137,11 +137,39 @@ esac],
 	    [dfp_backend=$default_backend])
 AC_SUBST(dfp_backend)
 
+# Ensure basic toolchain tools are available.
+AC_PROG_CC
+AC_PROG_CXX
+
+AC_PATH_PROG([OBJDUMP], [objdump])
+AC_ARG_VAR(OBJDUMP,The path to the objdump used by the debug scripts.
+Defaults to that found in $$PATH)
+
+AC_PATH_PROG([READELF], [readelf])
+AC_ARG_VAR(READELF,The path to the readelf used by test scripts.
+Defaults to that found in $$PATH)
+
+AC_PATH_PROG([GDB], [gdb])
+AC_ARG_VAR(GDB,The path to the gdb used by the debug scripts.
+Defaults to that found in $$PATH)
+
+AC_PATH_PROG([LDD], [ldd])
+AC_ARG_VAR(LDD,The path to the ldd used by the debug scripts.
+Defaults to that found in $$PATH)
+
+AC_SUBST(CFLAGS)
+AC_SUBST(CXXFLAGS)
+AC_SUBST(CPPFLAGS)
+AC_SUBST(ASFLAGS)
+
 
 # This will invoke the sysdeps/$machine/<processor>/ machinery.
 mzarch=
 submachine=
 with_dfp=
+# This tells us whether we know we have a hardware decimal floating point
+# unit.  We know this based upon the submachine.
+AC_MSG_CHECKING([for hardware decimal floating point unit])
 AC_ARG_WITH([cpu],
 	    AS_HELP_STRING([--with-cpu=CPU], [select code for CPU variant]),
 	    [dnl
@@ -183,7 +211,22 @@ AC_ARG_WITH([cpu],
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=no ;;
   esac
-],[with_dfp=no])
+],[
+  case "$host_cpu" in
+  powerpc*)
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+      #ifdef _ARCH_PWR6
+      # define SUCCESS 1
+      #else
+      # error "Support for hardware dfp isn't available"
+      #endif
+      ]])], [with_dfp=yes], [with_dfp=no]) ;;
+  *)
+    with_dfp=no ;;
+  esac
+])
+AC_SUBST(with_dfp)
+AC_MSG_RESULT($with_dfp)
 
 if test -n "$submachine"; then
   AC_CACHE_CHECK([for compiler option for CPU variant],
@@ -203,9 +246,6 @@ fi
 # Unless the system is a s390 variant this is most likely empty.
 AC_SUBST(mzarch)
 
-# This tells us whether we know we have a hardware decimal floating point
-# unit.  We know this based upon the submachine.
-AC_SUBST(with_dfp)
 
 AC_ARG_WITH([fp],
 	    AS_HELP_STRING([--with-fp],
@@ -228,30 +268,6 @@ esac
 changequote([,])dnl
 AC_SUBST(base_machine)
 AC_SUBST(machine)
-
-AC_PROG_CC
-AC_PROG_CXX
-
-AC_PATH_PROG([OBJDUMP], [objdump])
-AC_ARG_VAR(OBJDUMP,The path to the objdump used by the debug scripts.
-	   Defaults to that found in $$PATH)
-
-AC_PATH_PROG([READELF], [readelf])
-AC_ARG_VAR(READELF,The path to the readelf used by test scripts.
-	   Defaults to that found in $$PATH)
-
-AC_PATH_PROG([GDB], [gdb])
-AC_ARG_VAR(GDB,The path to the gdb used by the debug scripts.
-	   Defaults to that found in $$PATH)
-
-AC_PATH_PROG([LDD], [ldd])
-AC_ARG_VAR(LDD,The path to the ldd used by the debug scripts.
-	   Defaults to that found in $$PATH)
-
-AC_SUBST(CFLAGS)
-AC_SUBST(CXXFLAGS)
-AC_SUBST(CPPFLAGS)
-AC_SUBST(ASFLAGS)
 
 # Don't even bother configuring if the compiler can't handle Decimal
 # Floating Point data types.

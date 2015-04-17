@@ -599,6 +599,11 @@ enable_shared
 enable_static
 cxxdecimal
 libdfp_cv_cc_with_decimal_float
+machine
+base_machine
+with_fp
+mzarch
+with_dfp
 ASFLAGS
 LDD
 GDB
@@ -614,11 +619,6 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
-machine
-base_machine
-with_fp
-with_dfp
-mzarch
 dfp_backend
 enable_decimal_float
 host_os
@@ -2085,120 +2085,7 @@ fi
 
 
 
-
-# This will invoke the sysdeps/$machine/<processor>/ machinery.
-mzarch=
-submachine=
-with_dfp=
-
-# Check whether --with-cpu was given.
-if test "${with_cpu+set}" = set; then :
-  withval=$with_cpu;   case "$withval" in
-  yes|'') as_fn_error $? "--with-cpu requires an argument" "$LINENO" 5 ;;
-  no)
-    with_dfp=no
-    ;;
-  power8)
-    submachine="$withval"
-    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
-$as_echo "$as_me: configuring for the $submachine processor" >&6;}
-    with_dfp=yes ;;
-  power7)
-    submachine="$withval"
-    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
-$as_echo "$as_me: configuring for the $submachine processor" >&6;}
-    with_dfp=yes ;;
-  power6)
-    submachine="$withval"
-    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
-$as_echo "$as_me: configuring for the $submachine processor" >&6;}
-    with_dfp=yes ;;
-  power6x)
-    submachine="$withval"
-    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
-$as_echo "$as_me: configuring for the $submachine processor" >&6;}
-    with_dfp=yes ;;
-  z9-ec)
-    submachine="$withval"
-    # Warning, -mzarch won't get passed to libecnumber/configure
-    mzarch="-mzarch"
-    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
-$as_echo "$as_me: configuring for the $submachine processor" >&6;}
-    with_dfp=yes ;;
-  z10)
-    submachine="$withval"
-    # Warning, -mzarch won't get passed to libecnumber/configure
-    mzarch="-mzarch"
-    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
-$as_echo "$as_me: configuring for the $submachine processor" >&6;}
-    with_dfp=yes ;;
-  *)
-    submachine="$withval"
-    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
-$as_echo "$as_me: configuring for the $submachine processor" >&6;}
-    with_dfp=no ;;
-  esac
-
-else
-  with_dfp=no
-fi
-
-
-if test -n "$submachine"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for compiler option for CPU variant" >&5
-$as_echo_n "checking for compiler option for CPU variant... " >&6; }
-if ${libdfp_cv_submachine_opt+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-    libdfp_cv_submachine_opt=no
-  for opt in "-march=$submachine" "-mcpu=$submachine"; do
-    if { ac_try='${CC-cc} $opt -xc /dev/null -S -o /dev/null'
-  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; }; then
-      libdfp_cv_submachine_opt="$opt"
-      break
-    fi
-  done
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libdfp_cv_submachine_opt" >&5
-$as_echo "$libdfp_cv_submachine_opt" >&6; }
-  if test "x$libdfp_cv_submachine_opt" = xno; then
-    as_fn_error $? "${CC-cc} does not support $submachine" "$LINENO" 5
-  fi
-fi
-
-# Unless the system is a s390 variant this is most likely empty.
-
-
-# This tells us whether we know we have a hardware decimal floating point
-# unit.  We know this based upon the submachine.
-
-
-
-# Check whether --with-fp was given.
-if test "${with_fp+set}" = set; then :
-  withval=$with_fp; with_fp=$withval
-else
-  with_fp=yes
-fi
-
-
-
-
-case "$machine" in
-	powerpc|powerpcle) base_machine=powerpc machine=powerpc/powerpc32 ;;
-	powerpc64|powerpc64le) base_machine=powerpc machine=powerpc/powerpc64 ;;
-	s390) base_machine=s390 machine=s390/s390-32 ;;
-	s390x) base_machine=s390 machine=s390/s390-64 ;;
-	i[34567]86) base_machine=i386 machine=i386/$machine ;;
-	*) base_machine=$machine ;;
-esac
-
-
-
+# Ensure basic toolchain tools are available.
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -3419,6 +3306,147 @@ fi
 
 
 
+
+# This will invoke the sysdeps/$machine/<processor>/ machinery.
+mzarch=
+submachine=
+with_dfp=
+# This tells us whether we know we have a hardware decimal floating point
+# unit.  We know this based upon the submachine.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for hardware decimal floating point unit" >&5
+$as_echo_n "checking for hardware decimal floating point unit... " >&6; }
+
+
+# Check whether --with-cpu was given.
+if test "${with_cpu+set}" = set; then :
+  withval=$with_cpu;   case "$withval" in
+  yes|'') as_fn_error $? "--with-cpu requires an argument" "$LINENO" 5 ;;
+  no)
+    with_dfp=no
+    ;;
+  power8)
+    submachine="$withval"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
+$as_echo "$as_me: configuring for the $submachine processor" >&6;}
+    with_dfp=yes ;;
+  power7)
+    submachine="$withval"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
+$as_echo "$as_me: configuring for the $submachine processor" >&6;}
+    with_dfp=yes ;;
+  power6)
+    submachine="$withval"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
+$as_echo "$as_me: configuring for the $submachine processor" >&6;}
+    with_dfp=yes ;;
+  power6x)
+    submachine="$withval"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
+$as_echo "$as_me: configuring for the $submachine processor" >&6;}
+    with_dfp=yes ;;
+  z9-ec)
+    submachine="$withval"
+    # Warning, -mzarch won't get passed to libecnumber/configure
+    mzarch="-mzarch"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
+$as_echo "$as_me: configuring for the $submachine processor" >&6;}
+    with_dfp=yes ;;
+  z10)
+    submachine="$withval"
+    # Warning, -mzarch won't get passed to libecnumber/configure
+    mzarch="-mzarch"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
+$as_echo "$as_me: configuring for the $submachine processor" >&6;}
+    with_dfp=yes ;;
+  *)
+    submachine="$withval"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
+$as_echo "$as_me: configuring for the $submachine processor" >&6;}
+    with_dfp=no ;;
+  esac
+
+else
+
+                      case "$host_cpu" in
+  powerpc*)
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+      #ifdef _ARCH_PWR6
+      # define SUCCESS 1
+      #else
+      # error "Support for hardware dfp isn't available"
+      #endif
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  with_dfp=yes
+else
+  with_dfp=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext ;;
+  *)
+    with_dfp=no ;;
+  esac
+
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_dfp" >&5
+$as_echo "$with_dfp" >&6; }
+
+if test -n "$submachine"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for compiler option for CPU variant" >&5
+$as_echo_n "checking for compiler option for CPU variant... " >&6; }
+if ${libdfp_cv_submachine_opt+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+    libdfp_cv_submachine_opt=no
+  for opt in "-march=$submachine" "-mcpu=$submachine"; do
+    if { ac_try='${CC-cc} $opt -xc /dev/null -S -o /dev/null'
+  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; }; then
+      libdfp_cv_submachine_opt="$opt"
+      break
+    fi
+  done
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libdfp_cv_submachine_opt" >&5
+$as_echo "$libdfp_cv_submachine_opt" >&6; }
+  if test "x$libdfp_cv_submachine_opt" = xno; then
+    as_fn_error $? "${CC-cc} does not support $submachine" "$LINENO" 5
+  fi
+fi
+
+# Unless the system is a s390 variant this is most likely empty.
+
+
+
+
+# Check whether --with-fp was given.
+if test "${with_fp+set}" = set; then :
+  withval=$with_fp; with_fp=$withval
+else
+  with_fp=yes
+fi
+
+
+
+
+case "$machine" in
+	powerpc|powerpcle) base_machine=powerpc machine=powerpc/powerpc32 ;;
+	powerpc64|powerpc64le) base_machine=powerpc machine=powerpc/powerpc64 ;;
+	s390) base_machine=s390 machine=s390/s390-32 ;;
+	s390x) base_machine=s390 machine=s390/s390-64 ;;
+	i[34567]86) base_machine=i386 machine=i386/$machine ;;
+	*) base_machine=$machine ;;
+esac
+
+
+
 # Don't even bother configuring if the compiler can't handle Decimal
 # Floating Point data types.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for decimal-float-support in compiler" >&5
@@ -3456,7 +3484,6 @@ fi
 have_glibc_2_10_headers=yes
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for printf-hook register_printf_type() in printf.h to verify GLIBC 2.10" >&5
 $as_echo_n "checking for printf-hook register_printf_type() in printf.h to verify GLIBC 2.10... " >&6; }
-
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include "printf.h"
