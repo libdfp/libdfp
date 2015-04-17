@@ -70,7 +70,7 @@ AC_ARG_ENABLE([decimal-float],
   esac],
   [enable_decimal_float="$default_encoding"])
 AC_SUBST(enable_decimal_float)
-AC_MSG_NOTICE(Using $enable_decimal_float decimal floating point encoding)
+AC_MSG_RESULT($enable_decimal_float)
 
 # Some code may need to have conditional guards based on the backend.  Give the
 # developers _DPD_BACKEND or _BID_BACKEND.  Try avoiding this as much as

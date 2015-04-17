@@ -2021,8 +2021,8 @@ else
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: Using $enable_decimal_float decimal floating point encoding" >&5
-$as_echo "$as_me: Using $enable_decimal_float decimal floating point encoding" >&6;}
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_decimal_float" >&5
+$as_echo "$enable_decimal_float" >&6; }
 
 # Some code may need to have conditional guards based on the backend.  Give the
 # developers _DPD_BACKEND or _BID_BACKEND.  Try avoiding this as much as
