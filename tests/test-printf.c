@@ -754,11 +754,27 @@ d128_type printf_d128s[] =
   {0,0,0,0 }
 };
 
+typedef struct{
+  int line;
+  float f;
+  _Decimal32 d;
+  const char *expect;
+  const char *format;
+} m32_type;
+
+m32_type printf_m32s[] =
+{
+  {__LINE__, 1.0, 123.456E-6DL, "1.000000 0.000123", "%f %Hf"},
+
+  {0,0,0,0,0 }
+};
+
 int main (void)
 {
   d32_type *d32ptr;
   d64_type *d64ptr;
   d128_type *d128ptr;
+  m32_type *m32ptr;
 
   for (d32ptr = printf_d32s; d32ptr->line; d32ptr++)
     {
@@ -773,6 +789,12 @@ int main (void)
   for (d128ptr = printf_d128s; d128ptr->line; d128ptr++)
     {
       _PC_P(__FILE__,d128ptr->line, d128ptr->expect,d128ptr->format,d128ptr->d);
+    }
+
+  for (m32ptr = printf_m32s; m32ptr->line; m32ptr++)
+    {
+      _PC_P(__FILE__, m32ptr->line, m32ptr->expect, m32ptr->format, \
+	    m32ptr->f, m32ptr->d);
     }
 
   _REPORT();
