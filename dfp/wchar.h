@@ -40,7 +40,7 @@ __END_DECLS
 
 #endif /* __STDC_WANT_DEC_FP__  */
 
+#endif /* _DFP_WCHAR_H  */
+
 /* Pick up the system fenv.h.  */
 #include_next <wchar.h>
-
-#endif /* _DFP_WCHAR_H  */
