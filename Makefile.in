@@ -336,7 +336,8 @@ libdfp_c_tests = test-printf test-amort test-decode \
 		 test-isgreater-d32 test-isgreater-d64 test-isgreater-d128 \
 		 test-isgreaterequal-d32 test-isgreaterequal-d64 test-isgreaterequal-d128 \
 		 test-isless-d32 test-isless-d64 test-isless-d128 \
-		 test-islessequal-d32 test-islessequal-d64 test-islessequal-d128
+		 test-islessequal-d32 test-islessequal-d64 \
+		 test-islessequal-d128 test-multi-format
 
 # Only enable C++ tests if compiler supports std::decimal (GCC 4.5+),
 # otherwise just skip them.
