@@ -65,7 +65,7 @@ extern int fe_dec_getround(void) __THROW;
 __END_DECLS
 #endif /* __STDC_WANT_DEC_FP__  */
 
+#endif /* _DFP_FENV_H  */
+
 /* Pick up the system fenv.h.  */
 #include_next <fenv.h>
-
-#endif /* _DFP_FENV_H  */

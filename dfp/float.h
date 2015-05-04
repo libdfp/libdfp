@@ -24,9 +24,9 @@
 
 /* This uses a bit of circular including in order to get std::decimal defined.
  * without error such that we can typedef _Decimal types to decimal types.  */
+#include_next <float.h>
 #ifndef _LIBDFP_FLOAT_H
 #define _LIBDFP_FLOAT_H 1
-#include_next <float.h>
 
 #pragma GCC system_header
 
