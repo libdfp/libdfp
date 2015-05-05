@@ -756,7 +756,7 @@ d128_type printf_d128s[] =
 
 typedef struct{
   int line;
-  long double f;
+  float f;
   _Decimal32 d;
   const char *expect;
   const char *format;
@@ -764,7 +764,7 @@ typedef struct{
 
 m32_type printf_m32s[] =
 {
-  {__LINE__, 1.0, 123.456E-6DL, "1.000000 0.000123", "%Lf %Hf"},
+  {__LINE__, 1.0, 123.456E-6DL, "1.000000 0.000123", "%f %Hf"},
 
   {0,0,0,0,0 }
 };
