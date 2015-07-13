@@ -1,5 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 
+AC_PREREQ([2.69])
 AC_INIT([libdfp],[1.0.10],[azanella@br.ibm.com])
 AC_CONFIG_SRCDIR([printf_dfp.c])
 
@@ -140,6 +141,11 @@ AC_SUBST(dfp_backend)
 # Ensure basic toolchain tools are available.
 AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_AWK
+AC_PROG_RANLIB
 
 AC_PATH_PROG([OBJDUMP], [objdump])
 AC_ARG_VAR(OBJDUMP,The path to the objdump used by the debug scripts.
@@ -596,9 +602,6 @@ if test "x$libc_cv_asm_type_prefix" != xno; then
   AC_DEFINE_UNQUOTED(ASM_TYPE_DIRECTIVE_PREFIX, ${libc_cv_asm_type_prefix}, "Define to the prefix before `object' or `function' in the assembler's `.type' directive, if it has one.")
 fi
 
-AC_PROG_RANLIB # Required for static archives.
-AC_PROG_AWK
-
 # Check which is the loader
 libdfp_cv_loader=`
 cat > conftest.c <<EOF
@@ -619,17 +622,25 @@ rm -f conftest*`
 AC_DEFINE_UNQUOTED([LIBDFP_RUNTIME_LOADER], ["$libdfp_cv_loader"],
                    [The loader to use in direct DSO call])
 
-
-dnl AC_PROG_INSTALL
-
 # Checks for libraries.
 
 # Checks for header files.
-dnl AC_HEADER_STDC
-dnl AC_CHECK_HEADERS([stdlib.h])
+AC_FUNC_ALLOCA
+AC_CHECK_HEADERS([fenv.h float.h langinfo.h limits.h locale.h stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h wchar.h wctype.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
+# Checks for typedefs, structures, and compiler characteristics.
+AC_CHECK_HEADER_STDBOOL
+AC_C_INLINE
+AC_TYPE_INT32_T
+AC_TYPE_SIZE_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
 
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_FUNC_MBRTOWC
+AC_CHECK_FUNCS([floor gettimeofday memset nl_langinfo setlocale sqrt strchr strtol])
 
 # Wherever there's a standalone configure fragment we need to tell the top
 # level configure to recurse into it.

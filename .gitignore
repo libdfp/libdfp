@@ -13,6 +13,7 @@
 *.tmp
 config.h
 config.status
+configure.scan
 Makefile
 libdfp-test-ulps.h
 stamp-h*
