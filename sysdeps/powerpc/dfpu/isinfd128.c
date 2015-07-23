@@ -30,7 +30,7 @@ __isinfd128 (_Decimal128 x)
   int cr0;
 
   asm ("dtstdcq cr0,%1,0x04\n"
-       "mfcr     %0, 0\n"
+       "mfcr     %0, 128\n"
        : "=r" (cr0)
        : "f" (input)
        : "cr0");

@@ -31,7 +31,7 @@ __isnand64 (_Decimal64 x)
   int cr0;
 
   asm ("dtstdc 0,%1,3\n"
-       "mfcr   %0, 0\n"
+       "mfcr   %0, 128\n"
     : "=r" (cr0)
     : "f" (x)
     : "cr0");

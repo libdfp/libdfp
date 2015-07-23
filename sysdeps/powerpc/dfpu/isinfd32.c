@@ -34,7 +34,7 @@ __isinfd32 (_Decimal32 x)
 
   _Decimal64 input = x;
   asm ("dtstdc cr0,%1,0x04\n"
-       "mfcr    %0, 0\n"
+       "mfcr    %0, 128\n"
        : "=r" (cr0)
        : "f" (input)
        : "cr0");

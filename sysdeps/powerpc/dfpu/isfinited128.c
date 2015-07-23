@@ -32,7 +32,7 @@ __isfinited128 (_Decimal128 val)
   int cr0;
 
   asm ("dtstdcq cr0,%1,0x38\n"
-       "mfcr     %0, 0\n"
+       "mfcr     %0, 128\n"
     : "=r" (cr0)
     : "f" (input)
     : "cr0");

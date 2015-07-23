@@ -32,7 +32,7 @@ __isfinited32 (_Decimal32 val)
   _Decimal64 input = val;
 
   asm ("dtstdc cr0,%1,0x38\n"
-       "mfcr   %0, 0\n"
+       "mfcr   %0, 128\n"
     : "=r" (cr0)
     : "f" (input)
     : "cr0");

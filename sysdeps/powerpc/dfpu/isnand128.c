@@ -31,7 +31,7 @@ __isnand128 (_Decimal128 val)
   int cr0;
 
   asm ("dtstdcq cr0,%1,3\n"
-       "mfcr     %0, 0\n"
+       "mfcr     %0, 128\n"
     : "=r" (cr0)
     : "f" (input)
     : "cr0");
