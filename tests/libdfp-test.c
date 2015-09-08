@@ -247,8 +247,7 @@ check_float (const char *test_name, FLOAT computed, FLOAT expected)
       ulps = ULPDIFF (computed, expected);
       print_diff = 1;
       //if ((exceptions & IGNORE_ZERO_INF_SIGN) == 0
-      if (computed == 0.0DF && expected == 0.0DF
-          && signbit(computed) != signbit (expected))
+      if (signbit(computed) != signbit (expected))
         ok = 0;
       //else if (ulps <= 0.5 || (ulps <= max_ulp && !ignore_max_ulp))
       else if ((ulps <= 0.5DF) || (ulps <= max_ulp))
