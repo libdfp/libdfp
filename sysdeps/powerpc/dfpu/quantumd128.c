@@ -25,7 +25,7 @@
 /* Return the quantum 1 * 10^exponent(x)  */
 _Decimal128 __quantumd128 (_Decimal128 x)
 {
-  register _Decimal128 input asm("fr0") = x;
+  register _Decimal128 input asm("fr2") = x;
   _Decimal128 ret;
   _Decimal128 ref = 1e-6176DL;
   asm ("dxexq   %1,%1\n"      /* Extract exponent  */

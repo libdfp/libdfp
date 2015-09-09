@@ -22,7 +22,7 @@
 
 _Decimal128 __rintd128 (_Decimal128 a)
 {
-  register _Decimal128 fr0 asm("fr0") = a;
+  register _Decimal128 fr0 asm("fr2") = a;
   asm (
    "drintxq 0,%0,%0,3\n\t"
    : "=f"(fr0) : "0"(fr0));

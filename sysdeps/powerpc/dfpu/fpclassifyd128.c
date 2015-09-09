@@ -30,7 +30,7 @@ int
 __fpclassifyd128 (_Decimal128 val)
 {
   int result = FP_NAN;
-  register _Decimal128 fr0 asm("fr0") = val;
+  register _Decimal128 fr0 asm("fr2") = val;
 
   /* Check in order, FP_NORMAL, FP_ZERO, FP_SUBNORMAL, FP_INFINITE,
      FP_NAN. The thought is the most likely case exits early. */
