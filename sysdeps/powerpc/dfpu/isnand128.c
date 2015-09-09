@@ -27,7 +27,7 @@
 int
 __isnand128 (_Decimal128 val)
 {
-  register _Decimal128 input asm("fr0") = val;
+  register _Decimal128 input asm("fr2") = val;
   int cr0;
 
   asm ("dtstdcq cr0,%1,3\n"

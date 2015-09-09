@@ -24,7 +24,7 @@
 
 _Decimal128 __nearbyintd128 (_Decimal128 x)
 {
-  register _Decimal128 input asm("fr0") = x;
+  register _Decimal128 input asm("fr2") = x;
   _Decimal128 ret;
   asm ("drintnq 0,%0,%1,3\n"
     : "=f"(ret)

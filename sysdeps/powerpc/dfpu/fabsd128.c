@@ -25,8 +25,10 @@ _Decimal128
 __fabsd128 (_Decimal128 x)
 {
   /* Half part os decimal128 constainst the sign bit at same position as
-     binary64, so the instruction works for both formats.  */
-  register _Decimal128 input asm("fr0") = x;
+     binary64, so the instruction works for both formats.  Also for 
+     _Decimal128 the ABI constraint it to odd/even register so it is
+     passed and returned in fr2/fr2.  */
+  register _Decimal128 input asm("fr2") = x;
   _Decimal128 ret;
   asm ("fabs  %1, %0\n"
        : "=f"(ret)
