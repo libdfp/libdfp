@@ -1,9 +1,9 @@
 Maintainers:
 
-	Base:    Adhemerval Zanella <azanella@br.ibm.com>
-	PowerPC: Adhemerval Zanella <azanella@br.ibm.com>
+	Base:    Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
+	PowerPC: Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
 	s390:    <tbd>
-	x86(64): Adhemerval Zanella <azanella@br.ibm.com>
+	x86(64): Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
 
 Contributors:
 
@@ -14,3 +14,7 @@ Contributors:
 	Carlos Eduardo Seo <cseo@linux.vnet.ibm.com>
 	Luis Machado <luisgpm@br.ibm.com>
 	Adhemerval Zanella <azanella@br.ibm.com>
+	Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
+	Rajalakshmi Srinivasaraghavan <raji@linux.vnet.ibm.com>
+	Paul E. Murphy <murphyp@linux.vnet.ibm.com>
+	Gabriel F. T. Gomes <gftg@linux.vnet.ibm.com>
