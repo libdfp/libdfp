@@ -25,13 +25,12 @@
 /* Return the quantum 1 * 10^exponent(x)  */
 _Decimal128 __quantumd128 (_Decimal128 x)
 {
-  register _Decimal128 input asm("fr0") = x;
   _Decimal128 ret;
   _Decimal128 ref = 1e-6176DL;
   asm ("dxexq   %1,%1\n"      /* Extract exponent  */
        "diexq   %0,%1,%2\n"   /* Sets it to reference value  */
     : "=d"(ret) :
-      "d"(input), "d"(ref));
+      "d"(x), "d"(ref));
   return ret;
 }
 weak_alias (__quantumd128, quantumd128)

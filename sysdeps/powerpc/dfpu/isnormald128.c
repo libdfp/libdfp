@@ -27,13 +27,12 @@
 int
 __isnormald128 (_Decimal128 x)
 {
-  register _Decimal128 input asm("fr0") = x;
   int cr0;
 
   asm ("dtstdcq cr0,%1,0x08\n"
        "mfcr     %0, 128\n"
        : "=r" (cr0)
-       : "f" (input)
+       : "f" (x)
        : "cr0");
 
   return (cr0 & 0x20000000) ? (cr0 & 0x80000000 ? -1 : 1) : 0;

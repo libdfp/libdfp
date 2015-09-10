@@ -24,11 +24,10 @@
 
 _Decimal128 __ceild128 (_Decimal128 x)
 {
-  register _Decimal128 input asm("fr0") = x;
   _Decimal128 ret;
   asm ("drintnq 1,%0,%1,0\n"
     : "=f"(ret)
-    : "f"(input));
+    : "f"(x));
   return ret;
 }
 weak_alias (__ceild128, ceild128)

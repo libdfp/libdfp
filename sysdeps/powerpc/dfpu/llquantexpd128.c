@@ -28,12 +28,11 @@ long long int
 __llquantexpd128 (_Decimal128 x)
 {
   long long int ret;
-  register _Decimal128 input asm("fr0") = x;
   _Decimal128 r;
   asm ("dxexq   %0,%1\n"
        "dcffixq %0,%0\n"
     : "=f"(r) :
-      "f"(input));
+      "f"(x));
   ret = (long long int)r;
   if ((ret == -1) ||  /* Infinity  */
       (ret == -2) ||  /* NaN  */

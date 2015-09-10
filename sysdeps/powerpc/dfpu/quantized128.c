@@ -25,12 +25,11 @@
 _Decimal128
 __quantized128(_Decimal128 x, _Decimal128 y)
 {
-
   _Decimal128 result;
 
   asm ("dquaq %0,%1,%2,3\n\t"
 	: "=f" (result)
-        : "f" ((_Decimal128) y), "f" ((_Decimal128) x));
+        : "f" (y), "f" (x));
   return result;
 
 }

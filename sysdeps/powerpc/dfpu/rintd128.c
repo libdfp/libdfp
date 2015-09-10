@@ -22,11 +22,11 @@
 
 _Decimal128 __rintd128 (_Decimal128 a)
 {
-  register _Decimal128 fr0 asm("fr0") = a;
+  _Decimal128 ret;
   asm (
    "drintxq 0,%0,%0,3\n\t"
-   : "=f"(fr0) : "0"(fr0));
+   : "=f"(ret) : "f"(a));
 
-  return fr0;
+  return ret;
 }
 weak_alias(__rintd128, rintd128)

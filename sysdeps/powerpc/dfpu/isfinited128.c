@@ -28,13 +28,12 @@
 int
 __isfinited128 (_Decimal128 val)
 {
-  register _Decimal128 input asm("fr0") = val;
   int cr0;
 
   asm ("dtstdcq cr0,%1,0x38\n"
        "mfcr     %0, 128\n"
     : "=r" (cr0)
-    : "f" (input)
+    : "f" (val)
     : "cr0");
 
   return (cr0 & 0x20000000) ? 1 : 0;
