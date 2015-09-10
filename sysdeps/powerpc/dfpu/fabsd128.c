@@ -26,11 +26,10 @@ __fabsd128 (_Decimal128 x)
 {
   /* Half part os decimal128 constainst the sign bit at same position as
      binary64, so the instruction works for both formats.  */
-  register _Decimal128 input asm("fr0") = x;
   _Decimal128 ret;
-  asm ("fabs  %1, %0\n"
+  asm ("fabs  %0, %1\n"
        : "=f"(ret)
-       : "f"(input));
+       : "f"(x));
   return ret;
 }
 hidden_def (__fabsd128)
