@@ -220,13 +220,29 @@ AC_ARG_WITH([cpu],
 ],[
   case "$host_cpu" in
   powerpc*)
+    # Test successively newer processors and select the
+    # best implementation.
     AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-      #ifdef _ARCH_PWR6
-      # define SUCCESS 1
-      #else
+      #ifndef _ARCH_PWR6
       # error "Support for hardware dfp isn't available"
       #endif
-      ]])], [with_dfp=yes], [with_dfp=no]) ;;
+      ]])], [with_dfp=yes; submachine=power6], [with_dfp=no])
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+      #ifndef _ARCH_PWR6X
+      # error "POWER6X not supported"
+      #endif
+      ]])], [submachine=power6x], [])
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+      #ifndef _ARCH_PWR7
+      # error "POWER7 not supported"
+      #endif
+      ]])], [submachine=power7], [])
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+      #ifndef _ARCH_PWR8
+      # error "POWER8 not supported"
+      #endif
+      ]])], [submachine=power8], [])
+    ;;
   *)
     with_dfp=no ;;
   esac

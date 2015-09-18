@@ -4184,22 +4184,59 @@ else
 
   case "$host_cpu" in
   powerpc*)
+    # Test successively newer processors and select the
+    # best implementation.
     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-      #ifdef _ARCH_PWR6
-      # define SUCCESS 1
-      #else
+      #ifndef _ARCH_PWR6
       # error "Support for hardware dfp isn't available"
       #endif
 
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
-  with_dfp=yes
+  with_dfp=yes; submachine=power6
 else
   with_dfp=no
 fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext ;;
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+      #ifndef _ARCH_PWR6X
+      # error "POWER6X not supported"
+      #endif
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  submachine=power6x
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+      #ifndef _ARCH_PWR7
+      # error "POWER7 not supported"
+      #endif
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  submachine=power7
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+      #ifndef _ARCH_PWR8
+      # error "POWER8 not supported"
+      #endif
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  submachine=power8
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    ;;
   *)
     with_dfp=no ;;
   esac
