@@ -177,7 +177,17 @@ with_dfp=
 # unit.  We know this based upon the submachine.
 AC_MSG_CHECKING([for hardware decimal floating point unit])
 AC_ARG_WITH([cpu],
-	    AS_HELP_STRING([--with-cpu=CPU], [select code for CPU variant]),
+	    AS_HELP_STRING([--with-cpu=CPU],
+			   [Select the CPU to run on. Accepted values
+			    are similar to those accepted by gcc's -mcpu
+			    option. power6 and newer, and some z processors
+			    are supported. no is also accepted to indicate
+			    software only dfp should be used.
+
+			    If this option is not specified, configure will
+			    attempt to guess the latest powerpc processor
+			    supported by the toolchain, or use the soft
+			    dfp implementation.]),
 	    [dnl
   case "$withval" in
   yes|'') AC_MSG_ERROR([--with-cpu requires an argument]) ;;
@@ -220,13 +230,29 @@ AC_ARG_WITH([cpu],
 ],[
   case "$host_cpu" in
   powerpc*)
+    # Test successively newer processors and select the
+    # best implementation.
     AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-      #ifdef _ARCH_PWR6
-      # define SUCCESS 1
-      #else
+      #ifndef _ARCH_PWR6
       # error "Support for hardware dfp isn't available"
       #endif
-      ]])], [with_dfp=yes], [with_dfp=no]) ;;
+      ]])], [with_dfp=yes; submachine=power6], [with_dfp=no])
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+      #ifndef _ARCH_PWR6X
+      # error "POWER6X not supported"
+      #endif
+      ]])], [submachine=power6x], [])
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+      #ifndef _ARCH_PWR7
+      # error "POWER7 not supported"
+      #endif
+      ]])], [submachine=power7], [])
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+      #ifndef _ARCH_PWR8
+      # error "POWER8 not supported"
+      #endif
+      ]])], [submachine=power8], [])
+    ;;
   *)
     with_dfp=no ;;
   esac

@@ -1373,7 +1373,14 @@ Optional Packages:
                           BID libdecnumber will also work with the BID Decimal
                           Floating Point types encoding. libbid will NOT work
                           with the DPD Decimal Floating Point types encoding.
-  --with-cpu=CPU          select code for CPU variant
+  --with-cpu=CPU          Select the CPU to run on. Accepted values are
+                          similar to those accepted by gcc's -mcpu option.
+                          power6 and newer, and some z processors are
+                          supported. no is also accepted to indicate software
+                          only dfp should be used. If this option is not
+                          specified, configure will attempt to guess the
+                          latest powerpc processor supported by the toolchain,
+                          or use the soft dfp implementation.
   --with-fp               if using floating point hardware [default=yes]
 
 Some influential environment variables:
@@ -4184,22 +4191,59 @@ else
 
   case "$host_cpu" in
   powerpc*)
+    # Test successively newer processors and select the
+    # best implementation.
     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-      #ifdef _ARCH_PWR6
-      # define SUCCESS 1
-      #else
+      #ifndef _ARCH_PWR6
       # error "Support for hardware dfp isn't available"
       #endif
 
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
-  with_dfp=yes
+  with_dfp=yes; submachine=power6
 else
   with_dfp=no
 fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext ;;
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+      #ifndef _ARCH_PWR6X
+      # error "POWER6X not supported"
+      #endif
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  submachine=power6x
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+      #ifndef _ARCH_PWR7
+      # error "POWER7 not supported"
+      #endif
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  submachine=power7
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+      #ifndef _ARCH_PWR8
+      # error "POWER8 not supported"
+      #endif
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  submachine=power8
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    ;;
   *)
     with_dfp=no ;;
   esac
