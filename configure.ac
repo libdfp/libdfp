@@ -220,17 +220,48 @@ AC_ARG_WITH([cpu],
 ],[
   case "$host_cpu" in
   powerpc*)
+    # Test successively newer processors and select the
+    # best implementation.
     AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-      #ifdef _ARCH_PWR6
-      # define SUCCESS 1
-      #else
+      #ifndef _ARCH_PWR6
       # error "Support for hardware dfp isn't available"
       #endif
-      ]])], [with_dfp=yes], [with_dfp=no]) ;;
+      ]])], [with_dfp=yes; submachine=power6], [with_dfp=no])
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+      #ifndef _ARCH_PWR6X
+      # error "POWER6X not supported"
+      #endif
+      ]])], [submachine=power6x], [])
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+      #ifndef _ARCH_PWR7
+      # error "POWER7 not supported"
+      #endif
+      ]])], [submachine=power7], [])
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+      #ifndef _ARCH_PWR8
+      # error "POWER8 not supported"
+      #endif
+      ]])], [submachine=power8], [])
+    ;;
   *)
     with_dfp=no ;;
   esac
 ])
+
+# If building for a soft dfp, we must explicitly
+# prevent the compiler from emitting hardware
+# instructions. Otherwise, unexpected behavior
+# will occur.
+#
+# Test to the toolchain to see if it supports the
+# option to disable hard dfp, and if so, disable it.
+# This should work for s390 and power.
+if test "$with_dfp" == "no"; then
+  cflags_tmp="$CFLAGS"
+  CFLAGS="$CFLAGS -mno-hard-dfp"
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[]])],[],[CFLAGS="$cflags_tmp"])
+fi
+
 AC_SUBST(with_dfp)
 AC_MSG_RESULT($with_dfp)
 
