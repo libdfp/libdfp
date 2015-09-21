@@ -862,7 +862,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
     exponent -= incr;
   }
 
-  if (int_no + exponent > MAX_10_EXP + 1)
+  if (int_no + exponent > MAX_10_EXP)
     {
       __set_errno (ERANGE);
       freelocale(C_locale);
