@@ -4251,6 +4251,30 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
 
+# If building with soft dfp, we must explicitly
+# prevent the compiler from emitting hardware
+# instructions. Otherwise, unexpected behavior
+# will occur.
+#
+# Test the toolchain to see if it supports the
+# option to disable hard dfp, and if so, disable it.
+# This should work for s390 and power.
+if test "$with_dfp" == "no"; then
+  cflags_tmp="$CFLAGS"
+  CFLAGS="$CFLAGS -mno-hard-dfp"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+else
+  CFLAGS="$cflags_tmp"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_dfp" >&5
 $as_echo "$with_dfp" >&6; }
 
