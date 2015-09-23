@@ -86,7 +86,7 @@
 
 #define PRINTF_EXPR CHOOSE ("DDe", "De", "He")
 #define PRINTF_NEXPR CHOOSE ("DDf", "Df", "Hf")
-#define PRINTF_XEXPR CHOOSE (".34DDe", ".16De", ".8He")
+#define PRINTF_XEXPR CHOOSE (".33DDe", ".15De", ".7He")
 
 /* TODO: Add set parse options.  */
 #define ulps_file_name "ULPs"   /* Name of the ULPs file.  */
