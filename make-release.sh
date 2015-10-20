@@ -46,17 +46,8 @@ touch configure.ac aclocal.m4 configure Makefile.am Makefile.in
 mkdir _build
 cd _build
 
-# TODO - This is a bug in the library which needs fixed
-#
-# There is a bug when building with the default soft-dfp
-# option. This causes "make check" to fail on pretty much
-# all targets in different ways.
-#
-# For better or worse, we'll make the CPU assumption below:
-CONFIG_FLAGS="--with-cpu=power8"
-
 echo "Running configure"
-if ! ../configure ${CONFIG_FLAGS} >> ${logfile} 2>&1 ; then
+if ! ../configure >> ${logfile} 2>&1 ; then
 	echo "Failed to configure"
 	exit 1
 fi
