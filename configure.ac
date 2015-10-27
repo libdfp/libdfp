@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([libdfp],[1.0.11],[tulioqm@br.ibm.com])
+AC_INIT([libdfp],[1.0.12],[tulioqm@br.ibm.com])
 AC_CONFIG_SRCDIR([printf_dfp.c])
 
 # We don't use Automake so this is necessary.
