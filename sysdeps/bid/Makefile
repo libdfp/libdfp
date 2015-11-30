@@ -19,3 +19,5 @@
 # Please see libdfp/COPYING.txt for more information.  */
 
 libdfp_files += bid-private binpowof10 decpowof2
+
+libdfp_ti_files += ticonstants

@@ -127,6 +127,22 @@ hidden_proto_enc (fixunsdddi)
 unsigned long long __BACKEND_(fixunstddi) (_Decimal128);
 hidden_proto_enc (fixunstddi)
 
+#ifdef HAVE_UINT128_T /* Only available for compilers with TI moode */
+unsigned __int128 __BACKEND_(fixunssdti) (_Decimal32);
+hidden_proto_enc (fixunssdti)
+unsigned __int128 __BACKEND_(fixunsddti) (_Decimal64);
+hidden_proto_enc (fixunsddti)
+unsigned __int128 __BACKEND_(fixunstdti) (_Decimal128);
+hidden_proto_enc (fixunstdti)
+
+__int128 __BACKEND_(fixsdti) (_Decimal32);
+hidden_proto_enc (fixsdti)
+__int128 __BACKEND_(fixddti) (_Decimal64);
+hidden_proto_enc (fixddti)
+__int128 __BACKEND_(fixtdti) (_Decimal128);
+hidden_proto_enc (fixtdti)
+#endif
+
 _Decimal64 __BACKEND_(floatdidd) (long long);
 hidden_proto_enc (floatdidd)
 _Decimal32 __BACKEND_(floatdisd) (long long);
@@ -154,6 +170,22 @@ _Decimal32 __BACKEND_(floatunssisd) (unsigned int);
 hidden_proto_enc (floatunssisd)
 _Decimal128 __BACKEND_(floatunssitd) (unsigned int);
 hidden_proto_enc (floatunssitd)
+
+#ifdef HAVE_UINT128_T /* Only available for compilers with TI moode */
+_Decimal64 __BACKEND_(floatunstidd) (unsigned __int128);
+hidden_proto_enc (floatunstidd)
+_Decimal32 __BACKEND_(floatunstisd) (unsigned __int128);
+hidden_proto_enc (floatunstisd)
+_Decimal128 __BACKEND_(floatunstitd) (unsigned __int128);
+hidden_proto_enc (floatunstitd)
+
+_Decimal128 __BACKEND_(floattisd) (__int128);
+hidden_proto_enc (floattisd)
+_Decimal128 __BACKEND_(floattidd) (__int128);
+hidden_proto_enc (floattidd)
+_Decimal128 __BACKEND_(floattitd) (__int128);
+hidden_proto_enc (floattitd)
+#endif
 
 int __BACKEND_(gesd2) (_Decimal32,_Decimal32);
 hidden_proto_enc (gesd2)

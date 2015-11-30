@@ -637,6 +637,7 @@ picflag
 enable_shared
 enable_static
 cxxdecimal
+dfp_ti_abi
 libdfp_cv_cc_with_decimal_float
 machine
 base_machine
@@ -4443,6 +4444,9 @@ _ACEOF
 
 fi
 
+# Enable TImode abi if compiler supports 128b integer.
+dfp_ti_abi=$libdfp_cv_uint128_t
+
 
 # Check for std::decimal compiler support
 
@@ -5596,6 +5600,17 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 ;;
   esac
+
+ac_fn_c_find_intX_t "$LINENO" "64" "ac_cv_c_int64_t"
+case $ac_cv_c_int64_t in #(
+  no|yes) ;; #(
+  *)
+
+cat >>confdefs.h <<_ACEOF
+#define int64_t $ac_cv_c_int64_t
+_ACEOF
+;;
+esac
 
 
 # Checks for library functions.

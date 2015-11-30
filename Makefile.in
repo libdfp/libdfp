@@ -86,6 +86,16 @@ cflags-cpu = $(libdfp_cv_submachine_opt)
 asflags-cpu = $(libdfp_cv_submachine_opt)
 endif
 
+# Only try building TImode files if it is support.
+dfp_ti_abi = @dfp_ti_abi@
+
+# Need to check a different PLT file for int128
+ifeq ($(dfp_ti_abi),yes)
+dfp_abi_extn =
+else
+dfp_abi_extn = -no-ti
+endif
+
 picflag = @picflag@
 
 # Yes this is a bit of a hack, but gcc/libdecnumber/Makefile won't allow
@@ -182,6 +192,12 @@ libdfp_files := dfptypeconv mapround decode fmt_d32 fmt_d64 fmt_d128 fe_decround
 # they can add files to the libdfp_files list.
 include $(foreach dir,$(makefile_dirs), $(dir)/Makefile )
 
+# Build the TImode files if we support them.
+# Note that this does change the ABI.
+ifeq ($(dfp_ti_abi),yes)
+libdfp_files += $(libdfp_ti_files)
+endif
+
 # Libdfp has a dependency on the backend so build that first.
 all: first $(dfp_backend)/$(dfp_backend_lib) libdfp
 
@@ -220,16 +236,16 @@ CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 
 # Build the static object files.
 .c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 .S.o:
-	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 # Build the shared object files.
 .c.os:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 .S.os:
-	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 # C++ compatibility test cases.
 .cpp.os:
@@ -338,6 +354,10 @@ libdfp_c_tests = test-printf test-amort test-decode \
 		 test-isless-d32 test-isless-d64 test-isless-d128 \
 		 test-islessequal-d32 test-islessequal-d64 test-islessequal-d128
 
+ifeq ($(dfp_ti_abi),yes)
+libdfp_c_tests += test-fix test-float
+endif
+
 # Only enable C++ tests if compiler supports std::decimal (GCC 4.5+),
 # otherwise just skip them.
 ifeq ($(cxxdecimal), yes)
@@ -400,7 +420,7 @@ vpath %.abilist $(+sysdeps_dirs)
 check-abi: check-abi-libdfp.out
 	$(warning $@)
 
-check-abi-libdfp.out: libdfp.abilist libdfp.symlist
+check-abi-libdfp.out: libdfp$(dfp_abi_extn).abilist libdfp.symlist
 	diff -p -U 0 $(filter %.abilist,$^) $(filter %.symlist,$^) > $@
 
 %.symlist: $(top_srcdir)/scripts/abilist.awk %.dynsym

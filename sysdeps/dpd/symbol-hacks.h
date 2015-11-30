@@ -31,6 +31,14 @@ asm ("__dpd_floatsitd  = __GI___dpd_floatsitd");
 asm ("__dpd_floatdidd  = __GI___dpd_floatdidd");
 asm ("__dpd_floatsisd  = __GI___dpd_floatsisd");
 
+asm ("__dpd_floatunsditd  = __GI___dpd_floatditd");
+
+#ifdef HAVE_UINT128_T
+asm ("__dpd_floattitd  = __GI___dpd_floattitd");
+
+asm ("__dpd_floatunstitd  = __GI___dpd_floatunstitd");
+#endif
+
 asm ("__dpd_trunctddd2 = __GI___dpd_trunctddd2");
 asm ("__dpd_truncddsd2 = __GI___dpd_truncddsd2");
 
@@ -52,6 +60,17 @@ asm ("__dpd_fixdddi = __GI___dpd_fixdddi");
 asm ("__dpd_fixtdsi = __GI___dpd_fixtdsi");
 asm ("__dpd_fixsddi = __GI___dpd_fixsddi");
 asm ("__dpd_fixtddi = __GI___dpd_fixtddi");
+
+asm ("__dpd_fixunssddi = __GI___dpd_fixunssddi");
+asm ("__dpd_fixunsdddi = __GI___dpd_fixunsdddi");
+asm ("__dpd_fixunstddi = __GI___dpd_fixunstddi");
+
+#ifdef HAVE_UINT128_T
+asm ("__dpd_fixtdti = __GI___dpd_fixtdti");
+
+asm ("__dpd_fixunstdti = __GI___dpd_fixunstdti");
+#endif
+
 
 asm ("__dpd_addsd3 = __GI___dpd_addsd3");
 asm ("__dpd_addtd3 = __GI___dpd_addtd3");

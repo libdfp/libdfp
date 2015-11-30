@@ -306,14 +306,6 @@ LIBDFP_1.0.0
  wcstod64 F
 LIBDFP_1.0.13
  LIBDFP_1.0.13 A
- __dpd_fixddti F
- __dpd_fixsdti F
- __dpd_fixtdti F
- __dpd_fixunsddti F
- __dpd_fixunssdti F
- __dpd_fixunstdti F
- __dpd_floattitd F
- __dpd_floatunstitd F
 LIBDFP_1.0.2
  LIBDFP_1.0.2 A
  __isinfd128 F

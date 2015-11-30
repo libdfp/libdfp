@@ -6,8 +6,7 @@
 # redistribute it and/or modify it under the terms of the GNU Lesser
 # General Public License version 2.1.
 #
-# The Decimal Floating Point C Library is distributed in the hope that
-# it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+# The Decimal Floating Point C Library is distributed in the hope that # it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
 # the GNU Lesser General Public License version 2.1 for more details.
 #
@@ -46,3 +45,7 @@ libdfp_files += addsd3 adddd3 addtd3 \
 		trunctdsf trunctddf trunctdtf \
 		unordsd2 unorddd2 unordtd2 \
 		classify
+
+libdfp_ti_files += fixsdti fixddti \
+		   fixunssdti fixunsddti \
+		   floattitd floatunstitd

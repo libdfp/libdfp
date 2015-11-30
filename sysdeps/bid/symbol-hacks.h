@@ -32,6 +32,11 @@ asm ("__bid_floatsitd  = __GI___bid_floatsitd");
 asm ("__bid_floatdidd  = __GI___bid_floatdidd");
 asm ("__bid_floatsisd  = __GI___bid_floatsisd");
 
+#if HAVE_UINT128_T
+asm ("__bid_floattitd  = __GI___bid_floattitd");
+asm ("__bid_floatunsditd  = __GI___bid_floatunsditd");
+#endif
+
 asm ("__bid_truncdddf  = __GI___bid_truncdddf");
 asm ("__bid_trunctddf  = __GI___bid_trunctddf");
 asm ("__bid_trunctddd2 = __GI___bid_trunctddd2");
@@ -51,6 +56,9 @@ asm ("__bid_fixddsi = __GI___bid_fixddsi");
 asm ("__bid_fixsddi = __GI___bid_fixsddi");
 asm ("__bid_fixtddi = __GI___bid_fixtddi");
 asm ("__bid_fixtdsi = __GI___bid_fixtdsi");
+
+asm ("__bid_fixunsdddi = __GI___bid_fixunsdddi");
+asm ("__bid_fixunssddi = __GI___bid_fixunssddi");
 
 asm ("__bid_addsd3 = __GI___bid_addsd3");
 asm ("__bid_addtd3 = __GI___bid_addtd3");
