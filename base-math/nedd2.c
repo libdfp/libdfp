@@ -24,7 +24,7 @@
 
 #include <dfpacc.h>
 
-int
+CMPINT
 __BACKEND_(nedd2) (_Decimal64 x, _Decimal64 y)
 {
   return x != y;

@@ -24,7 +24,7 @@
 
 #include <dfpacc.h>
 
-int
+CMPINT
 __BACKEND_(gesd2) (_Decimal32 x, _Decimal32 y)
 {
   return (_Decimal64)x >= (_Decimal64)y ? 1 : -1;

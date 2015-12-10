@@ -24,7 +24,7 @@
 
 #include <dfpacc.h>
 
-int
+CMPINT
 __BACKEND_(lttd2) (_Decimal128 x, _Decimal128 y)
 {
   return x < y ? -1 : 1;

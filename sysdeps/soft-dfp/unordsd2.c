@@ -36,7 +36,7 @@
 
 #include "dfpacc.h"
 #include <dfpmacro.h>
-int
+CMPINT
 PREFIXED_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
   return FUNC_D(__isnan) (x) || FUNC_D(__isnan) (y);
