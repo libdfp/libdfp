@@ -25,7 +25,7 @@
 #include <dfpacc.h>
 #include <math.h>
 
-int
+CMPINT
 __BACKEND_(unordsd2) (_Decimal32 x, _Decimal32 y)
 {
   return __isnand64 ((_Decimal64)x) || __isnand64 ((_Decimal64)y);

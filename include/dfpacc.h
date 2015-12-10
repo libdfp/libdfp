@@ -64,11 +64,15 @@ hidden_proto_enc (divdd3)
 _Decimal128 __BACKEND_(divtd3) (_Decimal128,_Decimal128);
 hidden_proto_enc (divtd3)
 
-int __BACKEND_(eqsd2) (_Decimal32,_Decimal32);
+/* The result of a comparison is a bit more complicated
+   than an int type.  */
+typedef int CMPINT __attribute__ ((mode (__libgcc_cmp_return__)));
+
+CMPINT __BACKEND_(eqsd2) (_Decimal32,_Decimal32);
 hidden_proto_enc (eqsd2)
-int __BACKEND_(eqdd2) (_Decimal64,_Decimal64);
+CMPINT __BACKEND_(eqdd2) (_Decimal64,_Decimal64);
 hidden_proto_enc (eqdd2)
-int __BACKEND_(eqtd2) (_Decimal128,_Decimal128);
+CMPINT __BACKEND_(eqtd2) (_Decimal128,_Decimal128);
 hidden_proto_enc (eqtd2)
 
 _Decimal64  __BACKEND_(extendsddd2) (_Decimal32);
@@ -187,32 +191,32 @@ _Decimal128 __BACKEND_(floattitd) (__int128);
 hidden_proto_enc (floattitd)
 #endif
 
-int __BACKEND_(gesd2) (_Decimal32,_Decimal32);
+CMPINT __BACKEND_(gesd2) (_Decimal32,_Decimal32);
 hidden_proto_enc (gesd2)
-int __BACKEND_(gedd2) (_Decimal64,_Decimal64);
+CMPINT __BACKEND_(gedd2) (_Decimal64,_Decimal64);
 hidden_proto_enc (gedd2)
-int __BACKEND_(getd2) (_Decimal128,_Decimal128);
+CMPINT __BACKEND_(getd2) (_Decimal128,_Decimal128);
 hidden_proto_enc (getd2)
 
-int __BACKEND_(gtsd2) (_Decimal32,_Decimal32);
+CMPINT __BACKEND_(gtsd2) (_Decimal32,_Decimal32);
 hidden_proto_enc (gtsd2)
-int __BACKEND_(gtdd2) (_Decimal64,_Decimal64);
+CMPINT __BACKEND_(gtdd2) (_Decimal64,_Decimal64);
 hidden_proto_enc (gtdd2)
-int __BACKEND_(gttd2) (_Decimal128,_Decimal128);
+CMPINT __BACKEND_(gttd2) (_Decimal128,_Decimal128);
 hidden_proto_enc (gttd2)
 
-int __BACKEND_(lesd2) (_Decimal32,_Decimal32);
+CMPINT __BACKEND_(lesd2) (_Decimal32,_Decimal32);
 hidden_proto_enc (lesd2)
-int __BACKEND_(ledd2) (_Decimal64,_Decimal64);
+CMPINT __BACKEND_(ledd2) (_Decimal64,_Decimal64);
 hidden_proto_enc (ledd2)
-int __BACKEND_(letd2) (_Decimal128,_Decimal128);
+CMPINT __BACKEND_(letd2) (_Decimal128,_Decimal128);
 hidden_proto_enc (letd2)
 
-int __BACKEND_(ltsd2) (_Decimal32,_Decimal32);
+CMPINT __BACKEND_(ltsd2) (_Decimal32,_Decimal32);
 hidden_proto_enc (ltsd2)
-int __BACKEND_(ltdd2) (_Decimal64,_Decimal64);
+CMPINT __BACKEND_(ltdd2) (_Decimal64,_Decimal64);
 hidden_proto_enc (ltdd2)
-int __BACKEND_(lttd2) (_Decimal128,_Decimal128);
+CMPINT __BACKEND_(lttd2) (_Decimal128,_Decimal128);
 hidden_proto_enc (lttd2)
 
 _Decimal32  __BACKEND_(mulsd3) (_Decimal32,_Decimal32);
@@ -222,11 +226,11 @@ hidden_proto_enc (muldd3)
 _Decimal128 __BACKEND_(multd3) (_Decimal128,_Decimal128);
 hidden_proto_enc (multd3)
 
-int __BACKEND_(nesd2) (_Decimal32,_Decimal32);
+CMPINT __BACKEND_(nesd2) (_Decimal32,_Decimal32);
 hidden_proto_enc (nesd2)
-int __BACKEND_(nedd2) (_Decimal64,_Decimal64);
+CMPINT __BACKEND_(nedd2) (_Decimal64,_Decimal64);
 hidden_proto_enc (nedd2)
-int __BACKEND_(netd2) (_Decimal128,_Decimal128);
+CMPINT __BACKEND_(netd2) (_Decimal128,_Decimal128);
 hidden_proto_enc (netd2)
 
 _Decimal32  __BACKEND_(subsd3) (_Decimal32,_Decimal32);
@@ -264,7 +268,7 @@ hidden_proto_enc (trunctddf)
 long double __BACKEND_(trunctdtf) (_Decimal128);
 hidden_proto_enc (trunctdtf)
 
-int __BACKEND_(unordsd2) (_Decimal32,_Decimal32);
-int __BACKEND_(unorddd2) (_Decimal64,_Decimal64);
-int __BACKEND_(unordtd2) (_Decimal128,_Decimal128);
+CMPINT __BACKEND_(unordsd2) (_Decimal32,_Decimal32);
+CMPINT __BACKEND_(unorddd2) (_Decimal64,_Decimal64);
+CMPINT __BACKEND_(unordtd2) (_Decimal128,_Decimal128);
 #endif /* _DFPACC_PRIVATE_H  */

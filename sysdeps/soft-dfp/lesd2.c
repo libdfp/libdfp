@@ -37,7 +37,7 @@
 
 #include "dfpacc.h"
 #include <dfpmacro.h>
-int
+CMPINT
 PREFIXED_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
   decNumber dn_x, dn_y, result;
