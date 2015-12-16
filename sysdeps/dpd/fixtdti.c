@@ -28,10 +28,12 @@
 #ifndef SIGNED
 # define SIGNED 1
 # define FUNC fixtdti
-# define QTYPE
+# define RTYPE INT128
 #endif
 
-static inline QTYPE __int128 convert_td_ti(_Decimal128 d);
+#include "dfpacc.h"
+
+static inline RTYPE convert_td_ti(_Decimal128 d);
 
 #define D128_CONVERSION(a)  convert_td_ti(a)
 #include "fixsdti.c"
@@ -39,7 +41,7 @@ static inline QTYPE __int128 convert_td_ti(_Decimal128 d);
 #include "numdigits.h"
 #include "tidpdcommon.h"
 
-static RET_TYPE
+static RTYPE
 convert_td_ti(_Decimal128 a)
 {
   /* Ensure number is rounded to an integral value.  */
@@ -106,7 +108,7 @@ convert_td_ti(_Decimal128 a)
   a_high_ti = (RET_TYPE) a_high_di * ten_16_ti;
   result = (a_low_ti + a_high_ti) * (RET_TYPE) exp10_ti[exp];
 
-  /* No need to worry about overflow with __int128 */
+  /* No need to worry about overflow with INT128 */
 #if SIGNED
   if (neg)
     result = -result;

@@ -58,6 +58,8 @@
 #define _WANT_VC 1		/* Pick up the _VC_P(x,y,fmt) macro.  */
 #include "scaffold.c"		/* Pick up the _VC_P(x,y,fmt) macro.  */
 
+#include "dfpacc.h"
+
 /* We're going to be comparing fields so we need to extract the data.  This is a
  * sneaky way to get around the fact that get_digits_d* isn't exported from
  * libdfp.  */
@@ -72,7 +74,7 @@ typedef struct
   const char *format;		/* Expected value printf format.  */
   int uns;			/* Signed or unsigned conversion.  */
   int line;
-  char const *x;		/* Stringified __int128 input value.  */
+  char const *x;		/* Stringified INT128 input value.  */
   _Decimal128 e;		/* Expected result.  */
 } d128_type;
 
@@ -102,10 +104,10 @@ static d128_type d128[] = {
 static int d128_s = sizeof (d128) / sizeof (d128[0]);
 
 /* Mediocre string to ti/unsti function. */
-static __int128
+static INT128
 intifyti (char const *str)
 {
-  unsigned __int128 val = 0;
+  UINT128 val = 0;
   long neg = 0;
   if (*str == '-')
     {
@@ -114,12 +116,12 @@ intifyti (char const *str)
     }
   while (*str)
     {
-      val *= (__int128) 10;
+      val *= (INT128) 10;
       val += (*str - '0');
       str++;
     }
   if (neg)
-    return -((__int128) val);
+    return -((INT128) val);
   return val;
 }
 
@@ -135,13 +137,13 @@ main (void)
       if (d128[i].uns)
 	{
 	  fmt = "floatunstitd (%s) in: %s:%d\n";
-	  unsigned __int128 x_ti = intifyti (d128[i].x);
+	  UINT128 x_ti = intifyti (d128[i].x);
 	  x = x_ti;
 	}
       else
 	{
 	  fmt = "floattitd (%s) in: %s:%d\n";
-	  __int128 x_ti = intifyti (d128[i].x);
+	  INT128 x_ti = intifyti (d128[i].x);
 	  x = x_ti;
 	}
       fprintf (stdout, fmt, d128[i].x, __FILE__, __LINE__);

@@ -22,10 +22,12 @@
 
    Please see dfp/COPYING.txt for more information.  */
 
-#define QI(_x) ((__int128)(_x##ULL))
+#include "dfpacc.h"
+
+#define QI(_x) ((INT128)(_x##ULL))
 #define ONEe19QI QI(10000000000000000000)
 
-__int128 const exp10_ti[] = {
+INT128 const exp10_ti[] = {
   1ULL,				/* 1e0 */
   10ULL,
   100ULL,

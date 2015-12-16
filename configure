@@ -627,9 +627,6 @@ ac_subst_vars='LTLIBOBJS
 subdirs
 LIBOBJS
 ALLOCA
-EGREP
-GREP
-CPP
 sysdep_dirs
 libdfp_cv_submachine_opt
 submachine
@@ -638,6 +635,9 @@ enable_shared
 enable_static
 cxxdecimal
 dfp_ti_abi
+EGREP
+GREP
+CPP
 libdfp_cv_cc_with_decimal_float
 machine
 base_machine
@@ -4444,374 +4444,6 @@ _ACEOF
 
 fi
 
-# Enable TImode abi if compiler supports 128b integer.
-dfp_ti_abi=$libdfp_cv_uint128_t
-
-
-# Check for std::decimal compiler support
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for std::decimal" >&5
-$as_echo_n "checking for std::decimal... " >&6; }
-if ${libdfp_cv_cxxdecimal+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-
-    ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
- #include <decimal/decimal>
-int
-main ()
-{
-
-        std::decimal::decimal64 x = 0.0000006E-90DD;
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"; then :
-
-        libdfp_cv_cxxdecimal=yes
-
-else
-
-        libdfp_cv_cxxdecimal=no
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-    ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libdfp_cv_cxxdecimal" >&5
-$as_echo "$libdfp_cv_cxxdecimal" >&6; }
-cxxdecimal="$libdfp_cv_cxxdecimal"
-
-
-
-# Check whether --enable-static was given.
-if test "${enable_static+set}" = set; then :
-  enableval=$enable_static; case "$enableval" in
-  yes)
-       enable_static=static
-       { $as_echo "$as_me:${as_lineno-$LINENO}: enabling support for a static library." >&5
-$as_echo "$as_me: enabling support for a static library." >&6;};;
-   no)
-       enable_static=
-       { $as_echo "$as_me:${as_lineno-$LINENO}: disabling support for a static library." >&5
-$as_echo "$as_me: disabling support for a static library." >&6;};;
-    *)
-       enable_static=static
-       { $as_echo "$as_me:${as_lineno-$LINENO}: enabling support for a static library." >&5
-$as_echo "$as_me: enabling support for a static library." >&6;};;
- esac
-else
-  enable_static=static
-fi
-
-
-
-# Check whether --enable-shared was given.
-if test "${enable_shared+set}" = set; then :
-  enableval=$enable_shared; case "$enableval" in
-  yes)
-       enable_shared=shared
-       { $as_echo "$as_me:${as_lineno-$LINENO}: enabling support for a shared library." >&5
-$as_echo "$as_me: enabling support for a shared library." >&6;};;
-   no)
-       enable_shared=
-       { $as_echo "$as_me:${as_lineno-$LINENO}: disabling support for a shared library." >&5
-$as_echo "$as_me: disabling support for a shared library." >&6;};;
-    *)
-       enable_shared=
-       { $as_echo "$as_me:${as_lineno-$LINENO}: enabling support for a shared library." >&5
-$as_echo "$as_me: enabling support for a shared library." >&6;};;
-  esac
-else
-  enable_shared=shared
-fi
-
-
-
-# Should be ok if we build static with this turned on.  If the linker
-# complains that the GOT is too big this may need to be upgraded to -fPIC so
-# we get full addressibility.
-picflag="-fpic -DSHARED"
-{ $as_echo "$as_me:${as_lineno-$LINENO}: configuring with \"$picflag\"" >&5
-$as_echo "$as_me: configuring with \"$picflag\"" >&6;}
-
-
-# Compute the list of sysdeps directories.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking sysdep dirs" >&5
-$as_echo_n "checking sysdep dirs... " >&6; }
-
-# Build a search list based on this precedence:
-# ${srcdir}/include [internal libdfp headers]
-# ${srcdir}/libdecnumber/dpd [libdecnumber headers]
-# ${srcdir}/libdecnumber/bid [libdecnumber headers]
-# ${srcdir}/libbid/? [libbid headers]
-# [MACHINE/SUBMACHINE]
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/fpu [platform directories]
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power6/fpu [platform directories]
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power6/
-#   ${srcdir}/sysdeps/powerpc/powerpc64/
-#   ${srcdir}/sysdeps/powerpc/powerpc32/power6/fpu [platform directories]
-#   ${srcdir}/sysdeps/powerpc/powerpc32/power6/
-#   ${srcdir}/sysdeps/powerpc/powerpc32/
-# [BASE_MACHINE/[FPU|NOFPU]
-#   ${srcdir}/sysdeps/powerpc/dfpu
-#   ${srcdir}/sysdeps/powerpc/dfpu/bits
-#   ${srcdir}/sysdeps/powerpc/fpu
-#   ${srcdir}/sysdeps/powerpc/fpu/bits
-#   ${srcdir}/sysdeps/powerpc/nofpu
-#   ${srcdir}/sysdeps/powerpc/nofpu/bits
-# [BASE_MACHINE]
-#   ${srcdir}/sysdeps/powerpc/
-#   ${srcdir}/sysdeps/i386/
-# [ENCODING]
-#   ${srcdir}/sysdeps/dpd [dpd specific implementations]
-#   ${srcdir}/sysdeps/bid [bid specific implementations]
-# ${srcdir}/sysdeps/soft-dfp/dpd [soft-dfp dpd arithmetic, conversion, and comparison fns]
-# ${srcdir}/sysdeps/soft-dfp/bid [soft-dfp bid arithmetic, conversion, and comparison fns]
-# ${srcdir}/sysdeps/soft-dfp [soft-dfp arithmetic, conversion, and comparison fns]
-# ${srcdir}/dfp [headers files that will be installed.  These follow the
-#		 sysdep overrides so that sysdeps override directories show up
-#		 before the install headers in #include_next <header>.
-# ${srcdir}/ieee754r [ISO C Draft TR functions]
-# ${srcdir}/base-math [Arithmetic, Conversion, and Comparison Routines.]
-# ${srcdir}/[common libdfp framework code & common headers for the backends.]
-
-# Out of Tree Sources
-# ${srcdir}/libdecnumber [third-party GCC sources]
-# ${srcdir}/libbid       [third-party libBID sources]
-
-# We only assume Linux support so we don't worry about all the os stuff that
-# GLIBC does.
-
-tail=$machine${submachine:+/$submachine}
-# Build the list of dfpu|fpu|nofpu directories.
-while m=`echo $tail | sed 's@^\(.*\)/\([^/]*\)$@& \1@'`; test -n "$m"; do
-  set $m
-  # Only look for 'dfpu' directory if the system supports hardware dfp.
-  if test "$with_dfp" = yes; then
-    mach="$mach /$1/dfpu/bits /$1/dfpu"
-    #mach="$mach /$1/dfpu"
-  fi
-  # Prepend the machine's FPU directory unless --without-fp.
-  if test "$with_fp" = yes; then
-    mach="$mach /$1/fpu/bits /$1/fpu"
-    #mach="$mach /$1/fpu"
-  else
-    mach="$mach /$1/fpu/bits /$1/nofpu"
-    #mach="$mach /$1/nofpu"
-  fi
-  mach="$mach /$1"
-  tail="$2"
-done
-
-
-# Thankfully we don't support add-ons or non-Linux operating systems so this
-# is relatively simple compared to what it could be.  We also don't care if
-# the machine or submachine don't show up in the sysdeps directory.  The base
-# configuration doesn't require it.
-sysnames=
-try_srcdir="${srcdir}/"
-for m in $mach ''; do
-  # We don't want to add /src/sysdeps yet.
-  if test -n "$m"; then
-    try="sysdeps${m}"
-    if test -d "${try_srcdir}${try}"; then
-      sysnames="$sysnames $try"
-    fi
-  fi
-done
-
-
-
-
-if test "$with_dfp" = no; then
-  # Add src/sysdeps/soft-dfp and src/sysdeps/soft-dfp/dpd or
-  # src/sysdeps/soft-dfp/bid to the search path.
-  if test -d "${try_srcdir}/sysdeps/soft-dfp/"; then
-    if test -d "${try_srcdir}/sysdeps/soft-dfp/${enable_decimal_float}"; then
-      sysnames="$sysnames `echo sysdeps/soft-dfp/${enable_decimal_float} | sed -e 's,//,/,g'`"
-    fi
-    sysnames="$sysnames `echo sysdeps/soft-dfp | sed -e 's,//,/,g'`"
-  fi
-fi
-
-# Add src/sysdeps/dpd or src/sysdeps/bid to the search path.
-if test -d "${try_srcdir}/sysdeps/${enable_decimal_float}"; then
-  sysnames="$sysnames `echo sysdeps/${enable_decimal_float} | sed -e 's,//,/,g'`"
-fi
-
-# Close out the sysdeps directory.
-#sysnames="$sysnames sysdeps"
-
-# Add the default directories.
-default_sysnames="sysdeps/generic"
-sysnames="$sysnames $default_sysnames"
-
-set $sysnames
-names=
-while test $# -gt 0; do
-  name=$1
-  shift
-
-  case " $names " in *" $name "*)
-  # Already in the list.
-  continue
-  esac
-
-  case $name in
-    /*) xsrcdir=;;
-    *) xsrcdir=$srcdir/ ;;
-  esac
-
-  if test -f $xsrcdir$name/Implies; then
-    implied_candidate="`sed 's/#.*$//' < $xsrcdir$name/Implies`"
-    implied=
-    for x in $implied_candidate; do
-	  found=no
-	  if test -d $xsrcdir/$x; then
-	    implied="$implied $x";
-	    found=yes
-	  fi
-
-	  if test $found = no; then
-	    echo "$name/Implies specifies nonexistent $x"
-	  fi
-	done
-  else
-    implied=
-  fi
-
-  names="$names $name"
-
-  parent="`echo $name | sed -n -e 's=/^/*$==' -e '/sysdeps$/q' -e p`"
-
-  sysnames="`echo $implied $* $parent`"
-  test -n "$sysnames" && set $sysnames
-done
-
-sysdep_dirs="$names"
-
-# Just the directories in the sysdeps tree.
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $sysdep_dirs" >&5
-$as_echo "$sysdep_dirs" >&6; }
-
-# Taken from GLIBC's configure.in
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for assembler global-symbol directive" >&5
-$as_echo_n "checking for assembler global-symbol directive... " >&6; }
-if ${libc_cv_asm_global_directive+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  libc_cv_asm_global_directive=UNKNOWN
-for ac_globl in .globl .global .EXPORT; do
-  cat > conftest.s <<EOF
-	${libc_cv_dot_text}
-	${ac_globl} foo
-foo:
-EOF
-  if { ac_try='${CC-cc} $ASFLAGS -c conftest.s 1>&5'
-  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; }; then
-    libc_cv_asm_global_directive=${ac_globl}
-  fi
-  rm -f conftest*
-  test $libc_cv_asm_global_directive != UNKNOWN && break
-done
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_asm_global_directive" >&5
-$as_echo "$libc_cv_asm_global_directive" >&6; }
-if test $libc_cv_asm_global_directive = UNKNOWN; then
-  as_fn_error $? "cannot determine asm global directive" "$LINENO" 5
-else
-
-cat >>confdefs.h <<_ACEOF
-#define ASM_GLOBAL_DIRECTIVE ${libc_cv_asm_global_directive}
-_ACEOF
-
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for assembler .type directive prefix" >&5
-$as_echo_n "checking for assembler .type directive prefix... " >&6; }
-if ${libc_cv_asm_type_prefix+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  libc_cv_asm_type_prefix=no
-for ac_try_prefix in '@' '%' '#'; do
-  cat > conftest.s <<EOF
-	${libc_cv_dot_text}
-	${libc_cv_asm_global_directive} foo
-	.type foo, ${ac_try_prefix}object
-	.size foo, 1
-foo:
-	.byte 1
-EOF
-  if { ac_try='${CC-cc} $ASFLAGS -c conftest.s 1>&5'
-  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; }; then
-    libc_cv_asm_type_prefix=${ac_try_prefix}
-  fi
-  rm -f conftest*
-  test "x$libc_cv_asm_type_prefix" != xno && break
-done
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_asm_type_prefix" >&5
-$as_echo "$libc_cv_asm_type_prefix" >&6; }
-if test "x$libc_cv_asm_type_prefix" != xno; then
-
-cat >>confdefs.h <<_ACEOF
-#define ASM_TYPE_DIRECTIVE_PREFIX ${libc_cv_asm_type_prefix}
-_ACEOF
-
-fi
-
-# Check which is the loader
-libdfp_cv_loader=`
-cat > conftest.c <<EOF
-int main () {}
-EOF
-${CC-cc} $CFLAGS $CPPFLAGS -o conftest conftest.c && ldd conftest | $AWK '
-BEGIN {
-  loader=$0 ~ "ld.*so"
-}
-{
-  gsub (/[[:space:]]*/, "", $loader)
-  split ($loader, fields, "[=(]")
-}
-END {
-  print fields[1]
-}'
-rm -f conftest*`
-
-cat >>confdefs.h <<_ACEOF
-#define LIBDFP_RUNTIME_LOADER "$libdfp_cv_loader"
-_ACEOF
-
-
-# Checks for libraries.
-
-# Checks for header files.
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5209,6 +4841,397 @@ fi
 done
 
 
+ac_fn_c_check_type "$LINENO" "__int128" "ac_cv_type___int128" "$ac_includes_default"
+if test "x$ac_cv_type___int128" = xyes; then :
+
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_INT128 1
+_ACEOF
+
+      libdfp_cv_int128=yes
+
+else
+
+      libdfp_cv_int128=no
+
+fi
+
+
+# Enable TImode abi if compiler supports 128b integer.
+if test x$libdfp_cv_uint128_t = xyes; then
+  dfp_ti_abi=yes
+elif test x$libdfp_cv_int128 = xyes; then
+  dfp_ti_abi=yes
+else
+  dfp_ti_abi=no
+fi
+
+
+# Check for std::decimal compiler support
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for std::decimal" >&5
+$as_echo_n "checking for std::decimal... " >&6; }
+if ${libdfp_cv_cxxdecimal+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+    ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+ #include <decimal/decimal>
+int
+main ()
+{
+
+        std::decimal::decimal64 x = 0.0000006E-90DD;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+
+        libdfp_cv_cxxdecimal=yes
+
+else
+
+        libdfp_cv_cxxdecimal=no
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libdfp_cv_cxxdecimal" >&5
+$as_echo "$libdfp_cv_cxxdecimal" >&6; }
+cxxdecimal="$libdfp_cv_cxxdecimal"
+
+
+
+# Check whether --enable-static was given.
+if test "${enable_static+set}" = set; then :
+  enableval=$enable_static; case "$enableval" in
+  yes)
+       enable_static=static
+       { $as_echo "$as_me:${as_lineno-$LINENO}: enabling support for a static library." >&5
+$as_echo "$as_me: enabling support for a static library." >&6;};;
+   no)
+       enable_static=
+       { $as_echo "$as_me:${as_lineno-$LINENO}: disabling support for a static library." >&5
+$as_echo "$as_me: disabling support for a static library." >&6;};;
+    *)
+       enable_static=static
+       { $as_echo "$as_me:${as_lineno-$LINENO}: enabling support for a static library." >&5
+$as_echo "$as_me: enabling support for a static library." >&6;};;
+ esac
+else
+  enable_static=static
+fi
+
+
+
+# Check whether --enable-shared was given.
+if test "${enable_shared+set}" = set; then :
+  enableval=$enable_shared; case "$enableval" in
+  yes)
+       enable_shared=shared
+       { $as_echo "$as_me:${as_lineno-$LINENO}: enabling support for a shared library." >&5
+$as_echo "$as_me: enabling support for a shared library." >&6;};;
+   no)
+       enable_shared=
+       { $as_echo "$as_me:${as_lineno-$LINENO}: disabling support for a shared library." >&5
+$as_echo "$as_me: disabling support for a shared library." >&6;};;
+    *)
+       enable_shared=
+       { $as_echo "$as_me:${as_lineno-$LINENO}: enabling support for a shared library." >&5
+$as_echo "$as_me: enabling support for a shared library." >&6;};;
+  esac
+else
+  enable_shared=shared
+fi
+
+
+
+# Should be ok if we build static with this turned on.  If the linker
+# complains that the GOT is too big this may need to be upgraded to -fPIC so
+# we get full addressibility.
+picflag="-fpic -DSHARED"
+{ $as_echo "$as_me:${as_lineno-$LINENO}: configuring with \"$picflag\"" >&5
+$as_echo "$as_me: configuring with \"$picflag\"" >&6;}
+
+
+# Compute the list of sysdeps directories.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking sysdep dirs" >&5
+$as_echo_n "checking sysdep dirs... " >&6; }
+
+# Build a search list based on this precedence:
+# ${srcdir}/include [internal libdfp headers]
+# ${srcdir}/libdecnumber/dpd [libdecnumber headers]
+# ${srcdir}/libdecnumber/bid [libdecnumber headers]
+# ${srcdir}/libbid/? [libbid headers]
+# [MACHINE/SUBMACHINE]
+#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/fpu [platform directories]
+#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/
+#   ${srcdir}/sysdeps/powerpc/powerpc64/power6/fpu [platform directories]
+#   ${srcdir}/sysdeps/powerpc/powerpc64/power6/
+#   ${srcdir}/sysdeps/powerpc/powerpc64/
+#   ${srcdir}/sysdeps/powerpc/powerpc32/power6/fpu [platform directories]
+#   ${srcdir}/sysdeps/powerpc/powerpc32/power6/
+#   ${srcdir}/sysdeps/powerpc/powerpc32/
+# [BASE_MACHINE/[FPU|NOFPU]
+#   ${srcdir}/sysdeps/powerpc/dfpu
+#   ${srcdir}/sysdeps/powerpc/dfpu/bits
+#   ${srcdir}/sysdeps/powerpc/fpu
+#   ${srcdir}/sysdeps/powerpc/fpu/bits
+#   ${srcdir}/sysdeps/powerpc/nofpu
+#   ${srcdir}/sysdeps/powerpc/nofpu/bits
+# [BASE_MACHINE]
+#   ${srcdir}/sysdeps/powerpc/
+#   ${srcdir}/sysdeps/i386/
+# [ENCODING]
+#   ${srcdir}/sysdeps/dpd [dpd specific implementations]
+#   ${srcdir}/sysdeps/bid [bid specific implementations]
+# ${srcdir}/sysdeps/soft-dfp/dpd [soft-dfp dpd arithmetic, conversion, and comparison fns]
+# ${srcdir}/sysdeps/soft-dfp/bid [soft-dfp bid arithmetic, conversion, and comparison fns]
+# ${srcdir}/sysdeps/soft-dfp [soft-dfp arithmetic, conversion, and comparison fns]
+# ${srcdir}/dfp [headers files that will be installed.  These follow the
+#		 sysdep overrides so that sysdeps override directories show up
+#		 before the install headers in #include_next <header>.
+# ${srcdir}/ieee754r [ISO C Draft TR functions]
+# ${srcdir}/base-math [Arithmetic, Conversion, and Comparison Routines.]
+# ${srcdir}/[common libdfp framework code & common headers for the backends.]
+
+# Out of Tree Sources
+# ${srcdir}/libdecnumber [third-party GCC sources]
+# ${srcdir}/libbid       [third-party libBID sources]
+
+# We only assume Linux support so we don't worry about all the os stuff that
+# GLIBC does.
+
+tail=$machine${submachine:+/$submachine}
+# Build the list of dfpu|fpu|nofpu directories.
+while m=`echo $tail | sed 's@^\(.*\)/\([^/]*\)$@& \1@'`; test -n "$m"; do
+  set $m
+  # Only look for 'dfpu' directory if the system supports hardware dfp.
+  if test "$with_dfp" = yes; then
+    mach="$mach /$1/dfpu/bits /$1/dfpu"
+    #mach="$mach /$1/dfpu"
+  fi
+  # Prepend the machine's FPU directory unless --without-fp.
+  if test "$with_fp" = yes; then
+    mach="$mach /$1/fpu/bits /$1/fpu"
+    #mach="$mach /$1/fpu"
+  else
+    mach="$mach /$1/fpu/bits /$1/nofpu"
+    #mach="$mach /$1/nofpu"
+  fi
+  mach="$mach /$1"
+  tail="$2"
+done
+
+
+# Thankfully we don't support add-ons or non-Linux operating systems so this
+# is relatively simple compared to what it could be.  We also don't care if
+# the machine or submachine don't show up in the sysdeps directory.  The base
+# configuration doesn't require it.
+sysnames=
+try_srcdir="${srcdir}/"
+for m in $mach ''; do
+  # We don't want to add /src/sysdeps yet.
+  if test -n "$m"; then
+    try="sysdeps${m}"
+    if test -d "${try_srcdir}${try}"; then
+      sysnames="$sysnames $try"
+    fi
+  fi
+done
+
+
+
+
+if test "$with_dfp" = no; then
+  # Add src/sysdeps/soft-dfp and src/sysdeps/soft-dfp/dpd or
+  # src/sysdeps/soft-dfp/bid to the search path.
+  if test -d "${try_srcdir}/sysdeps/soft-dfp/"; then
+    if test -d "${try_srcdir}/sysdeps/soft-dfp/${enable_decimal_float}"; then
+      sysnames="$sysnames `echo sysdeps/soft-dfp/${enable_decimal_float} | sed -e 's,//,/,g'`"
+    fi
+    sysnames="$sysnames `echo sysdeps/soft-dfp | sed -e 's,//,/,g'`"
+  fi
+fi
+
+# Add src/sysdeps/dpd or src/sysdeps/bid to the search path.
+if test -d "${try_srcdir}/sysdeps/${enable_decimal_float}"; then
+  sysnames="$sysnames `echo sysdeps/${enable_decimal_float} | sed -e 's,//,/,g'`"
+fi
+
+# Close out the sysdeps directory.
+#sysnames="$sysnames sysdeps"
+
+# Add the default directories.
+default_sysnames="sysdeps/generic"
+sysnames="$sysnames $default_sysnames"
+
+set $sysnames
+names=
+while test $# -gt 0; do
+  name=$1
+  shift
+
+  case " $names " in *" $name "*)
+  # Already in the list.
+  continue
+  esac
+
+  case $name in
+    /*) xsrcdir=;;
+    *) xsrcdir=$srcdir/ ;;
+  esac
+
+  if test -f $xsrcdir$name/Implies; then
+    implied_candidate="`sed 's/#.*$//' < $xsrcdir$name/Implies`"
+    implied=
+    for x in $implied_candidate; do
+	  found=no
+	  if test -d $xsrcdir/$x; then
+	    implied="$implied $x";
+	    found=yes
+	  fi
+
+	  if test $found = no; then
+	    echo "$name/Implies specifies nonexistent $x"
+	  fi
+	done
+  else
+    implied=
+  fi
+
+  names="$names $name"
+
+  parent="`echo $name | sed -n -e 's=/^/*$==' -e '/sysdeps$/q' -e p`"
+
+  sysnames="`echo $implied $* $parent`"
+  test -n "$sysnames" && set $sysnames
+done
+
+sysdep_dirs="$names"
+
+# Just the directories in the sysdeps tree.
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $sysdep_dirs" >&5
+$as_echo "$sysdep_dirs" >&6; }
+
+# Taken from GLIBC's configure.in
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for assembler global-symbol directive" >&5
+$as_echo_n "checking for assembler global-symbol directive... " >&6; }
+if ${libc_cv_asm_global_directive+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  libc_cv_asm_global_directive=UNKNOWN
+for ac_globl in .globl .global .EXPORT; do
+  cat > conftest.s <<EOF
+	${libc_cv_dot_text}
+	${ac_globl} foo
+foo:
+EOF
+  if { ac_try='${CC-cc} $ASFLAGS -c conftest.s 1>&5'
+  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; }; then
+    libc_cv_asm_global_directive=${ac_globl}
+  fi
+  rm -f conftest*
+  test $libc_cv_asm_global_directive != UNKNOWN && break
+done
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_asm_global_directive" >&5
+$as_echo "$libc_cv_asm_global_directive" >&6; }
+if test $libc_cv_asm_global_directive = UNKNOWN; then
+  as_fn_error $? "cannot determine asm global directive" "$LINENO" 5
+else
+
+cat >>confdefs.h <<_ACEOF
+#define ASM_GLOBAL_DIRECTIVE ${libc_cv_asm_global_directive}
+_ACEOF
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for assembler .type directive prefix" >&5
+$as_echo_n "checking for assembler .type directive prefix... " >&6; }
+if ${libc_cv_asm_type_prefix+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  libc_cv_asm_type_prefix=no
+for ac_try_prefix in '@' '%' '#'; do
+  cat > conftest.s <<EOF
+	${libc_cv_dot_text}
+	${libc_cv_asm_global_directive} foo
+	.type foo, ${ac_try_prefix}object
+	.size foo, 1
+foo:
+	.byte 1
+EOF
+  if { ac_try='${CC-cc} $ASFLAGS -c conftest.s 1>&5'
+  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; }; then
+    libc_cv_asm_type_prefix=${ac_try_prefix}
+  fi
+  rm -f conftest*
+  test "x$libc_cv_asm_type_prefix" != xno && break
+done
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_asm_type_prefix" >&5
+$as_echo "$libc_cv_asm_type_prefix" >&6; }
+if test "x$libc_cv_asm_type_prefix" != xno; then
+
+cat >>confdefs.h <<_ACEOF
+#define ASM_TYPE_DIRECTIVE_PREFIX ${libc_cv_asm_type_prefix}
+_ACEOF
+
+fi
+
+# Check which is the loader
+libdfp_cv_loader=`
+cat > conftest.c <<EOF
+int main () {}
+EOF
+${CC-cc} $CFLAGS $CPPFLAGS -o conftest conftest.c && ldd conftest | $AWK '
+BEGIN {
+  loader=$0 ~ "ld.*so"
+}
+{
+  gsub (/[[:space:]]*/, "", $loader)
+  split ($loader, fields, "[=(]")
+}
+END {
+  print fields[1]
+}'
+rm -f conftest*`
+
+cat >>confdefs.h <<_ACEOF
+#define LIBDFP_RUNTIME_LOADER "$libdfp_cv_loader"
+_ACEOF
+
+
+# Checks for libraries.
+
+# Checks for header files.
 ac_fn_c_check_type "$LINENO" "size_t" "ac_cv_type_size_t" "$ac_includes_default"
 if test "x$ac_cv_type_size_t" = xyes; then :
 

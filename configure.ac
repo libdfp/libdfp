@@ -375,8 +375,22 @@ if test x$libdfp_cv_uint128_t = xyes; then
   AC_DEFINE_UNQUOTED([HAVE_UINT128_T], [1], ["Have __uint128_t type"])
 fi
 
+AC_CHECK_TYPE([__int128],
+    [
+      AC_DEFINE_UNQUOTED([HAVE_INT128], [1], [Have __int128 type. ])
+      libdfp_cv_int128=yes
+    ],[
+      libdfp_cv_int128=no
+    ],[])
+
 # Enable TImode abi if compiler supports 128b integer.
-dfp_ti_abi=$libdfp_cv_uint128_t
+if test x$libdfp_cv_uint128_t = xyes; then
+  dfp_ti_abi=yes
+elif test x$libdfp_cv_int128 = xyes; then
+  dfp_ti_abi=yes
+else
+  dfp_ti_abi=no
+fi
 AC_SUBST(dfp_ti_abi)
 
 # Check for std::decimal compiler support

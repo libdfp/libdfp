@@ -51,6 +51,7 @@
 #undef DEC_TYPE
 
 #include "scaffold.c"
+#include "dfpacc.h"
 
 /* TODO: For now, BID does not have dpd conversions.  */
 #ifndef __DECIMAL_BID_FORMAT__
@@ -59,7 +60,7 @@
 
 union tidi
 {
-  __int128 ti;
+  INT128 ti;
   unsigned long long int di[2];
 };
 
@@ -184,7 +185,7 @@ DECLARE_TESTS(32,uns) = {
 
 /* Mediocre stringify routing for all valid td conversions to ti/unsti. */
 static char const *
-stringifyti (__int128 val)
+stringifyti (INT128 val)
 {
   static char s128str[60];
   memset (s128str, ' ', sizeof (s128str));
@@ -202,8 +203,8 @@ stringifyti (__int128 val)
     }
   while (val)
     {
-      __int128 rem = val % (__int128) 10;
-      val /= (__int128) 10;
+      INT128 rem = val % (INT128) 10;
+      val /= (INT128) 10;
       s128str[i--] = '0' + (char) rem;
     }
   if (neg)
@@ -213,7 +214,7 @@ stringifyti (__int128 val)
 
 /* Likewise for unsigned.  */
 static char const *
-stringifyunsti (unsigned __int128 val)
+stringifyunsti (UINT128 val)
 {
   static char s128str[60];
   memset (s128str, ' ', sizeof (s128str));
@@ -224,15 +225,15 @@ stringifyunsti (unsigned __int128 val)
     i--;
   while (val)
     {
-      __int128 rem = val % (__int128) 10;
-      val /= (__int128) 10;
+      INT128 rem = val % (INT128) 10;
+      val /= (INT128) 10;
       s128str[i--] = '0' + (char) rem;
     }
   return &s128str[i + 1];
 }
 
-typedef __int128 ti;
-typedef unsigned __int128 unsti;
+typedef INT128 ti;
+typedef UINT128 unsti;
 
 #define RUN_TEST_SERIES(_t, _type, _name)                          \
   for (i = 0; i < (int)(sizeof(_t)/sizeof(_t[0])); ++i)            \

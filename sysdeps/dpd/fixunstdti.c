@@ -24,5 +24,5 @@
 
 #define SIGNED 0
 #define FUNC fixunstdti
-#define QTYPE unsigned
+#define RTYPE UINT128
 #include "fixtdti.c"

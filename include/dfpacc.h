@@ -41,6 +41,15 @@
    __hidden_proto (__dpd_##name, __GI___dpd_##name, ##attrs)
 #endif
 
+/* Older versions of GCC support __int128 differently.  */
+#ifdef HAVE_UINT128_T
+# define UINT128 __uint128_t
+# define INT128 __int128_t
+#elif HAVE_INT128
+# define INT128 __int128
+# define UINT128 unsigned __int128
+#endif
+
 /* This file contains the prototypes for the DFP arithmetic, conversion, and
  * comparison routines.  These also exist in libgcc, but these versions
  * support decimal floating point rounding control and exception support
@@ -131,19 +140,19 @@ hidden_proto_enc (fixunsdddi)
 unsigned long long __BACKEND_(fixunstddi) (_Decimal128);
 hidden_proto_enc (fixunstddi)
 
-#ifdef HAVE_UINT128_T /* Only available for compilers with TI moode */
-unsigned __int128 __BACKEND_(fixunssdti) (_Decimal32);
+#if defined(HAVE_UINT128_T) || defined(HAVE_INT128)
+UINT128 __BACKEND_(fixunssdti) (_Decimal32);
 hidden_proto_enc (fixunssdti)
-unsigned __int128 __BACKEND_(fixunsddti) (_Decimal64);
+UINT128 __BACKEND_(fixunsddti) (_Decimal64);
 hidden_proto_enc (fixunsddti)
-unsigned __int128 __BACKEND_(fixunstdti) (_Decimal128);
+UINT128 __BACKEND_(fixunstdti) (_Decimal128);
 hidden_proto_enc (fixunstdti)
 
-__int128 __BACKEND_(fixsdti) (_Decimal32);
+INT128 __BACKEND_(fixsdti) (_Decimal32);
 hidden_proto_enc (fixsdti)
-__int128 __BACKEND_(fixddti) (_Decimal64);
+INT128 __BACKEND_(fixddti) (_Decimal64);
 hidden_proto_enc (fixddti)
-__int128 __BACKEND_(fixtdti) (_Decimal128);
+INT128 __BACKEND_(fixtdti) (_Decimal128);
 hidden_proto_enc (fixtdti)
 #endif
 
@@ -175,19 +184,19 @@ hidden_proto_enc (floatunssisd)
 _Decimal128 __BACKEND_(floatunssitd) (unsigned int);
 hidden_proto_enc (floatunssitd)
 
-#ifdef HAVE_UINT128_T /* Only available for compilers with TI moode */
-_Decimal64 __BACKEND_(floatunstidd) (unsigned __int128);
+#if defined(HAVE_UINT128_T) || defined(HAVE_INT128)
+_Decimal64 __BACKEND_(floatunstidd) (UINT128);
 hidden_proto_enc (floatunstidd)
-_Decimal32 __BACKEND_(floatunstisd) (unsigned __int128);
+_Decimal32 __BACKEND_(floatunstisd) (UINT128);
 hidden_proto_enc (floatunstisd)
-_Decimal128 __BACKEND_(floatunstitd) (unsigned __int128);
+_Decimal128 __BACKEND_(floatunstitd) (UINT128);
 hidden_proto_enc (floatunstitd)
 
-_Decimal128 __BACKEND_(floattisd) (__int128);
+_Decimal128 __BACKEND_(floattisd) (INT128);
 hidden_proto_enc (floattisd)
-_Decimal128 __BACKEND_(floattidd) (__int128);
+_Decimal128 __BACKEND_(floattidd) (INT128);
 hidden_proto_enc (floattidd)
-_Decimal128 __BACKEND_(floattitd) (__int128);
+_Decimal128 __BACKEND_(floattitd) (INT128);
 hidden_proto_enc (floattitd)
 #endif
 

@@ -56,7 +56,7 @@
 #    define MIN_VAL (-170141183460469231731687303715884100000.DL)
 #    define MAX_VAL ( 170141183460469231731687303715884100000.DL)
 #  endif
-#  define RET_TYPE __int128
+#  define RET_TYPE INT128
 #  define QUICK_CONVERT(_x) ({ long long int _a_di = _x; _a_di;})
 #else
 #  define MAX_RET_VAL {.di = {0xFFFFFFFFFFFFFFFFLL, 0xFFFFFFFFFFFFFFFFLL}}
@@ -69,7 +69,7 @@
 #  else
 #    define MAX_VAL (340282366920938463463374607431768200000.DL)
 #  endif
-#  define RET_TYPE unsigned __int128
+#  define RET_TYPE UINT128
 #  define QUICK_CONVERT(_x) ({ unsigned long long int _a_di = _x; _a_di;})
 #endif
 
@@ -85,7 +85,7 @@
 #  define FABS(_x) _x
 #endif
 
-extern const __int128 exp10_ti[39];
+extern const INT128 exp10_ti[39];
 
 RET_TYPE __BACKEND_(FUNC) (DEC_TYPE a)
 {

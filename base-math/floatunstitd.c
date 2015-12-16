@@ -28,7 +28,7 @@
  * Convert a unsigned 128-bit binary integer into nearest representable
  * IEEE754R 128-bit Densely Packed Decimal Floating-point (DFP).
  *
- * Care must be taken, as the unsigned __int128 type has a maximum
+ * Care must be taken, as the UINT128 type has a maximum
  * value of ~340.282366921e+36 (or 39 decimal digits), while the
  * _Decimal128 type carries only 34 significant digits, so inexact
  * (truncated or rounded) results are possible.
@@ -63,11 +63,11 @@
  */
 
 _Decimal128
-__BACKEND_ (floatunstitd) (unsigned __int128 a)
+__BACKEND_ (floatunstitd) (UINT128 a)
 {
-  unsigned __int128 ten_17 = (unsigned __int128) 100000000000000000UL;
-  unsigned __int128 two_63 = (unsigned __int128) 0x8000000000000000UL;
-  unsigned __int128 x, y, z;
+  UINT128 ten_17 = (UINT128) 100000000000000000UL;
+  UINT128 two_63 = (UINT128) 0x8000000000000000UL;
+  UINT128 x, y, z;
   unsigned long long t_low, t_mid, t_high;
   _Decimal128 result = 0.DL;
   _Decimal128 d_low, d_mid, d_high;
