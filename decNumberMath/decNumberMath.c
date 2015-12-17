@@ -23,6 +23,9 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
+/* HACK: libdecnumber will try dragging in its config.h, prevent it.  */
+#define _DCONFIG_H
+
 #define  DECNUMDIGITS 60
 #include "decNumber.h"             // base number library
 #include "decNumberMath.h"

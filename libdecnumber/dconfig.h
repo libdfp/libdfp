@@ -22,6 +22,9 @@ a copy of the GCC Runtime Library Exception along with this program;
 see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 <http://www.gnu.org/licenses/>.  */
 
+#ifndef _DCONFIG_H
+#define _DCONFIG_H
+
 #ifdef IN_LIBGCC2
 
 #include "tconfig.h"
@@ -37,3 +40,5 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include "config.h"
 
 #endif
+
+#endif /* _DCONFIG_H */
