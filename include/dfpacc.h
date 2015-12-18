@@ -185,16 +185,16 @@ _Decimal128 __BACKEND_(floatunssitd) (unsigned int);
 hidden_proto_enc (floatunssitd)
 
 #if defined(HAVE_UINT128_T) || defined(HAVE_INT128)
-_Decimal64 __BACKEND_(floatunstidd) (UINT128);
-hidden_proto_enc (floatunstidd)
 _Decimal32 __BACKEND_(floatunstisd) (UINT128);
 hidden_proto_enc (floatunstisd)
+_Decimal64 __BACKEND_(floatunstidd) (UINT128);
+hidden_proto_enc (floatunstidd)
 _Decimal128 __BACKEND_(floatunstitd) (UINT128);
 hidden_proto_enc (floatunstitd)
 
-_Decimal128 __BACKEND_(floattisd) (INT128);
+_Decimal32 __BACKEND_(floattisd) (INT128);
 hidden_proto_enc (floattisd)
-_Decimal128 __BACKEND_(floattidd) (INT128);
+_Decimal64 __BACKEND_(floattidd) (INT128);
 hidden_proto_enc (floattidd)
 _Decimal128 __BACKEND_(floattitd) (INT128);
 hidden_proto_enc (floattitd)

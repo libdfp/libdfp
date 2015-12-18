@@ -30,7 +30,11 @@ asm ("__bid_floatsidd  = __GI___bid_floatsidd");
 asm ("__bid_floatditd  = __GI___bid_floatditd");
 asm ("__bid_floatsitd  = __GI___bid_floatsitd");
 asm ("__bid_floatdidd  = __GI___bid_floatdidd");
+asm ("__bid_floatdisd  = __GI___bid_floatdisd");
 asm ("__bid_floatsisd  = __GI___bid_floatsisd");
+
+asm ("__bid_floatunsdisd  = __GI___bid_floatunsdisd");
+asm ("__bid_floatunsdidd  = __GI___bid_floatunsdidd");
 
 #if HAVE_UINT128_T
 asm ("__bid_floattitd  = __GI___bid_floattitd");

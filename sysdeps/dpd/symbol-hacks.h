@@ -29,9 +29,12 @@ asm ("__dpd_floatsidd  = __GI___dpd_floatsidd");
 asm ("__dpd_floatditd  = __GI___dpd_floatditd");
 asm ("__dpd_floatsitd  = __GI___dpd_floatsitd");
 asm ("__dpd_floatdidd  = __GI___dpd_floatdidd");
+asm ("__dpd_floatdisd  = __GI___dpd_floatdisd");
 asm ("__dpd_floatsisd  = __GI___dpd_floatsisd");
 
 asm ("__dpd_floatunsditd  = __GI___dpd_floatditd");
+asm ("__dpd_floatunsdidd  = __GI___dpd_floatdidd");
+asm ("__dpd_floatunsdisd  = __GI___dpd_floatdisd");
 
 #ifdef HAVE_UINT128_T
 asm ("__dpd_floattitd  = __GI___dpd_floattitd");

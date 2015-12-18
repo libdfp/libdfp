@@ -1,10 +1,14 @@
-/* Convert a unsigned 128-bit binary integer into nearest representable
-   IEEE754R 128-bit Densely Packed Decimal Floating-point (DFP).
+/* Take 3 _Decimal128 numbers spanning 39 digits and
+   convert them into one properly rounding _Decimal64 value.
+
+   This is meant to be used internally to assist in rounding
+   __int128 values to _Decimal32/64.
 
    Copyright (C) 2015 Free Software Foundation, Inc.
+
    This file is part of the Decimal Floating Point C Library.
 
-   Contributed by Steven Munroe (munroesj@linux.vnet.ibm.com)
+   Author(s): Paul E. Murphy <murphyp@linux.vnet.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -20,11 +24,15 @@
    if not, write to the Free Software Foundation, Inc., 59 Temple Place,
    Suite 330, Boston, MA 02111-1307 USA.
 
-   Please see dfp/COPYING.txt for more information.  */
+   Please see libdfp/COPYING.txt for more information.  */
 
-#define UNSIGNED  1
-#define FUNC floatunstitd
-#define RET_TYPE _Decimal128
-#define RET_SIZE 128
+/* This will take at most 39 digits.  This should always be 39
+   for this function.  It must defined before including this
+   file as decimal*.h will attempt to define it.  */
+#define DECNUMDIGITS 39
 
-#include "floattitd.c"
+#define _DECIMAL_SIZE 64
+#include <decimal64.h>
+#define FUNC_NAME combine_and_truncd64
+
+#include "candtruncd32.c"
