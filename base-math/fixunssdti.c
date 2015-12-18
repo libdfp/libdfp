@@ -1,4 +1,4 @@
-/* fixunssdti implementation.
+/* fixunssdti implementation.  _Decimal32 -> INT128.
 
    Copyright (C) 2015 Free Software Foundation, Inc.
 

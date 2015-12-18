@@ -1,4 +1,4 @@
-/* fixunsddti implementation.
+/* fixunsddti implementation.  _Decimal64 -> UINT128.
 
    Copyright (C) 2015 Free Software Foundation, Inc.
 

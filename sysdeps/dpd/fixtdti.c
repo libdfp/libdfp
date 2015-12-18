@@ -97,7 +97,7 @@ convert_td_ti(_Decimal128 a)
 
      Now... shift a_high right 18 digits, and convert
      as a uint64, compute digs, and convert a_low as
-     a uint64
+     a uint64.
    */
   a_low_di = ((_Decimal64) setexpd128 (a_low, 0));
   a_high_di = ((_Decimal64) setexpd128 (a_high, -18));
@@ -108,7 +108,7 @@ convert_td_ti(_Decimal128 a)
   a_high_ti = (RET_TYPE) a_high_di * ten_16_ti;
   result = (a_low_ti + a_high_ti) * (RET_TYPE) exp10_ti[exp];
 
-  /* No need to worry about overflow with INT128 */
+  /* No need to worry about overflow with INT128.  */
 #if SIGNED
   if (neg)
     result = -result;

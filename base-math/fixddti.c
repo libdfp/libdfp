@@ -1,4 +1,4 @@
-/* fixddti implementation.
+/* fixddti implementation.  _Decimal64 -> INT128.
 
    Copyright (C) 2015 Free Software Foundation, Inc.
 

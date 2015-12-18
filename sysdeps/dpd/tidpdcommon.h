@@ -43,19 +43,19 @@ split_td (_Decimal128 a, _Decimal128 * a_high, _Decimal128 * a_low)
 
   dunion.td = a;
   digs = dunion.ieee.cc5;
-  dunion.ieee.cc5 = 0;		/* Set lower 18 digits to 0 */
+  dunion.ieee.cc5 = 0;		/* Set lower 18 digits to 0.  */
   dunion.ieee.cc6 = 0;
   dunion.ieee.cc7H8 = 0;
   dunion.ieee.cc7L2 = 0;
   dunion.ieee.cc8 = 0;
   dunion.ieee.cc9 = 0;
   dunion.ieee.cc10 = 0;
-  *a_high = dunion.td;		/* a_high should now have only 16 leading dec sig figs */
+  *a_high = dunion.td;		/* a_high should now have only 16 leading dec sig figs.  */
   digs = dpd_to_bcd[digs];
   digs &= 0xff0;
-  dunion.ieee.cc5 = bcd_to_dpd[digs];	/* Replace d15 in mantissa */
-  a_high_18 = dunion.td;	/* a_high_18 contains  18 leading dec sig figs */
-  *a_low = a - a_high_18;	/* a_low contains trailing 16 sig figs */
+  dunion.ieee.cc5 = bcd_to_dpd[digs];	/* Replace d15 in mantissa.  */
+  a_high_18 = dunion.td;	/* a_high_18 contains  18 leading dec sig figs.  */
+  *a_low = a - a_high_18;	/* a_low contains trailing 16 sig figs.  */
 
   /* Turn two BCD digits into binary.  */
   digs >>= 4;
