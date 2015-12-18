@@ -49,4 +49,6 @@ libdfp_files += addsd3 adddd3 addtd3 \
 
 libdfp_ti_files += fixsdti fixddti \
 		   fixunssdti fixunsddti \
-		   floattitd floatunstitd
+		   floattitd floatunstitd \
+		   floattidd floatunstidd \
+		   floattisd floatunstisd

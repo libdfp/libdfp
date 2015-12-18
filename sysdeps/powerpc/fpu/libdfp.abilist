@@ -312,7 +312,11 @@ LIBDFP_1.0.13
  __dpd_fixunsddti F
  __dpd_fixunssdti F
  __dpd_fixunstdti F
+ __dpd_floattidd F
+ __dpd_floattisd F
  __dpd_floattitd F
+ __dpd_floatunstidd F
+ __dpd_floatunstisd F
  __dpd_floatunstitd F
 LIBDFP_1.0.2
  LIBDFP_1.0.2 A

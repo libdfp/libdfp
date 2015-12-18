@@ -24,7 +24,11 @@ libdfp {
 
   LIBDFP_1.0.13 {
     __bid_floattitd;
+    __bid_floattidd;
+    __bid_floattisd;
     __bid_floatunstitd;
+    __bid_floatunstidd;
+    __bid_floatunstisd;
     __bid_fixunssdti;
     __bid_fixunsddti;
     __bid_fixsdti;

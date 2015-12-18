@@ -24,6 +24,8 @@
 
 #include <dfpacc.h>
 
+#include "convert_helpers.h"
+
 /*
  * Convert a signed 128-bit binary integer into nearest representable
  * IEEE754R 128-bit Densely Packed Decimal Floating-point (DFP).
@@ -62,19 +64,41 @@
  * preserving the most significant 34-digits in the result.
  */
 
-_Decimal128
-__BACKEND_ (floattitd) (INT128 a)
+/* These strictly control signed/unsigned behavior.  */
+#ifndef UNSIGNED
+# define INPUT_TYPE64 long long
+# define INPUT_TYPE INT128
+#else
+# define INPUT_TYPE64 unsigned long long
+# define INPUT_TYPE UINT128
+#endif
+
+/* Generic macros to overload for other conversions.  */
+#ifndef FUNC
+# define FUNC     floattitd
+# define RET_TYPE _Decimal128
+# define RET_SIZE 128
+#endif
+
+#define FMULTRUNC(_x) (__fmultruncd ## RET_SIZE)(_x)
+
+RET_TYPE
+__BACKEND_ (FUNC) (INPUT_TYPE a)
 {
+#ifndef UNSIGNED
   INT128 zero = (INT128) 0L;
+  int negative = 0;
+#endif
+
   UINT128 ten_17 = (UINT128) 100000000000000000UL;
   UINT128 two_63 = (UINT128) 0x8000000000000000UL;
   UINT128 u, x, y, z;
   unsigned long long t_low, t_mid, t_high;
-  _Decimal128 result = 0.DL;
-  _Decimal128 d_low, d_mid, d_high;
-  int negative = 0;
+  RET_TYPE result = 0.DL;
+  _Decimal128 d_low, d_mid, d_high __attribute__((unused));
 
   /* take the absolute value and record the sign.  */
+#ifndef UNSIGNED
   if (a < zero)
     {
       /* This is necessary because __builtin_abs() does not handle
@@ -86,6 +110,7 @@ __BACKEND_ (floattitd) (INT128 a)
       negative = 1;
     }
   else
+#endif
     {
       u = (UINT128) a;
     }
@@ -95,7 +120,7 @@ __BACKEND_ (floattitd) (INT128 a)
     {
       /* If abs(a) is less than 63-bits we can convert the signed
        * value directly.  */
-      result = (long long) a;
+    result = (INPUT_TYPE64) a;
     }
   else
     {
@@ -120,16 +145,29 @@ __BACKEND_ (floattitd) (INT128 a)
 	  d_low = t_low;
 	  d_mid = t_mid;
 	  d_high = t_high;
+
+          /* Call out to internal helpers to properly handle
+	   * conversion and trunctation into a smaller format.
+	   */
+#if RET_SIZE == 64
+	  result = combine_and_truncd64(d_high,d_mid,d_low);
+#elif RET_SIZE == 32
+	  result = combine_and_truncd32(d_high,d_mid,d_low);
+#else
 	  result = (d_high * 100000000000000000.DL) + d_mid;
 	  result = (result * 100000000000000000.DL) + d_low;
+#endif
 	}
+
+#ifndef UNSIGNED
       /* Converted the absolute 127-bit value of "a" to Decimal128.
        * Now correct the decimal sign if the original value
        * was negative.  */
       if (negative)
 	result = -result;
+#endif
     }
 
   return (result);
 }
-hidden_def (__BACKEND_ (floattitd))
+hidden_def (__BACKEND_ (FUNC))

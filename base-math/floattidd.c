@@ -1,10 +1,10 @@
-/* Convert a unsigned 128-bit binary integer into nearest representable
-   IEEE754R 128-bit Densely Packed Decimal Floating-point (DFP).
+/* Convert a signed 128-bit binary integer into nearest representable
+   IEEE754R 64-bit Densely Packed Decimal Floating-point (DFP).
 
    Copyright (C) 2015 Free Software Foundation, Inc.
    This file is part of the Decimal Floating Point C Library.
 
-   Contributed by Steven Munroe (munroesj@linux.vnet.ibm.com)
+   Contributed by Paul E. Murphy (murphyp@linux.vnet.ibm.com)
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -22,9 +22,7 @@
 
    Please see dfp/COPYING.txt for more information.  */
 
-#define UNSIGNED  1
-#define FUNC floatunstitd
-#define RET_TYPE _Decimal128
-#define RET_SIZE 128
-
+#define FUNC floattidd
+#define RET_TYPE _Decimal64
+#define RET_SIZE 64
 #include "floattitd.c"

@@ -41,7 +41,11 @@ libdfp {
     __dpd_fixunsddti;
     __dpd_fixunssdti;
     __dpd_floattitd;
+    __dpd_floattidd;
+    __dpd_floattisd;
     __dpd_floatunstitd;
+    __dpd_floatunstidd;
+    __dpd_floatunstisd;
   }
 
 }
