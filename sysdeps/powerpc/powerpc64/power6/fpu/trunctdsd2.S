@@ -28,8 +28,11 @@
 	.machine	"power6"
 /* _Decimal32 __dpd_trunctdsd2 (_Decimal128 x)  */
 ENTRY (__dpd_trunctdsd2)
-	drdpq	fp0,fp2	/* Round result to _Decimal64. */
-	drsp	fp1,fp0	/* Round result to _Decimal32. */
+	mffs    fp4     /* Save current rounding mode.  */
+	mtfsfi  7, 7, 1 /* Set round to prepare for shorter.  */
+	drdpq	fp0,fp2	/* Initial round to _Decimal64.  */
+	mtfsf   0xff,fp4,1,0 /* Restore previous rounding mode.  */
+	drsp	fp1,fp0	/* Round result to _Decimal32.  */
 	blr
 END (__dpd_trunctdsd2)
 hidden_def (__dpd_trunctdsd2)
