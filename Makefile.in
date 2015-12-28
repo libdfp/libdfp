@@ -234,22 +234,24 @@ ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -
 CXX_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_ISOC99_SOURCE
 CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 
+-include *.d
+
 # Build the static object files.
 .c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -MT $@ -MD -MP -MF $*.d -c $< $(C_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 .S.o:
-	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -MT $@ -MD -MP -MF $*.d -c $< $(ASM_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 # Build the shared object files.
 .c.os:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(C_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -MT $@ -MD -MP -MF $*.d -c $< $(C_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 .S.os:
-	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -c $< $(ASM_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -MT $@ -MD -MP -MF $*.d -c $< $(ASM_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 # C++ compatibility test cases.
 .cpp.os:
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mzarch) -c $< $(CXX_DEFINES) $(CXX_WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mzarch) -MT $@ -MD -MP -MF $*.d -c $< $(CXX_DEFINES) $(CXX_WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 # Archive the static library and include all of the .o files from the backend
 # archive.  IF the backend has more than the base directory the .o detection
