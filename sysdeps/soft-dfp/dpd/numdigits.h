@@ -214,7 +214,10 @@ FUNC_D (left_justify) (DEC_TYPE x)
   __get_digits_d32(x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 64
 # define decfield dd
-  union ieee754r_Decimal64 mask = { .di = {
+  /* The 'static const' is a hack to prevent an ancient version
+     of GCC from transforming this NaN and removing its payload,
+     and failing tests.  */
+  static const union ieee754r_Decimal64 mask = { .di = {
 #  if __BYTE_ORDER == __LITTLE_ENDIAN
     0x00000001, 0x7c000000
 #  else
