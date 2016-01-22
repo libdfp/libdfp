@@ -299,9 +299,9 @@ extern const _Decimal128 decpowof2[];
       (((status) & DEC_IEEE_854_Overflow) ? FE_OVERFLOW : 0) |		\
       (((status) & DEC_IEEE_854_Underflow) ? FE_UNDERFLOW : 0))
 
+#include <fenv_libdfp.h>
 
 #ifdef fegetenv_register
-# include <fenv_libdfp.h>
 # define DFP_TEST_EXCEPTIONS(status)	({	\
 	fenv_union_t u; 			\
 	u.fenv = fegetenv_register(); 		\
