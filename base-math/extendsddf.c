@@ -30,6 +30,7 @@
 
 #include "dfpacc.h"
 #include "convert.h"
+#include "convert_helpers.h"
 
 CONVERT_WRAPPER(
 // truncsdsf, extendsddf
@@ -38,9 +39,9 @@ CONVERT_WRAPPER(
 	long long mant;
 	int	exp, sexp;
 
-	a_norm = FREXPD32 (a, &exp);
-	mant = a_norm * 1E+7DF;		/* 7 digits of mantissa.  */
-	sexp = exp - 7;			/* Exponent adjusted for mantissa.  */
+	a_norm = getmantandexpd32 (a, &exp, 7, 1e7DF);
+	mant = a_norm;		/* 7 digits of mantissa.  */
+	sexp = exp - 7;		/* Exponent adjusted for mantissa.  */
 	temp = mant;
 	if (sexp > 0)
 	  temp *= BINPOWOF10[sexp];

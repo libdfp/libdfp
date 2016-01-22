@@ -31,6 +31,8 @@
 #include "dfpacc.h"
 #include "convert.h"
 
+#include "convert_helpers.h"
+
 CONVERT_WRAPPER(
 // trunctddf
 	long double temp;	/* Need at least 16 decimal digits of accuracy.  */
@@ -38,7 +40,9 @@ CONVERT_WRAPPER(
 	long long mant;
 	int	exp, sexp;
 
-	a_norm = FREXPD128 (a, &exp);
+	/* Get mantissa with 17 significant digits, and normalized exponent.  */
+	a_norm = getmantandexpd128 (a, &exp, 17, 1e17DL);
+
 	/* Avoid going beyond the bounds of the exponent table.  */
 	if (exp > BINPOWOF10_LIMIT)		/* Obvious overflow.  */
 	  {
@@ -53,8 +57,8 @@ CONVERT_WRAPPER(
 	    return SIGNBIT(a) ? -0.0 : 0.0;
 	  }
 
-	mant = a_norm * 1.E+17DL;		/* 17 digits of mantissa.  */
-	sexp = exp - 17;			/* Exponent adjusted for mantissa.  */
+	mant = a_norm;   /* Convert 17 digit mantissa to DI integer.  */
+	sexp = exp - 17; /* Exponent adjusted for mantissa.  */
 	temp = mant;
 	if (sexp > 0)
 	  temp *= BINPOWOF10[sexp];

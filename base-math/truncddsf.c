@@ -30,6 +30,7 @@
 
 #include "dfpacc.h"
 #include "convert.h"
+#include "convert_helpers.h"
 
 CONVERT_WRAPPER(
 // truncddsf
@@ -38,7 +39,7 @@ CONVERT_WRAPPER(
 	long long mant;
 	int exp, sexp;
 	
-	a_norm = FREXPD64 (a, &exp);
+	a_norm = getmantandexpd64 (a, &exp, 16, 1e16DD);
 	
 	/* Check for values that would overflow the exponent table, which
 	   would be obvious overflow and underflow.  */
@@ -55,7 +56,7 @@ CONVERT_WRAPPER(
 	    return SIGNBIT(a) ? -0.0 : 0.0;
 	  }
 
-	mant = a_norm * 1.E+16DD;	/* 16 digits of mantissa.  */
+	mant = a_norm;			/* 16 digits of mantissa.  */
 	sexp = exp - 16;		/* Exponent adjusted for mantissa.  */
 	temp = mant;
 	if (sexp > 0)

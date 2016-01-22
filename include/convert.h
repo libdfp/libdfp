@@ -246,11 +246,6 @@ extern const _Decimal128 decpowof2[];
 #define FREXPSF		__builtin_frexpf
 #define FREXPDF		__builtin_frexp
 #define FREXPTF		__builtin_frexpl
-#define FREXPD32	__frexpd32
-#define FREXPD64	__frexpd64
-#define FREXPD128	__frexpd128
-
-
 
 #ifndef PASTE
 # define PASTE(a,b) PASTE2(a,b)
