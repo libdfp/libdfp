@@ -171,4 +171,106 @@ getmantandexpd32(_Decimal32 x, int *y, int shift, _Decimal32 _y)
   return (_Decimal32) tmp;
 }
 
+/* Convert the entire mantissa to a quadword, and
+   return the exponent in the form .a0...a33 * 10^exp
+ */
+#ifdef INT128
+static inline INT128
+getmantd128(_Decimal128 dq, long *exp)
+{
+  union dfdi {
+	double df;
+	long long int di;
+  };
+  union dfdi a,b,c,d,e;
+
+  /* Useful constants */
+  a.di = 0 + 6176;	/* Biased 10^0.  */
+  b.di = -17 + 6176;    /* Biased 10^-17.  */
+
+  _Decimal128 t1, t2;
+
+  /* Pop off the exponent of the input.  */
+  asm ( "dxexq %[a],%[b]\n\t"      : [a] "=d" (e.df) : [b] "d" (dq) );
+
+  /* Insert 0 exponent into dq.  */
+  asm ( "diexq %[g],%[a],%[i]\n\t" : [g] "=d" (t1) : [a] "d" (a.df), [i] "d" (dq) );
+
+  /* Insert -17 exponent into dq.  */
+  asm ( "diexq %[d],%[b],%[i]\n\t" : [d] "=d" (t2) : [b] "d" (b.df), [i] "d" (dq) );
+
+  /* Lop of lower 17 digits of 0'ed dq (sort of /= 10^17).  */
+  asm ( "dscriq %[c],%[c],17\n\t"  : [c] "+&d" (t1) );
+
+  /* Lop of upper 17 digits of -17'ed dq (sort of a *= 10^17).  */
+  asm ( "dscliq %[d],%[d],17\n\t"  : [d] "+&d" (t2) );
+
+  /* Convert the two halves.  */
+  asm ( "dctfixq %[e],%[c]\n\t"    : [e] "=d" (c.df) : [c] "d" (t1) );
+  asm ( "dctfixq %[f],%[d]\n\t"    : [f] "=d" (d.df) : [d] "d" (t2) );
+
+  *exp = e.di - a.di;
+
+  INT128 x = 100000000000000000; /* 10^17 */
+  INT128 m = c.di * x + d.di;
+  return m;
+}
+#endif
+
+/* Convert the entire mantissa to a doubleworld and
+   return the normalized exponent, and the mantissa.  */
+static inline long long int
+getmantd64(_Decimal64 dd, long *exp)
+{
+  union dfdi {
+	double df;
+	long long int di;
+  };
+  union dfdi a,b,c;
+
+  /* Useful constants */
+  b.di = 0 + 398;	/* Biased 10^0.  */
+
+  _Decimal64 t1;
+
+  /* Pop off the exponent of the input.  */
+  asm ( "dxex %[a],%[dd]\n\t" : [a] "=d" (a.df) : [dd] "d" (dd) );
+
+  /* Insert 0 exponent into dd.  */
+  asm ( "diex %[t1],%[b],%[dd]\n\t" : [t1] "=d" (t1) : [b] "d" (b.df), [dd] "d" (dd) );
+
+  /* Convert the mantissa.  */
+  asm ( "dctfix %[c],%[t1]\n\t"    : [c] "=d" (c.df) : [t1] "d" (t1) );
+
+  *exp = a.di - b.di;
+
+  return c.di;
+}
+
+static inline int
+getmantd32(_Decimal32 sd, long *exp)
+{
+  return getmantd64((_Decimal64) sd, exp);
+}
+
+/* Truncate quickly.  No need to validate input.  */
+static inline _Decimal128
+fast_truncd128 (_Decimal128 a)
+{
+  asm ( "drintnq 0, %0, %0, 1\n\t" : "+d" (a) );
+  return a;
+}
+
+static inline _Decimal64
+fast_truncd64 (_Decimal64 a)
+{
+  asm ("drintn 0, %0, %0, 1\n\t" : "+d" (a));
+  return a;
+}
+
+static inline _Decimal32
+fast_truncd32 (_Decimal32 a)
+{
+  return (_Decimal32) fast_truncd64((_Decimal64) a);
+}
 #endif /* _CONVERTHELPERS_ */
