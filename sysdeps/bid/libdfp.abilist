@@ -308,8 +308,10 @@ LIBDFP_1.0.13
  LIBDFP_1.0.13 A
  __bid_fixddti F
  __bid_fixsdti F
+ __bid_fixtdti F
  __bid_fixunsddti F
  __bid_fixunssdti F
+ __bid_fixunstdti F
  __bid_floattidd F
  __bid_floattisd F
  __bid_floattitd F

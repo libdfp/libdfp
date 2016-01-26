@@ -34,9 +34,11 @@
 
 #include <dfpacc.h>
 #include <stdint.h>
-#include <dfp/math.h>
+#include <math.h>
 #include <dfpmacro.h>
 #include <ieee754r_private.h>
+
+#include "convert_helpers.h"
 
 #if SIGNED == 1
 #  if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
@@ -73,17 +75,10 @@
 #  define QUICK_CONVERT(_x) ({ unsigned long long int _a_di = _x; _a_di;})
 #endif
 
-#define TRUNC(_x) (PASTE(__truncd, SRC_SIZE)(_x))
-#define FREXP(_x,_y) (PASTE(__frexpd,SRC_SIZE)(_x,_y))
+#define TRUNC(_x) (PASTE(fast_truncd, SRC_SIZE)(_x))
 #define CLASSIFY(_x) (PASTE(__fpclassifyd,SRC_SIZE)(_x))
-#define SHIFT_EXP_VAL PASTE(PASTE(1e,SHIFT_EXP),PASTE(DSUFF,))
 #define SIGNBIT(_x) (PASTE(__signbitd,SRC_SIZE)(_x))
-
-#if SIGNED == 1
-#  define FABS(_x) (PASTE(__fabsd,SRC_SIZE)(_x))
-#else
-#  define FABS(_x) _x
-#endif
+#define GETMANT(_x,_y) (PASTE(getmantd,SRC_SIZE)(_x,_y))
 
 extern const INT128 exp10_ti[39];
 
@@ -114,37 +109,19 @@ RET_TYPE __BACKEND_(FUNC) (DEC_TYPE a)
   if(a < MIN_VAL || a > MAX_VAL)
   {
     DFP_EXCEPT (FE_INVALID);
-    return (a < MIN_VAL) ? min.ti : max.ti;
+    return SIGNBIT(a) ? min.ti : max.ti;
   }
 
-  /* A 64 bit mantissa is sufficient for dd/sd conversions. */
-#if SRC_SIZE <= 64
-  RET_TYPE result;
-  int e;
+  long e;
+  DEC_TYPE a_int = TRUNC (a);
+  RET_TYPE mant = GETMANT (a_int, &e);
 
-  if (FABS(a) < SHIFT_EXP_VAL)
-  {
-    return (RET_TYPE) QUICK_CONVERT (a);
-  }
-
-  DEC_TYPE a_int  = TRUNC (a);
-  DEC_TYPE a_norm = FREXP (a_int, &e);
-
-
-  a_norm *= SHIFT_EXP_VAL;
-  e -= SHIFT_EXP;
-  /* Force a 64b conversion of the mantissa */
-  result = ((int64_t) a_norm);
   if (e > 0)
-    return result * (RET_TYPE) exp10_ti[e];
+    return mant * (RET_TYPE) exp10_ti[e];
   else if (e < 0)
-    return result / (RET_TYPE) exp10_ti[-e];
+    return mant / (RET_TYPE) exp10_ti[-e];
   else
-    return result;
-#else
-  /* This requires specific knowledge of the encoding.  Punt it.  */
-  return D128_CONVERSION(a);
-#endif
+    return mant;
 }
 
 hidden_def (__BACKEND_(FUNC))

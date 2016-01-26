@@ -31,7 +31,9 @@ libdfp {
     __bid_floatunstisd;
     __bid_fixunssdti;
     __bid_fixunsddti;
+    __bid_fixunstdti;
     __bid_fixsdti;
     __bid_fixddti;
+    __bid_fixtdti;
   }
 }

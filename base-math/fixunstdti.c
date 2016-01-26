@@ -22,7 +22,10 @@
 
    Please see dfp/COPYING.txt for more information.  */
 
+#define SRC_SIZE 128
+#define DSUFF DL
 #define SIGNED 0
 #define FUNC fixunstdti
 #define RTYPE UINT128
-#include "fixtdti.c"
+
+#include "fixsdti.c"
