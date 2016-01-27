@@ -32,7 +32,7 @@ combine_and_truncd ## SIZE (_Decimal128 hi, _Decimal128 mid, _Decimal128 low) \
   _Decimal128 result;                                                         \
   fenv_t rnd = fegetenv_register();                                           \
   asm volatile ("mtfsfi 7, 7, 1"); /* Enforce round to prep for shorter.  */  \
-  hi = __builtin_dscliq (hi, 17);                                             \
+  asm ("dscliq %0, %0, 17" : "+&d" (hi));                                     \
   result = (hi + mid) * 1e17DL;                                               \
   /* This is a hack. We need to ensure this and above happens under           \
      the correct rounding mode. */                                            \
