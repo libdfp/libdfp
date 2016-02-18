@@ -160,19 +160,27 @@ FUNC_D (left_justify) (DEC_TYPE x)
 
   int exp;
 
-  asm ("rrdtr %0,%2,%3,1\n\t"
-       "eedtr %1,%0\n\t"
+  asm (
        /* The following magic numbers result from the precision of the
 		   data type minus 1.  */
+#if _DECIMAL_SIZE != 128
+       "rrdtr %0,%2,%3,5\n\t"
+       "eedtr %1,%0\n\t"
 #if _DECIMAL_SIZE == 32
        "ahi %1,-6\n\t"
-#elif _DECIMAL_SIZE == 64
+#else /* _DECIMAL_SIZE == 64 */
        "ahi %1,-15\n\t"
-#else /* _DECIMAL_SIZE == 128 */
-       "ahi %1,-33\n\t"
 #endif
        "iedtr %0,%0,%1\n\t"
-       "qadtr %0,%2,%0,1" : "=f"(rnd), "=d"(exp), "+f"(tmp) : "d"(1));
+       "qadtr %0,%2,%0,5"
+#else /* _DECIMAL_SIZE == 128 */
+       "rrxtr %0,%2,%3,5\n\t"
+       "eextr %1,%0\n\t"
+       "ahi %1,-33\n\t"
+       "iextr %0,%0,%1\n\t"
+       "qaxtr %0,%2,%0,5"
+#endif
+       : "=f"(rnd), "=d"(exp), "+f"(tmp) : "d"(1));
 
 #if _DECIMAL_SIZE == 32
   return (_Decimal32)rnd;
