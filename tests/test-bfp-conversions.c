@@ -165,7 +165,12 @@ tftd_type tftd_tests[] =
   {__LINE__, 100000000000000000, 100000000000000000.0DL,  "%DDe"},
   {__LINE__, 999999999999999999, 999999999999999999.0DL,  "%DDe"},
   {__LINE__, 100000000000000000000000000000000.0L, 100000000000000000000000000000000.0DL,  "%DDe"},
-  {__LINE__, 999999999999999999999999999999999.0L, 1000000000000000000000000000000000.0DL,  "%DDe"},
+#if __LDBL_MANT_DIG__ < 113
+  /* IEEE128 long double has more mantissa precision than _Decimal128.  */
+  {__LINE__, 999999999999999999999999999999999.0L, 1000000000000000000000000000000000.0DL,  "%.33DDe"},
+#else
+  {__LINE__, 999999999999999999999999999999999.0L,  999999999999999999999999999999999.0DL,  "%.33DDe"},
+#endif
   {0,0,0,0 }
 };
 
@@ -256,7 +261,7 @@ ddxf_type ddxf_tests[] =
   {0,0,0 }
 };
 
-#elif __LDBL_MANT_DIG__ == 106
+#else /* __LDBL_MANT_DIG__ == 106 or 113 */
 /* Test extendsdtf () - Single decimal to long double float conversions,
  * i.e., _Decimal32 -> long double.  */
 typedef struct{
@@ -268,7 +273,11 @@ typedef struct{
 
 sdtf_type sdtf_tests[] =
 {
+#if __LDBL_MANT_DIG__ == 113
+  {__LINE__, 12.345DF, 12.345L,  "%Le"},
+#else
   {__LINE__, 12.345DF, 12.345,  "%Le"},
+#endif
   {__LINE__, 2.0DF, 2.0, "%Le"},
   {0,0,0,0 }
 };
@@ -284,18 +293,24 @@ typedef struct{
 
 ddtf_type ddtf_tests[] =
 {
+#if __LDBL_MANT_DIG__ == 113
+  {__LINE__, 12.3456789DD, 12.3456789L,  "%Le"},
+#else
   {__LINE__, 12.3456789DD, 12.3456789,  "%Le"},
+#endif
   {__LINE__, -7.0DD, -7.0,  "%Le"},
   {0,0,0,0 }
 };
 
 #endif
 
-/* There is a lack of precision in division with long double on PowerPC. */
+#if __LDBL_MANT_DIG__ == 106
+/* There is a lack of precision in division with IBM long double on PowerPC. */
 union precision_expected{
   long double ld;
   double d[2];
 };
+#endif
 
 /* Test extendtdtf () - Double decimal to long double float conversions,
  * i.e., _Decimal128 -> long double. */
@@ -303,8 +318,8 @@ typedef struct{
   int line;
   _Decimal128 x; /* td 'quad decimal' value to convert.  */
   long double e;/* tf 'long double float' converted value.  */
-  double ppce1; /* df 'double float' part of the expected value for ppc. */
-  double ppce2; /* df 'double float' part of the expected value for ppc. */
+  double ppce1; /* df 'double float' part of the expected value for IBM long double. */
+  double ppce2; /* df 'double float' part of the expected value for IBM long double. */
   const char *format; /* printf %DDe */
 } tdtf_type;
 
@@ -580,10 +595,14 @@ int main (void)
       /* This will force the conversion and result in the hidden call to
        * __dpd_extendtdtf ().  */
       long double retval = tdtfp->x;
-      /* PowerPC has a lack of precision in division with long double, so
+
+      /* IBM long double has a lack of precision in division with long double, so
        * the expected value needs to be adjusted. */
+#if __LDBL_MANT_DIG__ == 106
       union precision_expected e = {.d = {tdtfp->ppce1, tdtfp->ppce2}};
       tdtfp->e = e.ld;
+#endif
+	
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%Le = (long double) ", retval);
