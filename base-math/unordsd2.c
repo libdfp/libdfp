@@ -24,6 +24,7 @@
 
 #include <dfpacc.h>
 #include <math.h>
+#include <ieee754r_private.h>
 
 CMPINT
 __BACKEND_(unordsd2) (_Decimal32 x, _Decimal32 y)
