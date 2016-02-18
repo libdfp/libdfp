@@ -1,0 +1,49 @@
+# ULP file for PowerPC with hardware floating ponint
+
+# exp
+test exp 88.72269439697265625
+# TODO check why these ulps are so high
+decimal32 15
+decimal64 13
+
+# log
+test log 0.75
+decimal32 0
+decimal64 0
+decimal128 0
+
+test log 1
+decimal32 0
+decimal64 0
+decimal128 0
+
+test log 2.718281828459045235360287471352662
+decimal32 0
+decimal64 0
+decimal128 0
+
+test log 3.141592653589793238462643383279503
+decimal32 0
+decimal64 0
+decimal128 0
+
+test log 2
+decimal32 0
+decimal64 0
+decimal128 0
+
+test log 10
+decimal32 0
+decimal64 0
+decimal128 0
+
+# log1p
+test log1p 3.141592653589793238462643383279503
+decimal32 1
+
+# log10
+test log10 3.141592653589793238462643383279503
+decimal64 1
+
+test log10 2.718281828459045235360287471352662
+decimal128 1

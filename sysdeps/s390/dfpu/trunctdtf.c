@@ -1,10 +1,8 @@
-/* Decimal Floating Point function intended to override the libgcc version.
+/* Handle conversion from Decimal128 to binary long double (dual 64bit)
 
-   Copyright (C) 2009-2015 Free Software Foundation, Inc.
+   Copyright (C) 2016 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
-
-   Author(s): Ryan S. Arnold <rsa@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -22,12 +20,10 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#include <dfpacc.h>
-#include <math.h>
-#include <ieee754r_private.h>
+#include "dfpacc.h"
 
-CMPINT
-__BACKEND_(unordsd2) (_Decimal32 x, _Decimal32 y)
+long double __dpd_trunctdtf(_Decimal128 d)
 {
-  return __isnand64 ((_Decimal64)x) || __isnand64 ((_Decimal64)y);
+  return d;
 }
+hidden_def (__dpd_trunctdtf)
