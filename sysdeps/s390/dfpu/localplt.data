@@ -1,0 +1,3 @@
+# See scripts/check-localplt.awk for how this file is processed.
+# TODO: s390 outputs this as a reloc, but it works. Is that normal?
+libdfp.so: register_printf_dfp ?
