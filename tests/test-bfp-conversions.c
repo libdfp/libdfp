@@ -23,7 +23,7 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #ifndef __STDC_WANT_DEC_FP__
-#define __STDC_WANT_DEC_FP__
+# define __STDC_WANT_DEC_FP__
 #endif
 
 #define _WANT_VC 1 /* Pick up the _VC_P(x,y,fmt) macro.  */
@@ -42,20 +42,20 @@ typedef struct{
 
 sfsd_type sfsd_tests[] =
 {
-  {__LINE__, 12.345, 12.345DF,  "%He"},
-  {__LINE__, 12.345678, 12.345678DF,  "%He"},
-  {__LINE__, 123456.7, 123456.7DF,  "%He"},
-  {__LINE__, 999999.9, 999999.9DF,  "%He"},
-  {__LINE__, 2.0, 2.0DF, "%He"},
-  {__LINE__, 30.0, 30.0DF, "%He"},
-  {__LINE__, 1.0e-20, 1.0e-20DF, "%He"},
-  {__LINE__, 1.0e-96, 0.0DF, "%He"},
-  {__LINE__, 3.402819e+38, 3.402819e+38DF, "%He"},
-  {__LINE__, 100000., 100000.0DF, "%He"},
-  {__LINE__, 999999., 999999.0DF, "%He"},
-  {__LINE__, 1.2e-38, 1.2e-38DF, "%He"},
-  {__LINE__, 1.1e-38, 1.1e-38DF, "%He"},
-  {__LINE__, -1.2e-38, -1.2e-38DF, "%He"},
+  {__LINE__, 12.345f, 12.345DF,  "%.7He"},
+  {__LINE__, 12.345678f, 12.345678DF,  "%.7He"},
+  {__LINE__, 123456.7f, 123456.7DF,  "%.7He"},
+  {__LINE__, 999999.9f, 999999.9DF,  "%.7He"},
+  {__LINE__, 2.0f, 2.0DF, "%.7He"},
+  {__LINE__, 30.0f, 30.0DF, "%.7He"},
+  {__LINE__, 1.0e-20f, 1.0e-20DF, "%.7He"},
+  {__LINE__, 1.0e-96f, 0.0DF, "%.7He"},
+  {__LINE__, 3.402819e+38f, 3.402819e+38DF, "%.7He"},
+  {__LINE__, 100000.f, 100000.0DF, "%.7He"},
+  {__LINE__, 999999.f, 999999.0DF, "%.7He"},
+  {__LINE__, 1.2e-38f, 1.2e-38DF, "%.7He"},
+  {__LINE__, 1.1e-38f, 1.1e-38DF, "%.7He"},
+  {__LINE__, -1.2e-38f, -1.2e-38DF, "%.7He"},
   {0,0,0,0 }
 };
 
@@ -70,9 +70,9 @@ typedef struct{
 
 sfdd_type sfdd_tests[] =
 {
-  {__LINE__, 12.345, 12.345000267028809DD,  "%De"},
-  {__LINE__, 30.0, 30.0DD, "%De"},
-  {__LINE__, 3.402819e+38f, 3.402819004255176e+38DD, "%De"},
+  {__LINE__, 12.345f, 12.345000267028809DD,  "%.16De"},
+  {__LINE__, 30.0f, 30.0DD, "%.16De"},
+  {__LINE__, 3.402819e+38f, 3.402819004255176e+38DD, "%.16De"},
   {0,0,0,0 }
 };
 
@@ -87,9 +87,9 @@ typedef struct{
 
 sftd_type sftd_tests[] =
 {
-  {__LINE__, 12.345, 12.3450002670288085937500000000000000DL,  "%DDe"},
-  {__LINE__, 30.0, 30.0DL,  "%DDe"},
-  {__LINE__, 3.402819e+38f, 3.402819004255175794749548566449886e+38DL,  "%DDe"},
+  {__LINE__, 12.345f, 12.3450002670288085937500000000000000DL,  "%.34DDe"},
+  {__LINE__, 30.0f, 30.0DL,  "%.34DDe"},
+  {__LINE__, 3.402819e+38f, 3.402819004255175794749548566449886e+38DL,  "%.34DDe"},
   {0,0,0,0 }
 };
 
@@ -104,11 +104,11 @@ typedef struct{
 
 dfdd_type dfdd_tests[] =
 {
-  {__LINE__, 12.3456789, 12.3456789DD,  "%De"},
-  {__LINE__, -2.0, -2.0DD,  "%De"},
-  {__LINE__, 1.79768e+308, 1.79768e+308DD,  "%De"},
-  {__LINE__, 100000000000000, 100000000000000.0DD,  "%De"},
-  {__LINE__, 999999999999999, 999999999999999.0DD,  "%De"},
+  {__LINE__, 12.3456789, 12.3456789DD,  "%.16De"},
+  {__LINE__, -2.0, -2.0DD,  "%.16De"},
+  {__LINE__, 1.79768e+308, 1.79768e+308DD,  "%.16De"},
+  {__LINE__, 100000000000000, 100000000000000.0DD,  "%.16De"},
+  {__LINE__, 999999999999999, 999999999999999.0DD,  "%.16De"},
   {0,0,0,0 }
 };
 
@@ -123,9 +123,9 @@ typedef struct{
 
 dftd_type dftd_tests[] =
 {
-  {__LINE__, 12.3456789, 12.3456788999999993450273905182257295DL,  "%DDe"},
-  {__LINE__, -2.0, -2.0DL,  "%DDe"},
-  {__LINE__, 1.79768e+308, 1.797679999999999908416854000763986e+308DL,  "%DDe"},
+  {__LINE__, 12.3456789, 12.3456788999999993450273905182257295DL,  "%.34DDe"},
+  {__LINE__, -2.0, -2.0DL,  "%.34DDe"},
+  {__LINE__, 1.79768e+308, 1.797679999999999908416854000763986e+308DL,  "%.34DDe"},
   {0,0,0,0 }
 };
 
@@ -140,12 +140,12 @@ typedef struct{
 
 xftd_type xftd_tests[] =
 {
-  {__LINE__, 12.3456789, 12.3456788999999993450273905182257295DL,  "%DDe"},
-  {__LINE__, -22.0, -22.0DL,  "%DDe"},
-  {__LINE__, 100000000000000000, 100000000000000000.0DL,  "%DDe"},
-  {__LINE__, 999999999999999999, 999999999999999999.0DL,  "%DDe"},
-  {__LINE__, 100000000000000000000545460846592.0L, 100000000000000000000545460846592.0DL,  "%DDe"},
-  {__LINE__, 999999999999999999970270236377088.0L, 999999999999999999970270236377088.0DL,  "%DDe"},
+  {__LINE__, 12.3456789, 12.3456788999999993450273905182257295DL,  "%.34DDe"},
+  {__LINE__, -22.0L, -22.0DL,  "%.34DDe"},
+  {__LINE__, 100000000000000000L, 100000000000000000.0DL,  "%.34DDe"},
+  {__LINE__, 999999999999999999L, 999999999999999999.0DL,  "%.34DDe"},
+  {__LINE__, 100000000000000000000545460846592.0L, 100000000000000000000545460846592.0DL,  "%.34DDe"},
+  {__LINE__, 999999999999999999970270236377088.0L, 999999999999999999970270236377088.0DL,  "%.34DDe"},
   {0,0,0,0 }
 };
 
@@ -160,12 +160,12 @@ typedef struct{
 
 tftd_type tftd_tests[] =
 {
-  {__LINE__, 12.3456789, 12.3456788999999993450273905182257295DL,  "%DDe"},
-  {__LINE__, -22.0, -22.0DL,  "%DDe"},
-  {__LINE__, 100000000000000000, 100000000000000000.0DL,  "%DDe"},
-  {__LINE__, 999999999999999999, 999999999999999999.0DL,  "%DDe"},
-  {__LINE__, 100000000000000000000000000000000.0L, 100000000000000000000000000000000.0DL,  "%DDe"},
-  {__LINE__, 999999999999999999999999999999999.0L, 1000000000000000000000000000000000.0DL,  "%DDe"},
+  {__LINE__, 12.3456789L, 12.3456789DL,  "%.34DDe"},
+  {__LINE__, -22.0L, -22.0DL,  "%.34DDe"},
+  {__LINE__, 100000000000000000L, 100000000000000000.0DL,  "%.34DDe"},
+  {__LINE__, 999999999999999999L, 999999999999999999.0DL,  "%.34DDe"},
+  {__LINE__, 100000000000000000000000000000000.0L, 100000000000000000000000000000000.0DL,  "%.34DDe"},
+  {__LINE__, 999999999999999999999999999999999.0L, 999999999999999999999999999999999.0DL,  "%.34DDe"},
   {0,0,0,0 }
 };
 
@@ -180,21 +180,21 @@ typedef struct{
 
 sddf_type sddf_tests[] =
 {
-  {__LINE__, 12.345DF, 12.345,  "%e"},
-  {__LINE__, 2.0DF, 2.0,  "%e"},
-  {__LINE__, 3.402819e+38DF, 3.402819e+38, "%e"},
-  {__LINE__, 9.999998e96DF, 9.999998e96,  "%e"},
-  {__LINE__, 100000.0DF, 100000,  "%e"},
-  {__LINE__, 999999.0DF, 999999,  "%e"},
-  {__LINE__, 1.e-39DF, 1.e-39,  "%e"},
-  {__LINE__, -1.e-39DF, -1.e-39,  "%e"},
-  {__LINE__, 1.2e-38DF, 1.2e-38,  "%e"},
-  {__LINE__, 1.e-40DF, 1.e-40,  "%e"},
-  {__LINE__, 8.e-44DF, 8.e-44,  "%e"},
-  {__LINE__, 9.e-44DF, 9.e-44,  "%e"},
-  {__LINE__, 8.e-46DF, 8.e-46,  "%e"},
-  {__LINE__, -9.e-44DF, -9.e-44,  "%e"},
-  {__LINE__, -8.e-46DF, -8.e-46,  "%e"},
+  {__LINE__, 12.345DF, 12.345,  "%.16e"},
+  {__LINE__, 2.0DF, 2.0,  "%.16e"},
+  {__LINE__, 3.402819e+38DF, 3.402819e+38, "%.16e"},
+  {__LINE__, 9.999998e96DF, 9.999998e96,  "%.16e"},
+  {__LINE__, 100000.0DF, 100000,  "%.16e"},
+  {__LINE__, 999999.0DF, 999999,  "%.16e"},
+  {__LINE__, 1.e-39DF, 1.e-39,  "%.16e"},
+  {__LINE__, -1.e-39DF, -1.e-39,  "%.16e"},
+  {__LINE__, 1.2e-38DF, 1.2e-38,  "%.16e"},
+  {__LINE__, 1.e-40DF, 1.e-40,  "%.16e"},
+  {__LINE__, 8.e-44DF, 8.e-44,  "%.16e"},
+  {__LINE__, 9.e-44DF, 9.e-44,  "%.16e"},
+  {__LINE__, 8.e-46DF, 8.e-46,  "%.16e"},
+  {__LINE__, -9.e-44DF, -9.e-44,  "%.16e"},
+  {__LINE__, -8.e-46DF, -8.e-46,  "%.16e"},
   {0,0,0,0 }
 };
 
@@ -209,19 +209,19 @@ typedef struct{
 
 dddf_type dddf_tests[] =
 {
-  {__LINE__, -7.0DD, -7.0,  "%De"},
-  {__LINE__, 3.402819e+38DD, 3.402819e+38,  "%De"},
-  {__LINE__, 1.79768e+308DD, 1.79768e+308,  "%De"},
-  {__LINE__, 100000000000000.0DD, 100000000000000,  "%De"},
-  {__LINE__, 999999999999999.0DD, 999999999999999,  "%De"},
-  {__LINE__, 1.e290DD, 1.e290,  "%De"},
-  {__LINE__, 1.e291DD, 1.e291,  "%De"},
-  {__LINE__, 1.e308DD, 1.e308,  "%De"},
-  {__LINE__, 1.e-308DD, 1.e-308,  "%De"},
-  {__LINE__, 1.e-291DD, 1.e-291,  "%De"},
-  {__LINE__, 1.e-290DD, 1.e-290,  "%De"},
-  {__LINE__, 1.e-39DD, 1.e-39,  "%De"},
-  {__LINE__, -1.e-39DD, -1.e-39,  "%De"},
+  {__LINE__, -7.0DD, -7.0,  "%.16e"},
+  {__LINE__, 3.402819e+38DD, 3.402819e+38,  "%.16e"},
+  {__LINE__, 1.79768e+308DD, 1.79768e+308,  "%.16e"},
+  {__LINE__, 100000000000000.0DD, 100000000000000,  "%.16e"},
+  {__LINE__, 999999999999999.0DD, 999999999999999,  "%.16e"},
+  {__LINE__, 1.e290DD, 1.e290,  "%.16e"},
+  {__LINE__, 1.e291DD, 1.e291,  "%.16e"},
+  {__LINE__, 1.e308DD, 1.e308,  "%.16e"},
+  {__LINE__, 1.e-308DD, 1.e-308,  "%.16e"},
+  {__LINE__, 1.e-291DD, 1.e-291,  "%.16e"},
+  {__LINE__, 1.e-290DD, 1.e-290,  "%.16e"},
+  {__LINE__, 1.e-39DD, 1.e-39,  "%.16e"},
+  {__LINE__, -1.e-39DD, -1.e-39,  "%.16e"},
   {0,0,0,0 }
 };
 
@@ -256,7 +256,7 @@ ddxf_type ddxf_tests[] =
   {0,0,0 }
 };
 
-#elif __LDBL_MANT_DIG__ == 106
+#elif __LDBL_MANT_DIG__ == 106 || __LDBL_MANT_DIG__ == 113
 /* Test extendsdtf () - Single decimal to long double float conversions,
  * i.e., _Decimal32 -> long double.  */
 typedef struct{
@@ -268,8 +268,8 @@ typedef struct{
 
 sdtf_type sdtf_tests[] =
 {
-  {__LINE__, 12.345DF, 12.345,  "%Le"},
-  {__LINE__, 2.0DF, 2.0, "%Le"},
+  {__LINE__, 12.345DF, 12.345L,  "%.34Le"},
+  {__LINE__, 2.0DF, 2.0L, "%.34Le"},
   {0,0,0,0 }
 };
 
@@ -284,12 +284,12 @@ typedef struct{
 
 ddtf_type ddtf_tests[] =
 {
-  {__LINE__, 12.3456789DD, 12.3456789,  "%Le"},
-  {__LINE__, -7.0DD, -7.0,  "%Le"},
+  {__LINE__, 12.3456789DD, 12.3456789L,  "%.34Le"},
+  {__LINE__, -7.0DD, -7.0L,  "%.34Le"},
   {0,0,0,0 }
 };
 
-#endif
+#endif /* __LDBL_MANT_DIG__ == 106 || __LDBL_MANT_DIG__ == 113  */
 
 /* There is a lack of precision in division with long double on PowerPC. */
 union precision_expected{
@@ -310,22 +310,22 @@ typedef struct{
 
 tdtf_type tdtf_tests[] =
 {
-  {__LINE__, 30.0DL, 30.0, 30, 0, "%DDe"},
+  {__LINE__, 30.0DL, 30.0L, 30, 0, "%.34DDe"},
   /* 2**(-11) = 0.00048828125. */
-  {__LINE__, 0.00048828125DL, 0.00048828125L, 0.00048828125, 0, "%DDe"},
+  {__LINE__, 0.00048828125DL, 0.00048828125L, 0.00048828125, 0, "%.34DDe"},
   /* 2**(-25) = 0.298023223876953125E-7.  */
-  {__LINE__, 2.98023223876953125E-8DL, 2.98023223876953125E-8, 2.9802322387695312e-08, 0, "%DDe"},
-  {__LINE__, 3.402819e+38DL, 3.402819e+38L, 3.4028189999999998e+38, 1.7176206731396606e+22, "%DDe"},
-  {__LINE__, 100000000000000000.0DL, 100000000000000000, 1e+17, 0, "%DDe"},
-  {__LINE__, 999999999999999999.0DL, 999999999999999999, 1e+18, -1, "%DDe"},
-  {__LINE__, 100000000000000000000000000000000.0DL, 100000000000000000000000000000000.L, 1.0000000000000001e+32, -5366162204393472, "%DDe"},
-  {__LINE__, 999999999999999999999999999999999.0DL, 999999999999999999999999999999999.L, 9.9999999999999995e+32, 54424769012957184, "%DDe"},
-  {__LINE__, 1.e290DL, 1.e290L, 1.0000000000000001e+290, -6.1727833527867157e+273, "%DDe"},
-  {__LINE__, 1.e-290DL, 1.e-290L, 1.0000000000000001e-290, -6.9127868599625479e-307, "%DDe"},
-  {__LINE__, 1.e-308DL, 1.e-308L, 9.9999999999999991e-309, 0, "%DDe"},
-  {__LINE__, 1.e-291DL, 1.e-291L, 9.9999999999999996e-292, 3.7675676608720188e-308, "%DDe"},
-  {__LINE__, 3.e-309DL, 3.e-309L, 3.0000000000000007e-309, 0, "%DDe"},
-  {__LINE__, -3.e-309DL, -3.e-309L, -3.0000000000000007e-309, 0, "%DDe"},
+  {__LINE__, 2.98023223876953125E-8DL, 2.98023223876953125E-8L, 2.9802322387695312e-08, 0, "%.34DDe"},
+  {__LINE__, 3.402819e+38DL, 3.402819e+38L, 3.4028189999999998e+38L, 1.7176206731396606e+22, "%.34DDe"},
+  {__LINE__, 100000000000000000.0DL, 100000000000000000L, 1e+17, 0, "%.34DDe"},
+  {__LINE__, 999999999999999999.0DL, 999999999999999999L, 1e+18, -1, "%.34DDe"},
+  {__LINE__, 100000000000000000000000000000000.0DL, 100000000000000000000000000000000.L, 1.0000000000000001e+32, -5366162204393472, "%.34DDe"},
+  {__LINE__, 999999999999999999999999999999999.0DL, 999999999999999999999999999999999.L, 9.9999999999999995e+32, 54424769012957184, "%.34DDe"},
+  {__LINE__, 1.e290DL, 1.e290L, 1.0000000000000001e+290, -6.1727833527867157e+273, "%.34DDe"},
+  {__LINE__, 1.e-290DL, 1.e-290L, 1.0000000000000001e-290, -6.9127868599625479e-307, "%.34DDe"},
+  {__LINE__, 1.e-308DL, 1.e-308L, 9.9999999999999991e-309, 0, "%.34DDe"},
+  {__LINE__, 1.e-291DL, 1.e-291L, 9.9999999999999996e-292, 3.7675676608720188e-308, "%.34DDe"},
+  {__LINE__, 3.e-309DL, 3.e-309L, 3.0000000000000007e-309, 0, "%.34DDe"},
+  {__LINE__, -3.e-309DL, -3.e-309L, -3.0000000000000007e-309, 0, "%.34DDe"},
   {0,0,0,0,0,0 }
 };
 
@@ -360,10 +360,10 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%He = (_Decimal32) ", retval);
-      fprintf(stdout, "%e; /* float */ in: %s: %d\n", (double) sfsdp->x,__FILE__,__LINE__-4);
-      fprintf(stdout, "expected: %s\n", decoded32(sfsdp->e,decodebuf));
-      fprintf(stdout, "retval:   %s\n", decoded32(retval,decodebuf));
-      _VC_P(__FILE__,sfsdp->line, sfsdp->e, retval, sfsdp->format);
+      fprintf(stdout, "%e; /* float */ in: %s: %d\n", (double) sfsdp->x, __FILE__, __LINE__ - 4);
+      fprintf(stdout, "expected: %s\n", decoded32(sfsdp->e, decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded32(retval, decodebuf));
+      _VC_P(__FILE__, sfsdp->line, sfsdp->e, retval, sfsdp->format);
     }
 
   for (sfddp = sfdd_tests; sfddp->line; sfddp++)
@@ -374,10 +374,10 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%De = (_Decimal64) ", retval);
-      fprintf(stdout, "%e; /* float */ in: %s: %d\n", (double) sfddp->x,__FILE__,__LINE__-4);
-      fprintf(stdout, "expected: %s\n", decoded64(sfddp->e,decodebuf));
-      fprintf(stdout, "retval:   %s\n", decoded64(retval,decodebuf));
-      _VC_P(__FILE__,sfddp->line, sfddp->e, retval, sfddp->format);
+      fprintf(stdout, "%e; /* float */ in: %s: %d\n", (double) sfddp->x, __FILE__, __LINE__ - 4);
+      fprintf(stdout, "expected: %s\n", decoded64(sfddp->e, decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded64(retval, decodebuf));
+      _VC_P(__FILE__, sfddp->line, sfddp->e, retval, sfddp->format);
     }
 
   for (sftdp = sftd_tests; sftdp->line; sftdp++)
@@ -388,10 +388,10 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%DDe = (_Decimal128) ", retval);
-      fprintf(stdout, "%e; /* float */ in: %s: %d\n", (double) sftdp->x,__FILE__,__LINE__-4);
-      fprintf(stdout, "expected: %s\n", decoded128(sftdp->e,decodebuf));
-      fprintf(stdout, "retval:   %s\n", decoded128(retval,decodebuf));
-      _VC_P(__FILE__,sftdp->line, sftdp->e, retval, sftdp->format);
+      fprintf(stdout, "%e; /* float */ in: %s: %d\n", (double) sftdp->x, __FILE__, __LINE__ - 4);
+      fprintf(stdout, "expected: %s\n", decoded128(sftdp->e, decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded128(retval, decodebuf));
+      _VC_P(__FILE__, sftdp->line, sftdp->e, retval, sftdp->format);
     }
 
   for (dfddp = dfdd_tests; dfddp->line; dfddp++)
@@ -402,10 +402,10 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%De = (_Decimal64) ", retval);
-      fprintf(stdout, "%e; /* double */ in: %s: %d\n", dfddp->x,__FILE__,__LINE__-4);
-      fprintf(stdout, "expected: %s\n", decoded64(dfddp->e,decodebuf));
-      fprintf(stdout, "retval:   %s\n", decoded64(retval,decodebuf));
-      _VC_P(__FILE__,dfddp->line, dfddp->e, retval, dfddp->format);
+      fprintf(stdout, "%e; /* double */ in: %s: %d\n", dfddp->x, __FILE__, __LINE__ - 4);
+      fprintf(stdout, "expected: %s\n", decoded64(dfddp->e, decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded64(retval, decodebuf));
+      _VC_P(__FILE__, dfddp->line, dfddp->e, retval, dfddp->format);
     }
 
   for (dftdp = dftd_tests; dftdp->line; dftdp++)
@@ -416,10 +416,10 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%DDe = (_Decimal128) ", retval);
-      fprintf(stdout, "%e; /* double */ in: %s: %d\n", dftdp->x,__FILE__,__LINE__-4);
-      fprintf(stdout, "expected: %s\n", decoded128(dftdp->e,decodebuf));
-      fprintf(stdout, "retval:   %s\n", decoded128(retval,decodebuf));
-      _VC_P(__FILE__,dftdp->line, dftdp->e, retval, dftdp->format);
+      fprintf(stdout, "%e; /* double */ in: %s: %d\n", dftdp->x, __FILE__, __LINE__ - 4);
+      fprintf(stdout, "expected: %s\n", decoded128(dftdp->e, decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded128(retval, decodebuf));
+      _VC_P(__FILE__, dftdp->line, dftdp->e, retval, dftdp->format);
     }
 
   for (sddfp = sddf_tests; sddfp->line; sddfp++)
@@ -430,8 +430,8 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%e = (double) ", retval);
-      fprintf(stdout, "%He; /* _Decimal32 */ in: %s: %d\n", sddfp->x,__FILE__,__LINE__-4);
-      _VC_P(__FILE__,sddfp->line, sddfp->e, retval, sddfp->format);
+      fprintf(stdout, "%He; /* _Decimal32 */ in: %s: %d\n", sddfp->x, __FILE__, __LINE__ - 4);
+      _VC_P(__FILE__, sddfp->line, sddfp->e, retval, sddfp->format);
     }
 
   for (dddfp = dddf_tests; dddfp->line; dddfp++)
@@ -442,14 +442,14 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%e = (double) ", retval);
-      fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", dddfp->x,__FILE__,__LINE__-4);
-      _VC_P(__FILE__,dddfp->line, dddfp->e, retval, dddfp->format);
+      fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", dddfp->x, __FILE__, __LINE__ - 4);
+      _VC_P(__FILE__, dddfp->line, dddfp->e, retval, dddfp->format);
     }
 
 /* Intel long double has a different precision than PowerPC long double.
  * Intel converts to xf (80 bits) and PowerPC converts to tf (128 bits).*/
 #if defined(__DECIMAL_BID_FORMAT__) && __LDBL_MANT_DIG__ == 64
-#define DECIMAL_PRINTF_BUF_SIZE 65	/* ((DECIMAL128_PMAX + 14) * 2) + 1 */
+# define DECIMAL_PRINTF_BUF_SIZE 65	/* ((DECIMAL128_PMAX + 14) * 2) + 1 */
   for (xftdp = xftd_tests; xftdp->line; xftdp++)
     {
       /* This will force the conversion and result in the hidden call to
@@ -458,10 +458,10 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%DDe = (_Decimal128) ", retval);
-      fprintf(stdout, "%Le; /* long double */ in: %s: %d\n", xftdp->x,__FILE__,__LINE__-4);
-      fprintf(stdout, "expected: %s\n", decoded128(xftdp->e,decodebuf));
-      fprintf(stdout, "retval:   %s\n", decoded128(retval,decodebuf));
-      _VC_P(__FILE__,xftdp->line, xftdp->e, retval, xftdp->format);
+      fprintf(stdout, "%Le; /* long double */ in: %s: %d\n", xftdp->x, __FILE__, __LINE__ - 4);
+      fprintf(stdout, "expected: %s\n", decoded128(xftdp->e, decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded128(retval, decodebuf));
+      _VC_P(__FILE__, xftdp->line, xftdp->e, retval, xftdp->format);
     }
 
   for (sdxfp = sdxf_tests; sdxfp->line; sdxfp++)
@@ -474,8 +474,8 @@ int main (void)
       char value[DECIMAL_PRINTF_BUF_SIZE];
       sprintf(value, "%.33Lf", retval);
       fprintf(stdout, "%Le = (long double) ", retval);
-      fprintf(stdout, "%He; /* _Decimal32 */ in: %s: %d\n", sdxfp->x,__FILE__,__LINE__-4);
-      _SC_P (__FILE__,sdxfp->line, sdxfp->e, &value[0]);
+      fprintf(stdout, "%He; /* _Decimal32 */ in: %s: %d\n", sdxfp->x, __FILE__, __LINE__ - 4);
+      _SC_P (__FILE__, sdxfp->line, sdxfp->e, &value[0]);
     }
 
   for (ddxfp = ddxf_tests; ddxfp->line; ddxfp++)
@@ -488,20 +488,8 @@ int main (void)
       char value[DECIMAL_PRINTF_BUF_SIZE];
       sprintf(value, "%.33Lf", retval);
       fprintf(stdout, "%Le = (long double) ", retval);
-      fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", ddxfp->x,__FILE__,__LINE__-4);
-      _SC_P (__FILE__,ddxfp->line, ddxfp->e, &value[0]);
-    }
-
-  for (tdtfp = tdtf_tests; tdtfp->line; tdtfp++)
-    {
-      /* This will force the conversion and result in the hidden call to
-       * __dpd_extendtdtf ().  */
-      long double retval = tdtfp->x;
-      /* Broken into two because printf has a bug when you do %Hf and %f in the
-       * same printf statement.  */
-      fprintf(stdout, "%Le = (long double) ", retval);
-      fprintf(stdout, "%DDe; /* _Decimal128 */ in: %s: %d\n", tdtfp->x,__FILE__,__LINE__-4);
-      _VC_P(__FILE__,tdtfp->line, tdtfp->e, retval, tdtfp->format);
+      fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", ddxfp->x, __FILE__, __LINE__ - 4);
+      _SC_P (__FILE__, ddxfp->line, ddxfp->e, &value[0]);
     }
 #else
   for (tftdp = tftd_tests; tftdp->line; tftdp++)
@@ -511,45 +499,13 @@ int main (void)
       _Decimal128 retval = tftdp->x;
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
-      fprintf(stdout, "%DDe = (_Decimal128) ", retval);
-      fprintf(stdout, "%Le; /* long double */ in: %s: %d\n", tftdp->x,__FILE__,__LINE__-4);
-      fprintf(stdout, "expected: %s\n", decoded128(tftdp->e,decodebuf));
-      fprintf(stdout, "retval:   %s\n", decoded128(retval,decodebuf));
-      _VC_P(__FILE__,tftdp->line, tftdp->e, retval, tftdp->format);
+      fprintf(stdout, "%.34DDe = (_Decimal128) ", retval);
+      fprintf(stdout, "%.34Le; /* long double */ in: %s: %d\n", tftdp->x, __FILE__, __LINE__ - 4);
+      fprintf(stdout, "expected: %s\n", decoded128(tftdp->e, decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded128(retval, decodebuf));
+      _VC_P(__FILE__, tftdp->line, tftdp->e, retval, tftdp->format);
     }
 
-/* Intel long double has a different precision than PowerPC long double.
- * Intel converts to xf (80 bits) and PowerPC converts to tf (128 bits).*/
-#if defined(__DECIMAL_BID_FORMAT__) && __LDBL_MANT_DIG__ == 64
-#define DECIMAL_PRINTF_BUF_SIZE 65	/* ((DECIMAL128_PMAX + 14) * 2) + 1 */
-  for (sdxfp = sdxf_tests; sdxfp->line; sdxfp++)
-    {
-      /* This will force the conversion and result in the hidden call to
-       * __bid_extendsdxf ().  */
-      long double retval = sdxfp->x;
-      /* Broken into two because printf has a bug when you do %Hf and %f in the
-       * same printf statement.  */
-      char value[DECIMAL_PRINTF_BUF_SIZE];
-      sprintf(value, "%.33Lf", retval);
-      fprintf(stdout, "%Le = (long double) ", retval);
-      fprintf(stdout, "%He; /* _Decimal32 */ in: %s: %d\n", sdxfp->x,__FILE__,__LINE__-4);
-      _SC_P (__FILE__,sdxfp->line, sdxfp->e, &value[0]);
-    }
-
-  for (ddxfp = ddxf_tests; ddxfp->line; ddxfp++)
-    {
-      /* This will force the conversion and result in the hidden call to
-       * __bid_extendddxf ().  */
-      long double retval = ddxfp->x;
-      /* Broken into two because printf has a bug when you do %Hf and %f in the
-       * same printf statement.  */
-      char value[DECIMAL_PRINTF_BUF_SIZE];
-      sprintf(value, "%.33Lf", retval);
-      fprintf(stdout, "%Le = (long double) ", retval);
-      fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", ddxfp->x,__FILE__,__LINE__-4);
-      _SC_P (__FILE__,ddxfp->line, ddxfp->e, &value[0]);
-    }
-#else
   for (sdtfp = sdtf_tests; sdtfp->line; sdtfp++)
     {
       /* This will force the conversion and result in the hidden call to
@@ -558,8 +514,8 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%Le = (long double) ", retval);
-      fprintf(stdout, "%He; /* _Decimal32 */ in: %s: %d\n", sdtfp->x,__FILE__,__LINE__-4);
-      _VC_P(__FILE__,sdtfp->line, sdtfp->e, retval, sdtfp->format);
+      fprintf(stdout, "%He; /* _Decimal32 */ in: %s: %d\n", sdtfp->x, __FILE__, __LINE__ - 4);
+      _VC_P(__FILE__, sdtfp->line, sdtfp->e, retval, sdtfp->format);
     }
 
   for (ddtfp = ddtf_tests; ddtfp->line; ddtfp++)
@@ -570,11 +526,12 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%Le = (long double) ", retval);
-      fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", ddtfp->x,__FILE__,__LINE__-4);
-      _VC_P(__FILE__,ddtfp->line, ddtfp->e, retval, ddtfp->format);
+      fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", ddtfp->x, __FILE__, __LINE__ - 4);
+      _VC_P(__FILE__, ddtfp->line, ddtfp->e, retval, ddtfp->format);
     }
-#endif
+#endif /* ! defined(__DECIMAL_BID_FORMAT__) && __LDBL_MANT_DIG__ == 64  */
 
+#if __LDBL_MANT_DIG__ == 106
   for (tdtfp = tdtf_tests; tdtfp->line; tdtfp++)
     {
       /* This will force the conversion and result in the hidden call to
@@ -587,11 +544,22 @@ int main (void)
       /* Broken into two because printf has a bug when you do %Hf and %f in the
        * same printf statement.  */
       fprintf(stdout, "%Le = (long double) ", retval);
-      fprintf(stdout, "%DDe; /* _Decimal128 */ in: %s: %d\n", tdtfp->x,__FILE__,__LINE__-8);
-      _VC_P(__FILE__,tdtfp->line, tdtfp->e, retval, tdtfp->format);
+      fprintf(stdout, "%DDe; /* _Decimal128 */ in: %s: %d\n", tdtfp->x, __FILE__, __LINE__ - 8);
+      _VC_P(__FILE__, tdtfp->line, tdtfp->e, retval, tdtfp->format);
     }
-#endif
-
+#else
+  for (tdtfp = tdtf_tests; tdtfp->line; tdtfp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __dpd_extendtdtf ().  */
+      long double retval = tdtfp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      fprintf(stdout, "%Le = (long double) ", retval);
+      fprintf(stdout, "%DDe; /* _Decimal128 */ in: %s: %d\n", tdtfp->x, __FILE__, __LINE__ - 4);
+      _VC_P(__FILE__, tdtfp->line, tdtfp->e, retval, tdtfp->format);
+    }
+#endif /* ! __LDBL_MANT_DIG__ == 106  */
   _REPORT();
 
   /* fail comes from scaffold.c  */
