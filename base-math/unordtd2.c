@@ -1,6 +1,6 @@
 /* Decimal Floating Point function intended to override the libgcc version.
 
-   Copyright (C) 2008-2015 Free Software Foundation, Inc.
+   Copyright (C) 2008-2016 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -24,6 +24,7 @@
 
 #include <dfpacc.h>
 #include <math.h>
+#include <ieee754r_private.h>
 
 CMPINT
 __BACKEND_(unordtd2) (_Decimal128 x, _Decimal128 y)

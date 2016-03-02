@@ -1,7 +1,7 @@
 /* Number of digits functions, optimized for S/390 z9-ec.
 
    Copyright (C) 2008 IBM Corporation.
-   Copyright (C) 2009-2015 Free Software Foundation, Inc.
+   Copyright (C) 2009-2016 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -38,6 +38,7 @@
 
 #include "dpd-private.h"
 
+#undef DECIMAL_BIAS
 #if _DECIMAL_SIZE == 32
 // DECIMAL32 gets widened to DECIMAL64, so it ought to use DECIMAL64 bias
 #  define DECIMAL_BIAS (101+297)
@@ -143,6 +144,7 @@ FUNC_D (numdigits) (DEC_TYPE x)
 }
 
 static DEC_TYPE
+__attribute__((unused))
 FUNC_D (left_justify) (DEC_TYPE x)
 {
 #if _DECIMAL_SIZE == 128
@@ -151,26 +153,38 @@ FUNC_D (left_justify) (DEC_TYPE x)
 #elif _DECIMAL_SIZE == 64
   DEC_TYPE tmp = x;
   DEC_TYPE rnd;
-#else
+#else /* _DECIMAL_SIZE == 32  */
   _Decimal64 tmp = (_Decimal64)x;
   _Decimal64 rnd;
 #endif
 
   int exp;
 
-  asm ("rrdtr %0,%2,%3,1\n\t"
-       "eedtr %1,%0\n\t"
+  asm (
+#if _DECIMAL_SIZE == 128
+       "rrxtr %0,%2,%3,1\n\t" /* Reround  */
+       "eextr %1,%0\n\t" /* Extract Biased Exponent - extended dfp  */
+#else /* _DECIMAL_SIZE == 32 || 64  */
+       "rrdtr %0,%2,%3,1\n\t" /* Reround  */
+       "eedtr %1,%0\n\t" /* Extract Biased Exponent - long dfp  */
+#endif
+
        /* The following magic numbers result from the precision of the
 		   data type minus 1.  */
-#if _DECIMAL_SIZE == 32
-       "ahi %1,-6\n\t"
-#elif _DECIMAL_SIZE == 64
-       "ahi %1,-15\n\t"
-#else /* _DECIMAL_SIZE == 128 */
+#if _DECIMAL_SIZE == 128
        "ahi %1,-33\n\t"
+#else /* _DECIMAL_SIZE == 32 || 64  */
+       "ahi %1,-15\n\t"
 #endif
-       "iedtr %0,%0,%1\n\t"
-       "qadtr %0,%2,%0,1" : "=f"(rnd), "=d"(exp), "+f"(tmp) : "d"(1));
+
+#if _DECIMAL_SIZE == 128
+       "iextr %0,%0,%1\n\t" /* Insert Biased Exponent - extended dfp  */
+       "qaxtr %0,%2,%0,1"
+#else /* _DECIMAL_SIZE == 32 || 64  */
+       "iedtr %0,%0,%1\n\t" /* Insert Biased Exponent - long dfp  */
+       "qadtr %0,%2,%0,1"
+#endif
+       : "=f"(rnd), "=d"(exp), "+f"(tmp) : "d"(1)); /* quantize  */
 
 #if _DECIMAL_SIZE == 32
   return (_Decimal32)rnd;
