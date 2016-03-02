@@ -1,6 +1,6 @@
 /* Decimal Floating Point function intended to override the libgcc version.
 
-   Copyright (C) 2009-2015 Free Software Foundation, Inc.
+   Copyright (C) 2009-2016 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -29,3 +29,4 @@ __BACKEND_(eqsd2) (_Decimal32 x, _Decimal32 y)
 {
   return (_Decimal64)x == (_Decimal64)y ? 0 : 1;
 }
+hidden_def (__BACKEND_(eqsd2))
