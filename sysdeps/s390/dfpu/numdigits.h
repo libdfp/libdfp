@@ -38,6 +38,7 @@
 
 #include "dpd-private.h"
 
+#undef DECIMAL_BIAS
 #if _DECIMAL_SIZE == 32
 // DECIMAL32 gets widened to DECIMAL64, so it ought to use DECIMAL64 bias
 #  define DECIMAL_BIAS (101+297)
@@ -143,6 +144,7 @@ FUNC_D (numdigits) (DEC_TYPE x)
 }
 
 static DEC_TYPE
+__attribute__((unused))
 FUNC_D (left_justify) (DEC_TYPE x)
 {
 #if _DECIMAL_SIZE == 128
