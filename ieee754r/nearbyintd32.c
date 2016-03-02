@@ -1,7 +1,7 @@
 /* Round to nearest integer _Decimal32 form
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007-2015 Free Software Foundation, Inc.
+   Copyright (C) 2007-2016 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -68,7 +68,7 @@ DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
   DEC_TYPE z = IEEE_FUNCTION_NAME (x);
-  if (!__isfinited32 (z) && __isfinited32 (x))
+  if (!FUNC_D(__isfinite) (z) && FUNC_D(__isfinite) (x))
     DFP_ERRNO (ERANGE);
   return z;
 }
