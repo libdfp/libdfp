@@ -151,7 +151,7 @@ FUNC_D (left_justify) (DEC_TYPE x)
 #elif _DECIMAL_SIZE == 64
   DEC_TYPE tmp = x;
   DEC_TYPE rnd;
-#else
+#else /* _DECIMAL_SIZE == 32  */
   _Decimal64 tmp = (_Decimal64)x;
   _Decimal64 rnd;
 #endif
@@ -169,12 +169,10 @@ FUNC_D (left_justify) (DEC_TYPE x)
 
        /* The following magic numbers result from the precision of the
 		   data type minus 1.  */
-#if _DECIMAL_SIZE == 32
-       "ahi %1,-6\n\t"
-#elif _DECIMAL_SIZE == 64
-       "ahi %1,-15\n\t"
-#else /* _DECIMAL_SIZE == 128 */
+#if _DECIMAL_SIZE == 128
        "ahi %1,-33\n\t"
+#else /* _DECIMAL_SIZE == 32 || 64  */
+       "ahi %1,-15\n\t"
 #endif
 
 #if _DECIMAL_SIZE == 128
