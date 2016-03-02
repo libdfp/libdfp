@@ -44,7 +44,9 @@ CONVERT_WRAPPER(
 	a_norm = getmantandexpd128 (a, &exp, 17, 1e17DL);
 
 	/* Avoid going beyond the bounds of the exponent table.  */
-	if (exp > BINPOWOF10_LIMIT)		/* Obvious overflow.  */
+	/* The +1 is necessary because of the one digit after the decimal
+	   point. */
+	if (exp > BINPOWOF10_LIMIT + 1)			/* Obvious overflow.  */
 	  {
 	    if (DFP_EXCEPTIONS_ENABLED)
 	      DFP_HANDLE_EXCEPTIONS (FE_OVERFLOW|FE_INEXACT);

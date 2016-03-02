@@ -93,6 +93,28 @@ sftd_type sftd_tests[] =
   {0,0,0,0 }
 };
 
+/* Test truncdfsd () - Double float to single decimal conversions,
+ * i.e., double -> _Decimal32.  */
+typedef struct{
+  int line;
+  double x;       /* df 'double float' value to convert.  */
+  _Decimal32 e;  /* sd 'single decimal' converted value.  */
+  const char *format; /* printf %Hf */
+} dfsd_type;
+
+dfsd_type dfsd_tests[] =
+{
+  {__LINE__, 12.34567, 12.34567DF,  "%.7He"},
+  {__LINE__, -2.0, -2.0DF,  "%.7He"},
+  {__LINE__, 1.79768e+90, 1.79768e+90DF,  "%.7He"},
+  {__LINE__, 1.79768e-90, 1.79768e-90DF,  "%.7He"},
+  {__LINE__, -1.79768e+90, -1.79768e+90DF,  "%.7He"},
+  {__LINE__, -1.79768e-90, -1.79768e-90DF,  "%.7He"},
+  {__LINE__, 1000000, 1000000.0DF,  "%.7He"},
+  {__LINE__, 9999999, 9999999.0DF,  "%.7He"},
+  {0,0,0,0 }
+};
+
 /* Test extenddfdd () - Double float to double decimal conversions,
  * i.e., double -> _Decimal64.  */
 typedef struct{
@@ -149,12 +171,56 @@ xftd_type xftd_tests[] =
   {0,0,0,0 }
 };
 
+/* Test trunctfsd () - long double float to single decimal conversions,
+ * i.e., long double -> _Decimal32.  */
+typedef struct{
+  int line;
+  long double x;       /* tf 'long double float' value to convert.  */
+  _Decimal32 e;  /* sd 'single decimal' converted value.  */
+  const char *format; /* printf %He */
+} tfsd_type;
+
+tfsd_type tfsd_tests[] =
+{
+  {__LINE__, 12.34567L, 12.34567DF,  "%.7He"},
+  {__LINE__, -22.0L, -22.0DF,  "%.7He"},
+  {__LINE__, 1000000, 1000000.0DF,  "%.7He"},
+  {__LINE__, 9999999, 9999999.0DF,  "%.7He"},
+  {__LINE__, 12.34567e+95L, 12.34567e+95DF,  "%.7He"},
+  {__LINE__, 12.34567e-95L, 12.34567e-95DF,  "%.7He"},
+  {__LINE__, -12.34567e+95L, -12.34567e+95DF,  "%.7He"},
+  {__LINE__, -12.34567e-95L, -12.34567e-95DF,  "%.7He"},
+  {0,0,0,0 }
+};
+
+/* Test trunctfdd () - long double float to double decimal conversions,
+ * i.e., long double -> _Decimal64.  */
+typedef struct{
+  int line;
+  long double x;      /* tf 'long double float' value to convert.  */
+  _Decimal64 e;       /* dd 'double decimal' converted value.  */
+  const char *format; /* printf %DDe */
+} tfdd_type;
+
+tfdd_type tfdd_tests[] =
+{
+  {__LINE__, 12.3456789L, 12.3456789DD,  "%.16De"},
+  {__LINE__, -22.0L, -22.0DD,  "%.16De"},
+  {__LINE__, 1000000000000000L, 1000000000000000.0DD,  "%.16De"},
+  {__LINE__, 9999999999999999L, 9999999999999999.0DD,  "%.16De"},
+  {__LINE__, 12.3456789e-290L, 12.3456789e-290DD,  "%.16De"},
+  {__LINE__, 12.3456789e+290L, 12.3456789e+290DD,  "%.16De"},
+  {__LINE__, -12.3456789e-290L, -12.3456789e-290DD,  "%.16De"},
+  {__LINE__, -12.3456789e+290L, -12.3456789e+290DD,  "%.16De"},
+  {0,0,0,0 }
+};
+
 /* Test extendtftd () - long double float to quad decimal conversions,
  * i.e., long double -> _Decimal128.  */
 typedef struct{
   int line;
-  long double x;       /* tf 'long double float' value to convert.  */
-  _Decimal128 e;  /* td 'quad decimal' converted value.  */
+  long double x;      /* tf 'long double float' value to convert.  */
+  _Decimal128 e;      /* td 'quad decimal' converted value.  */
   const char *format; /* printf %DDe */
 } tftd_type;
 
@@ -166,6 +232,72 @@ tftd_type tftd_tests[] =
   {__LINE__, 999999999999999999L, 999999999999999999.0DL,  "%.34DDe"},
   {__LINE__, 100000000000000000000000000000000.0L, 100000000000000000000000000000000.0DL,  "%.34DDe"},
   {__LINE__, 999999999999999999999999999999999.0L, 999999999999999999999999999999999.0DL,  "%.34DDe"},
+  {0,0,0,0 }
+};
+
+/* Test truncsdsf () - single decimal to single float conversions,
+ * i.e., _Decimal32 -> float.  */
+typedef struct{
+  int line;
+  _Decimal32 x;       /* sd 'single decimal' converted value.  */
+  float e;            /* sf 'single float' value to convert.  */
+  const char *format; /* printf %e */
+} sdsf_type;
+
+sdsf_type sdsf_tests[] =
+{
+  {__LINE__, 12.34567DF, 12.34567f,  "%.7e"},
+  {__LINE__, -22.0DF, -22.0f,  "%.7e"},
+  {__LINE__, 1000000.0DF, 1000000.0f,  "%.7e"},
+  {__LINE__, 9999999.0DF, 9999999.0f,  "%.7e"},
+  {__LINE__, 12.34567e+37DF, 12.34567e+37f,  "%.7e"},
+  {__LINE__, 12.34567e-37DF, 12.34567e-37f,  "%.7e"},
+  {__LINE__, -12.34567e+37DF, -12.34567e+37f,  "%.7e"},
+  {__LINE__, -12.34567e-37DF, -12.34567e-37f,  "%.7e"},
+  {0,0,0,0 }
+};
+
+/* Test truncddsf () - double decimal to single float conversions,
+ * i.e., _Decimal64 -> float.  */
+typedef struct{
+  int line;
+  _Decimal64 x;       /* dd 'double decimal' converted value.  */
+  float e;            /* sf 'single float' value to convert.  */
+  const char *format; /* printf %e */
+} ddsf_type;
+
+ddsf_type ddsf_tests[] =
+{
+  {__LINE__, 12.34567DD, 12.34567f,  "%.7e"},
+  {__LINE__, -22.0DD, -22.0f,  "%.7e"},
+  {__LINE__, 1000000.0DD, 1000000.0f,  "%.7e"},
+  {__LINE__, 9999999.0DD, 9999999.0f,  "%.7e"},
+  {__LINE__, 12.34567e+37DD, 12.34567e+37f,  "%.7e"},
+  {__LINE__, 12.34567e-37DD, 12.34567e-37f,  "%.7e"},
+  {__LINE__, -12.34567e+37DD, -12.34567e+37f,  "%.7e"},
+  {__LINE__, -12.34567e-37DD, -12.34567e-37f,  "%.7e"},
+  {0,0,0,0 }
+};
+
+/* Test trunctdsf () - quad decimal to single float conversions,
+ * i.e., _Decimal128 -> float.  */
+typedef struct{
+  int line;
+  _Decimal128 x;      /* td 'double decimal' converted value.  */
+  float e;            /* sf 'single float' value to convert.  */
+  const char *format; /* printf %e */
+} tdsf_type;
+
+tdsf_type tdsf_tests[] =
+{
+  {__LINE__, 12.34567DL, 12.34567f,  "%.7e"},
+  {__LINE__, -22.0DL, -22.0f,  "%.7e"},
+  {__LINE__, 1000000.0DL, 1000000.0f,  "%.7e"},
+  {__LINE__, 9999999.0DL, 9999999.0f,  "%.7e"},
+  {__LINE__, 12.34567e+37DL, 12.34567e+37f,  "%.7e"},
+  {__LINE__, 12.34567e-37DL, 12.34567e-37f,  "%.7e"},
+  {__LINE__, -12.34567e+37DL, -12.34567e+37f,  "%.7e"},
+  {__LINE__, -12.34567e-37DL, -12.34567e-37f,  "%.7e"},
   {0,0,0,0 }
 };
 
@@ -224,6 +356,34 @@ dddf_type dddf_tests[] =
   {__LINE__, -1.e-39DD, -1.e-39,  "%.16e"},
   {0,0,0,0 }
 };
+
+/* Test trunctddf () - quad decimal to double float conversions,
+ * i.e., _Decimal128 -> double.  */
+typedef struct{
+  int line;
+  _Decimal128 x;      /* td 'quad decimal' value to convert.  */
+  double e;	      /* df 'double float' converted value.  */
+  const char *format; /* printf %e */
+} tddf_type;
+
+tddf_type tddf_tests[] =
+{
+  {__LINE__, -7.0DL, -7.0,  "%.16e"},
+  {__LINE__, 3.402819e+38DL, 3.402819e+38,  "%.16e"},
+  {__LINE__, 1.79768e+308DL, 1.79768e+308,  "%.16e"},
+  {__LINE__, 100000000000000.0DL, 100000000000000,  "%.16e"},
+  {__LINE__, 999999999999999.0DL, 999999999999999,  "%.16e"},
+  {__LINE__, 1.e290DL, 1.e290,  "%.16e"},
+  {__LINE__, 1.e291DL, 1.e291,  "%.16e"},
+  {__LINE__, 1.e308DL, 1.e308,  "%.16e"},
+  {__LINE__, 1.e-308DL, 1.e-308,  "%.16e"},
+  {__LINE__, 1.e-291DL, 1.e-291,  "%.16e"},
+  {__LINE__, 1.e-290DL, 1.e-290,  "%.16e"},
+  {__LINE__, 1.e-39DL, 1.e-39,  "%.16e"},
+  {__LINE__, -1.e-39DL, -1.e-39,  "%.16e"},
+  {0,0,0,0 }
+};
+
 
 #if __LDBL_MANT_DIG__ == 64
 /* Test extendsdxf () - Single decimal to long double float conversions,
@@ -334,16 +494,28 @@ int main (void)
   sfsd_type *sfsdp;
   sfdd_type *sfddp;
   sftd_type *sftdp;
+
+  dfsd_type *dfsdp;
   dfdd_type *dfddp;
   dftd_type *dftdp;
+
+  sdsf_type *sdsfp;
+  ddsf_type *ddsfp;
+  tdsf_type *tdsfp;
+
   sddf_type *sddfp;
   dddf_type *dddfp;
+  tddf_type *tddfp;
+
 #if defined(__DECIMAL_BID_FORMAT__) && __LDBL_MANT_DIG__ == 64
   xftd_type *xftdp;
   sdxf_type *sdxfp;
   ddxf_type *ddxfp;
 #else
+  tfsd_type *tfsdp;
+  tfdd_type *tfddp;
   tftd_type *tftdp;
+
   sdtf_type *sdtfp;
   ddtf_type *ddtfp;
 #endif
@@ -394,6 +566,20 @@ int main (void)
       _VC_P(__FILE__, sftdp->line, sftdp->e, retval, sftdp->format);
     }
 
+  for (dfsdp = dfsd_tests; dfsdp->line; dfsdp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __dpd_truncdfsd ().  */
+      _Decimal32 retval = dfsdp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      fprintf(stdout, "%He = (_Decimal32) ", retval);
+      fprintf(stdout, "%e; /* double */ in: %s: %d\n", dfsdp->x, __FILE__, __LINE__ - 4);
+      fprintf(stdout, "expected: %s\n", decoded32(dfsdp->e, decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded32(retval, decodebuf));
+      _VC_P(__FILE__,dfsdp->line, dfsdp->e, retval, dfsdp->format);
+    }
+
   for (dfddp = dfdd_tests; dfddp->line; dfddp++)
     {
       /* This will force the conversion and result in the hidden call to
@@ -422,6 +608,42 @@ int main (void)
       _VC_P(__FILE__, dftdp->line, dftdp->e, retval, dftdp->format);
     }
 
+  for (sdsfp = sdsf_tests; sdsfp->line; sdsfp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __dpd_truncsdsf ().  */
+      float retval = sdsfp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      fprintf(stdout, "%e = (float) ", retval);
+      fprintf(stdout, "%He; /* _Decimal32 */ in: %s: %d\n", sdsfp->x, __FILE__, __LINE__ - 4);
+      _VC_P(__FILE__, sdsfp->line, sdsfp->e, retval, sdsfp->format);
+    }
+
+  for (ddsfp = ddsf_tests; ddsfp->line; ddsfp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __dpd_truncddsf ().  */
+      float retval = ddsfp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      fprintf(stdout, "%e = (float) ", retval);
+      fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", ddsfp->x, __FILE__, __LINE__ - 4);
+      _VC_P(__FILE__, ddsfp->line, ddsfp->e, retval, ddsfp->format);
+    }
+
+  for (tdsfp = tdsf_tests; tdsfp->line; tdsfp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __dpd_trunctdsf ().  */
+      float retval = tdsfp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      fprintf(stdout, "%e = (float) ", retval);
+      fprintf(stdout, "%DDe; /* _Decimal128 */ in: %s: %d\n", tdsfp->x, __FILE__, __LINE__ - 4);
+      _VC_P(__FILE__, tdsfp->line, tdsfp->e, retval, tdsfp->format);
+    }
+
   for (sddfp = sddf_tests; sddfp->line; sddfp++)
     {
       /* This will force the conversion and result in the hidden call to
@@ -444,6 +666,18 @@ int main (void)
       fprintf(stdout, "%e = (double) ", retval);
       fprintf(stdout, "%De; /* _Decimal64 */ in: %s: %d\n", dddfp->x, __FILE__, __LINE__ - 4);
       _VC_P(__FILE__, dddfp->line, dddfp->e, retval, dddfp->format);
+    }
+
+  for (tddfp = tddf_tests; tddfp->line; tddfp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __dpd_trunctddf ().  */
+      double retval = tddfp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      fprintf(stdout, "%e = (double) ", retval);
+      fprintf(stdout, "%DDe; /* _Decimal128 */ in: %s: %d\n", tddfp->x, __FILE__, __LINE__ - 4);
+      _VC_P(__FILE__, tddfp->line, tddfp->e, retval, tddfp->format);
     }
 
 /* Intel long double has a different precision than PowerPC long double.
@@ -492,6 +726,34 @@ int main (void)
       _SC_P (__FILE__, ddxfp->line, ddxfp->e, &value[0]);
     }
 #else
+  for (tfsdp = tfsd_tests; tfsdp->line; tfsdp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __dpd_trunctfsd ().  */
+      _Decimal32 retval = tfsdp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      fprintf(stdout, "%.7He = (_Decimal32) ", retval);
+      fprintf(stdout, "%.7Le; /* long double */ in: %s: %d\n", tfsdp->x, __FILE__, __LINE__ - 4);
+      fprintf(stdout, "expected: %s\n", decoded32(tfsdp->e, decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded32(retval, decodebuf));
+      _VC_P(__FILE__, tfsdp->line, tfsdp->e, retval, tfsdp->format);
+    }
+
+  for (tfddp = tfdd_tests; tfddp->line; tfddp++)
+    {
+      /* This will force the conversion and result in the hidden call to
+       * __dpd_trunctfdd ().  */
+      _Decimal64 retval = tfddp->x;
+      /* Broken into two because printf has a bug when you do %Hf and %f in the
+       * same printf statement.  */
+      fprintf(stdout, "%.16De = (_Decimal64) ", retval);
+      fprintf(stdout, "%.16Le; /* long double */ in: %s: %d\n", tfddp->x, __FILE__, __LINE__ - 4);
+      fprintf(stdout, "expected: %s\n", decoded64(tfddp->e, decodebuf));
+      fprintf(stdout, "retval:   %s\n", decoded64(retval, decodebuf));
+      _VC_P(__FILE__, tfddp->line, tfddp->e, retval, tfddp->format);
+    }
+
   for (tftdp = tftd_tests; tftdp->line; tftdp++)
     {
       /* This will force the conversion and result in the hidden call to
