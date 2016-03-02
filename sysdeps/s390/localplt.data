@@ -1,0 +1,12 @@
+# See scripts/check-localplt.awk for how this file is processed.
+#
+# For s390: register_printf_dfp is also allowed
+# as R_390_GLOB_DAT in section .rela.dyn
+# instead of R_390_JMP_SLOT in section .rela.plt.
+# In the former case register_printf_dfp is called via function-pointer
+# loaded from GOT, which also can be relocated by dynamic linker.
+# A plt-stub is not generated.
+# This relocation is done at load-time (and lazy-binding is not possible)!
+# 'gcc -O2' leads to R_390_GLOB_DAT, whereas
+# 'gcc -O0' or 'gcc -O2 -fno-optimize-sibling-calls' leads to R_390_JMP_SLOT.
+libdfp.so: register_printf_dfp + RELA R_390_GLOB_DAT
