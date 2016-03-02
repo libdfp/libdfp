@@ -4167,14 +4167,7 @@ $as_echo "$as_me: configuring for the $submachine processor" >&6;}
     { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
 $as_echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
-  z9-ec)
-    submachine="$withval"
-    # Warning, -mzarch won't get passed to libecnumber/configure
-    mzarch="-mzarch"
-    { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
-$as_echo "$as_me: configuring for the $submachine processor" >&6;}
-    with_dfp=yes ;;
-  z10)
+  z9-ec|z10|z196|zEC12|z13)
     submachine="$withval"
     # Warning, -mzarch won't get passed to libecnumber/configure
     mzarch="-mzarch"
@@ -4244,6 +4237,23 @@ if ac_fn_c_try_compile "$LINENO"; then :
   submachine=power8
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    ;;
+    s390|s390x)
+    # Check /proc/cpuinfo to determine if current hardware dfp feature exists.
+    # Do not set submachine here, so gcc decides arch-level.
+    # On s390, there are no submachine folders in sysdeps/s390/.
+    if { ac_try='grep ^features /proc/cpuinfo | grep dfp > /dev/null'
+  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; } ;
+    then
+	with_dfp=yes
+	mzarch="-mzarch"
+    else
+	with_dfp=no
+    fi
     ;;
   *)
     with_dfp=no ;;

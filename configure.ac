@@ -210,13 +210,7 @@ AC_ARG_WITH([cpu],
     submachine="$withval"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
-  z9-ec)
-    submachine="$withval"
-    # Warning, -mzarch won't get passed to libecnumber/configure
-    mzarch="-mzarch"
-    AC_MSG_NOTICE(configuring for the $submachine processor)
-    with_dfp=yes ;;
-  z10)
+  z9-ec|z10|z196|zEC12|z13)
     submachine="$withval"
     # Warning, -mzarch won't get passed to libecnumber/configure
     mzarch="-mzarch"
@@ -252,6 +246,18 @@ AC_ARG_WITH([cpu],
       # error "POWER8 not supported"
       #endif
       ]])], [submachine=power8], [])
+    ;;
+    s390|s390x)
+    # Check /proc/cpuinfo to determine if current hardware dfp feature exists.
+    # Do not set submachine here, so gcc decides arch-level.
+    # On s390, there are no submachine folders in sysdeps/s390/.
+    if AC_TRY_COMMAND([grep ^features /proc/cpuinfo | grep dfp > /dev/null]) ;
+    then
+	with_dfp=yes
+	mzarch="-mzarch"
+    else
+	with_dfp=no
+    fi
     ;;
   *)
     with_dfp=no ;;
