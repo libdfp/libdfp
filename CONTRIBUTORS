@@ -1,9 +1,12 @@
 Maintainers:
 
-	Base:    Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
-	PowerPC: Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
-	s390:    <tbd>
-	x86(64): Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
+	Base:    Paul E. Murphy <murphyp@linux.vnet.ibm.com>
+	         Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
+	PowerPC  Paul E. Murphy <murphyp@linux.vnet.ibm.com>
+	         Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
+	s390:    Paul E. Murphy <murphyp@linux.vnet.ibm.com>
+	x86(64): Paul E. Murphy <murphyp@linux.vnet.ibm.com>
+	         Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
 
 Contributors:
 
@@ -18,3 +21,4 @@ Contributors:
 	Rajalakshmi Srinivasaraghavan <raji@linux.vnet.ibm.com>
 	Paul E. Murphy <murphyp@linux.vnet.ibm.com>
 	Gabriel F. T. Gomes <gftg@linux.vnet.ibm.com>
+	Stefan Liebler <stli@linux.vnet.ibm.com>
