@@ -356,17 +356,14 @@ decDigitsToBID (const decNumber *dn, uInt *sourhi, uInt *sourmh,
       uQuadMulUInt (mult, 1000, mult);
     }
 
-  /* BID coefficient encoding is defined as:
-     - If it fits on 113 bits (10*J + 3, with J=11):
-     | 1bit (sign) | 14bits binary_encode(exp) | 113bits binary_encode (coeff) |
-
-     - Otherwise:
-     | 1bit (sign) | 2bits - 11 | 14bits binary_encode(exp) |
-       113 bits lsbs binary_encode (coeff) |  */
+  /* A _Decimal128 BID encoded mantissa is a 114 bit value.  However
+     the format uses prefix encoding to save space.  Large values
+     are encoded using 111 bits, and smaller values 113.  Large values
+     append 0b11 after the sign bit.  */
   if (bid_required_bits_128 (coeff) <= 113)
     *sourhi = uQuadHi(coeff) & 0x0001FFFF;
   else
-    *sourhi = 0x60020000U | (uQuadHi(coeff) & 0x00007FFFU);
+    *sourhi = 0x60000000U | (uQuadHi(coeff) & 0x00007FFFU);
   *sourmh = uQuadMh(coeff);
   *sourml = uQuadMl(coeff);
   *sourlo = uQuadLo(coeff);

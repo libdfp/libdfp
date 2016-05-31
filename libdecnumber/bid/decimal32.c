@@ -298,17 +298,14 @@ decDigitsToBID (const decNumber *dn, uInt *sour)
       coeff += uin[n] * mult;
     }
 
-  /* BID coefficient encoding is defined as:
-     - If it fits on 23 bits (10*J + 3, with J=2):
-     | 1bit (sign) | 8bits binary_encode(exp) | 23bits binary_encode (coeff) |
-
-     - Otherwise:
-     | 1bit (sign) | 2bits - 11 | 8bits binary_encode(exp) |
-       21 bits lsbs binary_encode (coeff) |  */
+  /* A _Decimal32 BID encoded mantissa is a 24 bit value.  However
+     the format uses prefix encoding to save space.  Large values
+     are encoded using 53 bits, and smaller values 51.  Large values
+     append 0b11 after the sign bit.  */
   if (bid_required_bits_32 (coeff) <= 23)
     *sour = coeff & 0x007FFFFFU;
   else
-    *sour = 0x60800000U | (coeff & 0x001FFFFFU);
+    *sour = 0x60000000U | (coeff & 0x001FFFFFU);
 }
 
 /* ------------------------------------------------------------------ */
