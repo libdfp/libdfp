@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([libdfp],[1.0.12],[https://github.com/libdfp/libdfp/issues])
+AC_INIT([libdfp],[1.0.13],[https://github.com/libdfp/libdfp/issues])
 AC_CONFIG_SRCDIR([printf_dfp.c])
 
 # We don't use Automake so this is necessary.
