@@ -271,6 +271,7 @@ main (int argc, char *argv[])
   FILE *inputfile;
   char inputfilename[] = "amort.input";
   const char *argv_option;
+  ssize_t r;
 
   table = (tabletype *) malloc (30 * 12 * sizeof (tabletype));
   //printf ("table@%p for %d bytes\n", table, (30 * 12 * sizeof (tabletype)));
@@ -324,7 +325,15 @@ main (int argc, char *argv[])
   numinputs = ftell (inputfile) / sizeof (inputtype);
   rewind (inputfile);
   inputs = malloc (numinputs * sizeof (inputtype));
-  fread (inputs, sizeof (inputtype), numinputs, inputfile);
+
+  r = fread (inputs, sizeof (inputtype), numinputs, inputfile);
+  if (r != numinputs)
+    {
+      printf ("fread() error\n");
+      fclose (inputfile);
+      exit (EXIT_FAILURE);
+    }
+
   fclose (inputfile);
 
   if (*argv_option == 'v')
