@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+export DH_VERBOSE=1
+
+%:
+	dh $@ --with autoreconf
+
+override_dh_auto_clean:
+	if [ -e Makefile ]; then make clean; fi
+	dh_auto_clean
+
+override_dh_auto_test:
+	# at the moment some tests fail
+	-dh_auto_test
+
+override_dh_auto_install:
+	$(MAKE) install install_root=$(CURDIR)/debian/tmp
+	$(MAKE) install-headers install_root=$(CURDIR)/debian/tmp

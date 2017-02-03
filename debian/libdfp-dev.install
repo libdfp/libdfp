@@ -1,0 +1,3 @@
+usr/include/dfp/
+usr/lib/*/libdfp.a
+usr/lib/*/libdfp.so

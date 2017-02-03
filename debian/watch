@@ -1,0 +1,3 @@
+version=3
+opts=filenamemangle=s/.+\/(\d\S*)\.tar\.gz/libdfp-$1\.tar\.gz/ \
+  https://github.com/libdfp/libdfp/tags .*/(\d\S*)\.tar\.gz

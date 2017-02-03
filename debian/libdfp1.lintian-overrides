@@ -1,0 +1,2 @@
+#This is false positive
+libdfp1 binary: hardening-no-fortify-functions usr/lib/powerpc64le-linux-gnu/libdfp-1.0.10.so

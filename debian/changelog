@@ -1,0 +1,5 @@
+libdfp (1.0.10-1) UNRELEASED; urgency=low
+
+  * Initial release (Closes: #781530)
+
+ -- Frédéric Bonnard <frediz@linux.vnet.ibm.com>  Mon, 30 Mar 2015 11:05:10 +0200

@@ -1,0 +1,30 @@
+Source: libdfp
+Priority: optional
+Maintainer: Frédéric Bonnard <frediz@linux.vnet.ibm.com>
+Build-Depends: debhelper (>= 9), dh-autoreconf
+Standards-Version: 3.9.6
+Section: libs
+Homepage: https://github.com/libdfp/libdfp
+
+Package: libdfp-dev
+Section: libdevel
+Architecture: any
+Depends: libdfp1 (= ${binary:Version}), ${misc:Depends}
+Description: Decimal Floating Point C Library development files
+ The "Decimal Floating Point C Library" is an implementation of ISO/IEC
+ Technical report  "ISO/IEC TR 24732" which describes the C-Language library
+ routines necessary to provide the C library runtime support for decimal
+ floating point data types introduced in IEEE 754-2008, namely _Decimal32,
+ _Decimal64, and _Decimal128.
+ .
+ This package contains the static library and header files used in development.
+
+Package: libdfp1
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Decimal Floating Point C Library
+ The "Decimal Floating Point C Library" is an implementation of ISO/IEC
+ Technical report  "ISO/IEC TR 24732" which describes the C-Language library
+ routines necessary to provide the C library runtime support for decimal
+ floating point data types introduced in IEEE 754-2008, namely _Decimal32,
+ _Decimal64, and _Decimal128.
