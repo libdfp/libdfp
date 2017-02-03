@@ -28,6 +28,9 @@ fi
 #  AC_MSG_ERROR([${PACKAGE_NAME} does not yet support cross-compliation.])
 #fi
 
+# Cross-compilation detection variable substitution
+AC_SUBST(cross_compiling)
+
 # PowerPC[64] defaults to DPD encoded DFP.  x86[_64] defaults to BID encoded DFP.
 default_encoding=
 case "$host_cpu" in
