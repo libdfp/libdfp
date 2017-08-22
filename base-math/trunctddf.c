@@ -28,6 +28,9 @@
 #define DEST 64
 #define NAME trunc
 
+#include <float.h>
+#include <fenv.h>
+
 #include "dfpacc.h"
 #include "convert.h"
 
@@ -48,7 +51,19 @@ CONVERT_WRAPPER(
 	  {
 	    if (DFP_EXCEPTIONS_ENABLED)
 	      DFP_HANDLE_EXCEPTIONS (FE_OVERFLOW|FE_INEXACT);
-	    return SIGNBIT(a) ? -INFINITY : INFINITY;
+
+	    switch (fegetround())
+	      {
+	        case FE_TOWARDZERO:
+	          return SIGNBIT(a) ? -DBL_MAX : DBL_MAX;
+	        case FE_DOWNWARD:
+	          return SIGNBIT(a) ? -INFINITY : DBL_MAX;
+	        case FE_UPWARD:
+	          return SIGNBIT(a) ? -DBL_MAX : INFINITY;
+	        case FE_TONEAREST:
+	        default:
+	          return SIGNBIT(a) ? -INFINITY : INFINITY;
+	      }
 	  }
 	else if (exp < -BINPOWOF10_LIMIT)		/* Obvious underflow.  */
 	  {
