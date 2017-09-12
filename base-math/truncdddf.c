@@ -70,7 +70,19 @@ CONVERT_WRAPPER(
 	  {
 	    if (DFP_EXCEPTIONS_ENABLED)
 	      DFP_HANDLE_EXCEPTIONS (FE_UNDERFLOW|FE_INEXACT);
-	    return SIGNBIT(a) ? -0.0 : 0.0;
+
+	    switch (fegetround())
+	      {
+	        case FE_TONEAREST:
+	          return SIGNBIT(a) ? -__DBL_DENORM_MIN__ : __DBL_DENORM_MIN__;
+	        case FE_DOWNWARD:
+	          return SIGNBIT(a) ? -__DBL_DENORM_MIN__ : 0.0;
+	        case FE_UPWARD:
+	          return SIGNBIT(a) ? -0.0 : __DBL_DENORM_MIN__;
+	        case FE_TOWARDZERO:
+	        default:
+	          return  SIGNBIT(a) ? -0.0 : 0.0;
+	      }
 	  }
 
 	mant = a_norm;			/* 16 digits of mantissa.  */
