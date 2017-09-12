@@ -326,7 +326,7 @@ GLIBC_LIBS := -lc -lm
 libdfp_c_tests = test-printf test-amort test-decode \
 		 test-strtod test-numdigits test-get_digits \
 		 test-fenv test-bfp-conversions test-type-conversions test-wchar \
-		 test-getexp test-setexp test-left_justify \
+		 test-getexp test-setexp test-left_justify test-cast-to-underflow \
 		 test-fpclassify-d32 test-fpclassify-d64 test-fpclassify-d128 \
 		 test-fabs-d32 test-fabs-d64 test-fabs-d128 \
 		 test-copysign-d32 test-copysign-d64 test-copysign-d128 \

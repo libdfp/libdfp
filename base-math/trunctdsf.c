@@ -28,6 +28,9 @@
 #define DEST 32
 #define NAME trunc
 
+#include <float.h>
+#include <fenv.h>
+
 #include "dfpacc.h"
 #include "convert.h"
 #include "convert_helpers.h"
@@ -52,7 +55,19 @@ CONVERT_WRAPPER(
 	  {
 	    if (DFP_EXCEPTIONS_ENABLED)
 	      DFP_HANDLE_EXCEPTIONS (FE_UNDERFLOW|FE_INEXACT);
-	    return SIGNBIT(a) ? -0.0 : 0.0;
+
+	    switch (fegetround())
+	      {
+	        case FE_TONEAREST:
+              return SIGNBIT(a) ? -__FLT_DENORM_MIN__ : __FLT_DENORM_MIN__;
+	        case FE_DOWNWARD:
+	          return SIGNBIT(a) ? -__FLT_DENORM_MIN__ : 0.0;
+	        case FE_UPWARD:
+	          return SIGNBIT(a) ? -0.0 : __FLT_DENORM_MIN__;
+	        case FE_TOWARDZERO:
+	        default:
+	          return  SIGNBIT(a) ? -0.0 : 0.0;
+	      }
 	  }
 
 	mant = a_norm;				/* 15 digits of mantissa.  */
