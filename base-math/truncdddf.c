@@ -74,7 +74,11 @@ CONVERT_WRAPPER(
 	    switch (fegetround())
 	      {
 	        case FE_TONEAREST:
-	          return SIGNBIT(a) ? -__DBL_DENORM_MIN__ : __DBL_DENORM_MIN__;
+	          mant = llabs(a_norm);
+	          if (exp < -324 || ((exp == -324) && (mant >= 24703282292062300)))
+	            return SIGNBIT(a) ? -0.0 : 0.0;
+	          else
+                return SIGNBIT(a) ? -__DBL_DENORM_MIN__ : __DBL_DENORM_MIN__;
 	        case FE_DOWNWARD:
 	          return SIGNBIT(a) ? -__DBL_DENORM_MIN__ : 0.0;
 	        case FE_UPWARD:
