@@ -108,9 +108,5 @@ CONVERT_WRAPPER(
 	    temp /= BINPOWOF10[-sexp];
 	  }
 	result = temp;
-	/* Clear inexact exception raised by DFP arithmetic.  */
-	if (DFP_EXCEPTIONS_ENABLED
-	    && DFP_TEST_EXCEPTIONS (FE_OVERFLOW|FE_UNDERFLOW) == 0)
-	  DFP_CLEAR_EXCEPTIONS (FE_INEXACT);
 )
 hidden_def (PREFIXED_FUNCTION_NAME)
