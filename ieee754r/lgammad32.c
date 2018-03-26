@@ -97,10 +97,6 @@
 #include <dfpmacro.h>
 #include <ieee754r_private.h>
 
-static const _Decimal128 PIDL = 3.1415926535897932384626433832795028841972E0DL;
-static const _Decimal128 MAXDLGM = 1.0485738685148938358098967157129705071571E4928DL;
-static const _Decimal128 one = 1.0DL;
-static const _Decimal128 zero = 0.0DL;
 static const _Decimal128 huge = 1.0e4000DL;
 
 /* log gamma(x) = ( x - 0.5 ) * log(x) - x + DLS2PI + 1/x P(1/x^2)
