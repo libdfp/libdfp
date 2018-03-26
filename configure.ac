@@ -351,12 +351,11 @@ fi
 have_glibc_2_10_headers=yes
 AC_MSG_CHECKING([for printf-hook register_printf_type() in printf.h to verify GLIBC 2.10])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "printf.h"]], [[
- static int foo;
  void foo_va (void *mem, va_list *ap)
  {
    return;
  }
- foo = register_printf_type (foo_va);
+ register_printf_type (foo_va);
  ]])],[AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no]); have_glibc_2_10_headers=no])
 
 if test x$have_glibc_2_10_headers != xyes; then

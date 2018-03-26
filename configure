@@ -4385,12 +4385,11 @@ int
 main ()
 {
 
- static int foo;
  void foo_va (void *mem, va_list *ap)
  {
    return;
  }
- foo = register_printf_type (foo_va);
+ register_printf_type (foo_va);
 
   ;
   return 0;
