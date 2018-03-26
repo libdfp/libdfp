@@ -903,10 +903,13 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	      {
 		int inner = 0;
 		if (thousands != NULL && *startp == *thousands
-		    && ({ for (inner = 1; thousands[inner] != '\0'; ++inner)
-			if (thousands[inner] != startp[inner])
-			  break;
-			thousands[inner] == '\0'; }))
+		    && ({
+			  for (inner = 1; thousands[inner] != '\0'; ++inner)
+			    if (thousands[inner] != startp[inner])
+			      break;
+			  thousands[inner] == '\0';
+			})
+		    )
 		  startp += inner;
 		else
 		  startp += decimal_len;
