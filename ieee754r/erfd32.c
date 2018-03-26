@@ -156,7 +156,6 @@ deval (_Decimal128 x, const _Decimal128 *p, int n)
 
 static const _Decimal128
 tiny = 1e-4931DL,
-  half = 0.5DL,
   one = 1.0DL,
   two = 2.0DL,
   /* 2/sqrt(pi) - 1 */
