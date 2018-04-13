@@ -117,9 +117,6 @@ padn (FILE *fp, int pad, int count)
 
 #define PAD(f, c, n) (wide ? wpadn (f, c, n) : padn (f, c, n))
 
-#define size_t     _IO_size_t
-#define FILE	     _IO_FILE
-
 /* Macros for doing the actual output.  */
 
 #define outchar(ch)							      \
