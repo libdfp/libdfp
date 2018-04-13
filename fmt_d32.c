@@ -176,7 +176,7 @@ char * INTERNAL_FUNCTION_NAME ( const struct printf_info *info,
   else /* Set the null terminator before copying the string.  */
     str[dtoslen] = 0x0;
 
-  strncpy(padded, dtos, dtoslen);
+  memcpy(padded, dtos, dtoslen);
   memset(dtos, 0x0, MAX_DECIMAL128_STRING);
 
   return str;

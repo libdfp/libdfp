@@ -304,8 +304,8 @@ struct ieee754r_c_field
 extern const struct ieee754r_c_field c_decoder[32];
 extern const unsigned char lm2lmd_to_c[10][4];
 extern const char	dpd_to_char[1024][4];
-extern const const short int	dpd_to_bcd[1024];
-extern const const short int	dpd_to_bin[1024];
+extern const short int	dpd_to_bcd[1024];
+extern const short int	dpd_to_bin[1024];
 extern const short int	bcd_to_dpd[2464];
 
 static inline unsigned int
