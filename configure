@@ -4167,7 +4167,7 @@ $as_echo "$as_me: configuring for the $submachine processor" >&6;}
     { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
 $as_echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
-  z9-ec|z10|z196|zEC12|z13)
+  z9-ec|z10|z196|zEC12|z13|arch12|z14)
     submachine="$withval"
     # Warning, -mzarch won't get passed to libecnumber/configure
     mzarch="-mzarch"
