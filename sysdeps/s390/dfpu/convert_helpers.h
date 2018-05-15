@@ -206,16 +206,16 @@ getmantd32(_Decimal32 sd, long *exp)
 static inline _Decimal128
 fast_truncd128 (_Decimal128 a)
 {
-  /* Load FP Integer with round toward 0 without inexact-exception.  */
-  asm ("fixtr %0,5,%0,4\n\t" : "+f" (a));
+  /* Load FP Integer with round toward 0 with inexact-exception.  */
+  asm ("fixtr %0,5,%0,0\n\t" : "+f" (a));
   return a;
 }
 
 static inline _Decimal64
 fast_truncd64 (_Decimal64 a)
 {
-  /* Load FP Integer with round toward 0 without inexact-exception.  */
-  asm ("fidtr %0,5,%0,4\n\t" : "+f" (a));
+  /* Load FP Integer with round toward 0 with inexact-exception.  */
+  asm ("fidtr %0,5,%0,0\n\t" : "+f" (a));
   return a;
 }
 
