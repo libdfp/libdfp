@@ -248,16 +248,22 @@ AC_ARG_WITH([cpu],
       ]])], [submachine=power8], [])
     ;;
     s390|s390x)
-    # Check /proc/cpuinfo to determine if current hardware dfp feature exists.
-    # Do not set submachine here, so gcc decides arch-level.
-    # On s390, there are no submachine folders in sysdeps/s390/.
-    if AC_TRY_COMMAND([grep ^features /proc/cpuinfo | grep dfp > /dev/null]) ;
+    with_dfp=no
+    # Check if the used compiler supports dfp instructions by converting
+    # from dfp to bfp. If supported, the pfpo instruction is used.
+    # Note: On s390 (31bit) we have to use -mzarch for this instruction.
+    cat > conftest.c <<EOF
+double test (_Decimal64 in) { return (double) in; }
+EOF
+    if AC_TRY_COMMAND([${CC-cc} ${CFLAGS} -mzarch -c conftest.c]);
     then
+      if AC_TRY_COMMAND([objdump -d conftest.o 2>&1 | grep pfpo > /dev/null]);
+      then
 	with_dfp=yes
 	mzarch="-mzarch"
-    else
-	with_dfp=no
+      fi
     fi
+    rm -f conftest*
     ;;
   *)
     with_dfp=no ;;
