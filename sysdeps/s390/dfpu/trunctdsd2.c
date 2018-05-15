@@ -31,9 +31,22 @@ __BACKEND_(trunctdsd2) (_Decimal128 in)
      which would lead to a Segmentation fault at runtime
      due to endless recursive calls.
      This code uses two "load rounded"-instructions one after another.
-     Starting with gcc 5, these two load-instructions are emitted
-     in the same way and omit this function-call at all.
-  */
-  return (_Decimal32) (_Decimal64)in;
+
+     Starting with gcc 5, gcc emits two load-rounded-instructions and omit this
+     function-call at all. But it uses the false rounding mode "according to the
+     current DFP rounding mode" for the d128 -> d64 conversion!
+
+     Starting with gcc 6, gcc emits those instructions and the correct rounding
+     mode "Round to prepare for shorter precision" is used for the d128 -> d64
+     conversion!  */
+  _Decimal32 out;
+  _Decimal64 tmp;
+  asm ("ldxtr %1,15,%2,0\n\t" /* Load rounded: d128 -> d64 in
+       "Round to prepare for shorter precision. " rouding-mode.  */
+       "ledtr %0,0,%1,0"
+       : "=f" (out), "=&f" (tmp)
+       : "f" (in)
+       );
+  return out;
 }
 hidden_def (__BACKEND_(trunctdsd2))
