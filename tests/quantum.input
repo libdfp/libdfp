@@ -25,8 +25,9 @@ DEC_SUBNORMAL_MIN      1E-DEC_MIN_EXP_SUB
 
 3599.6273704955        1e-10                  decimal64 decimal128
 359.962737049625       1e-12                  decimal64 decimal128
-3.5443504567320123     1e-15                  decimal64 decimal128
-      
+3.544350456732012      1e-15                  decimal64 decimal128
+
+3.5443504567320123     1e-16                  decimal128
 4503599627370495.5     0.1                    decimal128
 4503599627370.49625    0.00001                decimal128
 45035996.273704955     1E-9                   decimal128

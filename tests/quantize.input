@@ -496,14 +496,16 @@
 
 # decimal64
 8.666666666666000E+384     1.000000000000000E+384   8.666666666666000E+384  decimal64 decimal128
-8.666666666666000E+384     1E+384                   8.666666666666000E+384  decimal64 decimal128
+8.666666666666000E+384     1E+384                   8.666666666666000E+384  decimal64
+8.666666666666000E+384     1E+384                   9E+384                  decimal128
 8.666666666666000E+323     1E+31     NaN                                    decimal64 decimal128
 8.66666666E+3              1E+10     0E10                                   decimal64 decimal128
 8.66666666E+3              1E+3      9E+3                                   decimal64 decimal128
 1E+17                      1e+1      qNaN                                   decimal64
 1E+16			   1e+1      1.0000000E+16                          decimal64 decimal128
 1E+18                      1e+2      qNaN                                   decimal64
-1E+19			   1e+2      qNaN                                   decimal64 decimal128
+1E+19			   1e+2      qNaN                                   decimal64
+1E+19			   1e+2      100000000000000000e+2		    decimal128
 
   352364567289012.506  1e-2  qNaN                          decimal64
   35236458901.06       1e-2   3.52364589010600000000e+10   decimal64 decimal128

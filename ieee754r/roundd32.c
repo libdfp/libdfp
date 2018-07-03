@@ -63,6 +63,10 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   if (context.status & DEC_Overflow)
     DFP_EXCEPT (FE_OVERFLOW);
 
+#ifdef POSTFIX_CHECK
+  POSTFIX_CHECK ();
+#endif
+
   return result;
 }
 

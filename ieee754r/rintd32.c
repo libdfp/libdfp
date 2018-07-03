@@ -32,4 +32,12 @@
 #include <mapround.h>
 #define __ROUND_MODE	__dn_getround()
 
+#define POSTFIX_CHECK()					\
+  do {							\
+    if (x != result)					\
+      {							\
+	DFP_EXCEPT (FE_INEXACT);			\
+      }							\
+  } while (0)
+
 #include "roundd32.c"
