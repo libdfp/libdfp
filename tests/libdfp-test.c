@@ -21,8 +21,12 @@
 /* Test flags (e.g. possible exceptions) */
 #define NO_EXTRA_FLAG			0x0
 #define INVALID_EXCEPTION		0x1
+#define OVERFLOW_EXCEPTION		0x4
 #define INEXACT_EXCEPTION		0x10
 #define NO_INEXACT_EXCEPTION		0x200
+#define NO_OVERFLOW_EXCEPTION		0x400
+#define ERRNO_UNCHANGED			0x8000
+#define ERRNO_ERANGE			0x20000
 #define IGNORE_RESULT			0x40000
 #define ONLY_ON_4BYTE_LONG		0x100000
 #define ONLY_ON_8BYTE_LONG		0x200000
@@ -33,7 +37,8 @@
   char *test_name;                                                      \
   if (asprintf (&test_name, "%s (%s)", #FUNC_NAME, (ARG_STR)) == -1)    \
     abort ();								\
-  feclearexcept (FE_ALL_EXCEPT)
+  feclearexcept (FE_ALL_EXCEPT);					\
+  errno = 0;
 
 /* Common cleanup after an individual test.  */
 #define COMMON_TEST_CLEANUP                     \
@@ -314,6 +319,44 @@ test_exceptions (const char *test_name, int exception)
 			       INVALID_EXCEPTION, FE_INVALID,
 			       "Invalid");
 #endif
+#ifdef FE_OVERFLOW
+      if ((exception & (OVERFLOW_EXCEPTION  | NO_OVERFLOW_EXCEPTION)) != 0)
+	test_single_exception (test_name, exception,
+			       OVERFLOW_EXCEPTION, FE_OVERFLOW,
+			       "Overflow");
+#endif
+}
+
+/* Test whether errno for TEST_NAME, set to ERRNO_VALUE, has value
+   EXPECTED_VALUE (description EXPECTED_NAME).  */
+static void
+test_single_errno (const char *test_name, int errno_value,
+		   int expected_value, const char *expected_name)
+{
+  if (errno_value == expected_value)
+    {
+      if (print_screen (1))
+	printf ("Pass: %s: errno set to %d (%s)\n", test_name, errno_value,
+		expected_name);
+    }
+  else
+    {
+      ++noErrors;
+      if (print_screen (0))
+	printf ("Failure: %s: errno set to %d, expected %d (%s)\n",
+		test_name, errno_value, expected_value, expected_name);
+    }
+}
+
+/* Test whether errno (value ERRNO_VALUE) has been for TEST_NAME set
+   as required by EXCEPTIONS.  */
+static void
+test_errno (const char *test_name, int errno_value, int exceptions)
+{
+  if (exceptions & ERRNO_UNCHANGED)
+    test_single_errno (test_name, errno_value, 0, "unchanged");
+  if (exceptions & ERRNO_ERANGE)
+    test_single_errno (test_name, errno_value, ERANGE, "ERANGE");
 }
 
 static void
@@ -325,8 +368,10 @@ check_float (const char *test_name, FLOAT computed, FLOAT expected,
   int print_diff = 0;
   FLOAT diff = 0;
   FLOAT ulps = 0;
+  int errno_value = errno;
 
   test_exceptions (test_name, extraflags);
+  test_errno (test_name, errno_value, extraflags);
   if (extraflags & IGNORE_RESULT)
     goto out;
 
@@ -392,8 +437,10 @@ __attribute__((used))
 check_int (const char *test_name, int computed, int expected, int extraflags)
 {
   int ok = 0;
+  int errno_value = errno;
 
   test_exceptions (test_name, extraflags);
+  test_errno (test_name, errno_value, extraflags);
   if (extraflags & IGNORE_RESULT)
     goto out;
   noTests++;
@@ -422,8 +469,10 @@ check_long (const char *test_name, long int computed, long int expected,
 	    int extraflags)
 {
   int ok = 0;
+  int errno_value = errno;
 
   test_exceptions (test_name, extraflags);
+  test_errno (test_name, errno_value, extraflags);
   if (extraflags & IGNORE_RESULT)
     goto out;
   noTests++;
@@ -452,8 +501,10 @@ check_longlong (const char *test_name, long long int computed,
 		long long int expected, int extraflags)
 {
   int ok = 0;
+  int errno_value = errno;
 
   test_exceptions (test_name, extraflags);
+  test_errno (test_name, errno_value, extraflags);
   if (extraflags & IGNORE_RESULT)
     goto out;
   noTests++;
@@ -481,8 +532,10 @@ __attribute__((used))
 check_bool (const char *test_name, int computed, int expected, int extraflags)
 {
   int ok = 0;
+  int errno_value = errno;
 
   test_exceptions (test_name, extraflags);
+  test_errno (test_name, errno_value, extraflags);
   if (extraflags & IGNORE_RESULT)
     goto out;
   noTests++;
