@@ -1,4 +1,4 @@
-# name isnan
+# name __isnan
 # arg1 decimal
 # ret  int
 

@@ -340,6 +340,7 @@ libdfp_c_tests = test-printf test-amort test-decode test-inexact-exception \
 		 test-log10-d32 test-log10-d64 test-log10-d128 \
 		 test-llquantexp-d32 test-llquantexp-d64 test-llquantexp-d128 \
 		 test-isnan-d32 test-isnan-d64 test-isnan-d128 \
+		 test-isnan_internal-d32 test-isnan_internal-d64 test-isnan_internal-d128 \
 		 test-isinf-d32 test-isinf-d64 test-isinf-d128 \
 		 test-isfinite-d32 test-isfinite-d64 test-isfinite-d128 \
 		 test-issignaling-d32 test-issignaling-d64 test-issignaling-d128 \
