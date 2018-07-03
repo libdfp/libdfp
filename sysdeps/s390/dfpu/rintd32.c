@@ -26,16 +26,47 @@
 
 #include <math.h>
 
-#define FUNCTION_NAME rint
+#ifndef FUNCTION_NAME
+# define FUNCTION_NAME rint
+#endif
 #include <dfpmacro.h>
 
-DEC_TYPE
+#ifndef RET_TYPE
+# define RET_TYPE DEC_TYPE
+#endif
+
+RET_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
 #if _DECIMAL_SIZE == 128
   _Decimal128 tmp = x;
 #else
   _Decimal64 tmp = (_Decimal64) x;
+#endif
+
+#if defined RET_TYPE_MIN_VALUE && defined RET_TYPE_MAX_VALUE
+  /* Round according current dfp mode without inexact exception as we need to do
+     the out of bounds check first.  If the invalid exception is raised, the
+     inexact exception is not allowed to be raised.  */
+  __asm__ (
+#if _DECIMAL_SIZE == 128
+	   "fixtr %0,0,%0,4"
+#else
+	   "fidtr %0,0,%0,4"
+#endif
+	   : "+f" (tmp));
+
+  /* Check, if value is out of bounds in target format.  */
+  if (__builtin_expect (tmp < RET_TYPE_MIN_VALUE || tmp > RET_TYPE_MAX_VALUE,
+			0))
+    {
+      DFP_EXCEPT (FE_INVALID);
+      return (tmp < RET_TYPE_MIN_VALUE)
+	? RET_TYPE_MIN_VALUE
+	: RET_TYPE_MAX_VALUE;
+    }
+
+  tmp = x;
 #endif
 
   /* Round according current dfp mode with inexact exception.  */
@@ -46,6 +77,6 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 	   "fidtr %0,0,%0,0"
 #endif
 	   : "+f" (tmp));
-  return (DEC_TYPE) tmp;
+  return (RET_TYPE) tmp;
 }
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
