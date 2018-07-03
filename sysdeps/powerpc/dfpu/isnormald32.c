@@ -1,7 +1,7 @@
 /* Returns non-zero if the _Decimal32 is normalized
 
    Copyright (C) 2008 IBM Corporation.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2018 Free Software Foundation, Inc.
 
    Author(s): Pete Eberlein <eberlein@us.ibm.com>
 
@@ -28,7 +28,15 @@ int
 __isnormald32 (_Decimal32 val)
 {
   int cr0;
-  _Decimal64 input = val;
+  _Decimal64 input;
+
+  /* Since _Decimal32 is promoted to _Decimal64, __DEC32_SUBNORMAL_MIN__ is well
+   * within the bounds of a _Decimal64.  This means that we need to do our range
+   * check for __DEC32_SUBNORMAL_MIN__ before dropping into the asm code.  */
+  if (val > -__DEC32_MIN__ && val < __DEC32_MIN__)
+    return 0;
+
+  input = val;
 
   asm ("dtstdc cr0,%1,0x08\n"
        "mfcr   %0, 128\n"

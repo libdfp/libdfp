@@ -1,0 +1,40 @@
+# name isnormal
+# arg1 decimal
+# ret  bool
+
+Inf                0
+-Inf               0
+NaN                0
+-NaN               0
+sNaN               0
+-sNaN              0
+DEC_SUBNORMAL_MIN  0
+-DEC_SUBNORMAL_MIN 0
+1E-100		   0		decimal32
+-1E-100		   0		decimal32
+1E-96		   0		decimal32
+-1E-96		   0		decimal32
+1E-397		   0		decimal64
+-1E-397		   0		decimal64
+1E-384		   0		decimal64
+-1E-384		   0		decimal64
+1E-6175		   0		decimal128
+-1E-6175	   0		decimal128
+1E-6144		   0		decimal128
+-1E-6144	   0		decimal128
+DEC_MIN            1
+-DEC_MIN           1
+1E-94		   1		decimal32
+-1E-94		   1		decimal32
+1E-382		   1		decimal64
+-1E-382		   1		decimal64
+1E-6142		   1		decimal128
+-1E-6142	   1		decimal128
+DEC_MAX            1
+-DEC_MAX           1
+0.1                1
+-0.1               1
+10E1               1
+-10E1              1
+0.0                0
+-0.0               0
