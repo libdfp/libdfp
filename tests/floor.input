@@ -2,47 +2,47 @@
 # arg1 decimal
 # ret  decimal
 
- Inf                    Inf
--Inf                   -Inf
- NaN                    NaN
-sNaN                    NaN
- 0.0                    0.0
--0.0                   -0.0
+ Inf                    Inf						NO_INEXACT_EXCEPTION
+-Inf                   -Inf						NO_INEXACT_EXCEPTION
+ NaN                    NaN						NO_INEXACT_EXCEPTION
+sNaN                    NaN						NO_INEXACT_EXCEPTION
+ 0.0                    0.0						NO_INEXACT_EXCEPTION
+-0.0                   -0.0						NO_INEXACT_EXCEPTION
 
- 0.0                    0.0
--0.0                   -0.0
- 0.2                    0.0
--0.2                   -1.0
- 0.5                    0.0
--0.5                   -1.0
- 0.8                    0.0
--0.8                   -1.0
- 1.5                    1.0
--1.5                   -2.0
- 0.1                    0.0
- 0.25                   0.0
- 0.625                  0.0
--0.1                   -1.0
--0.25                  -1.0
--0.625                 -1.0
- 97152.5                97152.0
--97152.5               -97153.0
--370495.5              -370496.0
--370496.25             -370497.0
--370496.5              -370497.0
--370496.75             -370497.0
--370497.5              -370498.0
+ 0.0                    0.0						NO_INEXACT_EXCEPTION
+-0.0                   -0.0						NO_INEXACT_EXCEPTION
+ 0.2                    0.0						NO_INEXACT_EXCEPTION
+-0.2                   -1.0						NO_INEXACT_EXCEPTION
+ 0.5                    0.0						NO_INEXACT_EXCEPTION
+-0.5                   -1.0						NO_INEXACT_EXCEPTION
+ 0.8                    0.0						NO_INEXACT_EXCEPTION
+-0.8                   -1.0						NO_INEXACT_EXCEPTION
+ 1.5                    1.0						NO_INEXACT_EXCEPTION
+-1.5                   -2.0						NO_INEXACT_EXCEPTION
+ 0.1                    0.0						NO_INEXACT_EXCEPTION
+ 0.25                   0.0						NO_INEXACT_EXCEPTION
+ 0.625                  0.0						NO_INEXACT_EXCEPTION
+-0.1                   -1.0						NO_INEXACT_EXCEPTION
+-0.25                  -1.0						NO_INEXACT_EXCEPTION
+-0.625                 -1.0						NO_INEXACT_EXCEPTION
+ 97152.5                97152.0						NO_INEXACT_EXCEPTION
+-97152.5               -97153.0						NO_INEXACT_EXCEPTION
+-370495.5              -370496.0					NO_INEXACT_EXCEPTION
+-370496.25             -370497.0					NO_INEXACT_EXCEPTION
+-370496.5              -370497.0					NO_INEXACT_EXCEPTION
+-370496.75             -370497.0					NO_INEXACT_EXCEPTION
+-370497.5              -370498.0					NO_INEXACT_EXCEPTION
 
- 2097152.5              2097152.0            decimal64 decimal128
--2097152.5             -2097153.0            decimal64 decimal128
--3599627370495.5       -3599627370496.0      decimal64 decimal128
--3599627370496.25      -3599627370497.0      decimal64 decimal128
--3599627370496.5       -3599627370497.0      decimal64 decimal128
--3599627370496.75      -3599627370497.0      decimal64 decimal128
--3599627370497.5       -3599627370498.0      decimal64 decimal128
+ 2097152.5              2097152.0            decimal64 decimal128	NO_INEXACT_EXCEPTION
+-2097152.5             -2097153.0            decimal64 decimal128	NO_INEXACT_EXCEPTION
+-3599627370495.5       -3599627370496.0      decimal64 decimal128	NO_INEXACT_EXCEPTION
+-3599627370496.25      -3599627370497.0      decimal64 decimal128	NO_INEXACT_EXCEPTION
+-3599627370496.5       -3599627370497.0      decimal64 decimal128	NO_INEXACT_EXCEPTION
+-3599627370496.75      -3599627370497.0      decimal64 decimal128	NO_INEXACT_EXCEPTION
+-3599627370497.5       -3599627370498.0      decimal64 decimal128	NO_INEXACT_EXCEPTION
 
--4503599627370495.5    -4503599627370496.0   decimal128
--4503599627370496.25   -4503599627370497.0   decimal128
--4503599627370496.5    -4503599627370497.0   decimal128
--4503599627370496.75   -4503599627370497.0   decimal128
--4503599627370497.5    -4503599627370498.0   decimal128
+-4503599627370495.5    -4503599627370496.0   decimal128			NO_INEXACT_EXCEPTION
+-4503599627370496.25   -4503599627370497.0   decimal128			NO_INEXACT_EXCEPTION
+-4503599627370496.5    -4503599627370497.0   decimal128			NO_INEXACT_EXCEPTION
+-4503599627370496.75   -4503599627370497.0   decimal128			NO_INEXACT_EXCEPTION
+-4503599627370497.5    -4503599627370498.0   decimal128			NO_INEXACT_EXCEPTION
