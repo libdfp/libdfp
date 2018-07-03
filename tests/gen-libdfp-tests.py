@@ -36,6 +36,7 @@ class Operation:
   def __init__(self, line):
     self.args = []
     self.ret = None
+    self.extraflags = []
     self.line = line
 
 # Describe a type handle in operations and functions definition
@@ -244,9 +245,18 @@ def parse_file (filename):
         (filename, l, lines[l]))
       continue
 
-     # Check if the test applies to decimal type being tested
+    # Split all further args in decimal or extraflags (e.g. excpetions)
+    declist = []
+    extra_args = []
     if (len(fields) - 1) > expected_args:
-      declist = fields[expected_args+1].split()
+      for arg in fields[expected_args + 1 : ]:
+        if arg.startswith("decimal"):
+          declist.append(arg)
+        else:
+          extra_args.append(arg)
+
+    # Check if the test applies to decimal type being tested
+    if (len(declist) > 0):
       if DECIMAL.name not in declist:
         continue
 
@@ -254,6 +264,7 @@ def parse_file (filename):
     for oparg in range (0, expected_args):
       op.args.append(fields[oparg])
     op.ret = fields[expected_args]
+    op.extraflags.extend(extra_args)
 
     operations.append(op)
 
@@ -275,6 +286,7 @@ def print_header (func):
   print ("#include <limits.h>")
   print ("#include <errno.h>")
   print ("#include \"test-common.h\"")
+  print ("#include <fenv.h>")
   print ("")
   # Macros required for test build
   print ("#define %s" % DECIMAL.name.upper())
@@ -305,6 +317,7 @@ def print_operations (func, operations):
   for i in range(0, len(func.args)):
     print ("  %s arg%i;" % (func.arg_type(i), i))
   print ("  %s e;" % func.ret_init_type())
+  print ("  int extraflags;")
   print ("  int line;")
   print ("} operations_t;")
   print ("")
@@ -315,6 +328,11 @@ def print_operations (func, operations):
     for i in range(0, len(op.args)):
       print ("%s," % func.args[i].parse_arg(op.args[i])),
     print (" %s, " % func.ret.parse_arg(op.ret)),
+    if (len(op.extraflags) > 0):
+      print ("|".join (op.extraflags)),
+      print (", "),
+    else:
+      print ("NO_EXTRA_FLAG, "),
     print (" %d }," % op.line)
   print ("};")
   print ("static const int operations_size = \
@@ -342,7 +360,7 @@ def print_func_call(func):
   print ("    %s (%s, operations[i].argname, " % (macro, func.name, )),
   for i in range(0, len(func.args)):
     print ("operations[i].arg%i.%s, " % (i, DECIMAL.decfield)),
-  print ("operations[i].e%s);" % func.ret_field())
+  print ("operations[i].e%s, operations[i].extraflags);" % func.ret_field())
 
   print ("  }")
   print ("")

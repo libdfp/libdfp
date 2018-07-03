@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2015 Free Software Foundation, Inc.
+/*  Copyright (C) 2014-2018 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -18,12 +18,17 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
+/* Test flags (e.g. possible exceptions) */
+#define NO_EXTRA_FLAG			0x0
+#define INEXACT_EXCEPTION		0x10
+#define NO_INEXACT_EXCEPTION		0x200
 
 /* Common setup for an individual test.  */
 #define COMMON_TEST_SETUP(FUNC_NAME, ARG_STR)                           \
   char *test_name;                                                      \
   if (asprintf (&test_name, "%s (%s)", #FUNC_NAME, (ARG_STR)) == -1)    \
-    abort ()
+    abort ();								\
+  feclearexcept (FE_ALL_EXCEPT)
 
 /* Common cleanup after an individual test.  */
 #define COMMON_TEST_CLEANUP                     \
@@ -31,52 +36,58 @@
 
 /* Run an individual test, including any required setup and checking
    of results, or loop over all tests in an array.  */
-#define RUN_TEST_f_f(FUNC_NAME, ARG_STR, ARG, EXPECTED)                 \
+#define RUN_TEST_f_f(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
-   check_float (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED);           \
+   check_float (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED,		\
+		EXTRAFLAGS);						\
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
-#define RUN_TEST_ff_f(FUNC_NAME, ARG_STR, ARG1, ARG2, EXPECTED)         \
+#define RUN_TEST_ff_f(FUNC_NAME, ARG_STR, ARG1, ARG2, EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
-   check_float (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED);    \
+   check_float (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED,	\
+		EXTRAFLAGS);						\
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
-#define RUN_TEST_f_i(FUNC_NAME, ARG_STR, ARG, EXPECTED)                 \
+#define RUN_TEST_f_i(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
-   check_int (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED);             \
+   check_int (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED, EXTRAFLAGS);	\
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
-#define RUN_TEST_f_l(FUNC_NAME, ARG_STR, ARG, EXPECTED)                 \
+#define RUN_TEST_f_l(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
-   check_long (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED);            \
+   check_long (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED,		\
+	       EXTRAFLAGS);						\
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
-#define RUN_TEST_f_L(FUNC_NAME, ARG_STR, ARG, EXPECTED)                 \
+#define RUN_TEST_f_L(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
-   check_longlong (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED);        \
+   check_longlong (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED,		\
+		   EXTRAFLAGS);						\
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
-#define RUN_TEST_ff_b(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED)        \
+#define RUN_TEST_ff_b(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
-   check_bool (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED);     \
+   check_bool (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED,	\
+	       EXTRAFLAGS);						\
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
-#define RUN_TEST_ff_i(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED)        \
+#define RUN_TEST_ff_i(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
-   check_int (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED);	\
+   check_int (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED,	\
+	      EXTRAFLAGS);						\
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
@@ -218,14 +229,68 @@ update_stats (int ok)
 #define ULPDIFF(given, expected) \
         (FUNC(fabs) ((given) - (expected)) / ulp (expected))
 
+/* Test whether a given exception was raised.  */
+static void
+test_single_exception (const char *test_name, int exception, int exc_flag,
+		       int fe_flag, const char *flag_name)
+{
+  int ok = 1;
+  if (exception & exc_flag)
+    {
+      if (fetestexcept (fe_flag))
+	{
+	  if (print_screen (1))
+	    printf ("Pass: %s: Exception \"%s\" set\n", test_name, flag_name);
+	}
+      else
+	{
+	  ok = 0;
+	  if (print_screen (0))
+	    printf ("Failure: %s: Exception \"%s\" not set\n",
+		    test_name, flag_name);
+	}
+    }
+  else
+    {
+      if (fetestexcept (fe_flag))
+	{
+	  ok = 0;
+	  if (print_screen (0))
+	    printf ("Failure: %s: Exception \"%s\" set\n",
+		    test_name, flag_name);
+	}
+      else
+	{
+	  if (print_screen (1))
+	    printf ("%s: Exception \"%s\" not set\n", test_name,
+		    flag_name);
+	}
+    }
+  if (!ok)
+    ++noErrors;
+}
+
+static void
+test_exceptions (const char *test_name, int exception)
+{
+#ifdef FE_INEXACT
+  if ((exception & (INEXACT_EXCEPTION | NO_INEXACT_EXCEPTION)) != 0)
+    test_single_exception (test_name, exception, INEXACT_EXCEPTION,
+			   FE_INEXACT, "Inexact");
+#endif
+}
+
 static void
 __attribute__((used))
-check_float (const char *test_name, FLOAT computed, FLOAT expected)
+check_float (const char *test_name, FLOAT computed, FLOAT expected,
+	     int extraflags)
 {
   int ok = 0;
   int print_diff = 0;
   FLOAT diff = 0;
   FLOAT ulps = 0;
+
+  test_exceptions (test_name, extraflags);
 
   FLOAT max_ulp = find_test_ulps (test_name);
   if (issignaling (computed) && issignaling (expected))
@@ -285,9 +350,11 @@ check_float (const char *test_name, FLOAT computed, FLOAT expected)
 /* Check that computed and expected values are equal (int values).  */
 static void
 __attribute__((used))
-check_int (const char *test_name, int computed, int expected)
+check_int (const char *test_name, int computed, int expected, int extraflags)
 {
   int ok = 0;
+
+  test_exceptions (test_name, extraflags);
 
   noTests++;
   if (computed == expected)
@@ -310,10 +377,12 @@ check_int (const char *test_name, int computed, int expected)
 /* check that computed and expected values are equal (long int values) */
 static void
 __attribute__((used))
-check_long (const char *test_name, long int computed,
-            long int expected)
+check_long (const char *test_name, long int computed, long int expected,
+	    int extraflags)
 {
   int ok = 0;
+
+  test_exceptions (test_name, extraflags);
 
   noTests++;
   if (computed == expected)
@@ -336,9 +405,11 @@ check_long (const char *test_name, long int computed,
 static void
 __attribute__((used))
 check_longlong (const char *test_name, long long int computed,
-                long long int expected)
+		long long int expected, int extraflags)
 {
   int ok = 0;
+
+  test_exceptions (test_name, extraflags);
 
   noTests++;
   if (computed == expected)
@@ -360,9 +431,11 @@ check_longlong (const char *test_name, long long int computed,
 /* Check that computed value is true/false.  */
 static void
 __attribute__((used))
-check_bool (const char *test_name, int computed, int expected)
+check_bool (const char *test_name, int computed, int expected, int extraflags)
 {
   int ok = 0;
+
+  test_exceptions (test_name, extraflags);
 
   noTests++;
   if ((computed == 0) == (expected == 0))
