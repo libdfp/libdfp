@@ -1,7 +1,7 @@
 /* Rounds to the nearest (long int) integer
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007-2015 Free Software Foundation, Inc.
+   Copyright (C) 2007-2018 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -37,5 +37,14 @@
 #define __MAX_VALUE	LONG_MAX
 #include <mapround.h>
 #define __ROUND_MODE	__dn_getround()
+
+#define POSTFIX_CHECK					\
+  do							\
+    {							\
+      if (x != result)					\
+	{						\
+	  DFP_EXCEPT (FE_INEXACT);			\
+	}						\
+    } while (0)
 
 #include "llroundd32.c"
