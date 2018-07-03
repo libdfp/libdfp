@@ -46,28 +46,20 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   DEC_TYPE result;
   decNumber dn_x;
   decNumber dn_y;
-  decNumber dn_diff;
-  DEC_TYPE temp_diff;
-  DEC_TYPE temp_result;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
   FUNC_CONVERT_TO_DN (&y, &dn_y);
 
-  if(decNumberIsNaN (&dn_x) || decNumberIsNaN (&dn_y))
-    return x;
+  if (decNumberIsNaN (&dn_x) || decNumberIsNaN (&dn_y))
+    return x + y;
 
   decContextDefault (&context, DEFAULT_CONTEXT);
-  decNumberSubtract (&dn_diff, &dn_x, &dn_y, &context);
-  decNumberSubtract (&dn_result, &dn_x, &dn_x, &context);
 
-  FUNC_CONVERT_FROM_DN (&dn_diff, &temp_diff, &context);
-  FUNC_CONVERT_FROM_DN (&dn_result, &temp_result, &context);
-  if(temp_diff>temp_result)
-    decNumberAdd (&dn_result,&dn_result,&dn_diff,&context);
- /* if(decCompare (&dn_diff,&dn_result) == 1)
-    decNumberAdd (&dn_result,&dn_result,&dn_diff,&context);
-    */
+  decNumberCompare (&dn_result, &dn_x, &dn_y, &context);
+  if (decNumberIsNegative(&dn_result) || decNumberIsZero(&dn_result))
+    return 0;
 
+  decNumberSubtract (&dn_result, &dn_x, &dn_y, &context);
   FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
   if (context.status & DEC_Overflow)
     DFP_EXCEPT (FE_OVERFLOW);
@@ -79,7 +71,8 @@ DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
   DEC_TYPE z = IEEE_FUNCTION_NAME (x, y);
-  if (!FUNC_D(__isfinite) (z) && FUNC_D(__isfinite) (x))
+  if (!FUNC_D(__isfinite) (z) && FUNC_D(__isfinite) (x)
+      && FUNC_D(__isfinite) (y))
     DFP_ERRNO (ERANGE);
   return z;
 }
