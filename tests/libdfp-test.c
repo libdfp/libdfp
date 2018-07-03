@@ -20,8 +20,13 @@
 
 /* Test flags (e.g. possible exceptions) */
 #define NO_EXTRA_FLAG			0x0
+#define INVALID_EXCEPTION		0x1
 #define INEXACT_EXCEPTION		0x10
 #define NO_INEXACT_EXCEPTION		0x200
+#define IGNORE_RESULT			0x40000
+#define ONLY_ON_4BYTE_LONG		0x100000
+#define ONLY_ON_8BYTE_LONG		0x200000
+
 
 /* Common setup for an individual test.  */
 #define COMMON_TEST_SETUP(FUNC_NAME, ARG_STR)                           \
@@ -34,10 +39,20 @@
 #define COMMON_TEST_CLEANUP                     \
   free (test_name)
 
+/* Skip test in case of invalid characteristics.  */
+#define CHECK_SKIP_TEST(EXTRAFLAGS)			\
+  if (((EXTRAFLAGS & ONLY_ON_4BYTE_LONG) != 0		\
+       && sizeof(long int) != 4)			\
+      || ((EXTRAFLAGS & ONLY_ON_8BYTE_LONG) != 0	\
+	  && sizeof(long int) != 8))			\
+    break;
+
+
 /* Run an individual test, including any required setup and checking
    of results, or loop over all tests in an array.  */
 #define RUN_TEST_f_f(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
+   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_float (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED,		\
 		EXTRAFLAGS);						\
@@ -46,6 +61,7 @@
 
 #define RUN_TEST_ff_f(FUNC_NAME, ARG_STR, ARG1, ARG2, EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
+   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_float (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED,	\
 		EXTRAFLAGS);						\
@@ -54,6 +70,7 @@
 
 #define RUN_TEST_f_i(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
+   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_int (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED, EXTRAFLAGS);	\
    COMMON_TEST_CLEANUP;                                                 \
@@ -61,6 +78,7 @@
 
 #define RUN_TEST_f_l(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
+   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_long (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED,		\
 	       EXTRAFLAGS);						\
@@ -69,6 +87,7 @@
 
 #define RUN_TEST_f_L(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
+   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_longlong (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED,		\
 		   EXTRAFLAGS);						\
@@ -77,6 +96,7 @@
 
 #define RUN_TEST_ff_b(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
+   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_bool (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED,	\
 	       EXTRAFLAGS);						\
@@ -85,6 +105,7 @@
 
 #define RUN_TEST_ff_i(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
+   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_int (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED,	\
 	      EXTRAFLAGS);						\
@@ -278,6 +299,12 @@ test_exceptions (const char *test_name, int exception)
     test_single_exception (test_name, exception, INEXACT_EXCEPTION,
 			   FE_INEXACT, "Inexact");
 #endif
+#ifdef FE_INVALID
+      if ((exception & INVALID_EXCEPTION) != 0)
+	test_single_exception (test_name, exception,
+			       INVALID_EXCEPTION, FE_INVALID,
+			       "Invalid");
+#endif
 }
 
 static void
@@ -291,6 +318,8 @@ check_float (const char *test_name, FLOAT computed, FLOAT expected,
   FLOAT ulps = 0;
 
   test_exceptions (test_name, extraflags);
+  if (extraflags & IGNORE_RESULT)
+    goto out;
 
   FLOAT max_ulp = find_test_ulps (test_name);
   if (issignaling (computed) && issignaling (expected))
@@ -344,6 +373,7 @@ check_float (const char *test_name, FLOAT computed, FLOAT expected,
     }
   update_stats (ok);
 
+ out:
   errno = 0;
 }
 
@@ -355,7 +385,8 @@ check_int (const char *test_name, int computed, int expected, int extraflags)
   int ok = 0;
 
   test_exceptions (test_name, extraflags);
-
+  if (extraflags & IGNORE_RESULT)
+    goto out;
   noTests++;
   if (computed == expected)
     ok = 1;
@@ -371,6 +402,7 @@ check_int (const char *test_name, int computed, int expected, int extraflags)
     }
 
   update_stats (ok);
+ out:
   errno = 0;
 }
 
@@ -383,7 +415,8 @@ check_long (const char *test_name, long int computed, long int expected,
   int ok = 0;
 
   test_exceptions (test_name, extraflags);
-
+  if (extraflags & IGNORE_RESULT)
+    goto out;
   noTests++;
   if (computed == expected)
     ok = 1;
@@ -399,6 +432,8 @@ check_long (const char *test_name, long int computed, long int expected,
     }
 
   update_stats (ok);
+ out:
+  errno = 0;
 }
 
 /* check that computed and expected values are equal (long int values) */
@@ -410,7 +445,8 @@ check_longlong (const char *test_name, long long int computed,
   int ok = 0;
 
   test_exceptions (test_name, extraflags);
-
+  if (extraflags & IGNORE_RESULT)
+    goto out;
   noTests++;
   if (computed == expected)
     ok = 1;
@@ -426,6 +462,8 @@ check_longlong (const char *test_name, long long int computed,
     }
 
   update_stats (ok);
+ out:
+  errno = 0;
 }
 
 /* Check that computed value is true/false.  */
@@ -436,7 +474,8 @@ check_bool (const char *test_name, int computed, int expected, int extraflags)
   int ok = 0;
 
   test_exceptions (test_name, extraflags);
-
+  if (extraflags & IGNORE_RESULT)
+    goto out;
   noTests++;
   if ((computed == 0) == (expected == 0))
     ok = 1;
@@ -452,4 +491,6 @@ check_bool (const char *test_name, int computed, int expected, int extraflags)
     }
 
   update_stats (ok);
+ out:
+  errno = 0;
 }
