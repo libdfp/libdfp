@@ -7,13 +7,38 @@ Inf                FP_INFINITE
 NaN                FP_NAN
 -NaN               FP_NAN
 sNaN               FP_NAN
+-sNaN              FP_NAN
 DEC_SUBNORMAL_MIN  FP_SUBNORMAL
 -DEC_SUBNORMAL_MIN FP_SUBNORMAL
+1E-100		   FP_SUBNORMAL		decimal32
+-1E-100		   FP_SUBNORMAL		decimal32
+1E-96		   FP_SUBNORMAL		decimal32
+-1E-96		   FP_SUBNORMAL		decimal32
+1E-397		   FP_SUBNORMAL		decimal64
+-1E-397		   FP_SUBNORMAL		decimal64
+1E-384		   FP_SUBNORMAL		decimal64
+-1E-384		   FP_SUBNORMAL		decimal64
+1E-6175		   FP_SUBNORMAL		decimal128
+-1E-6175	   FP_SUBNORMAL		decimal128
+1E-6144		   FP_SUBNORMAL		decimal128
+-1E-6144	   FP_SUBNORMAL		decimal128
 DEC_MIN            FP_NORMAL
+-DEC_MIN           FP_NORMAL
+1E-94		   FP_NORMAL		decimal32
+-1E-94		   FP_NORMAL		decimal32
+1E-382		   FP_NORMAL		decimal64
+-1E-382		   FP_NORMAL		decimal64
+1E-6142		   FP_NORMAL		decimal128
+-1E-6142	   FP_NORMAL		decimal128
 DEC_MAX            FP_NORMAL
+-DEC_MAX           FP_NORMAL
 0.1                FP_NORMAL
+-0.1               FP_NORMAL
 10E1               FP_NORMAL
+-10E1              FP_NORMAL
 0.0                FP_ZERO
-0E10               FP_ZERO
 -0.0               FP_ZERO
+0E10               FP_ZERO
+-0E10              FP_ZERO
+0E-3               FP_ZERO
 -0E-3              FP_ZERO
