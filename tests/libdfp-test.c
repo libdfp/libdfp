@@ -94,6 +94,15 @@
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
+#define RUN_TEST_f_b(FUNC_NAME, ARG_STR, ARG1, EXPECTED, EXTRAFLAGS) \
+  do {                                                                  \
+   CHECK_SKIP_TEST (EXTRAFLAGS);					\
+   COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
+   check_bool (test_name, FUNC (FUNC_NAME) (ARG1), EXPECTED,		\
+	       EXTRAFLAGS);						\
+   COMMON_TEST_CLEANUP;                                                 \
+  } while (0)
+
 #define RUN_TEST_ff_b(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
    CHECK_SKIP_TEST (EXTRAFLAGS);					\
