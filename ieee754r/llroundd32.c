@@ -1,7 +1,7 @@
 /* Rounds to the nearest long long int value, ignoring rounding mode
 
    Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007-2015 Free Software Foundation, Inc.
+   Copyright (C) 2007-2018 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -73,6 +73,11 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   decNumberToIntegralValue (&dn_result,&dn_x,&context);
 
   FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
+
+#ifdef POSTFIX_CHECK
+  POSTFIX_CHECK;
+#endif
+
   /* Use _Decimal* to __ROUND_RETURN_TYPE casting.  */
   return (__ROUND_RETURN_TYPE)result;
 
