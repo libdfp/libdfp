@@ -356,7 +356,8 @@ libdfp_c_tests = test-printf test-amort test-decode test-inexact-exception \
 		 test-isless-d32 test-isless-d64 test-isless-d128 \
 		 test-islessequal-d32 test-islessequal-d64 test-islessequal-d128 \
 		 test-rint-d32 test-rint-d64 test-rint-d128 \
-		 test-lround-d32 test-lround-d64 test-lround-d128
+		 test-lround-d32 test-lround-d64 test-lround-d128 \
+		 test-llround-d32 test-llround-d64 test-llround-d128
 
 ifeq ($(dfp_ti_abi),yes)
 libdfp_c_tests += test-fix test-float
