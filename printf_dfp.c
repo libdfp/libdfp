@@ -879,7 +879,7 @@ __printf_dfp (FILE *fp,
     PADN (info->pad, width);
 } /* Done output block.  */
 
-   return 0;
+   return done;
 }
 strong_alias (__printf_dfp, printf_dfp)
 hidden_def (__printf_dfp)
