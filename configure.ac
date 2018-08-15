@@ -194,19 +194,7 @@ AC_ARG_WITH([cpu],
   no)
     with_dfp=no
     ;;
-  power8)
-    submachine="$withval"
-    AC_MSG_NOTICE(configuring for the $submachine processor)
-    with_dfp=yes ;;
-  power7)
-    submachine="$withval"
-    AC_MSG_NOTICE(configuring for the $submachine processor)
-    with_dfp=yes ;;
-  power6)
-    submachine="$withval"
-    AC_MSG_NOTICE(configuring for the $submachine processor)
-    with_dfp=yes ;;
-  power6x)
+  power[[6-9]]|power6x)
     submachine="$withval"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
