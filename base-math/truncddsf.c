@@ -46,7 +46,7 @@ CONVERT_WRAPPER(
 
 	/* Check for values that would overflow the exponent table, which
 	   would be obvious overflow and underflow.  */
-	if (exp > 39)		/* Obvious overflow.  */
+	if (exp > FLT_MAX_10_EXP + 1)		/* Obvious overflow.  */
 	  {
 	    if (DFP_EXCEPTIONS_ENABLED)
 	      DFP_HANDLE_EXCEPTIONS (FE_OVERFLOW|FE_INEXACT);
@@ -72,14 +72,7 @@ CONVERT_WRAPPER(
 	    switch (fegetround())
 	      {
 	        case FE_TONEAREST:
-	          mant = llabs(a_norm);
-	          if (exp < -POWOF10_MIN_DENORM_FLT_EXP
-	              || ((exp == -POWOF10_MIN_DENORM_FLT_EXP)
-	              && (mant >= (POWOF10_MIN_DENORM_FLT_MAN/2LL))))
 	            return SIGNBIT(a) ? -0.0 : 0.0;
-	          else
-	            return SIGNBIT(a) ? -__FLT_DENORM_MIN__ :
-	                                 __FLT_DENORM_MIN__;
 	        case FE_DOWNWARD:
 	          return SIGNBIT(a) ? -__FLT_DENORM_MIN__ : 0.0;
 	        case FE_UPWARD:
