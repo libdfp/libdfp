@@ -396,7 +396,8 @@ $(addsuffix .os, $(libdfp_cxx_tests)): $(top_srcdir)/dfp/decimal/decimal $(top_s
 # Add the ULP file generation explicity rule
 $(addprefix $(objpfx), $(libdfp_tests)): $(top_builddir)/libdfp-test-ulps.h
 
-ulps-file = $(shell find $(sysdep_dirs:%=$(top_srcdir)/%/libdfp-test-ulps))
+ulps-file = $(shell find $(sysdep_dirs:%=$(top_srcdir)/%/) \
+			 -name libdfp-test-ulps | head -1)
 $(top_builddir)/libdfp-test-ulps.h: $(ulps-file)
 	$(top_srcdir)/tests/gen-libdfp-ulps.py $< -o $@
 
