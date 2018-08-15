@@ -158,10 +158,18 @@ static char buf[1024];
 
 /* _PC == Printf_dfp Compare with Position  */
 #define _PC_P(f,l,x,y,args...) do { \
+  size_t __tmp; \
   memset(buf,'\0',CHAR_MAX); \
   /* Invokes printf dfp.  */  \
-  sprintf(buf, y, ##args); \
+  __tmp = sprintf(buf, y, ##args); \
   _SC_P(f,l,x,buf); \
+  if (__tmp != strlen(x)) { \
+    fprintf(stderr, "%-3d Error: fprintf didn't return the correct size." \
+	    "  Expected: \"%zd\"\n           " \
+	    "  Result:   \"%zd\"\n    in: %s:%d.\n\n", \
+	    testnum,strlen(x),__tmp,f,l); \
+    ++fail; \
+  } \
 } while (0)
 
 /* _PC == Printf_dfp Compare
