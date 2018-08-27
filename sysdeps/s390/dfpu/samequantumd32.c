@@ -48,7 +48,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 #else
 	   "cedtr %1,%2 \n\t"
 #endif
-	   "je 1f       \n\t"  /* Jump away if exponents are equal. */
+	   "je 1f       \n\t"  /* Jump away if exponents are equal.  */
 	   "lhi %0,0    \n\t"  /* Not same exponent.  */
 	   "1:"
 	   : "=d" (result) : "f" (tmpx), "f" (tmpy) : "cc");
