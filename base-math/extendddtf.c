@@ -30,13 +30,60 @@
 #define NAME extend
 #endif
 
+#include <float.h>
+
 #include "dfpacc.h"
 #include "convert.h"
+#include "convert_helpers.h"
 
 CONVERT_WRAPPER(
 // extendddtf, trunctdtf
 	volatile double df_part1, df_part2;
+	int exp;
 	SRC_TYPE dd_part1, dd_part2;
+
+	/* Get normalized exponent.  */
+	(void) getmantandexpd128 (a, &exp, 0, 0);
+
+	/* Check if the normalized exponent is beyond the greatest or the least
+	   exponent supported by IBM long double and return the result properly
+	   rounded.  */
+	if (exp > BINPOWOF10_LIMIT) /* Overflow.  */
+	  {
+	    if (DFP_EXCEPTIONS_ENABLED)
+	      DFP_HANDLE_EXCEPTIONS (FE_OVERFLOW|FE_INEXACT);
+
+	    switch (fegetround())
+	      {
+	        case FE_TOWARDZERO:
+	          return SIGNBIT(a) ? -LDBL_MAX : LDBL_MAX;
+	        case FE_DOWNWARD:
+	          return SIGNBIT(a) ? -INFINITY : LDBL_MAX;
+	        case FE_UPWARD:
+	          return SIGNBIT(a) ? -LDBL_MAX : INFINITY;
+	        case FE_TONEAREST:
+	        default:
+	          return SIGNBIT(a) ? -INFINITY : INFINITY;
+	      }
+	  }
+	else if (exp < -POWOF10_MIN_DENORM_DBL_EXP) /* Underflow.  */
+	  {
+	    if (DFP_EXCEPTIONS_ENABLED)
+	      DFP_HANDLE_EXCEPTIONS (FE_UNDERFLOW|FE_INEXACT);
+
+	    switch (fegetround())
+	      {
+	        case FE_TOWARDZERO:
+	          return SIGNBIT(a) ? -0.0 : 0.0;
+	        case FE_DOWNWARD:
+	          return SIGNBIT(a) ? -__LDBL_DENORM_MIN__ : 0.0;
+	        case FE_UPWARD:
+	          return SIGNBIT(a) ? -0.0 : __LDBL_DENORM_MIN__;
+	        case FE_TONEAREST:
+	        default:
+	          return SIGNBIT(a) ? -0.0 : 0.0;
+	      }
+	  }
 
 	df_part1 = a;			/* TD -> DF  */
 	dd_part1 = df_part1;		/* DF -> DD./TD.  */
