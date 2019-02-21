@@ -45,7 +45,7 @@ CONVERT_WRAPPER(
 	a_norm = getmantandexpd128 (a, &exp, 15, 1e15DL);
 	/* Handle obvious overflow and underflow to avoid going beyond the
 	   bounds of the exponent table.  */
-	if (exp > 39)		/* Obvious overflow.  */
+	if (exp > FLT_MAX_10_EXP)		/* Obvious overflow.  */
 	  {
 	    if (DFP_EXCEPTIONS_ENABLED)
 	      DFP_HANDLE_EXCEPTIONS (FE_OVERFLOW|FE_INEXACT);
