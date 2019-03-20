@@ -46,7 +46,7 @@ CONVERT_WRAPPER(
 
 	/* Check for values that would overflow the exponent table, which
 	   would be obvious overflow and underflow.  */
-	if (exp > 39)		/* Obvious overflow.  */
+	if (exp > FLT_MAX_10_EXP)		/* Obvious overflow.  */
 	  {
 	    if (DFP_EXCEPTIONS_ENABLED)
 	      DFP_HANDLE_EXCEPTIONS (FE_OVERFLOW|FE_INEXACT);
