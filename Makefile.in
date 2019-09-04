@@ -379,7 +379,7 @@ ifeq ($(cxxdecimal), yes)
 libdfp_cxx_tests = test-ostream test-ostream-g-spec test-istream
 endif
 
-libdfp_tests = $(libdfp_c_tests) $(libdfp_cxx_tests)
+libdfp_tests = $(libdfp_c_tests) $(libdfp_cxx_tests) check-abi-libdfp check-localplt
 
 test-printf.os: $(top_builddir)/printf_dfp.os
 test-strtod.os: $(top_builddir)/strtod32.os $(top_builddir)/strtod64.os $(top_builddir)/strtod128.os
@@ -422,9 +422,21 @@ test-%-d64.c: %.input
 test-%-d128.c: %.input
 	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal128 $^ > $(top_builddir)/$@
 
+# The name to give to a test in test results summaries.
+test-name = $(strip $(patsubst %.out, %, $@))
+
+# Likewise, in XFAIL variable names.
+test-xfail-name = $(strip $(patsubst %.out, %, $@))
+
+evaluate-test = $(top_srcdir)/scripts/evaluate-test.sh $(test-name) $$? \
+		  $(if $(test-xfail-$(test-xfail-name)),true,false) \
+		  false \
+		  > $(top_builddir)/$(test-name).test-result
+
 # Make check main rule
-$(addsuffix .out,$(libdfp_tests)): %.out:%
-	LD_LIBRARY_PATH=$(top_builddir)/:$$LD_LIBRARY_PATH $(top_builddir)/$(patsubst %.out,%,$@) 2> $(top_builddir)/$@ 1> /dev/null
+%.out: %
+	LD_LIBRARY_PATH=$(top_builddir)/:$$LD_LIBRARY_PATH $(top_builddir)/$(test-name) 2> $(top_builddir)/$@ 1> /dev/null; \
+	$(evaluate-test)
 
 
 # Check ABI rules
@@ -433,11 +445,9 @@ generated += $(extra-libs:=.symlist)
 
 vpath %.abilist $(+sysdeps_dirs)
 
-check-abi: check-abi-libdfp.out
-	$(warning $@)
-
 check-abi-libdfp.out: libdfp$(dfp_abi_extn).abilist libdfp.symlist
-	diff -p -U 0 $(filter %.abilist,$^) $(filter %.symlist,$^) > $@
+	diff -p -U 0 $(filter %.abilist,$^) $(filter %.symlist,$^) > $@; \
+	$(evaluate-test)
 
 %.symlist: $(top_srcdir)/scripts/abilist.awk %.dynsym
 	LC_ALL=C $(AWK) -f $^ > $@T
@@ -448,8 +458,6 @@ check-abi-libdfp.out: libdfp$(dfp_abi_extn).abilist libdfp.symlist
 	mv -f $@T $@
 
 # Check local PLT calls
-check-localplt: check-localplt.out
-
 vpath localplt.data $(+sysdep_dirs)
 
 check-localplt.out: $(top_srcdir)/scripts/check-localplt.awk \
@@ -458,7 +466,8 @@ check-localplt.out: $(top_srcdir)/scripts/check-localplt.awk \
                     localplt.data
 	LC_ALL=C $(AWK) -f $(filter-out $< %localplt.data,$^) | \
 	  LC_ALL=C $(AWK) -f $< $(filter %localplt.data,$^) - \
-	  > $@
+	  > $@; \
+	$(evaluate-test)
 
 libdfp.so.jmprel: libdfp.so
 	@rm -f $@T
@@ -466,10 +475,26 @@ libdfp.so.jmprel: libdfp.so
 	test -s $@T
 	mv -f $@T $@
 
+define summarize-tests
+@egrep -v '^(PASS|XFAIL):' $(top_builddir)/$1 || true
+@echo "Summary of test results$2:"
+@sed 's/:.*//' < $(top_builddir)/$1 | sort | uniq -c
+@! egrep -q -v '^(X?PASS|XFAIL|UNSUPPORTED):' $(top_builddir)/$1
+endef
+
+tests: $(libdfp_tests:%=%.out)
+	$(top_srcdir)/scripts/merge-test-results.sh -s $(top_builddir)/ "" \
+	$(sort $(libdfp_tests)) \
+	> tests.sum
+	@echo Details of failed tests:
+	awk -v builddir=$(top_builddir) \
+	'{ if ($$1 != "PASS:") printf "%s/%s.out ", builddir, $$2; }' \
+	tests.sum | xargs -n 1 -t cat
+	$(call summarize-tests,tests.sum)
+
 # The .out files are predicated in another rule on the actual test executables, so
 # those are built from those rules.
-check: $(addsuffix .out,$(libdfp_tests)) check-abi check-localplt
-	@echo +Completed make check
+check: tests
 
 .PHONY: check
 
@@ -485,8 +510,8 @@ clean:
 	rm -f libdfp.map $(SHARED_LINKERNAME_LIB).jmprel libdfp.symlist
 	rm -f Versions.tmp
 	rm -f sysd-versions
-	rm -f check-abi-libdfp.out check-localplt.out
 	rm -f $(addsuffix .out,$(libdfp_tests))
+	rm -f $(addsuffix .test-result,$(libdfp_tests))
 	rm -f $(addsuffix .conf,$(libdfp_tests))
 	rm -f $(libdfp_tests)
 	rm -f libdfp-test-ulps.h
