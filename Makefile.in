@@ -533,6 +533,7 @@ install-doc: $(top_srcdir)/ChangeLog.md
 	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/README.user
 	mv $(inst_docdir)dfp/README.user $(inst_docdir)dfp/README
 	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/ChangeLog.md
+	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.txt
 .PHONY: install-doc
 
 $(top_srcdir)/ChangeLog.md:
