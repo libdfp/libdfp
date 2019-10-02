@@ -24,12 +24,12 @@ libdfp {
     # sysdeps/soft-dfp/dpd/Versions.  This is a bug fix, not an
     # ABI change.  This makes sure that these exports are available in
     # hard-dfp shared objects at link time.
-    __dpd_extendsfsd; __dpd_extendsddf; __dpd_extendsdtf;
-    __dpd_extendsfdd; __dpd_extenddfdd; __dpd_extendddtf;
-    __dpd_extendsftd; __dpd_extenddftd; __dpd_extendtftd;
-    __dpd_truncsdsf; __dpd_truncdfsd; __dpd_trunctfsd;
-    __dpd_truncddsf; __dpd_truncdddf; __dpd_trunctfdd;
-    __dpd_trunctdsf; __dpd_trunctddf; __dpd_trunctdtf;
+    __dpd_extendsfsd; __dpd_extendsddf;
+    __dpd_extendsfdd; __dpd_extenddfdd;
+    __dpd_extendsftd; __dpd_extenddftd;
+    __dpd_truncsdsf; __dpd_truncdfsd;
+    __dpd_truncddsf; __dpd_truncdddf;
+    __dpd_trunctdsf; __dpd_trunctddf;
 
   }
 

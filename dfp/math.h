@@ -72,11 +72,21 @@ __BEGIN_DECLS
 /* We need the definition of _Bool.  */
 #include <stdbool.h>
 
+/* These are subtley different depending on how the C library may have
+ * defined them. */
 #ifndef FP_LLOGB0
-# define FP_LLOGB0 LONG_MIN+1
+# if defined (__FP_LOGB0_IS_MIN) && __FP_LOGB0_IS_MIN
+#  define FP_LLOGB0 (-LONG_MAX - 1)
+# else
+#  define FP_LLOGB0 (-LONG_MAX)
+# endif
 #endif
 #ifndef FP_LLOGBNAN
-# define FP_LLOGBNAN LONG_MAX
+# if defined (__FP_LOGBNAN_IS_MIN) && __FP_LOGBNAN_IS_MIN
+#  define FP_LLOGBNAN (-LONG_MAX - 1)
+# else
+#  define FP_LLOGBNAN LONG_MAX
+# endif
 #endif
 
 extern _Decimal32 acosd32 (_Decimal32 __x) __THROW;
