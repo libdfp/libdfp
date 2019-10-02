@@ -10,17 +10,17 @@ LIBDFP_1.0.0
  __bid_eqsd2 F
  __bid_eqtd2 F
  __bid_extendddtd2 F
- __bid_extendddtf F
+ __bid_extendddxf F
  __bid_extenddfdd F
  __bid_extenddftd F
  __bid_extendsddd2 F
  __bid_extendsddf F
  __bid_extendsdtd2 F
- __bid_extendsdtf F
+ __bid_extendsdxf F
  __bid_extendsfdd F
  __bid_extendsfsd F
  __bid_extendsftd F
- __bid_extendtftd F
+ __bid_extendxftd F
  __bid_fixdddi F
  __bid_fixddsi F
  __bid_fixsddi F
@@ -75,9 +75,9 @@ LIBDFP_1.0.0
  __bid_trunctddf F
  __bid_trunctdsd2 F
  __bid_trunctdsf F
- __bid_trunctdtf F
- __bid_trunctfdd F
- __bid_trunctfsd F
+ __bid_trunctdxf F
+ __bid_truncxfdd F
+ __bid_truncxfsd F
  __bid_unorddd2 F
  __bid_unordsd2 F
  __bid_unordtd2 F
