@@ -71,7 +71,7 @@ CONVERT_WRAPPER(
 	    switch (fegetround())
 	      {
 	        case FE_TONEAREST:
-	          mant = llabs(a_norm);
+	          mant = llabs ((long long)a_norm);
 	          if (exp < -POWOF10_MIN_DENORM_FLT_EXP
 	              || ((exp == -POWOF10_MIN_DENORM_FLT_EXP)
 	              && (mant >= (POWOF10_MIN_DENORM_FLT_MAN/2LL))))

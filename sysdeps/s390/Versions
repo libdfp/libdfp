@@ -1,0 +1,10 @@
+libdfp {
+  LIBDFP_1.0.0 {
+    __dpd_extendsdtf;
+    __dpd_extendddtf;
+    __dpd_extendtftd;
+    __dpd_trunctfsd;
+    __dpd_trunctfdd;
+    __dpd_trunctdtf;
+  }
+}

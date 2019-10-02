@@ -62,6 +62,25 @@ extern int SIGNBIT (SRC_TYPE);
 
 #endif //DECIMAL_TO_INTEGER || DECIMAL_TO_BINARY || DECIMAL_TO_DECIMAL
 
+#define LDBL_FMT_IBM 1
+#define LDBL_FMT_IEEE128 2
+#define LDBL_FMT_INTEL 3
+#define LDBL_FMT_IEEE64 4
+
+/* Determine which long double we are using. */
+#if __LDBL_MANT_DIG__ == 64
+#define LDBL_FMT LDBL_FMT_INTEL
+#define LDBL_GCC_NAME xf
+#elif __LDBL_MANT_DIG__ == 113
+#define LDBL_FMT LDBL_FMT_IEEE128
+#define LDBL_GCC_NAME tf
+#elif __LDBL_MANT_DIG__ == 106
+#define LDBL_FMT LDBL_FMT_IBM
+#define LDBL_GCC_NAME tf
+#else
+#error "Unsupported long double type"
+#endif
+
 
 /* float source */
 #if defined BINARY_TO_DECIMAL
@@ -87,7 +106,7 @@ extern int SIGNBIT (SRC_TYPE);
 #if SRC==128
 #define SRC_TYPE long double
 #define SRC_LITERAL(n) n##l
-#define SRC_KIND tf
+#define SRC_KIND LDBL_GCC_NAME
 #define SIGNBIT __builtin_signbitl
 //extern int __dfp_classify_df (double a);
 /* For IBM 128-bit long double we use the double version.  */
@@ -197,7 +216,7 @@ extern int CLASSIFY (SRC_TYPE);
 #if DEST==128
 #define DEST_TYPE       long double
 #define DEST_LITERAL(n) n##L
-#define DEST_KIND       tf
+#define DEST_KIND       LDBL_GCC_NAME
 #define DEST_INFINITY   __builtin_infl ()
 #define DEST_NAN        __builtin_nanl ("")
 #endif

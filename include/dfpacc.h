@@ -50,6 +50,35 @@
 # define UINT128 unsigned __int128
 #endif
 
+#if __LDBL_MANT_DIG__ == 64
+long double  __BACKEND_(extendsdxf) (_Decimal32);
+hidden_proto_enc (extendsdxf)
+long double  __BACKEND_(extendddxf) (_Decimal64);
+hidden_proto_enc (extendddxf)
+long double __BACKEND_(trunctdxf) (_Decimal128);
+hidden_proto_enc (trunctdxf)
+_Decimal128  __BACKEND_(extendxftd) (long double);
+hidden_proto_enc (extendxftd)
+_Decimal32 __BACKEND_(truncxfsd) (long double);
+hidden_proto_enc (truncxfsd)
+_Decimal64 __BACKEND_(truncxfdd) (long double);
+hidden_proto_enc (truncxfdd)
+#else
+/* TODO: these are available on x86 as _Float128 */
+long double  __BACKEND_(extendsdtf) (_Decimal32);
+hidden_proto_enc (extendsdtf)
+long double  __BACKEND_(extendddtf) (_Decimal64);
+hidden_proto_enc (extendddtf)
+long double __BACKEND_(trunctdtf) (_Decimal128);
+hidden_proto_enc (trunctdtf)
+_Decimal128  __BACKEND_(extendtftd) (long double);
+hidden_proto_enc (extendtftd)
+_Decimal32 __BACKEND_(trunctfsd) (long double);
+hidden_proto_enc (trunctfsd)
+_Decimal64 __BACKEND_(trunctfdd) (long double);
+hidden_proto_enc (trunctfdd)
+#endif
+
 /* This file contains the prototypes for the DFP arithmetic, conversion, and
  * comparison routines.  These also exist in libgcc, but these versions
  * support decimal floating point rounding control and exception support
@@ -95,22 +124,16 @@ _Decimal32  __BACKEND_(extendsfsd) (float);
 hidden_proto_enc (extendsfsd)
 double  __BACKEND_(extendsddf) (_Decimal32);
 hidden_proto_enc (extendsddf)
-long double  __BACKEND_(extendsdtf) (_Decimal32);
-hidden_proto_enc (extendsdtf)
 
 _Decimal64  __BACKEND_(extendsfdd) (float);
 hidden_proto_enc (extendsfdd)
 _Decimal64  __BACKEND_(extenddfdd) (double);
 hidden_proto_enc (extenddfdd)
-long double  __BACKEND_(extendddtf) (_Decimal64);
-hidden_proto_enc (extendddtf)
 
 _Decimal128  __BACKEND_(extendsftd) (float);
 hidden_proto_enc (extendsftd)
 _Decimal128  __BACKEND_(extenddftd) (double);
 hidden_proto_enc (extenddftd)
-_Decimal128  __BACKEND_(extendtftd) (long double);
-hidden_proto_enc (extendtftd)
 
 int __BACKEND_(fixsdsi) (_Decimal32);
 hidden_proto_enc (fixsdsi)
@@ -260,22 +283,16 @@ float __BACKEND_(truncsdsf) (_Decimal32);
 hidden_proto_enc (truncsdsf)
 _Decimal32 __BACKEND_(truncdfsd) (double);
 hidden_proto_enc (truncdfsd)
-_Decimal32 __BACKEND_(trunctfsd) (long double);
-hidden_proto_enc (trunctfsd)
 
 float __BACKEND_(truncddsf) (_Decimal64);
 hidden_proto_enc (truncddsf)
 double __BACKEND_(truncdddf) (_Decimal64);
 hidden_proto_enc (truncdddf)
-_Decimal64 __BACKEND_(trunctfdd) (long double);
-hidden_proto_enc (trunctfdd)
 
 float __BACKEND_(trunctdsf) (_Decimal128);
 hidden_proto_enc (trunctdsf)
 double __BACKEND_(trunctddf) (_Decimal128);
 hidden_proto_enc (trunctddf)
-long double __BACKEND_(trunctdtf) (_Decimal128);
-hidden_proto_enc (trunctdtf)
 
 CMPINT __BACKEND_(unordsd2) (_Decimal32,_Decimal32);
 CMPINT __BACKEND_(unorddd2) (_Decimal64,_Decimal64);

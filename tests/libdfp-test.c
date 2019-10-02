@@ -486,7 +486,7 @@ check_long (const char *test_name, long int computed, long int expected,
       printf ("Test: %s\n", test_name);
       printf ("Result:\n");
       printf (" is:         %ld\n", computed);
-      printf (" should be:  %lxd\n", expected);
+      printf (" should be:  %ld\n", expected);
     }
 
   update_stats (ok);
