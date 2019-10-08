@@ -632,15 +632,15 @@ make check
 		later.  The path to the build was passed to configure using
 		the --with-glibc-build switch.
 
-make install [install_root=<path>]
+make install [DESTDIR=<path>]
 
-	[install_root] (Optional) : Install to <path>/$prefix.  This is used
+	[DESTDIR] (Optional) : Install to <path>/$prefix.  This is used
 	by libdfp developers and distro builders so that they can build libdfp
 	and install it to an alternate location in preparation for packaging.
 
-make install-headers [install_root=<path>]
+make install-headers [DESTDIR=<path>]
 
-	[install_root] (Optional) : Install libdfp headers into
+	[DESTDIR] (Optional) : Install libdfp headers into
 	<path>/$prefix/include/dfp.  This is used by application or library
 	developers whose projects depend on libdfp who don't want to install
 	libdfp proper or may not have permission to do so.

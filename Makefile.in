@@ -15,19 +15,19 @@ docdir = @docdir@
 ifndef libdir
 libdir = $(exec_prefix)/lib
 endif
-inst_libdir = $(install_root)$(libdir)
+inst_libdir = $(DESTDIR)$(libdir)
 
 # Where to install the header files.
 ifndef includedir
 includedir = $(prefix)/include
 endif
-inst_includedir = $(install_root)$(includedir)
+inst_includedir = $(DESTDIR)$(includedir)
 
 # Where to install the README document
 ifndef docdir
 docdir = $(prefix)/share/doc/
 endif
-inst_docdir = $(install_root)$(docdir)
+inst_docdir = $(DESTDIR)$(docdir)
 
 dfp_name = @PACKAGE_NAME@
 dfp_version = @PACKAGE_VERSION@
