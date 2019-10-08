@@ -489,7 +489,7 @@ tests: $(libdfp_tests:%=%.out)
 	@echo Details of failed tests:
 	@awk -v builddir=$(top_builddir) \
 	'{ if ($$1 != "PASS:") printf "%s/%s.out ", builddir, $$2; }' \
-	tests.sum | xargs -n 1 cat
+	tests.sum | xargs -n 1 -t cat
 	$(call summarize-tests,tests.sum)
 
 # The .out files are predicated in another rule on the actual test executables, so
