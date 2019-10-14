@@ -36,7 +36,7 @@ asm ("__dpd_floatunsditd  = __GI___dpd_floatditd");
 asm ("__dpd_floatunsdidd  = __GI___dpd_floatdidd");
 asm ("__dpd_floatunsdisd  = __GI___dpd_floatdisd");
 
-#ifdef HAVE_UINT128_T
+#ifdef __SIZEOF_INT128__
 asm ("__dpd_floattitd  = __GI___dpd_floattitd");
 
 asm ("__dpd_floatunstitd  = __GI___dpd_floatunstitd");
@@ -68,7 +68,7 @@ asm ("__dpd_fixunssddi = __GI___dpd_fixunssddi");
 asm ("__dpd_fixunsdddi = __GI___dpd_fixunsdddi");
 asm ("__dpd_fixunstddi = __GI___dpd_fixunstddi");
 
-#ifdef HAVE_UINT128_T
+#ifdef __SIZEOF_INT128__
 asm ("__dpd_fixtdti = __GI___dpd_fixtdti");
 
 asm ("__dpd_fixunstdti = __GI___dpd_fixunstdti");

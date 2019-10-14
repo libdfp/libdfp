@@ -41,11 +41,8 @@
    __hidden_proto (__dpd_##name, __GI___dpd_##name, ##attrs)
 #endif
 
-/* Older versions of GCC support __int128 differently.  */
-#ifdef HAVE_UINT128_T
-# define UINT128 __uint128_t
-# define INT128 __int128_t
-#elif HAVE_INT128
+/* This should be true for 64b platforms. */
+#ifdef __SIZEOF_INT128__
 # define INT128 __int128
 # define UINT128 unsigned __int128
 #endif
@@ -163,7 +160,7 @@ hidden_proto_enc (fixunsdddi)
 unsigned long long __BACKEND_(fixunstddi) (_Decimal128);
 hidden_proto_enc (fixunstddi)
 
-#if defined(HAVE_UINT128_T) || defined(HAVE_INT128)
+#ifdef __SIZEOF_INT128__
 UINT128 __BACKEND_(fixunssdti) (_Decimal32);
 hidden_proto_enc (fixunssdti)
 UINT128 __BACKEND_(fixunsddti) (_Decimal64);
@@ -207,7 +204,7 @@ hidden_proto_enc (floatunssisd)
 _Decimal128 __BACKEND_(floatunssitd) (unsigned int);
 hidden_proto_enc (floatunssitd)
 
-#if defined(HAVE_UINT128_T) || defined(HAVE_INT128)
+#ifdef __SIZEOF_INT128__
 _Decimal32 __BACKEND_(floatunstisd) (UINT128);
 hidden_proto_enc (floatunstisd)
 _Decimal64 __BACKEND_(floatunstidd) (UINT128);

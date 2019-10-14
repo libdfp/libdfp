@@ -1,0 +1,10 @@
+libdfp {
+  LIBDFP_1.0.0 {
+    __bid_extendsdxf;
+    __bid_extendddxf;
+    __bid_extendxftd;
+    __bid_truncxfsd;
+    __bid_truncxfdd;
+    __bid_trunctdxf;
+  }
+}

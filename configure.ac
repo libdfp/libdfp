@@ -358,40 +358,6 @@ if test x$have_glibc_2_10_headers != xyes; then
 		available in GLIBC Version 2.10 or later.])
 fi
 
-
-# Check for __uint128_t compiler support
-AC_CACHE_CHECK(for __uint128_t, libdfp_cv_uint128_t,
-    AC_TRY_COMPILE([ ], [
-      __uint128_t u = 0;
-      return 0;
-    ], [
-      libdfp_cv_uint128_t=yes
-    ], [
-      libdfp_cv_uint128_t=no
-    ])
-)
-if test x$libdfp_cv_uint128_t = xyes; then
-  AC_DEFINE_UNQUOTED([HAVE_UINT128_T], [1], ["Have __uint128_t type"])
-fi
-
-AC_CHECK_TYPE([__int128],
-    [
-      AC_DEFINE_UNQUOTED([HAVE_INT128], [1], [Have __int128 type. ])
-      libdfp_cv_int128=yes
-    ],[
-      libdfp_cv_int128=no
-    ],[])
-
-# Enable TImode abi if compiler supports 128b integer.
-if test x$libdfp_cv_uint128_t = xyes; then
-  dfp_ti_abi=yes
-elif test x$libdfp_cv_int128 = xyes; then
-  dfp_ti_abi=yes
-else
-  dfp_ti_abi=no
-fi
-AC_SUBST(dfp_ti_abi)
-
 # Check for std::decimal compiler support
 AC_CACHE_CHECK(for std::decimal, libdfp_cv_cxxdecimal,
   [AC_LANG_SAVE
@@ -707,6 +673,17 @@ if test "$dfp_backend" = libdecnumber; then
 else
   AC_CONFIG_SUBDIRS(libbid)
 fi
+
+# Copy the glibc check for GCC minimum version:
+AC_CACHE_CHECK([if $CC is sufficient to build libdfp], libc_cv_compiler_ok, [
+AC_TRY_COMPILE([], [
+#if !defined __GNUC__ || __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6)
+#error insufficient compiler
+#endif],
+           [libc_cv_compiler_ok=yes],
+           [libc_cv_compiler_ok=no])])
+AS_IF([test $libc_cv_compiler_ok != yes],
+      [critic_missing="$critic_missing compiler"])
 
 # This tells autoconf to generate Makefile from the Makefile.in.  This is the
 # top level Makefile for the project.  This Makefile will then recurse into
