@@ -34,6 +34,14 @@
 #define _WANT_VC 1
 #include "scaffold.c"
 
+/* TODO: Radix conversion in the denormal range will fail today with the
+   implementations provided by libdfp today. */
+#if defined _LIBDFP_HAS_IDEAL_RDX_CVT
+#define XFAIL_CONVERSION 0
+#else
+#define XFAIL_CONVERSION 1
+#endif
+
 typedef struct
 {
   int line;
@@ -140,9 +148,7 @@ static const d128_type d128to64[] = {
  {__LINE__, FE_TONEAREST, -1e-6176DL, -0.0},
  {__LINE__, FE_TONEAREST, 1e-1000DL, 0.0},
  {__LINE__, FE_TONEAREST, -1e-1000DL, -0.0},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_TONEAREST, 1e-325DL, 0.0},
  {__LINE__, FE_TONEAREST, -1e-325DL, -0.0},
 #endif
@@ -152,9 +158,7 @@ static const d128_type d128to64[] = {
  {__LINE__, FE_TONEAREST, -2.4703282292062327e-324DL, -0.0},
  {__LINE__, FE_TONEAREST, 2.470328229206232720882843964341105e-324DL, 0.0},
  {__LINE__, FE_TONEAREST, -2.470328229206232720882843964341105e-324DL, -0.0},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_TONEAREST, 2.470328229206232720882843964341107e-324DL,
   __DBL_DENORM_MIN__},
  {__LINE__, FE_TONEAREST, -2.470328229206232720882843964341107e-324DL,
@@ -174,9 +178,7 @@ static const d128_type d128to64[] = {
  {__LINE__, FE_TOWARDZERO, -4.940656458412465e-324DL, -0.0},
  {__LINE__, FE_TOWARDZERO, 4.940656458412465441765687928682213e-324DL, 0.0},
  {__LINE__, FE_TOWARDZERO, -4.940656458412465441765687928682213e-324DL, -0.0},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_TOWARDZERO, 4.940656458412465441765687928682214e-324DL,
   __DBL_DENORM_MIN__},
  {__LINE__, FE_TOWARDZERO, -4.940656458412465441765687928682214e-324DL,
@@ -195,9 +197,7 @@ static const d128_type d128to64[] = {
  {__LINE__, FE_DOWNWARD, 4.940656458412465441765687928682213e-324DL, 0.0},
  {__LINE__, FE_DOWNWARD, -4.940656458412465441765687928682213e-324DL,
   -__DBL_DENORM_MIN__},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_DOWNWARD, 4.940656458412465441765687928682214e-324DL,
   __DBL_DENORM_MIN__},
  {__LINE__, FE_DOWNWARD, -4.940656458412465441765687928682214e-324DL,
@@ -216,9 +216,7 @@ static const d128_type d128to64[] = {
  {__LINE__, FE_UPWARD, 4.940656458412465441765687928682213e-324DL,
   __DBL_DENORM_MIN__},
  {__LINE__, FE_UPWARD, -4.940656458412465441765687928682213e-324DL, -0.0 },
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_UPWARD, 4.940656458412465441765687928682214e-324DL,
   2 * __DBL_DENORM_MIN__},
  {__LINE__, FE_UPWARD, -4.940656458412465441765687928682214e-324DL,
@@ -236,9 +234,7 @@ static const d128_type d128to32[] = {
  {__LINE__, FE_TONEAREST, -1e-6176DL, -0.0},
  {__LINE__, FE_TONEAREST, 1e-1000DL, 0.0},
  {__LINE__, FE_TONEAREST, -1e-1000DL, -0.0},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_TONEAREST, 7.0064922e-46DL, 0.0},
  {__LINE__, FE_TONEAREST, -7.0064922e-46DL, -0.0},
 #endif
@@ -248,9 +244,7 @@ static const d128_type d128to32[] = {
  {__LINE__, FE_TONEAREST, -7.006492321624085e-46DL, -0.0},
  {__LINE__, FE_TONEAREST, 7.006492321624085354618647916449580e-46DL, 0.0},
  {__LINE__, FE_TONEAREST, -7.006492321624085354618647916449580e-46DL, -0.0},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_TONEAREST, 7.006492321624085354618647916449581e-46DL,
   __FLT_DENORM_MIN__},
  {__LINE__, FE_TONEAREST, -7.006492321624085354618647916449581e-46DL,
@@ -272,9 +266,7 @@ static const d128_type d128to32[] = {
  {__LINE__, FE_TOWARDZERO, -1.401298464324817e-45DL, -0.0},
  {__LINE__, FE_TOWARDZERO, 1.401298464324817070923729583289916e-45DL, 0.0},
  {__LINE__, FE_TOWARDZERO, -1.401298464324817070923729583289916e-45DL, -0.0},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_TOWARDZERO, 1.401298464324817070923729583289917e-45DL,
   __FLT_DENORM_MIN__},
  {__LINE__, FE_TOWARDZERO, -1.401298464324817070923729583289917e-45DL,
@@ -293,9 +285,7 @@ static const d128_type d128to32[] = {
  {__LINE__, FE_DOWNWARD, 1.401298464324817070923729583289916e-45DL, 0.0},
  {__LINE__, FE_DOWNWARD, -1.401298464324817070923729583289916e-45DL,
   -__FLT_DENORM_MIN__},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_DOWNWARD, 1.401298464324817070923729583289917e-45DL,
   __FLT_DENORM_MIN__},
  {__LINE__, FE_DOWNWARD, -1.401298464324817070923729583289917e-45DL,
@@ -314,9 +304,7 @@ static const d128_type d128to32[] = {
  {__LINE__, FE_UPWARD, 1.401298464324817070923729583289916e-45DL,
   __FLT_DENORM_MIN__},
  {__LINE__, FE_UPWARD, -1.401298464324817070923729583289916e-45DL, -0.0},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_UPWARD, 1.401298464324817070923729583289917e-45DL,
   2 * __FLT_DENORM_MIN__},
  {__LINE__, FE_UPWARD, -1.401298464324817070923729583289917e-45DL,
@@ -332,9 +320,7 @@ static const d128_type d128to32[] = {
 static const d64_type d64to64[] = {
  {__LINE__, FE_TONEAREST, 1e-398DD, 0.0},
  {__LINE__, FE_TONEAREST, -1e-398DD, -0.0},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_TONEAREST, 1e-325DD, 0.0},
  {__LINE__, FE_TONEAREST, -1e-325DD, -0.0},
 #endif
@@ -390,9 +376,7 @@ static const d64_type d64to32[] = {
  {__LINE__, FE_TONEAREST, -7.00649232e-46DD, -0.0},
  {__LINE__, FE_TONEAREST, 7.006492321624085e-46DD, 0.0},
  {__LINE__, FE_TONEAREST, -7.006492321624085e-46DD, -0.0},
- /* TODO: Fix this.  The following lines are known to fail for soft-dfp and
-    POWER hard-dfp.  They should have passed.  */
-#ifndef __PPC__
+#if !XFAIL_CONVERSION
  {__LINE__, FE_TONEAREST, 7.006492321624086e-46DD, __FLT_DENORM_MIN__},
  {__LINE__, FE_TONEAREST, -7.006492321624086e-46DD, -__FLT_DENORM_MIN__},
 #endif
