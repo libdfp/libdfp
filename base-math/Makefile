@@ -47,9 +47,11 @@ libdfp_files += addsd3 adddd3 addtd3 \
 		unordsd2 unorddd2 unordtd2 \
 		classify
 
-libdfp_ti_files += fixsdti fixddti \
+ifeq ($(libdfp-has-timode),yes)
+libdfp_files += fixsdti fixddti \
 		   fixunssdti fixunsddti \
 		   fixtdti fixunstdti \
 		   floattitd floatunstitd \
 		   floattidd floatunstidd \
 		   floattisd floatunstisd
+endif

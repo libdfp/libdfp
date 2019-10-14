@@ -86,16 +86,6 @@ cflags-cpu = $(libdfp_cv_submachine_opt)
 asflags-cpu = $(libdfp_cv_submachine_opt)
 endif
 
-# Only try building TImode files if it is support.
-dfp_ti_abi = @dfp_ti_abi@
-
-# Need to check a different PLT file for int128
-ifeq ($(dfp_ti_abi),yes)
-dfp_abi_extn =
-else
-dfp_abi_extn = -no-ti
-endif
-
 picflag = @picflag@
 
 # Yes this is a bit of a hack, but gcc/libdecnumber/Makefile won't allow
@@ -191,12 +181,6 @@ libdfp_files := dfptypeconv mapround decode fmt_d32 fmt_d64 fmt_d128 fe_decround
 # The sysdeps subdirs aren't recursively invoked, they're included so that
 # they can add files to the libdfp_files list.
 include $(foreach dir,$(makefile_dirs), $(dir)/Makefile )
-
-# Build the TImode files if we support them.
-# Note that this does change the ABI.
-ifeq ($(dfp_ti_abi),yes)
-libdfp_files += $(libdfp_ti_files)
-endif
 
 # Libdfp has a dependency on the backend so build that first.
 all: first $(dfp_backend)/$(dfp_backend_lib) libdfp
@@ -369,7 +353,7 @@ libdfp_c_tests = test-printf test-amort test-decode test-inexact-exception \
 		 test-isunordered-d32 test-isunordered-d64 test-isunordered-d128 \
 		 test-islessgreater-d32 test-islessgreater-d64 test-islessgreater-d128
 
-ifeq ($(dfp_ti_abi),yes)
+ifeq ($(libdfp-has-timode),yes)
 libdfp_c_tests += test-fix test-float
 endif
 
@@ -445,7 +429,7 @@ generated += $(extra-libs:=.symlist)
 
 vpath %.abilist $(+sysdeps_dirs)
 
-check-abi-libdfp.out: libdfp$(dfp_abi_extn).abilist libdfp.symlist
+check-abi-libdfp.out: libdfp.abilist libdfp.symlist
 	diff -p -U 0 $(filter %.abilist,$^) $(filter %.symlist,$^) > $@; \
 	$(evaluate-test)
 

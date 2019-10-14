@@ -28,9 +28,9 @@
 #include <stdint.h>
 #include <string.h>
 
-#ifdef HAVE_UINT128_T
-typedef __uint128_t  u128_t;
-typedef __uint128_t *u128_ptr;
+#ifdef __SIZEOF_INT128__
+typedef unsigned __int128  u128_t;
+typedef unsigned __int128 *u128_ptr;
 
 static inline u128_t
 __u128_from_string (char* sz)
@@ -252,6 +252,6 @@ __u128_from_string (mpz_t a, char* sz)
 
 #define u128_init_from_str(__x,__str) __u128_from_string (__x, __str)
 
-#endif /* HAVE_UINT128_T  */
+#endif /* __SIZEOF_INT128__  */
 
 #endif

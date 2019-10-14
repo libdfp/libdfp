@@ -36,7 +36,7 @@ asm ("__bid_floatsisd  = __GI___bid_floatsisd");
 asm ("__bid_floatunsdisd  = __GI___bid_floatunsdisd");
 asm ("__bid_floatunsdidd  = __GI___bid_floatunsdidd");
 
-#if HAVE_UINT128_T
+#ifdef __SIZEOF_INT128__
 asm ("__bid_floattitd  = __GI___bid_floattitd");
 asm ("__bid_floatunsditd  = __GI___bid_floatunsditd");
 #endif
