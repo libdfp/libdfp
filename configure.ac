@@ -254,20 +254,6 @@ EOF
   esac
 ])
 
-# If building for a soft dfp, we must explicitly
-# prevent the compiler from emitting hardware
-# instructions. Otherwise, unexpected behavior
-# will occur.
-#
-# Test to the toolchain to see if it supports the
-# option to disable hard dfp, and if so, disable it.
-# This should work for s390 and power.
-if test "$with_dfp" == "no"; then
-  cflags_tmp="$CFLAGS"
-  CFLAGS="$CFLAGS -mno-hard-dfp"
-  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[]])],[],[CFLAGS="$cflags_tmp"])
-fi
-
 AC_SUBST(with_dfp)
 AC_MSG_RESULT($with_dfp)
 
@@ -466,6 +452,8 @@ while m=`echo $tail | sed 's@^\(.*\)/\([^/]*\)$@& \1@'`; test -n "$m"; do
   if test "$with_dfp" = yes; then
     mach="$mach /$1/dfpu/bits /$1/dfpu"
     #mach="$mach /$1/dfpu"
+  else
+    mach="$mach /$1/dfpu/bits /$1/nodfpu"
   fi
   # Prepend the machine's FPU directory unless --without-fp.
   if test "$with_fp" = yes; then
