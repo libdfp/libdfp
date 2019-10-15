@@ -78,9 +78,6 @@ submachine = @submachine@
 # e.g. -mcpu=power6
 libdfp_cv_submachine_opt = @libdfp_cv_submachine_opt@
 
-# Necessary for z9-ec and z10 s390 platforms.
-mzarch = @mzarch@
-
 ifdef libdfp_cv_submachine_opt
 cflags-cpu = $(libdfp_cv_submachine_opt)
 asflags-cpu = $(libdfp_cv_submachine_opt)
@@ -199,7 +196,7 @@ first:
 # maintainer doesn't want to use libtool this hack will have to stand.
 $(dfp_backend)/$(dfp_backend_lib):
 	@echo "+Building DFP backend $@"
-	DEFS="-D__STDC_DEC_FP__=200704L $(mzarch) $(BACKEND_CFLAGS)" $(MAKE) -C $(dfp_backend)
+	DEFS="-D__STDC_DEC_FP__=200704L $(CFLAGS-sysdeps) $(BACKEND_CFLAGS)" $(MAKE) -C $(dfp_backend)
 
 libdfp: @enable_static@ @enable_shared@
 
@@ -222,20 +219,20 @@ CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 
 # Build the static object files.
 .c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -MT $@ -MD -MP -MF $*.d -c $< $(C_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(CFLAGS-sysdeps) $(CPPFLAGS) -MT $@ -MD -MP -MF $*.d -c $< $(C_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 .S.o:
-	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -MT $@ -MD -MP -MF $*.d -c $< $(ASM_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(CFLAGS-sysdeps) $(ASFLAGS) -MT $@ -MD -MP -MF $*.d -c $< $(ASM_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 # Build the shared object files.
 .c.os:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(mzarch) -MT $@ -MD -MP -MF $*.d -c $< $(C_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(CFLAGS-sysdeps) $(CPPFLAGS) -MT $@ -MD -MP -MF $*.d -c $< $(C_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 .S.os:
-	$(CC) $(CFLAGS) $(ASFLAGS) $(mzarch) -MT $@ -MD -MP -MF $*.d -c $< $(ASM_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CC) $(CFLAGS) $(CFLAGS-sysdeps) $(ASFLAGS) -MT $@ -MD -MP -MF $*.d -c $< $(ASM_DEFINES) $(WARNS) -include $(top_builddir)/config.h -include $(top_srcdir)/include/libdfp-symbols.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 # C++ compatibility test cases.
 .cpp.os:
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mzarch) -MT $@ -MD -MP -MF $*.d -c $< $(CXX_DEFINES) $(CXX_WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
+	$(CXX) $(CXXFLAGS) $(CXXFLAGS-sysdeps) $(CPPFLAGS) -MT $@ -MD -MP -MF $*.d -c $< $(CXX_DEFINES) $(CXX_WARNS) -include $(top_srcdir)/include/libdfp-symbols.h -include $(top_builddir)/config.h $(foreach dir, $(header_search_dirs), -I$(dir)) -o $@
 
 # Archive the static library and include all of the .o files from the backend
 # archive.  IF the backend has more than the base directory the .o detection
@@ -263,7 +260,7 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 #  calls.
 $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@.
-	$(CC) $(CFLAGS) $(LDFLAGS) $(mzarch) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map -Wl,-entry=__libdfp_version $(addsuffix .os,$(libdfp_files)) -o $@ -lm -shared-libgcc
+	$(CC) $(CFLAGS) $(CFLAGS-sysdeps) $(LDFLAGS) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map -Wl,-entry=__libdfp_version $(addsuffix .os,$(libdfp_files)) -o $@ -lm -shared-libgcc
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
 # script Makefile foo.  Thank you Roland McGrath and Ulrich Drepper!
@@ -389,16 +386,16 @@ $(top_builddir)/libdfp-test-ulps.h: $(ulps-file)
 # built.
 $(libdfp_c_tests): CFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests -Wl,--no-as-needed
 $(libdfp_c_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
-	$(CC) $(CFLAGS) $(mzarch) $(top_builddir)/$(addsuffix .os,$@) -o $@ $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp
+	$(CC) $(CFLAGS) $(CFLAGS-sysdeps) $(top_builddir)/$(addsuffix .os,$@) -o $@ $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp
 
 # Explicitly link against the uninstalled GLIBC and the Libdfp.so.1 we just
 # built.
 $(libdfp_cxx_tests): CXXFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests -Wl,--no-as-needed
 $(libdfp_cxx_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
-	$(CXX) $(CXXFLAGS) $(mzarch) $(top_builddir)/$(addsuffix .os,$@) -o $@ $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp
+	$(CXX) $(CXXFLAGS) $(CXXFLAGS-sysdeps) $(top_builddir)/$(addsuffix .os,$@) -o $@ $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp
 
 test-%-d%: $(addsuffix .os,$@)
-	$(CC) $(CFLAGS) $(mzarch) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$^ -o $@
+	$(CC) $(CFLAGS) $(CFLAGS-sysdeps) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$^ -o $@
 test-%-d32.c: %.input
 	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal32 $^ > $(top_builddir)/$@
 test-%-d64.c: %.input
