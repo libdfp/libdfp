@@ -1,0 +1,1 @@
+CFLAGS-sysdeps += -mzarch

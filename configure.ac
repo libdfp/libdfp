@@ -170,7 +170,6 @@ AC_SUBST(ASFLAGS)
 
 
 # This will invoke the sysdeps/$machine/<processor>/ machinery.
-mzarch=
 submachine=
 with_dfp=
 # This tells us whether we know we have a hardware decimal floating point
@@ -200,8 +199,6 @@ AC_ARG_WITH([cpu],
     with_dfp=yes ;;
   z9-ec|z10|z196|zEC12|z13|arch12|z14)
     submachine="$withval"
-    # Warning, -mzarch won't get passed to libecnumber/configure
-    mzarch="-mzarch"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
   *)
@@ -248,7 +245,6 @@ EOF
       if AC_TRY_COMMAND([objdump -d conftest.o 2>&1 | grep pfpo > /dev/null]);
       then
 	with_dfp=yes
-	mzarch="-mzarch"
       fi
     fi
     rm -f conftest*
@@ -289,10 +285,6 @@ if test -n "$submachine"; then
     AC_MSG_ERROR([${CC-cc} does not support $submachine])
   fi
 fi
-
-# Unless the system is a s390 variant this is most likely empty.
-AC_SUBST(mzarch)
-
 
 AC_ARG_WITH([fp],
 	    AS_HELP_STRING([--with-fp],

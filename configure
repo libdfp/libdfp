@@ -641,7 +641,6 @@ libdfp_cv_cc_with_decimal_float
 machine
 base_machine
 with_fp
-mzarch
 with_dfp
 ASFLAGS
 LDD
@@ -4130,7 +4129,6 @@ fi
 
 
 # This will invoke the sysdeps/$machine/<processor>/ machinery.
-mzarch=
 submachine=
 with_dfp=
 # This tells us whether we know we have a hardware decimal floating point
@@ -4153,8 +4151,6 @@ $as_echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
   z9-ec|z10|z196|zEC12|z13|arch12|z14)
     submachine="$withval"
-    # Warning, -mzarch won't get passed to libecnumber/configure
-    mzarch="-mzarch"
     { $as_echo "$as_me:${as_lineno-$LINENO}: configuring for the $submachine processor" >&5
 $as_echo "$as_me: configuring for the $submachine processor" >&6;}
     with_dfp=yes ;;
@@ -4245,7 +4241,6 @@ EOF
   test $ac_status = 0; }; };
       then
 	with_dfp=yes
-	mzarch="-mzarch"
       fi
     fi
     rm -f conftest*
@@ -4309,10 +4304,6 @@ $as_echo "$libdfp_cv_submachine_opt" >&6; }
     as_fn_error $? "${CC-cc} does not support $submachine" "$LINENO" 5
   fi
 fi
-
-# Unless the system is a s390 variant this is most likely empty.
-
-
 
 
 # Check whether --with-fp was given.
