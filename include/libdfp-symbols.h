@@ -74,6 +74,15 @@
 # define attribute_hidden
 #endif /* SHARED  */
 
+/* Use the copy in cdefs.h if available, if not, bring in the glibc definition.  */
+#ifndef __attribute_copy__
+# if __GNUC__ >= 9
+#  define __attribute_copy__(name) __attribute__ ((__copy__ (name)))
+# else
+#  define __attribute_copy__(name)
+# endif
+#endif
+
 /* Add versioned symbol macros when necessary.  */
 
 /* Macros to avoid PLT calls within libdfp.  */
@@ -93,7 +102,8 @@
 #  define __hidden_ver1(local, internal, name) \
   extern __typeof (name) __EI_##name __asm__(__hidden_asmname (#internal)); \
   extern __typeof (name) __EI_##name \
-        __attribute__((alias (__hidden_asmname (#local))))
+        __attribute__((alias (__hidden_asmname (#local)))) \
+        __attribute_copy__ (name)
 #  define hidden_ver(local, name)       __hidden_ver1(local, __GI_##name, name);
 #  define hidden_data_ver(local, name)  hidden_ver(local, name)
 #  define hidden_def(name)              _hidden_def(name)
@@ -121,7 +131,7 @@
 # define hidden_data_ver(local, name)
 #endif /* SHARED */
 
-/* Get some dirty hacks.  */
+/* Bring in PLT redirects for implicit GCC functions.  */
 #include <symbol-hacks.h>
 
 /* C++ needs to know that types and declarations are C, not C++.  */
