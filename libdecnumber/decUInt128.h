@@ -25,9 +25,9 @@
    instance).  For archs/configurations that does not support it, a
    multiprecision implementation based on the mini GMP is used.  */
 
-#ifdef HAVE_UINT128_T
+#ifdef __SIZEOF_INT128__
 /* Native int 128 bits  */
-typedef __uint128_t uQuad;
+typedef unsigned __int128 uQuad;
 
 #define uQuadInit(__x)
 #define uQuadInitFromUInt(__ret, __hi, __mh, __ml, __lo)   \

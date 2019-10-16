@@ -63,7 +63,6 @@ INSTALL := install
 
 # libdecnumber or libbid
 dfp_backend = @dfp_backend@
-dfp_backend_lib = @dfp_backend@.a
 
 # dpd or bid
 dfp_encoding = @enable_decimal_float@
@@ -84,13 +83,6 @@ asflags-cpu = $(libdfp_cv_submachine_opt)
 endif
 
 picflag = @picflag@
-
-# Yes this is a bit of a hack, but gcc/libdecnumber/Makefile won't allow
-# CFLAGS to be overridden on a submake invocation.
-BACKEND_CFLAGS=
-ifeq (libdecnumber, $(dfp_backend))
-BACKEND_CFLAGS=$(cflags-cpu) $(picflag)
-endif
 
 cxxdecimal = @cxxdecimal@
 
@@ -135,11 +127,13 @@ sysdep_dirs = @sysdep_dirs@
 # convenience directories to the list.
 
 # Find each sysdep directory or convenience directory with a Makefile in it.
-makefile_dirs := $(foreach odir,$(sysdep_dirs), $(dir $(wildcard $(top_srcdir)/$(odir)/Makefile))) $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math
+makefile_dirs := $(foreach odir,$(sysdep_dirs), $(dir $(wildcard $(top_srcdir)/$(odir)/Makefile))) $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/$(dfp_backend)
 
 # Like $makefile_dirs but add the $(top_srcdir) reference and strip out the redundant spaces.
 # This has to be = assigned.
-all_srcdirs = $(strip $(foreach dir,$(sysdep_dirs), $(top_srcdir)/$(dir))) $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/ $(top_srcdir)/tests
+all_srcdirs = $(strip $(foreach dir,$(sysdep_dirs), $(top_srcdir)/$(dir))) \
+	      $(top_srcdir)/$(dfp_backend) $(top_srcdir)/$(dfp_backend)/$(dfp_encoding) \
+	      $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/ $(top_srcdir)/tests
 
 # We need to add the $(dfp_backend) directories to the search path in order to
 # pick up header files in those directories.
@@ -179,24 +173,13 @@ libdfp_files := dfptypeconv mapround decode fmt_d32 fmt_d64 fmt_d128 fe_decround
 # they can add files to the libdfp_files list.
 include $(foreach dir,$(makefile_dirs), $(dir)/Makefile )
 
-# Libdfp has a dependency on the backend so build that first.
-all: first $(dfp_backend)/$(dfp_backend_lib) libdfp
+all: first libdfp
 
 # Fake rule to output the VPATH before we build anything.  Don't use .PHONY
 # because we want this printed each time.
 first:
 	@echo VPATH=$(VPATH)
 	@echo Processing Makefiles: $(makefile_dirs)
-
-# Configure will have generated the Makefile for the selected backend.  Let's
-# add it to the subdir list so it gets recursively invoked by Make.  Don't pass
-# -e to make or it could pull unwanted variables from the environment.
-# Yes, passing $(BACKEND_CFLAGS) in -DEFS is a hack, but since the
-# libdecnumber maintainers won't allow CFLAGS to be overridden and the libdfp
-# maintainer doesn't want to use libtool this hack will have to stand.
-$(dfp_backend)/$(dfp_backend_lib):
-	@echo "+Building DFP backend $@"
-	DEFS="-D__STDC_DEC_FP__=200704L $(CFLAGS-sysdeps) $(BACKEND_CFLAGS)" $(MAKE) -C $(dfp_backend)
 
 libdfp: @enable_static@ @enable_shared@
 
@@ -237,9 +220,9 @@ CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 # Archive the static library and include all of the .o files from the backend
 # archive.  IF the backend has more than the base directory the .o detection
 # mechanism will need to be more robust than this.
-$(top_builddir)/$(STATIC_LIB): $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .o,$(libdfp_files))
+$(top_builddir)/$(STATIC_LIB): $(addsuffix .o,$(libdfp_files))
 	@echo +Creating static library $@
-	$(AR) rc $@ $(wordlist 2,$(words $^),$^) $(top_builddir)/$(dfp_backend)/*.o
+	$(AR) rc $@ $(wordlist 2,$(words $^),$^)
 	@ranlibpath=`which $(RANLIB)`; \
 	if test -x "$$ranlibpath"; \
 	then $(RANLIB) $@; fi;
@@ -258,9 +241,9 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 # $(dfp_name).map file be composed out of individual Versions files.  The
 # -bsymbolic switch makes the library avoid using the PLT for intra-library
 #  calls.
-$(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(dfp_backend)/$(dfp_backend_lib) $(addsuffix .os,$(libdfp_files))
+$(top_builddir)/$(SHARED_REALNAME_LIB): $(top_builddir)/$(dfp_name).map $(addsuffix .os,$(libdfp_files))
 	@echo +Linking shared object files into $@.
-	$(CC) $(CFLAGS) $(CFLAGS-sysdeps) $(LDFLAGS) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive $(dfp_backend)/$(dfp_backend_lib) -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map -Wl,-entry=__libdfp_version $(addsuffix .os,$(libdfp_files)) -o $@ -lm -shared-libgcc
+	$(CC) $(CFLAGS) $(CFLAGS-sysdeps) $(LDFLAGS) -shared -Wl,-soname,$(SHARED_SONAME_LIB) -Bsymbolic -Wl,--whole-archive -Wl,--no-whole-archive -Wl,--version-script,$(dfp_name).map -Wl,-entry=__libdfp_version $(addsuffix .os,$(libdfp_files)) -o $@ -lm -shared-libgcc
 
 # The LIBDFP version script support is strongly based upon the GLIBC version
 # script Makefile foo.  Thank you Roland McGrath and Ulrich Drepper!
@@ -496,8 +479,6 @@ clean:
 	rm -f $(addsuffix .conf,$(libdfp_tests))
 	rm -f $(libdfp_tests)
 	rm -f libdfp-test-ulps.h
-	rm -f $(top_builddir)/$(dfp_backend)/*.o
-	rm -f $(top_builddir)/$(dfp_backend)/*.a
 
 .PHONY: clean
 
@@ -507,12 +488,6 @@ distclean:
 	rm -f $(top_builddir)/config.log
 	rm -f $(top_builddir)/config.status
 	rm -f $(top_builddir)/Makefile
-	rm -f $(top_builddir)/$(dfp_backend)/config.h
-	rm -f $(top_builddir)/$(dfp_backend)/config.log
-	rm -f $(top_builddir)/$(dfp_backend)/config.status
-	rm -f $(top_builddir)/$(dfp_backend)/gstdint.h
-	rm -f $(top_builddir)/$(dfp_backend)/Makefile
-	rm -f $(top_builddir)/$(dfp_backend)/stamp-h1
 
 .PHONY: distclean
 
