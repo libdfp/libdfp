@@ -646,14 +646,6 @@ AC_FUNC_MALLOC
 AC_FUNC_MBRTOWC
 AC_CHECK_FUNCS([floor gettimeofday memset nl_langinfo setlocale sqrt strchr strtol])
 
-# Wherever there's a standalone configure fragment we need to tell the top
-# level configure to recurse into it.
-if test "$dfp_backend" = libdecnumber; then
-  AC_CONFIG_SUBDIRS(libdecnumber)
-else
-  AC_CONFIG_SUBDIRS(libbid)
-fi
-
 # Copy the glibc check for GCC minimum version:
 AC_CACHE_CHECK([if $CC is sufficient to build libdfp], libc_cv_compiler_ok, [
 AC_TRY_COMPILE([], [
