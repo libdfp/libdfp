@@ -139,9 +139,6 @@ EOF
   esac
 ])
 
-AC_SUBST(with_dfp)
-AC_MSG_RESULT($with_dfp)
-
 if test -n "$submachine"; then
   AC_CACHE_CHECK([for compiler option for CPU variant],
                 libdfp_cv_submachine_opt, [dnl
