@@ -27,6 +27,6 @@
 long long
 __BACKEND_(fixsddi) (_Decimal32 x)
 {
-  return (long long)((_Decimal64)x);
+  return (long long)(x);
 }
 hidden_def (__BACKEND_(fixsddi))

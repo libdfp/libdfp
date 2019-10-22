@@ -27,6 +27,6 @@
 CMPINT
 __BACKEND_(gesd2) (_Decimal32 x, _Decimal32 y)
 {
-  return (_Decimal64)x >= (_Decimal64)y ? 1 : -1;
+  return x >= y ? 1 : -1;
 }
 hidden_def (__BACKEND_(gesd2))

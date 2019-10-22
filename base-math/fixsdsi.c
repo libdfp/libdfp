@@ -27,6 +27,6 @@
 int
 __BACKEND_(fixsdsi) (_Decimal32 x)
 {
-  return (int)((_Decimal64)x);
+  return (int)(x);
 }
 hidden_def (__BACKEND_(fixsdsi))
