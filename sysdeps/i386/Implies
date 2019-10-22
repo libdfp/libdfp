@@ -1,2 +1,4 @@
 base-math/ldbl-96
 sysdeps/wordsize-32
+sysdeps/soft-dfp/bid
+sysdeps/bid
