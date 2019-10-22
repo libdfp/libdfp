@@ -120,12 +120,14 @@ sysdep_dirs = @sysdep_dirs@
 # Add the ieee754r and decNumberMath convenience directories to the list.
 
 # Find each sysdep directory or convenience directory with a Makefile in it.
-makefile_dirs := $(foreach odir,$(sysdep_dirs), $(dir $(wildcard $(top_srcdir)/$(odir)/Makefile))) $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/libdecnumber
+makefile_dirs := $(foreach odir,$(sysdep_dirs), $(dir $(wildcard $(top_srcdir)/$(odir)/Makefile))) $(top_srcdir)/decNumberMath/ \
+		 $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/libdecnumber \
+		 $(top_srcdir)/printf-hooks $(top_srcdir)/stdlib
 
 # Like $makefile_dirs but add the $(top_srcdir) reference and strip out the redundant spaces.
 # This has to be = assigned.
 all_srcdirs = $(strip $(foreach dir,$(sysdep_dirs), $(top_srcdir)/$(dir))) \
-	      $(top_srcdir)/libdecnumber \
+	      $(top_srcdir)/libdecnumber $(top_srcdir)/printf-hooks $(top_srcdir)/stdlib \
 	      $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/ $(top_srcdir)/tests
 
 backend_headers := libdecnumber
@@ -146,13 +148,6 @@ sp +=
 # VPATH only needs to know the directory that source files are in.  Headers
 # are searched based on -I precedence during the compilation invocation.
 VPATH := $(subst $(sp),:,$(all_srcdirs))
-
-# Files common to the $(top_srcdir).  These may be overriden in the sysdep
-# directories and this list may have additional files added by sysdeps
-# directory Makefiles which are included (not recursively invoked).
-libdfp_files := dfptypeconv mapround decode fmt_d32 fmt_d64 fmt_d128 fe_decround \
-		strtod32 strtod64 strtod128 wcstod32 wcstod64 wcstod128 \
-		printf_dfp init_dfp libdfp-version
 
 # The sysdeps subdirs aren't recursively invoked, they're included so that
 # they can add files to the libdfp_files list.

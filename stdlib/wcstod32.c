@@ -25,4 +25,4 @@
 
 #define	USE_WIDE_CHAR	1
 
-#include <strtod32.c>
+#include "strtod32.c"
