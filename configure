@@ -4546,22 +4546,6 @@ done
 
 
 
-if test "$with_dfp" = no; then
-  # Add src/sysdeps/soft-dfp and src/sysdeps/soft-dfp/dpd or
-  # src/sysdeps/soft-dfp/bid to the search path.
-  if test -d "${try_srcdir}/sysdeps/soft-dfp/"; then
-    if test -d "${try_srcdir}/sysdeps/soft-dfp/${enable_decimal_float}"; then
-      sysnames="$sysnames `echo sysdeps/soft-dfp/${enable_decimal_float} | sed -e 's,//,/,g'`"
-    fi
-    sysnames="$sysnames `echo sysdeps/soft-dfp | sed -e 's,//,/,g'`"
-  fi
-fi
-
-# Add src/sysdeps/dpd or src/sysdeps/bid to the search path.
-if test -d "${try_srcdir}/sysdeps/${enable_decimal_float}"; then
-  sysnames="$sysnames `echo sysdeps/${enable_decimal_float} | sed -e 's,//,/,g'`"
-fi
-
 # Close out the sysdeps directory.
 #sysnames="$sysnames sysdeps"
 
