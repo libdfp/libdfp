@@ -61,9 +61,6 @@ LDFLAGS = @LDFLAGS@
 
 INSTALL := install
 
-# dpd or bid
-dfp_encoding = @enable_decimal_float@
-
 # e.g. powerpc
 base_machine = @base_machine@
 # e.g. powerpc32
@@ -119,9 +116,8 @@ override ASFLAGS = $(+asflags)
 sysdep_dirs = @sysdep_dirs@
 
 # This is the precedence ordered list of subdirectories that configure
-# selected for searching based upon submachine, machine, base_machine,
-# dfp_encoding.  Add the ieee754r and decNumberMath
-# convenience directories to the list.
+# selected for searching based upon submachine, machine, base_machine.
+# Add the ieee754r and decNumberMath convenience directories to the list.
 
 # Find each sysdep directory or convenience directory with a Makefile in it.
 makefile_dirs := $(foreach odir,$(sysdep_dirs), $(dir $(wildcard $(top_srcdir)/$(odir)/Makefile))) $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/libdecnumber
@@ -129,10 +125,10 @@ makefile_dirs := $(foreach odir,$(sysdep_dirs), $(dir $(wildcard $(top_srcdir)/$
 # Like $makefile_dirs but add the $(top_srcdir) reference and strip out the redundant spaces.
 # This has to be = assigned.
 all_srcdirs = $(strip $(foreach dir,$(sysdep_dirs), $(top_srcdir)/$(dir))) \
-	      $(top_srcdir)/libdecnumber $(top_srcdir)/libdecnumber/$(dfp_encoding) \
+	      $(top_srcdir)/libdecnumber \
 	      $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/ $(top_srcdir)/tests
 
-backend_headers := libdecnumber/$(dfp_encoding) libdecnumber
+backend_headers := libdecnumber
 
 # For header files we want to search every directory that is relevant.  We
 # have to include $(top_builddir) in order to pick up the configure generated
