@@ -27,6 +27,6 @@
 CMPINT
 __BACKEND_(eqsd2) (_Decimal32 x, _Decimal32 y)
 {
-  return (_Decimal64)x == (_Decimal64)y ? 0 : 1;
+  return x == y ? 0 : 1;
 }
 hidden_def (__BACKEND_(eqsd2))

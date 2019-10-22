@@ -27,6 +27,6 @@
 CMPINT
 __BACKEND_(nesd2) (_Decimal32 x, _Decimal32 y)
 {
-  return (_Decimal64)x != (_Decimal64)y;
+  return x != y;
 }
 hidden_def (__BACKEND_(nesd2))
