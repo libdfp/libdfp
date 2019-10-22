@@ -94,38 +94,6 @@ case "$enable_decimal_float" in
     ;;
 esac
 
-dfp_backend=
-AC_ARG_WITH([backend],
-	    AS_HELP_STRING([--with-backend=@<:@libdecnumber|libbid@:>@],
-			   [This indicates which backend library to use
-			    in conjunction with the DFP type encoding
-			    specified by --enable-decimal-float:
-
-			    @<:@default=libdecnumber@:>@ for DPD
-			    @<:@optional=libbid@:>@ for BID
-			    @<:@default=libbid@:>@ for BID
-
-			    libdecnumber will also work with the BID
-			    Decimal Floating Point types encoding.
-
-			    libbid will NOT work with the DPD Decimal
-			    Floating Point types encoding.]),
-	    [dnl
-  case "$withval" in
-  libbid)
-    if test "$enable_decimal_float" = dpd; then
-      AC_MSG_ERROR([The DPD encoding can not be used with libbid.])
-    else
-      dfp_backend=libbid
-    fi
-    ;;
-   libdecnumber|*)
-    dfp_backend=libdecnumber
-    ;;
-esac],
-	    [dfp_backend=$default_backend])
-AC_SUBST(dfp_backend)
-
 # Ensure basic toolchain tools are available.
 AC_PROG_CC
 AC_PROG_CXX
