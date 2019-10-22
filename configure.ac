@@ -2,7 +2,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT([libdfp],[1.0.14],[https://github.com/libdfp/libdfp/issues])
-AC_CONFIG_SRCDIR([printf_dfp.c])
+AC_CONFIG_SRCDIR([generate-changelog.sh])
 
 # We don't use Automake so this is necessary.
 AC_CONFIG_HEADER([config.h])
