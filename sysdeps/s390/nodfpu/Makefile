@@ -1,1 +1,1 @@
-CFLAGS-sysdeps += -mno-hard-dfp
+sysdeps-CFLAGS += -mno-hard-dfp
