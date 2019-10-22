@@ -639,7 +639,6 @@ libdfp_cv_cc_with_decimal_float
 machine
 base_machine
 with_fp
-with_dfp
 ASFLAGS
 LDD
 GDB
@@ -4120,10 +4119,6 @@ EOF
 
 fi
 
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_dfp" >&5
-$as_echo "$with_dfp" >&6; }
 
 if test -n "$submachine"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for compiler option for CPU variant" >&5
