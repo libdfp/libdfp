@@ -2573,24 +2573,6 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_decimal_float" >&5
 $as_echo "$enable_decimal_float" >&6; }
 
-# Some code may need to have conditional guards based on the backend.  Give the
-# developers _DPD_BACKEND or _BID_BACKEND.  Try avoiding this as much as
-# possible and use sysdep file overrides.  A good place to use it is in the
-# tests/ directory.
-if test $enable_decimal_float = dpd; then
-
-cat >>confdefs.h <<_ACEOF
-#define _DPD_BACKEND 1
-_ACEOF
-
-else
-
-cat >>confdefs.h <<_ACEOF
-#define _BID_BACKEND 1
-_ACEOF
-
-fi
-
 # Now we know how to chose the desired backend directory, e.g.
 # src/backend/libdecnumber or src/backend/libbid when we build our search
 # path.  "libdecnumber" is an external project sucked into this library.  It

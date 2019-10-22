@@ -73,18 +73,6 @@ AC_ARG_ENABLE([decimal-float],
 AC_SUBST(enable_decimal_float)
 AC_MSG_RESULT($enable_decimal_float)
 
-# Some code may need to have conditional guards based on the backend.  Give the
-# developers _DPD_BACKEND or _BID_BACKEND.  Try avoiding this as much as
-# possible and use sysdep file overrides.  A good place to use it is in the
-# tests/ directory.
-if test $enable_decimal_float = dpd; then
-  AC_DEFINE_UNQUOTED([_DPD_BACKEND], [1],
-		     ["Defined if DPD is the backend designated by configure."])
-else
-  AC_DEFINE_UNQUOTED([_BID_BACKEND], [1],
-		     ["Defined if BID is the backend designated by configure."])
-fi
-
 # Now we know how to chose the desired backend directory, e.g.
 # src/backend/libdecnumber or src/backend/libbid when we build our search
 # path.  "libdecnumber" is an external project sucked into this library.  It
