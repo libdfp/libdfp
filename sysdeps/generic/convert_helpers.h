@@ -56,7 +56,7 @@ GETMANTANDEXP(128)
 #define fast_truncd64(a)  __truncd64(a)
 #define fast_truncd32(a)  __truncd32(a)
 
-#if _BID_BACKEND == 1
+#ifdef __DECIMAL_BID_FORMAT__
 #include "bid-private.h"
 #include <stdint.h>
 
@@ -130,7 +130,7 @@ getmantd128 (_Decimal128 td, long *exp)
 }
 #endif /* INT128 */
 
-#else /* _DPD_BACKED == 1 */
+#else /* DPD backend */
 
 #include "dpd-private.h"
 static inline int

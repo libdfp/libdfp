@@ -31,11 +31,11 @@
 # define PASTE2(x,y) x##y
 #endif
 
-#if _BID_BACKEND == 1
+#ifdef __DECIMAL_BID_FORMAT__
 # define __BACKEND_(x)  PASTE(__bid_,x)
 # define hidden_proto_enc(name, attrs...) \
    __hidden_proto (__bid_##name, __GI___bid_##name, ##attrs)
-#elif _DPD_BACKEND == 1
+#else
 # define __BACKEND_(x)  PASTE(__dpd_,x)
 # define hidden_proto_enc(name, attrs...) \
    __hidden_proto (__dpd_##name, __GI___dpd_##name, ##attrs)
