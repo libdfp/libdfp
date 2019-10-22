@@ -662,7 +662,6 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
-enable_decimal_float
 host_os
 host_vendor
 host_cpu
@@ -712,7 +711,6 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
-enable_decimal_float
 with_cpu
 with_fp
 enable_static
@@ -1347,12 +1345,6 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-decimal-float=[yes|bid|dpd]
-                          This indicates the IEEE754r Decimal Floating point
-                          type encoding to be used by libdfp. Select yes or
-                          [DPD|dpd] or [BID|bid] [default=dpd] for powerpc[64]
-                          [default=dpd] for s390[x] [default=bid] for
-                          x86[_64].
   --enable-static         build static library [default]
   --enable-shared         build shared library [default]
 
@@ -2513,76 +2505,6 @@ machine=$host_cpu
 if test "$config_os" != linux-gnu; then
   as_fn_error $? "'linux-gnu' is the only allowed host OS" "$LINENO" 5
 fi
-
-## This will fail on a pcc64 system where we're configuring for ppc.
-#if test "$host_cpi" != "$target_cpu"; then
-#  AC_MSG_ERROR([${PACKAGE_NAME} does not yet support cross-compliation.])
-#fi
-
-# PowerPC[64] defaults to DPD encoded DFP.  x86[_64] defaults to BID encoded DFP.
-default_encoding=
-case "$host_cpu" in
-  s390|s390x)
-    default_encoding=dpd
-    ;;
-  powerpc*|powerpc64*)
-    default_encoding=dpd
-    ;;
-  *)
-    default_encoding=bid ;;
-esac
-
-# This clones what's in libdecnumber because autoconf doesn't
-# support passing unique flags to subdir configure.ac invocations
-# because it is brain dead.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for decimal floating point type encoding" >&5
-$as_echo_n "checking for decimal floating point type encoding... " >&6; }
-# Check whether --enable-decimal-float was given.
-if test "${enable_decimal_float+set}" = set; then :
-  enableval=$enable_decimal_float;   case "$enable_decimal_float" in
-    DPD|dpd)
-      ;;
-    BID|bid)
-      if test "$host_cpu" = powerpc || test "$host_cpu" = powerpc64; then
-        as_fn_error $? "The BID encoding isn't a valid encoding for PowerPC[64]" "$LINENO" 5
-      elif test "$host_cpu" = s390 || test "$host_cpu" = s390x; then
-        as_fn_error $? "The BID encoding isn't a valid encoding for s390[x]" "$LINENO" 5
-      fi
-      ;;
-    yes|*)
-       enable_decimal_float="$default_encoding"
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: no argument specified" >&5
-$as_echo "$as_me: WARNING: no argument specified" >&2;}
-      ;;
-  esac
-else
-  enable_decimal_float="$default_encoding"
-fi
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_decimal_float" >&5
-$as_echo "$enable_decimal_float" >&6; }
-
-# Now we know how to chose the desired backend directory, e.g.
-# src/backend/libdecnumber or src/backend/libbid when we build our search
-# path.  "libdecnumber" is an external project sucked into this library.  It
-# is an API that can use either the DPD or BID DFP data-type encoding.
-
-# Because the 'libdecnumber' and 'libbid' source code are out of tree they
-# have historical names and aren't simply 'dpd' and 'bid', so we map a
-# variable to their name based upon $enable_decimal_float.
-default_backend=
-case "$enable_decimal_float" in
-  dpd)
-    default_backend=libdecnumber
-    ;;
-  bid)
-    default_backend=libdecnumber
-    ;;
-  *)
-    default_backend=libdecnumber
-    ;;
-esac
 
 # Ensure basic toolchain tools are available.
 ac_ext=c
