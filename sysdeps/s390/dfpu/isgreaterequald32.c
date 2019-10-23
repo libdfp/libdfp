@@ -28,6 +28,7 @@
 # define FUNCTION_NAME isgreaterequal
 #endif
 #include <dfpmacro.h>
+#include <ieee754r_private.h>
 
 int
 INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
