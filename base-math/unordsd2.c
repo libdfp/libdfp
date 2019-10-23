@@ -31,3 +31,4 @@ __BACKEND_(unordsd2) (_Decimal32 x, _Decimal32 y)
 {
   return __builtin_isunordered (x, y);
 }
+hidden_def (__BACKEND_(unordsd2))

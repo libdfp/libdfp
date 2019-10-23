@@ -113,4 +113,8 @@ asm ("__dpd_netd2 = __GI___dpd_netd2");
 asm ("__dpd_nesd2 = __GI___dpd_nesd2");
 asm ("__dpd_nedd2 = __GI___dpd_nedd2");
 
+asm ("__dpd_unordsd2 = __GI___dpd_unordsd2");
+asm ("__dpd_unorddd2 = __GI___dpd_unorddd2");
+asm ("__dpd_unordtd2 = __GI___dpd_unordtd2");
+
 #endif

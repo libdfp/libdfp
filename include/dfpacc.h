@@ -262,6 +262,13 @@ hidden_proto_enc (nedd2)
 CMPINT __BACKEND_(netd2) (_Decimal128,_Decimal128);
 hidden_proto_enc (netd2)
 
+CMPINT __BACKEND_(unordsd2) (_Decimal32,_Decimal32);
+hidden_proto_enc (unordsd2)
+CMPINT __BACKEND_(unorddd2) (_Decimal64,_Decimal64);
+hidden_proto_enc (unorddd2)
+CMPINT __BACKEND_(unordtd2) (_Decimal128,_Decimal128);
+hidden_proto_enc (unordtd2)
+
 _Decimal32  __BACKEND_(subsd3) (_Decimal32,_Decimal32);
 hidden_proto_enc (subsd3)
 _Decimal64  __BACKEND_(subdd3) (_Decimal64,_Decimal64);

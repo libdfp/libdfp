@@ -40,7 +40,7 @@
 int
 INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
-  return FUNC_D(__isnan) (x) || FUNC_D(__isnan) (y);
+  return __builtin_isunordered (x, y);
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

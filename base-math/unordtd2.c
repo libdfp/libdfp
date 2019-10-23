@@ -31,3 +31,4 @@ __BACKEND_(unordtd2) (_Decimal128 x, _Decimal128 y)
 {
   return __builtin_isunordered (x, y);
 }
+hidden_def (__BACKEND_(unordtd2))
