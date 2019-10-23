@@ -34,7 +34,7 @@
 # define SRC_LITERAL(n) n##DF
 # define SRC_KIND sd
 # define SIGNBIT __signbitd32
-# define CLASSIFY __fpclassifyd32
+# define CLASSIFY(x) __fpclassifyd32(x)
 #endif
 
 #if SRC==64
@@ -43,7 +43,7 @@
 # define SRC_LITERAL(n) n##DD
 # define SRC_KIND dd
 # define SIGNBIT __signbitd64
-# define CLASSIFY __fpclassifyd64
+# define CLASSIFY(x) __fpclassifyd64(x)
 #endif
 
 #if SRC==128
@@ -52,7 +52,7 @@
 # define SRC_LITERAL(n) n##DL
 # define SRC_KIND td
 # define SIGNBIT __signbitd128
-# define CLASSIFY __fpclassifyd128
+# define CLASSIFY(x) __fpclassifyd128(x)
 #endif
 
 extern int SIGNBIT (SRC_TYPE);
@@ -85,13 +85,14 @@ extern int SIGNBIT (SRC_TYPE);
 /* float source */
 #if defined BINARY_TO_DECIMAL
 
+/* Borrowed from glibc. We assume no snan and GCC > 4.4 */
+#define CLASSIFY(x) __builtin_fpclassify (FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x)
+
 #if SRC==32
 #define SRC_TYPE float
 #define SRC_LITERAL(n) n##f
 #define SRC_KIND sf
 #define SIGNBIT __builtin_signbitf
-//extern int __dfp_classify_sf (float a);
-#define CLASSIFY __dfp_classify_sf
 #endif
 
 #if SRC==64
@@ -99,8 +100,6 @@ extern int SIGNBIT (SRC_TYPE);
 #define SRC_LITERAL(n) n##d
 #define SRC_KIND df
 #define SIGNBIT __builtin_signbit
-//extern int __dfp_classify_df (double a);
-#define CLASSIFY __dfp_classify_df
 #endif
 
 #if SRC==128
@@ -108,14 +107,9 @@ extern int SIGNBIT (SRC_TYPE);
 #define SRC_LITERAL(n) n##l
 #define SRC_KIND LDBL_GCC_NAME
 #define SIGNBIT __builtin_signbitl
-//extern int __dfp_classify_df (double a);
-/* For IBM 128-bit long double we use the double version.  */
-#define CLASSIFY __dfp_classify_df
 #endif
 
 extern int SIGNBIT (SRC_TYPE);
-extern int CLASSIFY (SRC_TYPE);
-
 
 #endif // BINARY_TO_DECIMAL
 

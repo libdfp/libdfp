@@ -44,8 +44,7 @@ libdfp_files += addsd3 adddd3 addtd3 \
 		truncsdsf truncdfsd trunctfsd \
 		truncddsf truncdddf trunctfdd \
 		trunctdsf trunctddf trunctdtf \
-		unordsd2 unorddd2 unordtd2 \
-		classify
+		unordsd2 unorddd2 unordtd2
 
 ifeq ($(libdfp-has-timode),yes)
 libdfp_files += fixsdti fixddti \
