@@ -29,5 +29,5 @@
 CMPINT
 __BACKEND_(unordsd2) (_Decimal32 x, _Decimal32 y)
 {
-  return __isnand32 (x) || __isnand32 (y);
+  return __builtin_isunordered (x, y);
 }
