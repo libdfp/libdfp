@@ -27,6 +27,6 @@
 unsigned int
 __BACKEND_(fixunssdsi) (_Decimal32 x)
 {
-  return (unsigned int)((_Decimal64)x);
+  return (unsigned int)(x);
 }
 hidden_def (__BACKEND_(fixunssdsi))

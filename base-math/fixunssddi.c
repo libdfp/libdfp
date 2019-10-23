@@ -27,6 +27,6 @@
 unsigned long long
 __BACKEND_(fixunssddi) (_Decimal32 x)
 {
-  return (unsigned long long)((_Decimal64)x);
+  return (unsigned long long)(x);
 }
 hidden_def (__BACKEND_(fixunssddi))
