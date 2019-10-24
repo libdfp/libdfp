@@ -198,7 +198,7 @@ AC_ARG_WITH([cpu],
     submachine="$withval"
     AC_MSG_NOTICE(configuring for the $submachine processor)
     with_dfp=yes ;;
-  z9-ec|z10|z196|zEC12|z13|arch12|z14)
+  z9-ec|z10|z196|zEC12|z13|arch12|z14|arch13|z15)
     submachine="$withval"
     # Warning, -mzarch won't get passed to libecnumber/configure
     mzarch="-mzarch"
