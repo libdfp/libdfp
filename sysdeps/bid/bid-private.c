@@ -58,7 +58,7 @@ __get_digits_d32 (_Decimal32 x, char *str, int *exp_p, int *sign_p,
   if (c_f.is_nan)
     {
       exp = 0;
-      result = 1;
+      result = 0;
     }
   else if (d.divided.c != 3)
     {
@@ -115,7 +115,7 @@ __get_digits_d64 (_Decimal64 x, char *str, int *exp_p, int *sign_p,
   if (c_f.is_nan)
     {
       exp = 0;
-      result = 1;
+      result = 0;
     }
   else if (d.divided.c != 3)
     {
@@ -173,7 +173,7 @@ __get_digits_d128 (_Decimal128 x, char *str, int *exp_p, int *sign_p,
     {
       exp = 0;
       result[1] = 0;
-      result[0] = 1;
+      result[0] = 0;
     }
   else if (d.divided.c != 3)
     {

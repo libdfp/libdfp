@@ -326,6 +326,12 @@ LIBDFP_1.0.15
  fminmagd128 F
  fminmagd32 F
  fminmagd64 F
+ nextdownd128 F
+ nextdownd32 F
+ nextdownd64 F
+ nextupd128 F
+ nextupd32 F
+ nextupd64 F
 LIBDFP_1.0.2
  LIBDFP_1.0.2 A
  __isinfd128 F

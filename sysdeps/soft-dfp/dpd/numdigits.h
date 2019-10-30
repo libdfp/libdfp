@@ -205,56 +205,56 @@ FUNC_D (numdigits) (DEC_TYPE x)
 static inline DEC_TYPE
 FUNC_D (left_justify) (DEC_TYPE x)
 {
-  int firstdigit = 0, len;
+  int firstdigit = 0, len, ndigits;
 #undef decfield
 #if _DECIMAL_SIZE == 32
 # define decfield sd
-  union ieee754r_Decimal32 mask = { .si = 0x7c000001 };
-  char digits[NDIGITS_32+NDIGITS_32-1];
-  __get_digits_d32(x, digits, NULL, NULL, NULL, NULL);
+  ndigits = NDIGITS_32;
+  union ieee754r_Decimal32 d;
+  char digits[NDIGITS_32 + NDIGITS_32 - 1];
+  __get_digits_d32 (x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 64
 # define decfield dd
-  /* This is hack to get an older version of GCC (RHEL6 PPC 4.4) to
-     prevent incorrectly generating a NaN without a payload and
-     failing tests.  */
-  static const union ieee754r_Decimal64 mask = { .di = {
-#  if __BYTE_ORDER == __LITTLE_ENDIAN
-    0x00000001, 0x7c000000
-#  else
-    0x7c000000, 0x00000001
-#endif
-  } };
-  char digits[NDIGITS_64+NDIGITS_64-1];
-  __get_digits_d64(x, digits, NULL, NULL, NULL, NULL);
+  ndigits = NDIGITS_64;
+  union ieee754r_Decimal64 d;
+  char digits[NDIGITS_64 + NDIGITS_64 - 1];
+  __get_digits_d64 (x, digits, NULL, NULL, NULL, NULL);
 #elif _DECIMAL_SIZE == 128
 # define decfield td
-  union ieee754r_Decimal128 mask = { .ti = {
-#  if __BYTE_ORDER == __LITTLE_ENDIAN
-    0x00000001, 0x0, 0x0, 0x7c000000 } };
-#  else
-    0x7c000000, 0x0, 0x0, 0x00000001 } };
+  ndigits = NDIGITS_128;
+  union ieee754r_Decimal128 d;
+  char digits[NDIGITS_128 + NDIGITS_128 - 1];
+  __get_digits_d128 (x, digits, NULL, NULL, NULL, NULL);
 #endif
-  char digits[NDIGITS_128+NDIGITS_128-1];
-  __get_digits_d128(x, digits, NULL, NULL, NULL, NULL);
-#endif
-  while (digits[firstdigit] == '0') firstdigit++;
-  len = strlen(digits + firstdigit);
+  d.decfield = x;
+  if (d.ieee.c == 0x1f)
+    return x;
+  while (digits[firstdigit] == '0')
+    firstdigit++;
+  len = strlen (digits + firstdigit);
   if (len)
     {
       int exp = FUNC_D (getexp) (x);
-      /* pad the significant digits with enough trailing zeroes */
-      if ((exp - firstdigit) < -DECIMAL_BIAS)
-       {
-         firstdigit = DECIMAL_BIAS + exp;
-         /* If the number overflows the data it will become a NaN. */
-         if ((exp - firstdigit) <= -DECIMAL_BIAS && (firstdigit != 0))
-           return mask.decfield;
-       }
+      /* Pad the significant digits with enough trailing zeroes the first case
+	 is left justify the number the best you can regarding the minimum
+	 possible exponent the other case is the perfect case: you can left
+	 justify the number until it hits the most significant digit of the
+	 mantissa.  */
+      int leadingzeroes = ((exp - firstdigit) < -DECIMAL_BIAS)
+	? DECIMAL_BIAS + exp : firstdigit;
+      if (leadingzeroes == 0)
+	return x;
       if (firstdigit)
-	memset (digits + firstdigit + len, '0', firstdigit);
-      x = FUNC_D (setdigits) (x, digits + firstdigit);
-      x = FUNC_D(setexp) (x, FUNC_D (getexp) (x) - firstdigit);
-      x = FUNC_D(setexp) (x, exp - firstdigit);
+	memset (digits + firstdigit + len, '0', leadingzeroes);
+      int index = 0;
+      /* setdigits expects a number with exactly ndigits or it will segfault
+	 here we are going to the end of the number then going back
+	 ndigits.  */
+      if (firstdigit + len + leadingzeroes >= ndigits)
+	index = firstdigit + len + leadingzeroes - ndigits + 1;
+      x = FUNC_D (setdigits) (x, digits + index);
+      x = FUNC_D (setexp) (x, exp - leadingzeroes);
+
     }
 
   return x;

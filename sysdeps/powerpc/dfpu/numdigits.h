@@ -185,7 +185,13 @@ FUNC_D (left_justify) (DEC_TYPE x)
   asm ("dxex" Q " %0,%1\n\t" : "=d"(tmp2) : "d"(rnd));
 
   d2.f = tmp2;
-  d2.l -= ADJUST;
+  /* Check for NaN and infinity, dxex returns < 0 for qnan, snan, and inf.  */
+  if (d2.l < 0)
+    return x;
+  if (d2.l >= ADJUST)
+    d2.l -= ADJUST;
+  else
+    d2.l = 0;
   tmp2 = d2.f;
 
   asm ("diex" Q " %0,%1,%0\n\t" : "=d"(rnd) : "d"(tmp2), "0"(rnd));

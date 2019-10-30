@@ -1,11 +1,11 @@
-/* Returns the next representable neighbor of x in the direction of y
+/* Returns the next representable neighbor of x in the direction of negative
+   infinity
 
-   Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007-2015 Free Software Foundation, Inc.
+   Copyright (C) 2019-2020 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
-   Author(s): Joseph Kerian <jkerian@us.ibm.com>
+   Author(s): Pedro Caldeira <caldeira@linux.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -23,8 +23,22 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#define _DECIMAL_SIZE 128
-#include <decimal128.h>
-#define SUBNORMAL_MIN DEC128_SUBNORMAL_MIN
-#define DEC_MAX DEC128_MAX
-#include "nextafterd32.c"
+#ifndef _DECIMAL_SIZE
+# include <decimal32.h>
+# define _DECIMAL_SIZE 32
+#endif
+
+#include <math.h>
+#include <ieee754r_private.h>
+
+#define FUNCTION_NAME nextdown
+
+#include <dfpmacro.h>
+
+DEC_TYPE
+INTERNAL_FUNCTION_NAME (DEC_TYPE x)
+{
+  return FUNC_D(__nextafter) (x, -1*DEC_INFINITY);
+}
+
+weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

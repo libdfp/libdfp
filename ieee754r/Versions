@@ -270,5 +270,11 @@ libdfp {
     fminmagd32;
     fminmagd64;
     fminmagd128;
+    nextdownd128;
+    nextdownd32;
+    nextdownd64;
+    nextupd128;
+    nextupd32;
+    nextupd64;
   }
 }
