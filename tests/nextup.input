@@ -1,0 +1,31 @@
+# name nextup
+# arg1 decimal
+# ret  decimal
+
+0                                                   0.000001 decimal32
+0                                                   0.000000000000001 decimal64
+0                                                   0.000000000000000000000000000000001 decimal128
+
+-0                                                  0.000001 decimal32
+-0                                                  0.000000000000001 decimal64
+-0                                                  0.000000000000000000000000000000001 decimal128
+
+1                                                   1.000001 decimal32
+2                                                   2.000001 decimal32
+
+3                                                   3.000001 decimal32
+3                                                   3.000000000000001 decimal64
+3                                                   3.000000000000000000000000000000001 decimal128
+
+9.999998E+DEC_MAX_EXP                               9.999999E+DEC_MAX_EXP  decimal32
+9.999999999999998E+DEC_MAX_EXP                      9.999999999999999E+DEC_MAX_EXP decimal64
+9.999999999999999999999999999999998E+DEC_MAX_EXP    9.999999999999999999999999999999999E+DEC_MAX_EXP decimal128
+
+-1E-DEC_MIN_EXP                                     -0.999999E-DEC_MIN_EXP decimal32
+-1E-DEC_MIN_EXP                                     -0.999999999999999E-DEC_MIN_EXP decimal64
+-1E-DEC_MIN_EXP                                     -0.999999999999999999999999999999999E-DEC_MIN_EXP decimal128
+
+NaN                                                 NaN
+Inf                                                 Inf
+-Inf                                                -Inf
+DEC_MAX                                             Inf

@@ -229,9 +229,9 @@ shared: $(top_builddir)/$(SHARED_REALNAME_LIB) \
 	@echo +Building shared lib and symlinks: $(notdir $^)
 
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
-C_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -std=gnu99 -D_ISOC99_SOURCE
-ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1
-CXX_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_ISOC99_SOURCE
+C_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -std=gnu99 -D_ISOC99_SOURCE -D__STDC_WANT_IEC_60559_DFP_EXT__=1
+ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D__STDC_WANT_IEC_60559_DFP_EXT__=1
+CXX_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_ISOC99_SOURCE -D__STDC_WANT_IEC_60559_DFP_EXT__=1
 CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 
 -include *.d
@@ -367,7 +367,9 @@ libdfp_c_tests = test-printf test-amort test-decode test-inexact-exception \
 		 test-fmax-d32 test-fmax-d64 test-fmax-d128 \
 		 test-fdim-d32 test-fdim-d64 test-fdim-d128 \
 		 test-isunordered-d32 test-isunordered-d64 test-isunordered-d128 \
-		 test-islessgreater-d32 test-islessgreater-d64 test-islessgreater-d128
+		 test-islessgreater-d32 test-islessgreater-d64 test-islessgreater-d128 \
+		 test-nextup-d32 test-nextup-d64 test-nextup-d128
+
 
 ifeq ($(dfp_ti_abi),yes)
 libdfp_c_tests += test-fix test-float
