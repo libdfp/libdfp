@@ -25,5 +25,7 @@
 
 #define _DECIMAL_SIZE 64
 #include <decimal64.h>
+#define SUBNORMAL_MIN DEC64_SUBNORMAL_MIN
+#define DEC_MAX DEC64_MAX
 
 #include "nextafterd32.c"

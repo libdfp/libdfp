@@ -1,6 +1,6 @@
 /* Number of digits functions.
 
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2020 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -302,6 +302,13 @@ setdigitsd64 (_Decimal64 x, char *str)
 static inline _Decimal32
 left_justifyd32 (_Decimal32 x)
 {
+  union ieee754r_Decimal32 d32;
+  d32.sd = x;
+
+  /* Checking for corner cases.  */
+  if (d32.nan.nan == 0x1f)
+    return x; /* Number is NaN.  */
+
   int firstdigit = 0, len;
   char digits[NDIGITS_32+NDIGITS_32-1] = { 0 };
 
@@ -312,21 +319,19 @@ left_justifyd32 (_Decimal32 x)
   if (len)
     {
       int exp = getexpd32 (x);
-      /* pad the significant digits with enough trailing zeroes */
-      if ((exp - firstdigit) < -DECIMAL32_Bias)
-	{
-	  firstdigit = DECIMAL32_Bias + exp;
-	  /* If the number overflows the data it will become a NaN1. */
-	  if ((exp - firstdigit) <= -DECIMAL32_Bias && firstdigit != 0)
-	    {
-	      union ieee754r_Decimal32 mask = { .si = 0x7c000001 };
-	      return mask.sd;
-	    }
-        }
+
+      /* Pad the significant digits with enough trailing zeroes the first case
+	 is left justify the number the best you can regarding the minimum
+	 possible exponent the other case is the perfect case: you can left
+	 justify the number until it hits the most significant digit of the
+	 mantissa.  */
+      int leadingzeroes = ((exp - firstdigit) < -DECIMAL32_Bias)
+	? DECIMAL32_Bias + exp : firstdigit;
+
       if (firstdigit)
-	memset (digits + firstdigit + len, '0', firstdigit);
+	memset (digits + firstdigit + len, '0', leadingzeroes);
       x = setdigitsd32 (x, digits + firstdigit);
-      x = setexpd32 (x, exp - firstdigit);
+      x = setexpd32 (x, exp - leadingzeroes);
     }
 
   return x;
@@ -335,8 +340,15 @@ left_justifyd32 (_Decimal32 x)
 static inline _Decimal64
 left_justifyd64 (_Decimal64 x)
 {
+  union ieee754r_Decimal64 d64;
+  d64.dd = x;
+
+  /* Checking for corner cases.  */
+  if (d64.nan.nan == 0x1f)
+    return x; /* Number is NaN.  */
+
   int firstdigit = 0, len;
-  char digits[NDIGITS_64+NDIGITS_64-1] = { 0 };
+  char digits[NDIGITS_64 + NDIGITS_64 - 1] = { 0 };
 
   __get_digits_d64 (x, digits, NULL, NULL, NULL, NULL);
   while (digits[firstdigit] == '0')
@@ -345,22 +357,18 @@ left_justifyd64 (_Decimal64 x)
   if (len)
     {
       int exp = getexpd64 (x);
-      /* pad the significant digits with enough trailing zeroes */
-      if ((exp - firstdigit) < -DECIMAL64_Bias)
-	{
-	  firstdigit = DECIMAL64_Bias + exp;
-	  /* If the number overflows the data it will become a NaN1. */
-	  if ((exp - firstdigit) <= -DECIMAL64_Bias && firstdigit != 0)
-	    {
-	      union ieee754r_Decimal64 mask = { .di = { 0x00000001,
-                                                        0x7c000000 } };
-	      return mask.dd;
-	    }
-	}
+
+      /* Pad the significant digits with enough trailing zeroes the first case
+	 is left justify the number the best you can regarding the minimum
+	 possible exponent the other case is the perfect case: you can left
+	 justify the number until it hits the MSB of the mantissa.  */
+      int leadingzeroes = ((exp - firstdigit) < -DECIMAL64_Bias)
+	? DECIMAL64_Bias + exp : firstdigit;
+
       if (firstdigit)
-	memset (digits + firstdigit + len, '0', firstdigit);
+	memset (digits + firstdigit + len, '0', leadingzeroes);
       x = setdigitsd64 (x, digits + firstdigit);
-      x = setexpd64 (x, exp - firstdigit);
+      x = setexpd64 (x, exp - leadingzeroes);
     }
 
   return x;
@@ -369,6 +377,13 @@ left_justifyd64 (_Decimal64 x)
 static inline _Decimal128
 left_justifyd128 (_Decimal128 x)
 {
+  union ieee754r_Decimal128 d128;
+  d128.td = x;
+
+  /* Checking for corner cases.  */
+  if (d128.nan.nan == 0x1f)
+    return x; /* Number is NaN.  */
+
   int firstdigit = 0, len;
   char digits[NDIGITS_128+NDIGITS_128-1] = { 0 };
   _Decimal128 y;
@@ -380,22 +395,18 @@ left_justifyd128 (_Decimal128 x)
   if (len)
     {
       int exp = getexpd128 (x);
-      /* pad the significant digits with enough trailing zeroes */
-      if ((exp - firstdigit) < -DECIMAL128_Bias)
-        {
-	  firstdigit = DECIMAL128_Bias + exp;
-	  /* If the number overflows the data it will become a NaN1. */
-	  if ((exp - firstdigit) <= -DECIMAL128_Bias && firstdigit != 0)
-	    {
-	      union ieee754r_Decimal128 mask = { .ti = { 0x00000001, 0x0, 0x0,
-                                                         0x7c000000 } };
-	      return mask.td;
-	    }
-	}
+
+      /* Pad the significant digits with enough trailing zeroes the first
+	 case is left justify the number the best you can regarding the
+	 minimum possible exponent the other case is the perfect case: you
+	 can left justify the number until it hits the MSB of the mantissa.  */
+      int leadingzeroes = ((exp - firstdigit) < -DECIMAL128_Bias)
+	? DECIMAL128_Bias + exp : firstdigit;
+
       if (firstdigit)
 	memset(digits + firstdigit + len, '0', firstdigit);
 
-      y = setexpd128 (x, exp - firstdigit);
+      y = setexpd128 (x, exp - leadingzeroes);
       x = __quantized128 (x, y);
     }
 

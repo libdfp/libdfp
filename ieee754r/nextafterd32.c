@@ -24,12 +24,12 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #ifndef _DECIMAL_SIZE
-#  include <decimal32.h>
-#  define _DECIMAL_SIZE 32
+# include <decimal32.h>
+# define _DECIMAL_SIZE 32
+# define SUBNORMAL_MIN DEC32_SUBNORMAL_MIN
+# define DEC_MAX DEC32_MAX
 #endif
 
-#include <decContext.h>
-#include <decNumber.h>
 #include <math.h>
 #include <float.h>
 #include <errno.h>
@@ -38,58 +38,52 @@
 #define FUNCTION_NAME nextafter
 
 #include <dfpmacro.h>
-
+#include <numdigits.h>
 static DEC_TYPE
 IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
-  decContext context;
-  decNumber dn_result;
-  DEC_TYPE result;
-  DEC_TYPE epsilon;
-  decNumber dn_x;
-  decNumber dn_y;
-  decNumber dn_epsilon;
-/*  int comparison;*/
-
-  FUNC_CONVERT_TO_DN (&x, &dn_x);
-  FUNC_CONVERT_TO_DN (&y, &dn_y);
-
-  /*  Early exit for nan's */
-  if (decNumberIsNaN (&dn_x))
-    return x+x;
-  if (decNumberIsNaN (&dn_y))
-    return y+y;
-
-  /*comparison = decCompare (&dn_x, &dn_y);  */
-  /*  Early exit for equal values */
-  /*if (comparison == 0) */
-  if (x==y)
+  if (x == y)
     return x;
+  if (x == DEC_NAN || y == DEC_NAN)
+    {
+      if (x == DEC_NAN)
+	return y;
+      return x;
+    }
+  DEC_TYPE epsilon = SUBNORMAL_MIN;
+  if (x == -SUBNORMAL_MIN)
+    return -0;
 
-  epsilon = DFP_EPSILON;
-  FUNC_CONVERT_TO_DN (&epsilon, &dn_epsilon);
-
-  dn_epsilon.exponent += dn_x.digits+dn_x.exponent-1;
-
-  decContextDefault (&context, DEFAULT_CONTEXT);
-/*  if (comparison > 0)*/
-  if (x>y)
-    decNumberSubtract (&dn_result,&dn_x,&dn_epsilon,&context);
+  if (x > y)
+    {
+      if (x == DEC_INFINITY)
+	return DEC_MAX;
+      if (x == SUBNORMAL_MIN)
+	return 0;
+      if (x == -DEC_MAX)
+	return -DEC_INFINITY;
+      epsilon *= -1;
+    }
   else
-    decNumberAdd (&dn_result,&dn_x,&dn_epsilon,&context);
-
-  FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
-  if (context.status & DEC_Overflow)
-    DFP_EXCEPT (FE_OVERFLOW);
-
-  return result;
+    {
+      if (!FUNC_D (__isfinite) (x) && x < 0)
+	return -1 * DEC_MAX;	//nextup(-Inf) = -DEC_MAX
+      if (x == DEC_MAX)
+	return DEC_INFINITY;
+    }
+  if (x == 0)
+    return epsilon;
+  DEC_TYPE justified = FUNC_D (left_justify) (x);
+  int exponent = FUNC_D (getexp) (justified);
+  epsilon = FUNC_D (setexp) (epsilon, exponent);
+  return x + epsilon;
 }
 
 DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
   DEC_TYPE z = IEEE_FUNCTION_NAME (x, y);
-  if (!FUNC_D(__isfinite) (z) && FUNC_D(__isfinite) (x))
+  if (!FUNC_D (__isfinite) (z) && FUNC_D (__isfinite) (x))
     DFP_ERRNO (ERANGE);
   /* TODO: Handle underflow here */
   return z;

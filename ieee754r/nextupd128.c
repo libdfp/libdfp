@@ -1,11 +1,11 @@
-/* Returns the next representable neighbor of x in the direction of y
+/* Returns the next representable neighbor of x in the direction of plus
+   infinity
 
-   Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007-2015 Free Software Foundation, Inc.
+   Copyright (C) 2019-2020 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
-   Author(s): Joseph Kerian <jkerian@us.ibm.com>
+   Author(s): Pedro Caldeira <caldeira@linux.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -25,6 +25,5 @@
 
 #define _DECIMAL_SIZE 128
 #include <decimal128.h>
-#define SUBNORMAL_MIN DEC128_SUBNORMAL_MIN
-#define DEC_MAX DEC128_MAX
-#include "nextafterd32.c"
+
+#include "nextupd32.c"
