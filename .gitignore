@@ -20,3 +20,4 @@ stamp-h*
 sysd-versions
 Versions.all
 Versions.sysdeps
+gen-auto-dfp-tests

@@ -4,28 +4,20 @@ import sys
 import os
 from optparse import OptionParser
 
-class ULP (object):
-  def __init__ (self, function, input):
-    self.function = function
-    self.input = input
-    self.ulp32 = 0
-    self.ulp64 = 0
-    self.ulp128 = 0
-
-  def callstr (self):
-    return "\"%s (%s)\"" % (self.function, self.input)
-
 # Parse a ulp description file returning a set of (ulps) for each operation.
 # Lines starting with '#' are ignored.
 # Each test is decribed as:
-# test <function name> <input>
+# test <function name>
 # decimal<N> <ulp expected>
 #
 # If not described, ULP is assumed to be 0.
 def parse_file (filename):
   try:
     ulp = None
-    ulps = []
+    ulps = dict()
+    dmap = {'decimal32' : 2, 'decimal64' : 1, 'decimal128' : 0}
+    f = ""
+
     for line in open(filename, 'r').readlines():
       # Ignore comments and blank lines
       if line.rstrip().startswith ("#"):
@@ -33,15 +25,16 @@ def parse_file (filename):
       fields = line.split()
       if len(fields) is 0:
         continue
+
       if fields[0] == 'test':
-        ulp = ULP (fields[1], fields[2])
-        ulps.append (ulp)
-      elif fields[0] == 'decimal32':
-        ulp.ulp32 = fields[1]
-      elif fields[0] == 'decimal64':
-        ulp.ulp64 = fields[1]
-      elif fields[0] == 'decimal128':
-        ulp.ulp128 = fields[1]
+        f = fields[1]
+        if f not in ulps:
+            ulps[f] = [0,0,0]
+      elif fields[0] in dmap.keys():
+        slot = dmap[fields[0]]
+        val = int(fields[1])
+        if val > ulps[f][slot]:
+            ulps[f][slot] = val
 
     return ulps
 
@@ -73,9 +66,9 @@ def print_ulps (ulps):
   print ("/* Maximal error of functions.  */")
   print ("static const struct ulp_data test_ulps[] = {")
   # The array will be used in a bsearch call, so the itens must be sorted
-  for ulp in sorted(ulps, key=lambda x: x.callstr()):
-    print ("  { %s, CHOOSE(%s, %s, %s) }," %
-      (ulp.callstr(), ulp.ulp128, ulp.ulp64, ulp.ulp32))
+  for ulp in sorted (ulps.keys ()):
+    print ("  { \"%s\", CHOOSE(%d, %d, %d) }," %
+      tuple ([ulp] + ulps[ulp]))
   print ("};")
     
 
