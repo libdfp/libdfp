@@ -18,6 +18,10 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
+#include <getopt.h>
+#include <string.h>
+#include <error.h>
+
 /* Test flags (e.g. possible exceptions) */
 #define NO_EXTRA_FLAG			0x0
 #define INVALID_EXCEPTION		0x1
@@ -145,6 +149,9 @@ static int noTests;             /* number of tests (without testing exceptions) 
 static int verbose = 99;
 static int output_points = 1;   /* Should the single function results printed?  */
 
+static int max_aggr_ulp = 0;    /* Maximum ULP encountered across all tests */
+static const char *max_ulp_file = NULL;
+FLOAT max_allowed_ulp;
 
 /* Compare KEY (a string, with the name of a test or a function) with
    ULP (a pointer to a struct ulp_data structure), returning a value
@@ -375,7 +382,6 @@ check_float (const char *test_name, FLOAT computed, FLOAT expected,
   if (extraflags & IGNORE_RESULT)
     goto out;
 
-  FLOAT max_ulp = find_test_ulps (test_name);
   if (issignaling (computed) && issignaling (expected))
     ok = 1;
   else if (issignaling (computed) || issignaling (expected))
@@ -397,14 +403,17 @@ check_float (const char *test_name, FLOAT computed, FLOAT expected,
       //if ((exceptions & IGNORE_ZERO_INF_SIGN) == 0
       if (signbit(computed) != signbit (expected))
         ok = 0;
-      //else if (ulps <= 0.5 || (ulps <= max_ulp && !ignore_max_ulp))
-      else if ((ulps <= 0.5DF) || (ulps <= max_ulp))
+      //else if (ulps <= 0.5 || (ulps <= max_allowed_ulp && !ignore_max_ulp))
+      else if ((ulps <= 0.5DF) || (ulps <= max_allowed_ulp))
         ok = 1;
       else
         {
           ok = 0;
           print_ulps (test_name, ulps);
         }
+
+      if (FUNC(ceil) (ulps) > max_aggr_ulp)
+        max_aggr_ulp = FUNC(ceil) (ulps);
 
     }
   if (print_screen (ok))
@@ -422,7 +431,7 @@ check_float (const char *test_name, FLOAT computed, FLOAT expected,
           printf (" difference: % .20" PRINTF_EXPR "  %" PRINTF_XEXPR
                   "\n", diff, diff);
           printf (" ulp       : % .4" PRINTF_NEXPR "\n", ulps);
-          printf (" max.ulp   : % .4" PRINTF_NEXPR "\n", max_ulp);
+          printf (" max.ulp   : % .4" PRINTF_NEXPR "\n", max_allowed_ulp);
         }
     }
   update_stats (ok);
@@ -555,4 +564,36 @@ check_bool (const char *test_name, int computed, int expected, int extraflags)
   update_stats (ok);
  out:
   errno = 0;
+}
+
+/* Parse test options, if any. */
+static void scaffold_setup(int argn, char **argv, const char *test)
+{
+  int opt;
+
+  max_allowed_ulp = find_test_ulps (test);
+
+  while ( ((opt = getopt (argn, argv, "v:u:"))) && opt != -1)
+    switch (opt)
+      {
+	default: break;
+	case 'v': verbose = atoi (optarg); break;
+	case 'u': max_ulp_file = optarg; break;
+      }
+}
+
+/* Cleanup. Generate ulps file if requested */
+static void scaffold_teardown(void)
+{
+  if (max_ulp_file)
+    {
+      FILE *ulpf = fopen (max_ulp_file, "w");
+
+      if (!ulpf)
+        error(EXIT_FAILURE, 0, "fopen %s", max_ulp_file);
+      fprintf (ulpf, "%s %d\n",
+               CHOOSE("decimal128", "decimal64", "decimal32"),
+               max_aggr_ulp);
+      fclose (ulpf);
+    }
 }

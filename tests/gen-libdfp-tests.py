@@ -323,17 +323,19 @@ def print_operations (func, operations):
   print ("")
   print ("static const operations_t operations[] = {")
   for op in operations:
-    print ("  {"),
-    print ("\"%s\", " % ", ".join(op.args)),
+    line = ""
+    line += "  {"
+    line += "\"%s\", " % ", ".join(op.args)
     for i in range(0, len(op.args)):
-      print ("%s," % func.args[i].parse_arg(op.args[i])),
-    print (" %s, " % func.ret.parse_arg(op.ret)),
+      line += "%s," % func.args[i].parse_arg(op.args[i])
+    line += " %s, " % func.ret.parse_arg(op.ret)
     if (len(op.extraflags) > 0):
-      print ("|".join (op.extraflags)),
-      print (", "),
+      line += "|".join (op.extraflags)
+      line += ", "
     else:
-      print ("NO_EXTRA_FLAG, "),
-    print (" %d }," % op.line)
+      line += "NO_EXTRA_FLAG, "
+    line += " %d }," % op.line
+    print (line)
   print ("};")
   print ("static const int operations_size = \
     sizeof(operations)/sizeof(operations[0]);");
@@ -341,8 +343,10 @@ def print_operations (func, operations):
 
 
 def print_func_call(func):
-  print ("int main (void) {")
+  print ("int main (int argn, char *argv[]) {")
   print ("  int i;")
+  print ("")
+  print ("  scaffold_setup (argn, argv, \"%s\");" % func.name)
   print ("  for (i = 0; i < operations_size; ++i) {")
 
   # <macro> (func.name, arg1, arg2, ..., ret, expected)
@@ -357,12 +361,14 @@ def print_func_call(func):
   }
   macro = "RUN_TEST_" + ('f' * len(func.args)) + "_" + MACROSUFFIX[func.ret.name]
   
-  print ("    %s (%s, operations[i].argname, " % (macro, func.name, )),
+  line = "    %s (%s, operations[i].argname, " % (macro, func.name, )
   for i in range(0, len(func.args)):
-    print ("operations[i].arg%i.%s, " % (i, DECIMAL.decfield)),
-  print ("operations[i].e%s, operations[i].extraflags);" % func.ret_field())
+    line += "operations[i].arg%i.%s, " % (i, DECIMAL.decfield)
+  line += "operations[i].e%s, operations[i].extraflags);" % func.ret_field()
+  print (line)
 
   print ("  }")
+  print ("  scaffold_teardown ();")
   print ("")
   print ("  return noErrors;");
   print ("}")
