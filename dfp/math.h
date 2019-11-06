@@ -853,6 +853,17 @@ extern _Decimal128 __quantumd128 (_Decimal128 __x) __THROW;
 extern _Bool samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 extern _Bool __samequantumd128 (_Decimal128 __x, _Decimal128 __y) __THROW;
 
+#ifdef __STDC_WANT_IEC_60559_DFP_EXT__
+extern _Decimal32 nextdownd32 (_Decimal32 __x) __THROW __attribute__ ((__const__));
+extern _Decimal32 __nextdownd32 (_Decimal32 __x) __THROW __attribute__ ((__const__));
+
+extern _Decimal64 nextdownd64 (_Decimal64 __x) __THROW __attribute__ ((__const__));
+extern _Decimal64 __nextdownd64 (_Decimal64 __x) __THROW __attribute__ ((__const__));
+
+extern _Decimal128 nextdownd128 (_Decimal128 __x) __THROW __attribute__ ((__const__));
+extern _Decimal128 __nextdownd128 (_Decimal128 __x) __THROW __attribute__ ((__const__));
+#endif
+
 /* Classification functions.  We undefine those defined by the system math.h
  * so that we can add the _Decimal[32|64|128] types recognition to the macros.
  */
