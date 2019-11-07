@@ -873,6 +873,15 @@ extern _Decimal64 __fmaxmagd64 (_Decimal64 __x, _Decimal64 __y) __THROW __attrib
 
 extern _Decimal128 fmaxmagd128 (_Decimal128 __x, _Decimal128 __y) __THROW __attribute__ ((__const__));
 extern _Decimal128 __fmaxmagd128 (_Decimal128 __x, _Decimal128 __y) __THROW __attribute__ ((__const__));
+
+extern _Decimal32 fminmagd32 (_Decimal32 __x, _Decimal32 __y) __THROW __attribute__ ((__const__));
+extern _Decimal32 __fminmagd32 (_Decimal32 __x, _Decimal32 __y) __THROW __attribute__ ((__const__));
+
+extern _Decimal64 fminmagd64 (_Decimal64 __x, _Decimal64 __y) __THROW __attribute__ ((__const__));
+extern _Decimal64 __fminmagd64 (_Decimal64 __x, _Decimal64 __y) __THROW __attribute__ ((__const__));
+
+extern _Decimal128 fminmagd128 (_Decimal128 __x, _Decimal128 __y) __THROW __attribute__ ((__const__));
+extern _Decimal128 __fminmagd128 (_Decimal128 __x, _Decimal128 __y) __THROW __attribute__ ((__const__));
 #endif
 
 /* Classification functions.  We undefine those defined by the system math.h

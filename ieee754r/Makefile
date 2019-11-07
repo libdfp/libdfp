@@ -92,4 +92,5 @@ libdfp_files +=	acosd32 acosd64 acosd128 \
 		tanhd32 tanhd64 tanhd128 \
 		tgammad32 tgammad64 tgammad128 \
 		truncd32 truncd64 truncd128 \
-		fmaxmagd32 fmaxmagd64 fmaxmagd128
+		fmaxmagd32 fmaxmagd64 fmaxmagd128 \
+		fminmagd32 fminmagd64 fminmagd128
