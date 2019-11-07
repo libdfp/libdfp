@@ -1,0 +1,23 @@
+# name fmaxmag
+# arg1 decimal
+# arg2 decimal
+# ret  decimal
+
+1E+6   1E+5  1E+6
+-1E+6  1E+5  -1E+6
+2      2E+2  2E+2
+0      0     0
+100    101   101
+100    -100  100
+-100   100   100
+
+
+
+NaN    100   100
+100    NaN   100
+NaN    NaN   NaN
+Inf    100   Inf
+100    Inf   Inf
+-Inf   100   -Inf
+Inf    -Inf  Inf
+
