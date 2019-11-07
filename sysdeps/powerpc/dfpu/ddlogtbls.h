@@ -172,6 +172,9 @@ const _Decimal64 __oneOverfactDD [] = {
 	1.561920696858623e-16DD, /* 1.0DD/18.0DD! */
 	8.22063524662433e-18DD, /* 1.0DD/19.0DD! */
 	4.110317623312165e-19DD}; /* 1.0DD/20.0DD! */
+
+/* Note, this table starts at e^0. */
+#define EXPINT_MAX (sizeof (__expIntXDL) / sizeof (__expIntXDL[0]) - 1)
 const _Decimal128 __expIntXDL [] = {
 	1.0DL, /* exp(0.0DL) */
 	2.718281828459045235360287471352662DL, /* exp(1.0DL) */

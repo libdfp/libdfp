@@ -77,6 +77,10 @@ IEEE_FUNCTION_NAME (DEC_TYPE val)
   top = tmp;
   fraction = val - top;
   exp = tmp;
+
+  if (exp > (int)EXPINT_MAX)
+    return neg ? DFP_CONSTANT(0.0) : DFP_INF;
+
   if (fraction != 0.0DD)
     {
       a = top; x = val;
