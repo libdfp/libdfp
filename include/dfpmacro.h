@@ -153,6 +153,7 @@ do {									\
 /* Some useful (falsely generic) constants */
 #define DFP_HUGE_VAL		PASTE(HUGE_VAL_D,_DECIMAL_SIZE)
 #define DFP_NAN			(DEC_TYPE)DEC_NAN
+#define DFP_INF			(DEC_TYPE)DEC_INFINITY
 
 #ifndef PASTE
 /* Ideally these shouldn't need to be used elsewhere outside of this file */
