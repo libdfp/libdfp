@@ -173,9 +173,9 @@ shared: $(top_builddir)/$(SHARED_REALNAME_LIB) \
 	@echo +Building shared lib and symlinks: $(notdir $^)
 
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
-C_DEFINES := -D__STDC_WANT_DEC_FP__=1 -std=gnu99 -D_ISOC99_SOURCE
-ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_WANT_DEC_FP__=1
-CXX_DEFINES := -D__STDC_WANT_DEC_FP__=1 -D_ISOC99_SOURCE
+C_DEFINES := -D__STDC_WANT_DEC_FP__=1 -std=gnu99 -D_ISOC99_SOURCE -D__STDC_WANT_IEC_60559_DFP_EXT__=1
+ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_WANT_DEC_FP__=1 -D__STDC_WANT_IEC_60559_DFP_EXT__=1
+CXX_DEFINES := -D__STDC_WANT_DEC_FP__=1 -D_ISOC99_SOURCE -D__STDC_WANT_IEC_60559_DFP_EXT__=1
 CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 
 -include *.d
@@ -266,6 +266,7 @@ $(top_builddir)/sysd-versions: $(top_builddir)/Versions.all \
 $(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
 
 GLIBC_LIBS := -lc -lm
+
 
 # Only enable C++ tests if compiler supports std::decimal (GCC 4.5+),
 # otherwise just skip them.

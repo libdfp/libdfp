@@ -263,4 +263,9 @@ libdfp {
     quantumd64;
     quantumd128;
   }
+  LIBDFP_1.0.15 {
+    fmaxmagd32;
+    fmaxmagd64;
+    fmaxmagd128;
+  }
 }
