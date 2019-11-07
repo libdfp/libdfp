@@ -267,5 +267,8 @@ libdfp {
     fmaxmagd32;
     fmaxmagd64;
     fmaxmagd128;
+    fminmagd32;
+    fminmagd64;
+    fminmagd128;
   }
 }

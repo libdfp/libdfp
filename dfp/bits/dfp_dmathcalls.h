@@ -82,6 +82,7 @@ __DECL_D(yn, (int, __DECIMAL), __THROW)
 
 #ifdef __STDC_WANT_IEC_60559_DFP_EXT__
 __DECL_D(fmaxmag, (__DECIMAL, __DECIMAL), __THROW __attribute_const__)
+__DECL_D(fminmag, (__DECIMAL, __DECIMAL), __THROW __attribute_const__)
 #endif
 
 __DECL_D(ceil, (__DECIMAL), __THROW __attribute_const__)

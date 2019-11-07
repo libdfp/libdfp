@@ -41,6 +41,7 @@ libdfp_c_tests = test-printf test-amort test-decode test-inexact-exception \
 		 test-islessgreater-d32 test-islessgreater-d64 test-islessgreater-d128 \
 		 test-ldexp-d32 test-ldexp-d64 test-ldexp-d128 \
 		 test-fmaxmag-d32 test-fmaxmag-d64 test-fmaxmag-d128 \
+		 test-fminmag-d32 test-fminmag-d64 test-fminmag-d128 \
 		 test-math-macros
 
 ifeq ($(libdfp-has-timode),yes)
