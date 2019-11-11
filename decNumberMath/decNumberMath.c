@@ -53,6 +53,27 @@
 
 #define DIVIDE_BY_10(x) x.exponent--
 
+// Callers will bring in context using the source precision, e.g
+// 7/16/34. The algos here require higher precision to converge to
+// a correct answer. Expand precision and exponent range.
+//
+// This abuses decNumberAdd to copy and round a final result into
+// the target precision.
+#define DEC_STASH_CONTEXT(ctxp, zerop) \
+    const int _emax_stashed = ctxp->emax; \
+    const int _emin_stashed = ctxp->emin; \
+    const int _digits_stashed = ctxp->digits; \
+    decNumberFromString (zerop, "0", ctxp); \
+    ctxp->emax = 6144; \
+    ctxp->emin = -6143; \
+    ctxp->digits = DECNUMDIGITS;
+
+#define DEC_RESTORE_ROUND(ctxp, resultoutp, resultinp, zerop) \
+    ctxp->emax = _emax_stashed; \
+    ctxp->emin = _emin_stashed; \
+    ctxp->digits = _digits_stashed; \
+    decNumberAdd (resultoutp, resultinp, zerop, ctxp);
+
 // ----------------------------------------------------------------------
 // Basic Functions
 // ----------------------------------------------------------------------
@@ -512,13 +533,14 @@ decNumber* decNumberTanh (decNumber *result, decNumber *x, decContext *set)
 // Trigonometric Functions
 // ----------------------------------------------------------------------
 
-decNumber* decNumberSin (decNumber *result, decNumber *y, decContext *set)
+decNumber* decNumberSin (decNumber *_result, decNumber *y, decContext *set)
 {
-  decNumber pi, pi2, zero, one, two, x, cnt, term, cmp;
+  decNumber pi, pi2, zero, one, two, x, fctl, term, cmp, result;
   int i;
   int negate = 0;
 
-  decNumberFromString (&zero,"0", set);
+  DEC_STASH_CONTEXT (set, &zero);
+
   decNumberFromString (&one, "1", set);
   decNumberFromString (&two, "2", set);
   decNumberFromString (&pi,  PI , set);
@@ -559,36 +581,42 @@ decNumber* decNumberSin (decNumber *result, decNumber *y, decContext *set)
   // term(0) = x
   // term(i) = - term(i-1) * x^2 / ((2*i)*(2*i+1))
 
-  decNumberCopy (&cnt, &two);
+  decNumberCopy (&fctl, &one);
   decNumberCopy (&term, &x);
-  decNumberCopy (result, &x);
+  decNumberCopy (&result, &x);
   // DECNUMDIGITS+3 terms are enough to achieve the required precision.
   for (i=0; i<DECNUMDIGITS+3; i++) {
+    decNumber tmpd, termout;
+
     // term = -term * x^2 / (cnt*(cnt+1))
     // cnt = cnt+2
     decNumberMinus (&term, &term, set);
     decNumberMultiply (&term, &term, &x, set);
     decNumberMultiply (&term, &term, &x, set);
-    decNumberDivide   (&term, &term, &cnt, set);
-    decNumberAdd (&cnt, &cnt, &one, set); 
-    decNumberDivide   (&term, &term, &cnt, set);
-    decNumberAdd (&cnt, &cnt, &one, set);
+
+    // Compute denominator and generate term.
+    decNumberFromInt32 (&tmpd, ((i+1)*2 + 1) * ((i+1)*2));
+    decNumberMultiply (&fctl, &fctl, &tmpd, set);
+    decNumberDivide (&termout, &term, &fctl, set);
+
     // sum = sum + term
-    decNumberAdd (result, result, &term, set);
+    decNumberAdd (&result, &result, &termout, set);
   }
   if (negate) {
-    decNumberMinus (result, result, set);
+    decNumberMinus (&result, &result, set);
   }
-  return result;
+  DEC_RESTORE_ROUND (set, _result, &result, &zero)
+  return _result;
 } /* decNumberSin  */
 
-decNumber* decNumberCos (decNumber *result, decNumber *y, decContext *set)
+decNumber* decNumberCos (decNumber *_result, decNumber *y, decContext *set)
 {
-  decNumber pi, pi2, zero, one, two, x, cnt, term, cmp;
+  decNumber pi, pi2, zero, one, two, x, term, cmp, fctl, result;
   int i;
   int negate = 0;
 
-  decNumberFromString (&zero,"0", set);
+  DEC_STASH_CONTEXT (set, &zero);
+
   decNumberFromString (&one, "1", set);
   decNumberFromString (&two, "2", set);
   decNumberFromString (&pi,  PI , set);
@@ -627,27 +655,32 @@ decNumber* decNumberCos (decNumber *result, decNumber *y, decContext *set)
   //
   // term(0) = 1
   // term(i) = - term(i-1) * x^2 / ((2*i-1)*(2*i))
-  decNumberCopy (&cnt, &one);
   decNumberCopy (&term, &one);
-  decNumberCopy (result, &one);
+  decNumberCopy (&result, &one);
+  decNumberCopy (&fctl, &one);
   // DECNUMDIGITS+3 terms are enough to achieve the required precision.
   for (i=0; i<DECNUMDIGITS+3; i++) {
-    // term = -term * x^2 / (cnt*(cnt+1))
-    // cnt = cnt+2
+    decNumber tmpd, termout;
+
+    // x^(2*i)
     decNumberMinus (&term, &term, set);
     decNumberMultiply (&term, &term, &x, set);
     decNumberMultiply (&term, &term, &x, set);
-    decNumberDivide   (&term, &term, &cnt, set);
-    decNumberAdd (&cnt, &cnt, &one, set); 
-    decNumberDivide   (&term, &term, &cnt, set);
-    decNumberAdd (&cnt, &cnt, &one, set);
-    // sum = sum + term
-    decNumberAdd (result, result, &term, set);
+
+    // Compute factorial denominator
+    decNumberFromInt32 (&tmpd, (i+1)*2 * ((i+1)*2-1));
+    decNumberMultiply (&fctl, &fctl, &tmpd, set);
+    decNumberDivide (&termout, &term, &fctl, set);
+
+    // Sum
+    decNumberAdd (&result, &result, &termout, set);
   }
   if (negate) {
-    decNumberMinus (result, result, set);
+    decNumberMinus (&result, &result, set);
   }
-  return result;
+
+  DEC_RESTORE_ROUND (set, _result, &result, &zero);
+  return _result;
 } /* decNumberCos  */
 
 decNumber* decNumberTan (decNumber *result, decNumber *y, decContext *set)
