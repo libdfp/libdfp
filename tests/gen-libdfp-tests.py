@@ -5,6 +5,13 @@ import re
 import os
 from optparse import OptionParser
 
+# Use CPP flags to guard tests which should not be
+# be on certain platforms (e.g sizeof(long int) != x
+cppcheckdict = {
+    "ONLY_ON_4BYTE_LONG" : "(__SIZEOF_LONG__ == 4)",
+    "ONLY_ON_8BYTE_LONG" : "(__SIZEOF_LONG__ == 8)"
+    }
+
 # Decribes the evaluated function
 class Function:
   def __init__ (self):
@@ -38,6 +45,7 @@ class Operation:
     self.ret = None
     self.extraflags = []
     self.line = line
+    self.cppchecks = []
 
 # Describe a type handle in operations and functions definition
 class Type (object):
@@ -264,7 +272,19 @@ def parse_file (filename):
     for oparg in range (0, expected_args):
       op.args.append(fields[oparg])
     op.ret = fields[expected_args]
-    op.extraflags.extend(extra_args)
+
+    for earg in extra_args:
+      if earg in cppcheckdict.keys():
+	op.cppchecks.append(cppcheckdict[earg])
+      else:
+	op.extraflags.append(earg)
+
+    # Finally, if we ignore the results, coerce to a value
+    # which won't make the compiler generate warnings:
+    if "IGNORE_RESULT" in op.extraflags:
+      if op.ret != "0":
+        sys.stderr.write ("WARNING: ignored value coerced to 0 on line %d\n" % i)
+      op.ret = "0"
 
     operations.append(op)
 
@@ -323,6 +343,8 @@ def print_operations (func, operations):
   print ("")
   print ("static const operations_t operations[] = {")
   for op in operations:
+    if op.cppchecks:
+        print ("#if " + " && ".join (op.cppchecks))
     line = ""
     line += "  {"
     line += "\"%s\", " % ", ".join(op.args)
@@ -336,6 +358,8 @@ def print_operations (func, operations):
       line += "NO_EXTRA_FLAG, "
     line += " %d }," % op.line
     print (line)
+    if op.cppchecks:
+      print ("#endif")
   print ("};")
   print ("static const int operations_size = \
     sizeof(operations)/sizeof(operations[0]);");

@@ -32,8 +32,6 @@
 #define ERRNO_UNCHANGED			0x8000
 #define ERRNO_ERANGE			0x20000
 #define IGNORE_RESULT			0x40000
-#define ONLY_ON_4BYTE_LONG		0x100000
-#define ONLY_ON_8BYTE_LONG		0x200000
 
 
 /* Common setup for an individual test.  */
@@ -48,20 +46,10 @@
 #define COMMON_TEST_CLEANUP                     \
   free (test_name)
 
-/* Skip test in case of invalid characteristics.  */
-#define CHECK_SKIP_TEST(EXTRAFLAGS)			\
-  if (((EXTRAFLAGS & ONLY_ON_4BYTE_LONG) != 0		\
-       && sizeof(long int) != 4)			\
-      || ((EXTRAFLAGS & ONLY_ON_8BYTE_LONG) != 0	\
-	  && sizeof(long int) != 8))			\
-    break;
-
-
 /* Run an individual test, including any required setup and checking
    of results, or loop over all tests in an array.  */
 #define RUN_TEST_f_f(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
-   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_float (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED,		\
 		EXTRAFLAGS);						\
@@ -70,7 +58,6 @@
 
 #define RUN_TEST_ff_f(FUNC_NAME, ARG_STR, ARG1, ARG2, EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
-   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_float (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED,	\
 		EXTRAFLAGS);						\
@@ -79,7 +66,6 @@
 
 #define RUN_TEST_f_i(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
-   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_int (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED, EXTRAFLAGS);	\
    COMMON_TEST_CLEANUP;                                                 \
@@ -87,7 +73,6 @@
 
 #define RUN_TEST_f_l(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
-   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_long (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED,		\
 	       EXTRAFLAGS);						\
@@ -96,7 +81,6 @@
 
 #define RUN_TEST_f_L(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
-   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_longlong (test_name, FUNC (FUNC_NAME) (ARG), EXPECTED,		\
 		   EXTRAFLAGS);						\
@@ -105,7 +89,6 @@
 
 #define RUN_TEST_f_b(FUNC_NAME, ARG_STR, ARG1, EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
-   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_bool (test_name, FUNC (FUNC_NAME) (ARG1), EXPECTED,		\
 	       EXTRAFLAGS);						\
@@ -114,7 +97,6 @@
 
 #define RUN_TEST_ff_b(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
-   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_bool (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED,	\
 	       EXTRAFLAGS);						\
@@ -123,7 +105,6 @@
 
 #define RUN_TEST_ff_i(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED, EXTRAFLAGS) \
   do {                                                                  \
-   CHECK_SKIP_TEST (EXTRAFLAGS);					\
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
    check_int (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED,	\
 	      EXTRAFLAGS);						\
