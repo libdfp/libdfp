@@ -173,9 +173,9 @@ shared: $(top_builddir)/$(SHARED_REALNAME_LIB) \
 	@echo +Building shared lib and symlinks: $(notdir $^)
 
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
-C_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -std=gnu99 -D_ISOC99_SOURCE
-ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1
-CXX_DEFINES := -D__STDC_DEC_FP__=200704L -D__STDC_WANT_DEC_FP__=1 -DOPTION_EGLIBC_LOCALE_CODE=1 -D_ISOC99_SOURCE
+C_DEFINES := -D__STDC_WANT_DEC_FP__=1 -std=gnu99 -D_ISOC99_SOURCE
+ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_WANT_DEC_FP__=1
+CXX_DEFINES := -D__STDC_WANT_DEC_FP__=1 -D_ISOC99_SOURCE
 CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 
 -include *.d

@@ -195,11 +195,6 @@ EOF
   fi
   rm -f conftest*])
 AC_SUBST(libdfp_cv_cc_with_decimal_float)
-if test $libdfp_cv_cc_with_decimal_float = yes; then
-  cat >> confdefs.h <<\EOF
-#define __STDC_DEC_FP__ 200704L
-EOF
-fi
 
 # Check for GLIBC 2.10 headers
 have_glibc_2_10_headers=yes
