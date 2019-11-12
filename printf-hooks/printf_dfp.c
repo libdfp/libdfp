@@ -362,7 +362,6 @@ __printf_dfp (FILE *fp,
 
   const char *grouping;
 
-#ifdef OPTION_EGLIBC_LOCALE_CODE
   if (info->extra == 0)
     {
       decimal = nl_langinfo (__DECIMAL_POINT);
@@ -381,13 +380,7 @@ __printf_dfp (FILE *fp,
   /* The decimal point character must not be zero.  */
   assert (*decimal != '\0');
   assert (decimalwc.wc != L'\0');
-#else
-  /* Hard-code values from 'C' locale.  */
-  decimal = ".";
-  decimalwc.wc = L'.';
-#endif
 
-#ifdef OPTION_EGLIBC_LOCALE_CODE
   if (info->group)
     {
       if (info->extra == 0)
@@ -434,9 +427,6 @@ __printf_dfp (FILE *fp,
     }
   else
     grouping = NULL;
-#else
-  grouping = NULL;
-#endif
 
   /* Seriously, only touch this code if you MUST.  */
 
