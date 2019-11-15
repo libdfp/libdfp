@@ -108,6 +108,13 @@ exp 709.75
 exp NaN
 exp Inf
 exp -Inf
+exp 14149
+exp -14144
+exp 2.3025
+exp 1.151
+exp 1.152
+exp 1.1512
+exp 1.1519
 'exp sNaN NaN
 
 log 0.75

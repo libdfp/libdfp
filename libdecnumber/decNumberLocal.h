@@ -770,6 +770,4 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   /* [end of format-dependent macros and constants]		      */
   #endif
 
-#else
-  #error decNumberLocal included more than once
 #endif
