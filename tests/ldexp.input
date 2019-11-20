@@ -1,0 +1,28 @@
+# name ldexp
+# arg1 decimal
+# arg2 int
+# ret  decimal
+
+1.0 1 10.0
+1.0 0 1.0
+1.0 -1 0.1
+
+
+# Verify subnormal exponent math is correct
+DEC_MIN            1 1E-94             decimal32
+DEC_MIN           -1 1E-96             decimal32
+1E-100            -1 DEC_SUBNORMAL_MIN decimal32
+DEC_SUBNORMAL_MIN -1 0                 decimal32
+DEC_SUBNORMAL_MIN  1 1E-100            decimal32
+
+DEC_MIN            1 1E-382            decimal64
+DEC_MIN           -1 1E-384            decimal64
+1E-397            -1 DEC_SUBNORMAL_MIN decimal64
+DEC_SUBNORMAL_MIN -1 0                 decimal64
+DEC_SUBNORMAL_MIN  1 1E-397            decimal64
+
+DEC_MIN            1 1E-6142           decimal128
+DEC_MIN           -1 1E-6144           decimal128
+1E-6175           -1 DEC_SUBNORMAL_MIN decimal128
+DEC_SUBNORMAL_MIN -1 0                 decimal128
+DEC_SUBNORMAL_MIN  1 1E-6175           decimal128
