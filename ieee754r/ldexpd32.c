@@ -43,20 +43,31 @@
 static DEC_TYPE
 IEEE_FUNCTION_NAME (DEC_TYPE x, int y)
 {
-  DEC_TYPE result;
+  DEC_TYPE result, tiny;
   long newexp;
+  int minexp = PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Emin));
+  int p = PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Pmax));
 
 #if NUMDIGITS_SUPPORT==1
-  newexp = FUNC_D (getexp) (x) + y + 1;
+  newexp = FUNC_D (getexp) (x) + y;
   if (newexp > PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Emax)))
     {
-    result = DFP_HUGE_VAL;
+    result = FUNC_D(__copysign)(DFP_HUGE_VAL, x);
     DFP_EXCEPT (FE_OVERFLOW);
     }
-  else if (newexp < PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Emin)))
+  else if (newexp < minexp)
     {
-    result = -DFP_HUGE_VAL;
-    DFP_EXCEPT (FE_OVERFLOW);
+    /* Check if the result might be subnormal. */
+    if( newexp > (minexp - p))
+      {
+        result = FUNC_D(setexp) (x, minexp);
+        /* Use a multiply so we correctly round whatever may shifts out. */
+        tiny = FUNC_D(setexp) (1.DL, newexp - minexp);
+        return result * tiny;
+      }
+    result = DFP_CONSTANT(0.0);
+    DFP_EXCEPT (FE_UNDERFLOW);
+    return result;
     }
   else
     result = FUNC_D(setexp) (x, newexp);
@@ -73,8 +84,8 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, int y)
     return x;
 
   /* ldexp(x,y) is just x*10**y, which is equivalent to increasing the exponent
-   * by y + 1.  */
-  newexp = dn_x.exponent + y + 1;
+   * by y.  */
+  newexp = dn_x.exponent + y;
   if(newexp > INT_MAX)
     newexp = INT_MAX;
   if(newexp < -INT_MAX)

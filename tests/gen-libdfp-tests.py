@@ -226,7 +226,10 @@ def parse_file (filename):
     if fields[1].startswith("name"):
       func.name = fields[2]
     if fields[1].startswith("arg"):
-      func.args.append(DecimalTypes[fields[2] + DECIMAL.tname])
+      if fields[2].startswith("decimal"):
+        func.args.append(DecimalTypes[fields[2] + DECIMAL.tname])
+      else:
+        func.args.append(DecimalTypes[fields[2]])
     elif fields[1].startswith("ret"):
       rettname = fields[2]
       if rettname == "decimal":
@@ -383,11 +386,18 @@ def print_func_call(func):
     "decimal64"  : "f",
     "decimal128" : "f"
   }
-  macro = "RUN_TEST_" + ('f' * len(func.args)) + "_" + MACROSUFFIX[func.ret.name]
-  
+  macro = "RUN_TEST_";
+  for arg in func.args:
+    macro += MACROSUFFIX[arg.name]
+  macro += "_" + MACROSUFFIX[func.ret.name]
+
   line = "    %s (%s, operations[i].argname, " % (macro, func.name, )
   for i in range(0, len(func.args)):
-    line += "operations[i].arg%i.%s, " % (i, DECIMAL.decfield)
+    line += "operations[i].arg%i" % i
+    if "decimal" in func.args[i].name:
+      line += "." + DECIMAL.decfield
+    line += ", "
+
   line += "operations[i].e%s, operations[i].extraflags);" % func.ret_field()
   print (line)
 
@@ -415,22 +425,16 @@ if __name__ == "__main__":
                      help="DECIMAL type to use")
   (options, args) = parser.parse_args()
 
-  try:
-    if options.filename:
-      sys.stdout = open (options.filename, "w")
+  if options.filename:
+    sys.stdout = open (options.filename, "w")
 
-    if not args:
-      sys.stderr.write ("usage: gen-libdfp-tests.py <options> <input file\n>")
-      raise Exception()
-    if not options.dectype:
-      sys.stderr.write ("error: you must specify a type: decimal[32|64|128]")
-      raise Exception()
+  if not args:
+    sys.stderr.write ("usage: gen-libdfp-tests.py <options> <input file\n>")
+    raise Exception()
+  if not options.dectype:
+    sys.stderr.write ("error: you must specify a type: decimal[32|64|128]")
+    raise Exception()
 
-    DECIMAL = DecimalTypes[options.dectype]
+  DECIMAL = DecimalTypes[options.dectype]
 
-    print_output (args[0])
-
-  except:
-    if options.filename:
-      os.remove (options.filename)
-    exit (1)
+  print_output (args[0])

@@ -111,9 +111,29 @@
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
+#define RUN_TEST_fi_f(FUNC_NAME, ARG_STR, ARG1, ARG2,  EXPECTED, EXTRAFLAGS) \
+  do {                                                                  \
+   COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
+   check_float (test_name, FUNC (FUNC_NAME) (ARG1, ARG2), EXPECTED,	\
+		EXTRAFLAGS);						\
+   COMMON_TEST_CLEANUP;                                                 \
+  } while (0)
+
 
 #define MANT_DIG CHOOSE ((DEC128_MANT_DIG-1), (DEC64_MANT_DIG-1), (DEC32_MANT_DIG-1))
 #define MIN_EXP CHOOSE ((DEC128_MIN_EXP-1), (DEC64_MIN_EXP-1), (DEC32_MIN_EXP-1))
+
+#define SUBNORMAL_MIN CHOOSE ( __DEC128_SUBNORMAL_MIN__, \
+                               __DEC64_SUBNORMAL_MIN__,  \
+                               __DEC32_SUBNORMAL_MIN__ )
+
+#define NORMAL_MAX CHOOSE ( __DEC128_MAX__, \
+                            __DEC64_MAX__,  \
+                            __DEC32_MAX__ )
+
+#define NORMAL_MAX_ULP CHOOSE ( 1e6111DL, \
+                                1e369DD,  \
+                                1e90DF )
 
 #define PRINTF_EXPR CHOOSE ("DDe", "De", "He")
 #define PRINTF_NEXPR CHOOSE ("DDf", "Df", "Hf")
@@ -172,32 +192,19 @@ find_test_ulps (const char *name)
 static FLOAT
 ulp (FLOAT value)
 {
-  FLOAT ulp;
+  value = FUNC (fabs) (value);
 
-  switch (fpclassify (value))
-    {
-      case FP_ZERO:
-        /* We compute the distance to the next FP which is the same as the
-           value of the smallest subnormal number. Previously we used
-           10^(-MANT_DIG) which is too large a value to be useful. Note that we
-           can't use ilogb(0), since that isn't a valid thing to do.  */
-        /* Fall through...  */
-      case FP_SUBNORMAL:
-        /* The next closest subnormal value is a constant distance away.  */
-        /* TODO: check it  */
-        ulp = FUNC(ldexp) (1.0DF, MIN_EXP - MANT_DIG);
-        break;
+  /* Sanity check. Values should always be finite. */
+  if (FUNC(isinf) (value) || FUNC(isnan) (value))
+    abort ();
 
-      case FP_NORMAL:
-        ulp = FUNC(ldexp) (1.0DF, FUNC(ilogb) (value) - (MANT_DIG) - 1);
-        break;
+  /* TODO: Subnormals aren't handled well by libdfp today. */
+  if (FUNC(fpclassify) (value) == FP_SUBNORMAL)
+    return SUBNORMAL_MIN;
+  if (value == NORMAL_MAX)
+    return NORMAL_MAX_ULP;
 
-      default:
-        /* It should never happen. */
-        abort ();
-        break;
-    }
-  return ulp;
+  return FUNC(nextafter) (value, DEC_INFINITY) - value;
 }
 
 static void
