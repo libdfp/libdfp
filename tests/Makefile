@@ -40,6 +40,10 @@ libdfp_c_tests = test-printf test-amort test-decode test-inexact-exception \
 		 test-isunordered-d32 test-isunordered-d64 test-isunordered-d128 \
 		 test-islessgreater-d32 test-islessgreater-d64 test-islessgreater-d128
 
+ifeq ($(libdfp-has-timode),yes)
+libdfp_c_tests += test-fix test-float
+endif
+
 include $(top_srcdir)/tests/Makefile.autotest
 
 libdfp_c_autotests = $(foreach test, $(libdfp-auto-tests), $(foreach type, d32 d64 d128, test-$(test)-$(type)))
@@ -47,6 +51,24 @@ libdfp_c_autotests = $(foreach test, $(libdfp-auto-tests), $(foreach type, d32 d
 $(addsuffix .out,$(libdfp_c_autotests)) : test-extra-opts += -u $(basename $^).ulp
 
 libdfp_c_tests += $(libdfp_c_autotests)
+
+test-%-d%: $(addsuffix .os,$@)
+	$(CC) $(CFLAGS) $(sysdeps-CFLAGS) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$^ -o $@
+test-%-d32.c: %.input
+	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal32 $^ > $(top_builddir)/$@
+test-%-d64.c: %.input
+	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal64 $^ > $(top_builddir)/$@
+test-%-d128.c: %.input
+	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal128 $^ > $(top_builddir)/$@
+
+ulps-file = $(shell find $(sysdep_dirs:%=$(top_srcdir)/%/) \
+			 -name libdfp-test-ulps | head -1)
+
+libdfp-test-ulps.h: $(ulps-file)
+	$(top_srcdir)/tests/gen-libdfp-ulps.py $< -o $@
+
+# Add the ULP file generation explicity rule
+$(addprefix $(objpfx), $(libdfp_c_tests)): $(top_builddir)/libdfp-test-ulps.h
 
 regen-ulps:
 	for i in $(libdfp-auto-tests); do \

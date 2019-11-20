@@ -149,11 +149,11 @@ sp +=
 # are searched based on -I precedence during the compilation invocation.
 VPATH := $(subst $(sp),:,$(all_srcdirs))
 
+all: first libdfp
+
 # The sysdeps subdirs aren't recursively invoked, they're included so that
 # they can add files to the libdfp_files list.
 include $(foreach dir,$(makefile_dirs), $(dir)/Makefile )
-
-all: first libdfp
 
 # Fake rule to output the VPATH before we build anything.  Don't use .PHONY
 # because we want this printed each time.
@@ -267,11 +267,6 @@ $(top_builddir)/libdfp.map: $(top_builddir)/sysd-versions
 
 GLIBC_LIBS := -lc -lm
 
-
-ifeq ($(libdfp-has-timode),yes)
-libdfp_c_tests += test-fix test-float
-endif
-
 # Only enable C++ tests if compiler supports std::decimal (GCC 4.5+),
 # otherwise just skip them.
 ifeq ($(cxxdecimal), yes)
@@ -292,14 +287,6 @@ $(addsuffix .os, $(libdfp_tests)): $(top_srcdir)/tests/libdfp-test.c
 # need to be rebuilt.
 $(addsuffix .os, $(libdfp_cxx_tests)): $(top_srcdir)/dfp/decimal/decimal $(top_srcdir)/dfp/float.h
 
-# Add the ULP file generation explicity rule
-$(addprefix $(objpfx), $(libdfp_tests)): $(top_builddir)/libdfp-test-ulps.h
-
-ulps-file = $(shell find $(sysdep_dirs:%=$(top_srcdir)/%/) \
-			 -name libdfp-test-ulps | head -1)
-$(top_builddir)/libdfp-test-ulps.h: $(ulps-file)
-	$(top_srcdir)/tests/gen-libdfp-ulps.py $< -o $@
-
 # Explicitly link against the uninstalled GLIBC and the libdfp.so.1 we just
 # built.
 $(libdfp_c_tests): CFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests -Wl,--no-as-needed
@@ -311,15 +298,6 @@ $(libdfp_c_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 $(libdfp_cxx_tests): CXXFLAGS += -DNOT_IN_libdfp -I$(top_srcdir)/tests -Wl,--no-as-needed
 $(libdfp_cxx_tests): %:%.os $(top_builddir)/$(SHARED_SONAME_LIB)
 	$(CXX) $(CXXFLAGS) $(CXXFLAGS-sysdeps) $(top_builddir)/$(addsuffix .os,$@) -o $@ $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp
-
-test-%-d%: $(addsuffix .os,$@)
-	$(CC) $(CFLAGS) $(sysdeps-CFLAGS) $(GLIBC_LIBS) -L$(top_builddir)/ -ldfp $(top_builddir)/$^ -o $@
-test-%-d32.c: %.input
-	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal32 $^ > $(top_builddir)/$@
-test-%-d64.c: %.input
-	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal64 $^ > $(top_builddir)/$@
-test-%-d128.c: %.input
-	$(top_srcdir)/tests/gen-libdfp-tests.py -t decimal128 $^ > $(top_builddir)/$@
 
 # The name to give to a test in test results summaries.
 test-name = $(strip $(patsubst %.out, %, $@))
