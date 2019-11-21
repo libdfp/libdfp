@@ -1,7 +1,7 @@
 test cos
-decimal128 2773443
-decimal32 4020203
-decimal64 6508459
+decimal128 0
+decimal32 0
+decimal64 0
 
 test acos
 decimal128 1
@@ -9,9 +9,9 @@ decimal32 0
 decimal64 0
 
 test sin
-decimal128 116
-decimal32 346
-decimal64 239
+decimal128 0
+decimal32 0
+decimal64 0
 
 test log
 decimal128 0
@@ -29,7 +29,7 @@ decimal32 1
 decimal64 0
 
 test exp
-decimal128 0
+decimal128 1
 decimal32 0
-decimal64 0
+decimal64 3
 
