@@ -31,6 +31,8 @@
 #include <math.h>
 #include <ieee754r_private.h>
 
+#include "dfp_inline.h"
+
 /* Generated lookup tables */
 #include "t_expd128.h"
 

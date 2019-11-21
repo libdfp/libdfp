@@ -22,14 +22,13 @@
 
 #include <math.h>
 
+#include "dfp_inline.h"
+
+#undef __quantized64
+
 _Decimal64
 __quantized64 (_Decimal64 x, _Decimal64 y)
 {
-  _Decimal64 result;
-
-  asm ("dqua %0,%1,%2,3;"
-	: "=f" (result)
-	: "f" (y), "f" (x));
-  return result;
+  return ___quantized64 (x, y);
 }
 weak_alias (__quantized64, quantized64)

@@ -1,6 +1,7 @@
-/* Set the exponent of x to the exp of y, trying to preserve the value of x
+/* Internal ieee754r function prototypes used by libdfp
+   for powerpc
 
-   Copyright (C) 2010-2015 Free Software Foundation, Inc.
+   Copyright (C) 2019 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
@@ -18,17 +19,28 @@
    if not, write to the Free Software Foundation, Inc., 59 Temple Place,
    Suite 330, Boston, MA 02111-1307 USA.
 
-   Please see libdfp/COPYING.txt for more information.  */
+   Please see dfp/COPYING.txt for more information.  */
 
-#include <math.h>
+#ifndef _DFP_INLINE_H
+#define _DFP_INLINE_H
 
-#include "dfp_inline.h"
-
-#undef __quantized128
-
-_Decimal128
-__quantized128(_Decimal128 x, _Decimal128 y)
+inline _Decimal128
+___quantized128 (_Decimal128 x, _Decimal128 y)
 {
-  return ___quantized128 (x, y);
-}
-weak_alias (__quantized128, quantized128)
+  _Decimal128 result;
+  asm ("dquaq %0,%1,%2,3\n\t" : "=f" (result) : "f" (y), "f" (x));
+  return result;
+};
+
+inline _Decimal64
+___quantized64 (_Decimal64 x, _Decimal64 y)
+{
+  _Decimal64 result;
+  asm ("dqua %0,%1,%2,3\n\t" : "=f" (result) : "f" (y), "f" (x));
+  return result;
+};
+
+#define __quantized64(x, y) ___quantized64(x, y)
+#define __quantized128(x, y) ___quantized128(x, y)
+
+#endif
