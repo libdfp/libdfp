@@ -25,18 +25,14 @@
 #include <math.h>
 #include <ieee754r_private.h>
 
+#include "dfp_inline.h"
+
+#undef __isfinited128
+
 int
 __isfinited128 (_Decimal128 val)
 {
-  int cr0;
-
-  asm ("dtstdcq cr0,%1,0x38\n"
-       "mfcr     %0, 128\n"
-    : "=r" (cr0)
-    : "f" (val)
-    : "cr0");
-
-  return (cr0 & 0x20000000) ? 1 : 0;
+  return ___isfinited128 (val);
 }
 hidden_def (__isfinited128)
 weak_alias (__isfinited128, isfinited128)

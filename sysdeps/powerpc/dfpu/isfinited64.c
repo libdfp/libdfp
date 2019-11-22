@@ -25,18 +25,14 @@
 #include <math.h>
 #include <ieee754r_private.h>
 
+#include "dfp_inline.h"
+
+#undef __isfinited64
+
 int
 __isfinited64 (_Decimal64 x)
 {
-  int cr0;
-
-  asm ("dtstdc cr0,%1,0x38\n"
-       "mfcr   %0, 128\n"
-    : "=r" (cr0)
-    : "f" (x)
-    : "cr0");
-
-  return (cr0 & 0x20000000) ? 1 : 0;
+  return ___isfinited64 (x);
 }
 hidden_def (__isfinited64)
 weak_alias (__isfinited64, isfinited64)
