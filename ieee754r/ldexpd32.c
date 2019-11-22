@@ -40,6 +40,8 @@
 #include <numdigits.h>
 #include <limits.h>
 
+#include "dfp_inline.h"
+
 static DEC_TYPE
 IEEE_FUNCTION_NAME (DEC_TYPE x, int y)
 {
