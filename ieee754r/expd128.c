@@ -30,6 +30,7 @@
 
 #include <math.h>
 #include <ieee754r_private.h>
+#include <dfp/fenv.h>
 
 #include "dfp_inline.h"
 
@@ -81,6 +82,8 @@ __expd128 (_Decimal128 val)
       else
 	return 0.0DL;
     }
+
+  SET_RESTORE_DROUND (FE_DEC_TONEAREST)
 
   /*
      First, reduce range via fitting an integer such that

@@ -24,6 +24,8 @@
 #ifndef _DFP_INLINE_H
 #define _DFP_INLINE_H
 
+#include <dfp/fenv.h>
+
 inline _Decimal128
 ___quantized128 (_Decimal128 x, _Decimal128 y)
 {
@@ -42,5 +44,23 @@ ___quantized64 (_Decimal64 x, _Decimal64 y)
 
 #define __quantized64(x, y) ___quantized64(x, y)
 #define __quantized128(x, y) ___quantized128(x, y)
+
+inline void
+__restore_rnd (double *state)
+{
+  asm volatile ( "mtfsf 1, %0, 0, 1\n" : : "f" (*state));
+}
+
+#ifdef _ARCH_PWR9
+#define SET_RESTORE_DROUND(mode) \
+  double __rnd __attribute__ ((__cleanup__ (__restore_rnd))); \
+  asm volatile ("mffscdrni %0, %1\n" : "=f"(__rnd) : "i" (mode))
+#else
+/* Note, mffsl decodes as mffs on older machines, so take the free speedup where available. */
+/* The mffls snippet is taken from glibc. Thanks Paul Clarke! */
+#define SET_RESTORE_DROUND(mode) \
+  double __rnd __attribute__ ((__cleanup__ (__restore_rnd))); \
+  asm volatile (".machine push; .machine \"power9\"; mffsl %0; .machine pop; mtfsfi 7, %1, 1\n" : "=f" (__rnd) : "i" (mode));
+#endif
 
 #endif
