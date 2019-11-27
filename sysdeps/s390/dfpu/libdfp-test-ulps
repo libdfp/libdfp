@@ -1,15 +1,35 @@
-# ULP file for s390x with hardware decimal floating point
+test cos
+decimal128 0
+decimal32 0
+decimal64 0
 
-# exp
-test exp 88.72269439697265625
-# TODO check why these ulps are so high (same as powerpc)
-decimal32 15
-decimal64 13
+test acos
+decimal128 1
+decimal32 0
+decimal64 0
 
-# log1p
-test log1p 3.141592653589793238462643383279503
+test sin
+decimal128 0
+decimal32 0
+decimal64 0
+
+test log
+decimal128 0
+decimal32 0
+decimal64 0
+
+test log10
+decimal128 0
+decimal32 0
+decimal64 0
+
+test log1p
+decimal128 0
 decimal32 1
+decimal64 0
 
-# log10
-test log10 3.141592653589793238462643383279503
-decimal64 1
+test exp
+decimal128 1
+decimal32 0
+decimal64 3
+
