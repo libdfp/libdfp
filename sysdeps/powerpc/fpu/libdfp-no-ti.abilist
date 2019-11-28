@@ -314,6 +314,11 @@ LIBDFP_1.0.2
  __isnand128 F
  __isnand32 F
  __isnand64 F
+LIBDFP_1.0.15
+ LIBDFP_1.0.15 A
+ nextupd128 F
+ nextupd32 F
+ nextupd64 F
 LIBDFP_1.0.3
  LIBDFP_1.0.3 A
  __fabsd128 F

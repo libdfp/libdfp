@@ -306,6 +306,11 @@ LIBDFP_1.0.0
  wcstod64 F
 LIBDFP_1.0.13
  LIBDFP_1.0.13 A
+LIBDFP_1.0.15
+ LIBDFP_1.0.15 A
+ nextupd128 F
+ nextupd32 F
+ nextupd64 F
 LIBDFP_1.0.2
  LIBDFP_1.0.2 A
  __isinfd128 F
