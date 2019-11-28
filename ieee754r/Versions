@@ -262,9 +262,10 @@ libdfp {
     quantumd32;
     quantumd64;
     quantumd128;
+  }
+  LIBDFP_1.0.15 {
     nextdownd32;
     nextdownd64;
     nextdownd128;
-
   }
 }

@@ -318,6 +318,11 @@ LIBDFP_1.0.13
  __dpd_floatunstidd F
  __dpd_floatunstisd F
  __dpd_floatunstitd F
+LIBDFP_1.0.15
+ LIBDFP_1.0.15 A
+ nextdownd128 F
+ nextdownd32 F
+ nextdownd64 F
 LIBDFP_1.0.2
  LIBDFP_1.0.2 A
  __isinfd128 F
