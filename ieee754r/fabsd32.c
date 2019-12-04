@@ -1,11 +1,10 @@
 /* Calculate the absolute value for a _Decimal32 type
 
-   Copyright (C) 2006 IBM Corporation.
-   Copyright (C) 2007-2015 Free Software Foundation, Inc.
+   Copyright (C) 2007-2020 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
 
-   Author(s): Joseph Kerian <jkerian@us.ibm.com>
+   Author(s): Joseph Kerian <jkerian@us.ibm.com>, Pedro Caldeira <caldeira@linux.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -28,8 +27,6 @@
 #  include <decimal32.h>
 #endif
 
-#include <decContext.h>
-#include <decNumber.h>
 #include <math.h>
 #include <ieee754r_private.h>
 
@@ -40,19 +37,13 @@
 DEC_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
-  decContext context;
-  decNumber dn_result;
-  DEC_TYPE result;
-  decNumber dn_x;
-
-  FUNC_CONVERT_TO_DN (&x, &dn_x);
-
-  decContextDefault (&context, DEFAULT_CONTEXT);
-  decNumberAbs (&dn_result, &dn_x, &context);
-
-  FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
-
-  return result;
+  DEC_TYPE result = x;
+  unsigned char *p = (unsigned char*) &result;
+  #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    p += sizeof(DEC_TYPE)-1;
+  #endif
+  *p = *p & 0x7Fu;
+  return result; 
 }
 hidden_def (INTERNAL_FUNCTION_NAME)
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
