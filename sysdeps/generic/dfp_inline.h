@@ -32,7 +32,7 @@ struct _rnd_state
   int old_mode;
 };
 
-inline void
+static inline __attribute__((always_inline)) void
 __restore_rnd (struct _rnd_state *state)
 {
   if (state->changed)
