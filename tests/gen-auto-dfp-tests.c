@@ -109,9 +109,9 @@ enum dec_type
 
 struct dec_fmt_param dec_fmt_param[] =
 {
-  {7, 96, -95, "decimal32"},
-  {16, 384, -383, "decimal64"},
-  {34, 6144, -6143, "decimal128"},
+  {7, 96, -95 - 6, "decimal32"},
+  {16, 384, -383 - 15, "decimal64"},
+  {34, 6144, -6143 - 33, "decimal128"},
 };
 #define DEC_MAX_FMT_STR (10)
 
@@ -434,7 +434,7 @@ init_fmt(void)
       memset(d.v[i], '9', dec_fmt_param[i].p);
       sprintf(d.v[i] + p,"e%d",dec_fmt_param[i].emax - p + 1);
       mpfr_init_set_str(dec_fmt_param[i].frmax, d.v[i], 10, MPFR_RNDZ);
-      sprintf(d.v[i] + dec_fmt_param[i].p,"e%d",dec_fmt_param[i].emin);
+      sprintf(d.v[i],"1e%d",dec_fmt_param[i].emin);
       mpfr_init_set_str(dec_fmt_param[i].frmin, d.v[i], 10, MPFR_RNDZ);
       /* mpfr_printf("%.*Re\n", dec_fmt_param[i].p - 1, dec_fmt_param[i].frmin); */
       /* mpfr_printf("%.*Re\n", dec_fmt_param[i].p - 1, dec_fmt_param[i].frmax); */
