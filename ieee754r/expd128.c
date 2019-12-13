@@ -83,7 +83,7 @@ __expd128 (_Decimal128 val)
 	return 0.0DL;
     }
 
-  SET_RESTORE_DROUND (FE_DEC_TONEAREST)
+  SET_RESTORE_DROUND (FE_DEC_TONEAREST);
 
   /*
      First, reduce range via fitting an integer such that
