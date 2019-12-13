@@ -1,4 +1,0 @@
-# Pick up the power6 versions of files since power7 supports hardware-dfp as
-# well.
-sysdeps/powerpc/powerpc64/power6/dfpu
-
