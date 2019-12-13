@@ -1,11 +1,8 @@
 /* Decimal Floating Point truncate 128-bit to 32-bit.
 
-   Copyright (C) 2006-2015 Free Software Foundation, Inc.
+   Copyright (C) 2019 Free Software Foundation, Inc.
 
    This file is part of the Decimal Floating Point C Library.
-
-   Author(s): Steven J. Munroe  <sjmunroe@us.ibm.com>
-              Ryan S. Arnold  <rsa@us.ibm.com>
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -23,16 +20,24 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#include <sysdep.h>
+#include <dfpacc.h>
 
-	.machine	"power6"
-/* _Decimal32 __dpd_trunctdsd2 (_Decimal128 x)  */
-ENTRY (__dpd_trunctdsd2)
-	mffs    fp4     /* Save current rounding mode.  */
-	mtfsfi  7, 7, 1 /* Set round to prepare for shorter.  */
-	drdpq	fp0,fp2	/* Initial round to _Decimal64.  */
-	mtfsf   0xff,fp4,1,0 /* Restore previous rounding mode.  */
-	drsp	fp1,fp0	/* Round result to _Decimal32.  */
-	blr
-END (__dpd_trunctdsd2)
+#include "dfp_inline.h"
+
+_Decimal32
+__dpd_trunctdsd2 (_Decimal128 d)
+{
+  _Decimal64 tmp;
+  {
+    SET_RESTORE_DROUND (7);	/* Round to prepare for shorter */
+    tmp = d;
+    /* TODO: The compiler should respect our wishes, but we can't give it the hint
+       we've munged fpscr with inline asm. So, create a dependency between
+       the rounding variable and our computation. */
+    asm volatile ("":"+f" (__rnd), "+f" (d));
+  }
+  /* Round from D64 -> D32 using the current rounding mode. */
+  return tmp;
+}
+
 hidden_def (__dpd_trunctdsd2)
