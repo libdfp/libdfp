@@ -85,7 +85,7 @@ __restore_rnd (double *state)
 #ifdef _ARCH_PWR9
 #define SET_RESTORE_DROUND(mode) \
   double __rnd __attribute__ ((__cleanup__ (__restore_rnd))); \
-  asm volatile ("mffscdrni %0, %1\n" : "=f"(__rnd) : "i" (mode))
+  asm volatile ("mffscdrni %0, %1\n" : "=f"(__rnd) : "i" (mode));
 #else
 /* Note, mffsl decodes as mffs on older machines, so take the free speedup where available. */
 /* The mffls snippet is taken from glibc. Thanks Paul Clarke! */
