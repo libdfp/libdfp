@@ -109,7 +109,6 @@ __logd128 (_Decimal128 x)
       z = x - 1.0DL;
       m = 0;
       t = lntvals[m].t;
-      printf ("no table\n");
     }
   else
     {
