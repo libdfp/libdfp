@@ -1,5 +1,5 @@
 /* Decimal number arithmetic module for the decNumber C Library.
-   Copyright (C) 2005-2015 Free Software Foundation, Inc.
+   Copyright (C) 2005-2019 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -179,7 +179,6 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include "dconfig.h"		   /* for GCC definitions */
 #include "decNumber.h"		   /* base number library */
 #include "decNumberLocal.h"	   /* decNumber local types, etc. */
-#include "decDebug.h"
 
 /* Constants */
 /* Public lookup table used by the D2U macro */
@@ -326,6 +325,7 @@ static void decCheckInexact(const decNumber *, decContext *);
 
 #if DECTRACE || DECCHECK
 /* Optional trace/debugging routines (may or may not be used) */
+void decNumberShow(const decNumber *);	/* displays the components of a number */
 static void decDumpAr(char, const Unit *, Int);
 #endif
 
@@ -2171,7 +2171,7 @@ decNumber * decNumberPower(decNumber *res, const decNumber *lhs,
       /* if a negative power the constant 1 is needed, and if not subset */
       /* invert the lhs now rather than inverting the result later */
       if (decNumberIsNegative(rhs)) {	/* was a **-n [hence digits>0] */
-	decNumber *inv=invbuff; 	/* asssume use fixed buffer */
+	decNumber *inv=invbuff; 	/* assume use fixed buffer */
 	decNumberCopy(&dnOne, dac);	/* dnOne=1;  [needed now or later] */
 	#if DECSUBSET
 	if (set->extended) {		/* need to calculate 1/lhs */
@@ -5197,7 +5197,7 @@ static decNumber * decMultiplyOp(decNumber *res, const decNumber *lhs,
 /*    exp(-x) where x can be the tiniest number (Ntiny).	      */
 /*								      */
 /* 2. Normalizing x to be <=0.1 (instead of <=1) reduces loop	      */
-/*    iterations by appoximately a third with additional (although    */
+/*    iterations by approximately a third with additional (although    */
 /*    diminishing) returns as the range is reduced to even smaller    */
 /*    fractions.  However, h (the power of 10 used to correct the     */
 /*    result at the end, see below) must be kept <=8 as otherwise     */
@@ -6029,11 +6029,11 @@ decNumber * decCompareOp(decNumber *res, const decNumber *lhs,
 
     /* If total ordering then handle differing signs 'up front' */
     if (op==COMPTOTAL) {		/* total ordering */
-      if (decNumberIsNegative(lhs) & !decNumberIsNegative(rhs)) {
+      if (decNumberIsNegative(lhs) && !decNumberIsNegative(rhs)) {
 	result=-1;
 	break;
 	}
-      if (!decNumberIsNegative(lhs) & decNumberIsNegative(rhs)) {
+      if (!decNumberIsNegative(lhs) && decNumberIsNegative(rhs)) {
 	result=+1;
 	break;
 	}
@@ -7585,7 +7585,7 @@ static Int decGetInt(const decNumber *dn) {
   /* tricky code now, to accumulate up to 9.3 digits */
   if (got==0) {theInt=*up; got+=DECDPUN; up++;} /* ensure lsu is there */
 
-  if (ilength<10) {
+  if (ilength<11) {
     Int save=theInt;
     /* collect any remaining unit(s) */
     for (; got<ilength; up++) {
@@ -7795,6 +7795,59 @@ static Int decGetDigits(Unit *uar, Int len) {
   return digits;
   } /* decGetDigits */
 
+#if DECTRACE | DECCHECK
+/* ------------------------------------------------------------------ */
+/* decNumberShow -- display a number [debug aid]		      */
+/*   dn is the number to show					      */
+/*								      */
+/* Shows: sign, exponent, coefficient (msu first), digits	      */
+/*    or: sign, special-value					      */
+/* ------------------------------------------------------------------ */
+/* this is public so other modules can use it */
+void decNumberShow(const decNumber *dn) {
+  const Unit *up;		   /* work */
+  uInt u, d;			   /* .. */
+  Int cut;			   /* .. */
+  char isign='+';		   /* main sign */
+  if (dn==NULL) {
+    printf("NULL\n");
+    return;}
+  if (decNumberIsNegative(dn)) isign='-';
+  printf(" >> %c ", isign);
+  if (dn->bits&DECSPECIAL) {	   /* Is a special value */
+    if (decNumberIsInfinite(dn)) printf("Infinity");
+     else {				     /* a NaN */
+      if (dn->bits&DECSNAN) printf("sNaN");  /* signalling NaN */
+       else printf("NaN");
+      }
+    /* if coefficient and exponent are 0, no more to do */
+    if (dn->exponent==0 && dn->digits==1 && *dn->lsu==0) {
+      printf("\n");
+      return;}
+    /* drop through to report other information */
+    printf(" ");
+    }
+
+  /* now carefully display the coefficient */
+  up=dn->lsu+D2U(dn->digits)-1; 	/* msu */
+  printf("%ld", (LI)*up);
+  for (up=up-1; up>=dn->lsu; up--) {
+    u=*up;
+    printf(":");
+    for (cut=DECDPUN-1; cut>=0; cut--) {
+      d=u/powers[cut];
+      u-=d*powers[cut];
+      printf("%ld", (LI)d);
+      } /* cut */
+    } /* up */
+  if (dn->exponent!=0) {
+    char esign='+';
+    if (dn->exponent<0) esign='-';
+    printf(" E%c%ld", esign, (LI)abs(dn->exponent));
+    }
+  printf(" [%ld]\n", (LI)dn->digits);
+  } /* decNumberShow */
+#endif
 
 #if DECTRACE || DECCHECK
 /* ------------------------------------------------------------------ */

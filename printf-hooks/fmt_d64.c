@@ -25,5 +25,4 @@
 
 #define _DECIMAL_SIZE 64
 #include <decimal64.h>
-#include <dfptypeconv64.h>
 #include "fmt_d32.c"

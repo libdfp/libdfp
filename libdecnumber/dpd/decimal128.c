@@ -1,5 +1,5 @@
 /* Decimal 128-bit format module for the decNumber C Library.
-   Copyright (C) 2005-2015 Free Software Foundation, Inc.
+   Copyright (C) 2005-2019 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -54,6 +54,7 @@ extern void decDigitsToDPD(const decNumber *, uInt *, Int);
 
 #if DECTRACE || DECCHECK
 void decimal128Show(const decimal128 *);	  /* for debug */
+extern void decNumberShow(const decNumber *);	  /* .. */
 #endif
 
 /* Useful macro */
@@ -166,11 +167,20 @@ decimal128 * decimal128FromNumber(decimal128 *d128, const decNumber *dn,
   if (dn->bits&DECNEG) targhi|=0x80000000; /* add sign bit */
 
   /* now write to storage; this is endian */
-  /* hi -> lo */
-  UBFROMUIBW(d128->bytes,    targhi);
-  UBFROMUIBW(d128->bytes+4,  targmh);
-  UBFROMUIBW(d128->bytes+8,  targml);
-  UBFROMUIBW(d128->bytes+12, targlo);
+  if (DECLITEND) {
+    /* lo -> hi */
+    UBFROMUI(d128->bytes,    targlo);
+    UBFROMUI(d128->bytes+4,  targml);
+    UBFROMUI(d128->bytes+8,  targmh);
+    UBFROMUI(d128->bytes+12, targhi);
+    }
+   else {
+    /* hi -> lo */
+    UBFROMUI(d128->bytes,    targhi);
+    UBFROMUI(d128->bytes+4,  targmh);
+    UBFROMUI(d128->bytes+8,  targml);
+    UBFROMUI(d128->bytes+12, targlo);
+    }
 
   if (status!=0) decContextSetStatus(set, status); /* pass on status */
   /* decimal128Show(d128); */
@@ -196,10 +206,18 @@ decNumber * decimal128ToNumber(const decimal128 *d128, decNumber *dn) {
   #define sourlo sourar[0]	   /* and the lowest word */
 
   /* load source from storage; this is endian */
-  sourhi=UBTOUIBW(d128->bytes	); /* directly load the high int */
-  sourmh=UBTOUIBW(d128->bytes+4 ); /* then the mid-high */
-  sourml=UBTOUIBW(d128->bytes+8 ); /* then the mid-low */
-  sourlo=UBTOUIBW(d128->bytes+12); /* then the low int */
+  if (DECLITEND) {
+    sourlo=UBTOUI(d128->bytes	); /* directly load the low int */
+    sourml=UBTOUI(d128->bytes+4 ); /* then the mid-low */
+    sourmh=UBTOUI(d128->bytes+8 ); /* then the mid-high */
+    sourhi=UBTOUI(d128->bytes+12); /* then the high int */
+    }
+   else {
+    sourhi=UBTOUI(d128->bytes	); /* directly load the high int */
+    sourmh=UBTOUI(d128->bytes+4 ); /* then the mid-high */
+    sourml=UBTOUI(d128->bytes+8 ); /* then the mid-low */
+    sourlo=UBTOUI(d128->bytes+12); /* then the low int */
+    }
 
   comb=(sourhi>>26)&0x1f;	   /* combination field */
 

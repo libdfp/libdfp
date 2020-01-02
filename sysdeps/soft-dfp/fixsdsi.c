@@ -50,15 +50,13 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
   char *pos;
   decNumber qval, n1, n2;
   decContext context;
-  IEEE_SRC_TYPE e;
 
   /* Use a large context to avoid losing precision.  */
   decContextDefault (&context, DEC_INIT_DECIMAL128);
   /* Need non-default rounding mode here.  */
   context.round = DEC_ROUND_DOWN;
 
-  PASTE(___host_to_ieee_,SRC) ((&a), &e);
-  PASTE(decimal,PASTE(SRC,ToNumber))(&e, &n1);
+  PASTE(decimal,PASTE(SRC,ToNumber))((IEEE_SRC_TYPE*)&a, &n1);
   /* PASTE(decimal,PASTE(SRC,ToNumber))(&a, &n1); */
 
   /* Rescale if the exponent is less than zero.  */

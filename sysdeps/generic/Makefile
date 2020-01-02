@@ -1,1 +1,1 @@
-libdfp_files += dfptypeconv mapround decode fe_decround libdfp-version
+libdfp_files += mapround decode fe_decround libdfp-version

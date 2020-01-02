@@ -25,6 +25,5 @@
 #define DEST 64
 #define NAME trunc
 #include "decimal64.h"
-#include <dfptypeconv64.h>
 
 #include "trunctfsd.c"

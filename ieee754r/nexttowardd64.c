@@ -27,7 +27,6 @@
 
 /* Always include this since we need a _Decimal128 converted to a decNumber */
 #include <decimal128.h>
-#include <dfptypeconv128.h>
 #include <decimal64.h>
 
 #include "nexttowardd32.c"

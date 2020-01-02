@@ -1,5 +1,5 @@
-/* Decimal 64-bit format module header for the decNumber C Library.
-   Copyright (C) 2005-2015 Free Software Foundation, Inc.
+/* Decimal 32-bit format module header for the decNumber C Library.
+   Copyright (C) 2005-2019 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -24,46 +24,44 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 <http://www.gnu.org/licenses/>.  */
 
 /* ------------------------------------------------------------------ */
-/* Decimal 64-bit format module header				      */
+/* Decimal 32-bit format module header				      */
 /* ------------------------------------------------------------------ */
 
-#if !defined(DECIMAL64)
-  #define DECIMAL64
-  #define DEC64NAME	"decimal64"		      /* Short name   */
-  #define DEC64FULLNAME "Decimal 64-bit Number"       /* Verbose name */
-  #define DEC64AUTHOR	"Mike Cowlishaw"	      /* Who to blame */
+#if !defined(DECIMAL32)
+  #define DECIMAL32
+  #define DEC32NAME	"decimal32"		      /* Short name   */
+  #define DEC32FULLNAME "Decimal 32-bit Number"       /* Verbose name */
+  #define DEC32AUTHOR	"Mike Cowlishaw"	      /* Who to blame */
 
-
-  /* parameters for decimal64s					      */
-  #define DECIMAL64_Bytes  8		/* length		      */
-  #define DECIMAL64_Pmax   16		/* maximum precision (digits) */
-  #define DECIMAL64_Emax   384		/* maximum adjusted exponent  */
-  #define DECIMAL64_Emin  -383		/* minimum adjusted exponent  */
-  #define DECIMAL64_Bias   398		/* bias for the exponent      */
-  #define DECIMAL64_String 24		/* maximum string length, +1  */
-  #define DECIMAL64_EconL  8		/* exp. continuation length   */
+  /* parameters for decimal32s */
+  #define DECIMAL32_Bytes  4		/* length		      */
+  #define DECIMAL32_Pmax   7		/* maximum precision (digits) */
+  #define DECIMAL32_Emax   96		/* maximum adjusted exponent  */
+  #define DECIMAL32_Emin  -95		/* minimum adjusted exponent  */
+  #define DECIMAL32_Bias   101		/* bias for the exponent      */
+  #define DECIMAL32_String 15		/* maximum string length, +1  */
+  #define DECIMAL32_EconL  6		/* exp. continuation length   */
   /* highest biased exponent (Elimit-1) 			      */
-  #define DECIMAL64_Ehigh  (DECIMAL64_Emax+DECIMAL64_Bias-DECIMAL64_Pmax+1)
+  #define DECIMAL32_Ehigh  (DECIMAL32_Emax+DECIMAL32_Bias-DECIMAL32_Pmax+1)
 
   /* check enough digits, if pre-defined			      */
   #if defined(DECNUMDIGITS)
-    #if (DECNUMDIGITS<DECIMAL64_Pmax)
-      #error decimal64.h needs pre-defined DECNUMDIGITS>=16 for safe use
+    #if (DECNUMDIGITS<DECIMAL32_Pmax)
+      #error decimal32.h needs pre-defined DECNUMDIGITS>=7 for safe use
     #endif
   #endif
 
-
   #ifndef DECNUMDIGITS
-    #define DECNUMDIGITS DECIMAL64_Pmax /* size if not already defined*/
+    #define DECNUMDIGITS DECIMAL32_Pmax /* size if not already defined*/
   #endif
   #ifndef DECNUMBER
     #include "decNumber.h"		/* context and number library */
   #endif
 
-  /* Decimal 64-bit type, accessible by bytes			      */
+  /* Decimal 32-bit type, accessible by bytes */
   typedef struct {
-    uint8_t bytes[DECIMAL64_Bytes];	/* decimal64: 1, 5, 8, 50 bits*/
-    } decimal64;
+    uint8_t bytes[DECIMAL32_Bytes];	/* decimal32: 1, 5, 6, 20 bits*/
+    } decimal32;
 
   /* special values [top byte excluding sign bit; last two bits are   */
   /* don't-care for Infinity on input, last bit don't-care for NaN]   */
@@ -77,23 +75,25 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   /* Routines							      */
   /* ---------------------------------------------------------------- */
 
+#include "decimal32Symbols.h"
+
   #ifdef __cplusplus
   extern "C" {
   #endif
 
   /* String conversions 					      */
-  decimal64 * decimal64FromString(decimal64 *, const char *, decContext *);
-  char * decimal64ToString(const decimal64 *, char *);
-  char * decimal64ToEngString(const decimal64 *, char *);
+  decimal32 * decimal32FromString(decimal32 *, const char *, decContext *);
+  char * decimal32ToString(const decimal32 *, char *);
+  char * decimal32ToEngString(const decimal32 *, char *);
 
   /* decNumber conversions					      */
-  decimal64 * decimal64FromNumber(decimal64 *, const decNumber *,
+  decimal32 * decimal32FromNumber(decimal32 *, const decNumber *,
 				  decContext *);
-  decNumber * decimal64ToNumber(const decimal64 *, decNumber *);
+  decNumber * decimal32ToNumber(const decimal32 *, decNumber *);
 
   /* Format-dependent utilities 				      */
-  uint32_t    decimal64IsCanonical(const decimal64 *);
-  decimal64 * decimal64Canonical(decimal64 *, const decimal64 *);
+  uint32_t    decimal32IsCanonical(const decimal32 *);
+  decimal32 * decimal32Canonical(decimal32 *, const decimal32 *);
 
   #ifdef __cplusplus
   }

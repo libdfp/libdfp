@@ -42,7 +42,6 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
   DEST_TYPE f;
   char buf[BUFMAX];
   decContext context;
-  IEEE_DEST_TYPE e;
 
   decContextDefault (&context, CONTEXT_INIT);
   context.round = DEC_ROUND_HALF_EVEN;
@@ -51,8 +50,7 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
   sprintf (buf, INT_FMT "", CAST_FOR_FMT(a));
   /* Convert from the floating point string to a decimal* type.  */
   /* PASTE(___decimal,PASTE(DEST,FromString))(&f, buf, &context);  */
-  PASTE(decimal,PASTE(DEST,FromString))(&e, buf, &context);
-  PASTE(PASTE(___ieee_,DEST),_to_host) (&e, (&f));
+  PASTE(decimal,PASTE(DEST,FromString))((IEEE_DEST_TYPE*)&f, buf, &context);
 
   if (context.status != 0) {
     int dec_flags = context.status & 

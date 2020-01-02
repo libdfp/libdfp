@@ -26,7 +26,6 @@
 # define DEST 32
 # define NAME trunc
 # include "decimal32.h"
-# include <dfptypeconv32.h>
 #endif
 
 #include "dfpacc.h"
@@ -40,7 +39,6 @@
 DEST_TYPE
 PREFIXED_FUNCTION_NAME (SRC_TYPE a)
 {
-  IEEE_DEST_TYPE e;
   DEST_TYPE f;
   char buf[BUFMAX];
   decContext context;
@@ -48,8 +46,7 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
   snprintf (buf, BUFMAX, "%.36Le", a);
 
   decContextDefault (&context, CONTEXT_INIT);
-  PASTE(decimal,PASTE(DEST,FromString))(&e, buf, &context);
-  PASTE(PASTE(___ieee_,DEST),_to_host) (&e, (&f));
+  PASTE(decimal,PASTE(DEST,FromString))((IEEE_DEST_TYPE*)&f, buf, &context);
 
   if (context.status != 0) {
     int dec_flags = context.status & 

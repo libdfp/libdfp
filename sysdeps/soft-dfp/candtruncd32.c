@@ -38,7 +38,6 @@
 #endif
 
 #include "decimal128.h"
-#include "dfptypeconv128.h"
 #include "dfpmacro.h"
 
 #include "convert_helpers.h"
@@ -68,9 +67,9 @@ FUNC_NAME (_Decimal128 hi, _Decimal128 mid, _Decimal128 low)
   decNumberFromInt32(&dn_17, 17);
   decNumberFromInt32(&dn_34, 34);
 
-  __DECIMAL_TO_DECNUMBER (&hi,  &dn_hi,  128);
-  __DECIMAL_TO_DECNUMBER (&mid, &dn_mid, 128);
-  __DECIMAL_TO_DECNUMBER (&low, &dn_low, 128);
+  decimal128ToNumber((decimal128*)&hi, &dn_hi);
+  decimal128ToNumber((decimal128*)&mid, &dn_mid);
+  decimal128ToNumber((decimal128*)&low, &dn_low);
 
   /* Rotate addends into proper position.  */
   decNumberShift(&dn_hi_s,&dn_hi,&dn_34,&context);

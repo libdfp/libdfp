@@ -26,7 +26,6 @@
 # define DEST 128
 # define NAME extend
 # include "decimal32.h"
-# include <dfptypeconv32.h>
 #endif
 
 #include "dfpacc.h"
@@ -45,12 +44,10 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
   char buf[BUFMAX];
   decNumber n;
   decContext context;
-  IEEE_SRC_TYPE e;
 
   decContextDefault (&context, CONTEXT_INIT);
 
-  PASTE(___host_to_ieee_,SRC) ((&a), &e);
-  PASTE(decimal,PASTE(SRC,ToNumber))(&e, &n);
+  PASTE(decimal,PASTE(SRC,ToNumber))((IEEE_SRC_TYPE*)&a, &n);
 
   decNumberToString (&n, buf);
 

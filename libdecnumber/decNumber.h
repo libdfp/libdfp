@@ -1,5 +1,5 @@
 /* Decimal number arithmetic module header for the decNumber C Library.
-   Copyright (C) 2005-2015 Free Software Foundation, Inc.
+   Copyright (C) 2005-2019 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -105,6 +105,8 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   /* ---------------------------------------------------------------- */
   /* decNumber public functions and macros			      */
   /* ---------------------------------------------------------------- */
+
+  #include "decNumberSymbols.h"
 
   #ifdef __cplusplus
   extern "C" {

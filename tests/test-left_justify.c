@@ -61,7 +61,7 @@
 # ifndef __SIZEOF_INT128__
 /* BID required int 128 bits and for system that does not define the type
    the mini-gmp is required.  */
-#  include "libdecnumber/mini-gmp.c"
+#  include "sysdeps/bid/mini-gmp.c"
 # endif
 #else
 # include "sysdeps/dpd/dpd-private.c"
