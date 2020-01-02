@@ -40,18 +40,14 @@ PREFIXED_FUNCTION_NAME (SRC_TYPE a)
 	DEST_TYPE result;
 	decNumber d;
 	decContext context;
-	IEEE_SRC_TYPE e;
-	IEEE_DEST_TYPE r;
 	
 	decContextDefault(&context, CONTEXT_INIT);
 	context.round = __dn_getround();
 	
-	PASTE(___host_to_ieee_,SRC) ((&a), &e);
-	PASTE(decimal,PASTE(SRC,ToNumber))(&e, &d);
+	PASTE(decimal,PASTE(SRC,ToNumber))((IEEE_SRC_TYPE*)&a, &d);
 	/* PASTE(___decimal,PASTE(SRC,ToNumber))(&a, &d); */
 	/* PASTE(___decimal,PASTE(DEST,FromNumber))(&result, &d, &context);  */
-	PASTE(decimal,PASTE(DEST,FromNumber))(&r, &d, &context);
-	PASTE(PASTE(___ieee_,DEST),_to_host) (&r, (&result));
+	PASTE(decimal,PASTE(DEST,FromNumber))((IEEE_DEST_TYPE*)&result, &d, &context);
 
 	if (context.status != 0) {
 	  int dec_flags = context.status & (DEC_IEEE_854_Inexact|DEC_IEEE_854_Invalid_operation);

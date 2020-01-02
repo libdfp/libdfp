@@ -26,7 +26,6 @@
 #ifndef _DECIMAL_SIZE
 /* Always include this since we need a _Decimal128 converted to a decNumber */
 #  include <decimal128.h>
-#  include <dfptypeconv128.h>
 #  include <decimal32.h>
 #  define _DECIMAL_SIZE 32
 #endif
@@ -55,7 +54,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, _Decimal128 y)
 /*  int comparison; */
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
-  __DECIMAL_TO_DECNUMBER(&y, &dn_y, 128);
+  decimal128ToNumber((decimal128*)&y, &dn_y);
 
   /*  Early exit for nan's */
   if (decNumberIsNaN(&dn_x))

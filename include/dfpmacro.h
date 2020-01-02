@@ -41,8 +41,7 @@
  * #include "dfpmacro.h"
  *
  * The reason for this is that decNumber sets some type dependent sizes
- * according to values set in decimalX.h. dfptypeconv.h (included below)
- * includes all three of the decimalX.h headers
+ * according to values set in decimalX.h.
  */
 
 
@@ -51,52 +50,28 @@
 #error Including dfpmacro without defining _DECIMAL_SIZE is invalid
 #endif
 
-#if _DECIMAL_SIZE == 128
-  #include <dfptypeconv128.h>
-#elif _DECIMAL_SIZE == 64
-  #include <dfptypeconv64.h>
-#else
-  #include <dfptypeconv32.h>
-#endif
-
 /* Data type to use for the generic function implementations */
 #define DEC_TYPE		PASTE(_Decimal,_DECIMAL_SIZE)
 
 /* Use these "functions" for variable preperation */
-/* They use functions provided in decimal32/64/128.c and dfptypeconv.c */
-#define FUNC_CONVERT_TO_DN(dec,dn)			\
-	__DECIMAL_TO_DECNUMBER(dec,dn,_DECIMAL_SIZE)
+/* They use functions provided in decimal32/64/128.c */
 
-#define __DECIMAL_TO_DECNUMBER(dec,dn,SIZE)			\
-do {								\
-	PASTE(decimal,SIZE)	decimal;			\
-	PASTE(___host_to_ieee_,SIZE) ((dec), &decimal);		\
-	PASTE(PASTE(decimal,SIZE),ToNumber) (&decimal,(dn));	\
-}while (0)
-
-#define FUNC_CONVERT_FROM_DN(dn,dec,context)				\
-do {									\
-	PASTE(decimal,_DECIMAL_SIZE)	decimal;			\
-	PASTE(PASTE(decimal,_DECIMAL_SIZE),FromNumber)		\
-		(&decimal, (dn), (context));				\
-	PASTE(PASTE(___ieee_,_DECIMAL_SIZE),_to_host) (&decimal, (dec));\
-}while(0)
-
-#define IEEE_DECIMAL_TO_STRING(host, str)				\
-do {									\
-	PASTE(decimal, _DECIMAL_SIZE)	decimal;			\
-	PASTE(___host_to_ieee_,_DECIMAL_SIZE)(host, &decimal);		\
-	PASTE(decimal, PASTE(_DECIMAL_SIZE,ToString))		\
-		(&decimal, str);					\
-}while(0)
-
-#define IEEE_DECIMAL_TO_ENG_STRING(host, str)				\
-do {									\
-	PASTE(decimal, _DECIMAL_SIZE)	decimal;			\
-	PASTE(___host_to_ieee_,_DECIMAL_SIZE)(host, &decimal);		\
-	PASTE(decimal, PASTE(_DECIMAL_SIZE,ToEngString))		\
-		(&decimal, str);						\
-}while(0)
+#if _DECIMAL_SIZE == 32
+#define FUNC_CONVERT_TO_DN(dec,dn) decimal32ToNumber((decimal32*)dec, (dn))
+#define FUNC_CONVERT_FROM_DN(dn,dec,context) decimal32FromNumber((decimal32*)dec, (dn), context)
+#define IEEE_DECIMAL_TO_STRING(host, str) decimal32ToString((decimal32*)host, str)
+#define IEEE_DECIMAL_TO_ENG_STRING(host, str) decimal32ToEngString((decimal32*)host, str)
+#elif _DECIMAL_SIZE == 64
+#define FUNC_CONVERT_TO_DN(dec,dn) decimal64ToNumber((decimal64*)dec, (dn))
+#define FUNC_CONVERT_FROM_DN(dn,dec,context) decimal64FromNumber((decimal64*)dec, (dn), context)
+#define IEEE_DECIMAL_TO_STRING(host, str) decimal64ToString((decimal64*)host, str)
+#define IEEE_DECIMAL_TO_ENG_STRING(host, str) decimal64ToEngString((decimal64*)host, str)
+#elif _DECIMAL_SIZE == 128
+#define FUNC_CONVERT_TO_DN(dec,dn) decimal128ToNumber((decimal128*)dec, (dn))
+#define FUNC_CONVERT_FROM_DN(dn,dec,context) decimal128FromNumber((decimal128*)dec, (dn), context)
+#define IEEE_DECIMAL_TO_STRING(host, str) decimal128ToString((decimal128*)host, str)
+#define IEEE_DECIMAL_TO_ENG_STRING(host, str) decimal128ToEngString((decimal128*)host, str)
+#endif
 
 #define DEFAULT_CONTEXT		PASTE(DEC_INIT_DECIMAL,_DECIMAL_SIZE)
 

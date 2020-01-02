@@ -1,5 +1,5 @@
-/* Decimal 128-bit format module header for the decNumber C Library.
-   Copyright (C) 2005-2015 Free Software Foundation, Inc.
+/* Decimal 64-bit format module header for the decNumber C Library.
+   Copyright (C) 2005-2019 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -24,44 +24,46 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 <http://www.gnu.org/licenses/>.  */
 
 /* ------------------------------------------------------------------ */
-/* Decimal 128-bit format module header 			      */
+/* Decimal 64-bit format module header				      */
 /* ------------------------------------------------------------------ */
 
-#if !defined(DECIMAL128)
-  #define DECIMAL128
-  #define DEC128NAME	 "decimal128"		      /* Short name   */
-  #define DEC128FULLNAME "Decimal 128-bit Number"     /* Verbose name */
-  #define DEC128AUTHOR	 "Mike Cowlishaw"	      /* Who to blame */
+#if !defined(DECIMAL64)
+  #define DECIMAL64
+  #define DEC64NAME	"decimal64"		      /* Short name   */
+  #define DEC64FULLNAME "Decimal 64-bit Number"       /* Verbose name */
+  #define DEC64AUTHOR	"Mike Cowlishaw"	      /* Who to blame */
 
-  /* parameters for decimal128s */
-  #define DECIMAL128_Bytes  16		/* length		      */
-  #define DECIMAL128_Pmax   34		/* maximum precision (digits) */
-  #define DECIMAL128_Emax   6144	/* maximum adjusted exponent  */
-  #define DECIMAL128_Emin  -6143	/* minimum adjusted exponent  */
-  #define DECIMAL128_Bias   6176	/* bias for the exponent      */
-  #define DECIMAL128_String 43		/* maximum string length, +1  */
-  #define DECIMAL128_EconL  12		/* exp. continuation length   */
+
+  /* parameters for decimal64s					      */
+  #define DECIMAL64_Bytes  8		/* length		      */
+  #define DECIMAL64_Pmax   16		/* maximum precision (digits) */
+  #define DECIMAL64_Emax   384		/* maximum adjusted exponent  */
+  #define DECIMAL64_Emin  -383		/* minimum adjusted exponent  */
+  #define DECIMAL64_Bias   398		/* bias for the exponent      */
+  #define DECIMAL64_String 24		/* maximum string length, +1  */
+  #define DECIMAL64_EconL  8		/* exp. continuation length   */
   /* highest biased exponent (Elimit-1) 			      */
-  #define DECIMAL128_Ehigh  (DECIMAL128_Emax+DECIMAL128_Bias-DECIMAL128_Pmax+1)
+  #define DECIMAL64_Ehigh  (DECIMAL64_Emax+DECIMAL64_Bias-DECIMAL64_Pmax+1)
 
   /* check enough digits, if pre-defined			      */
   #if defined(DECNUMDIGITS)
-    #if (DECNUMDIGITS<DECIMAL128_Pmax)
-      #error decimal128.h needs pre-defined DECNUMDIGITS>=34 for safe use
+    #if (DECNUMDIGITS<DECIMAL64_Pmax)
+      #error decimal64.h needs pre-defined DECNUMDIGITS>=16 for safe use
     #endif
   #endif
 
+
   #ifndef DECNUMDIGITS
-    #define DECNUMDIGITS DECIMAL128_Pmax /* size if not already defined*/
+    #define DECNUMDIGITS DECIMAL64_Pmax /* size if not already defined*/
   #endif
   #ifndef DECNUMBER
     #include "decNumber.h"		/* context and number library */
   #endif
 
-  /* Decimal 128-bit type, accessible by bytes			      */
+  /* Decimal 64-bit type, accessible by bytes			      */
   typedef struct {
-    uint8_t bytes[DECIMAL128_Bytes]; /* decimal128: 1, 5, 12, 110 bits*/
-    } decimal128;
+    uint8_t bytes[DECIMAL64_Bytes];	/* decimal64: 1, 5, 8, 50 bits*/
+    } decimal64;
 
   /* special values [top byte excluding sign bit; last two bits are   */
   /* don't-care for Infinity on input, last bit don't-care for NaN]   */
@@ -71,29 +73,29 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
     #define DECIMAL_Inf     0x78	/* 0 11110 00 Infinity	      */
   #endif
 
-#include "decimal128Local.h"
-
   /* ---------------------------------------------------------------- */
   /* Routines							      */
   /* ---------------------------------------------------------------- */
+
+#include "decimal64Symbols.h"
 
   #ifdef __cplusplus
   extern "C" {
   #endif
 
   /* String conversions 					      */
-  decimal128 * decimal128FromString(decimal128 *, const char *, decContext *);
-  char * decimal128ToString(const decimal128 *, char *);
-  char * decimal128ToEngString(const decimal128 *, char *);
+  decimal64 * decimal64FromString(decimal64 *, const char *, decContext *);
+  char * decimal64ToString(const decimal64 *, char *);
+  char * decimal64ToEngString(const decimal64 *, char *);
 
   /* decNumber conversions					      */
-  decimal128 * decimal128FromNumber(decimal128 *, const decNumber *,
-				    decContext *);
-  decNumber * decimal128ToNumber(const decimal128 *, decNumber *);
+  decimal64 * decimal64FromNumber(decimal64 *, const decNumber *,
+				  decContext *);
+  decNumber * decimal64ToNumber(const decimal64 *, decNumber *);
 
   /* Format-dependent utilities 				      */
-  uint32_t    decimal128IsCanonical(const decimal128 *);
-  decimal128 * decimal128Canonical(decimal128 *, const decimal128 *);
+  uint32_t    decimal64IsCanonical(const decimal64 *);
+  decimal64 * decimal64Canonical(decimal64 *, const decimal64 *);
 
   #ifdef __cplusplus
   }

@@ -25,6 +25,5 @@
 #define DEST 128
 #define NAME extend
 #include "decimal64.h"
-#include <dfptypeconv64.h>
 
 #include "extendsdtf.c"

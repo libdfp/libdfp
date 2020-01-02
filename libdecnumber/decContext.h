@@ -1,5 +1,5 @@
 /* Decimal context header module for the decNumber C Library.
-   Copyright (C) 2005-2015 Free Software Foundation, Inc.
+   Copyright (C) 2005-2019 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -242,6 +242,8 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #define DEC_INIT_DECQUAD    DEC_INIT_DECIMAL128
 
   /* decContext routines					      */
+
+  #include "decContextSymbols.h"
 
   #ifdef __cplusplus
   extern "C" {

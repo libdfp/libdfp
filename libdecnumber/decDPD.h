@@ -1,5 +1,5 @@
 /* Conversion lookup tables for the decNumber C Library.
-   Copyright (C) 2007-2015 Free Software Foundation, Inc.
+   Copyright (C) 2007-2019 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -28,6 +28,8 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 /* [Automatically generated -- do not edit.  2008.06.21]		    */
 /* ------------------------------------------------------------------------ */
 /* For details, see DPDecimal.html on the General Decimal Arithmetic page.  */
+
+#include "decDPDSymbols.h"
 
 /* This include file defines several DPD and BCD conversion tables:	    */
 /*									    */

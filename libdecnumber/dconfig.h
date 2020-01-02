@@ -1,5 +1,5 @@
 /* Configure decNumber for either host or target.
-   Copyright (C) 2008-2015 Free Software Foundation, Inc.
+   Copyright (C) 2008-2019 Free Software Foundation, Inc.
 
    This file is part of GCC.
 
@@ -22,11 +22,18 @@ a copy of the GCC Runtime Library Exception along with this program;
 see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 <http://www.gnu.org/licenses/>.  */
 
-#ifndef _DCONFIG_H
-#define _DCONFIG_H
+#ifdef IN_LIBGCC2
+
+#include "tconfig.h"
+#include "coretypes.h"
+#include "tm.h"
 
 #if __FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__
 #define WORDS_BIGENDIAN 1
 #endif
 
-#endif /* _DCONFIG_H */
+#else
+
+#include "config.h"
+
+#endif

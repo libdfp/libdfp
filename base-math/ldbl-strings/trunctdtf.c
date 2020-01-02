@@ -25,6 +25,5 @@
 #define DEST 128
 #define NAME trunc
 #include "decimal128.h"
-#include <dfptypeconv128.h>
 
 #include "extendsdtf.c"

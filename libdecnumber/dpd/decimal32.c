@@ -1,5 +1,5 @@
 /* Decimal 32-bit format module for the decNumber C Library.
-   Copyright (C) 2005-2015 Free Software Foundation, Inc.
+   Copyright (C) 2005-2019 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -54,6 +54,7 @@ extern void decDigitsFromDPD(decNumber *, const uInt *, Int);
 
 #if DECTRACE || DECCHECK
 void decimal32Show(const decimal32 *);		  /* for debug */
+extern void decNumberShow(const decNumber *);	  /* .. */
 #endif
 
 /* Useful macro */
@@ -169,7 +170,7 @@ decimal32 * decimal32FromNumber(decimal32 *d32, const decNumber *dn,
   if (dn->bits&DECNEG) targ|=0x80000000;  /* add sign bit */
 
   /* now write to storage; this is endian */
-  UBFROMUIBW(d32->bytes, targ);	   /* directly store the int */
+  UBFROMUI(d32->bytes, targ);	   /* directly store the int */
 
   if (status!=0) decContextSetStatus(set, status); /* pass on status */
   /* decimal32Show(d32); */
@@ -190,7 +191,7 @@ decNumber * decimal32ToNumber(const decimal32 *d32, decNumber *dn) {
   uInt uiwork;			   /* for macros */
 
   /* load source from storage; this is endian */
-  sour=UBTOUIBW(d32->bytes);	   /* directly load the int */
+  sour=UBTOUI(d32->bytes);	   /* directly load the int */
 
   comb=(sour>>26)&0x1f; 	   /* combination field */
 

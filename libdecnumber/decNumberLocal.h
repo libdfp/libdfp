@@ -1,5 +1,5 @@
 /* Local definitions for the decNumber C Library.
-   Copyright (C) 2007-2015 Free Software Foundation, Inc.
+   Copyright (C) 2007-2019 Free Software Foundation, Inc.
    Contributed by IBM Corporation.  Author Mike Cowlishaw.
 
    This file is part of GCC.
@@ -57,7 +57,6 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #if !defined(DECUSE64)
   #define DECUSE64  1	      /* 1=use int64s, 0=int32 & smaller only */
   #endif
-  /*#define DECUSE128  1*/    /* 1=use int128s                        */
 
   /* Conditional check flags -- set these to 0 for best performance   */
   #if !defined(DECCHECK)
@@ -96,9 +95,6 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #define Long	 int64_t
   #define uLong  uint64_t
   #endif
-  #if DECUSE128
-  #include "decUInt128.h"
-  #endif
 
   /* Development-use definitions				      */
   typedef long int LI;	      /* for printf arguments only	      */
@@ -114,6 +110,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   extern const uByte  DECSTICKYTAB[10]; /* re-round digits if sticky  */
   extern const uInt   DECPOWERS[10];	/* powers of ten table	      */
   /* The following are included from decDPD.h			      */
+  #include "decDPDSymbols.h"
   extern const uShort DPD2BIN[1024];	/* DPD -> 0-999 	      */
   extern const uShort BIN2DPD[1000];	/* 0-999 -> DPD 	      */
   extern const uInt   DPD2BINK[1024];	/* DPD -> 0-999000	      */
@@ -151,33 +148,14 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   /* Variables needed are uswork, uiwork, etc. [so do not use at same */
   /* level in an expression, e.g., UBTOUI(x)==UBTOUI(y) may fail].    */
 
-  #if DECLITEND==1
-  # define BSWAP16(x) (__builtin_bswap16 (x))
-  # define BSWAP32(x) (__builtin_bswap32 (x))
-  #else
-  # define BSWAP16(x) (x)
-  # define BSWAP32(x) (x)
-  #endif
-
   /* Return a uInt, etc., from bytes starting at a char* or uByte*    */
   #define UBTOUS(b)  (memcpy((void *)&uswork, b, 2), uswork)
   #define UBTOUI(b)  (memcpy((void *)&uiwork, b, 4), uiwork)
-
-  /* Return a uInt, etc., from bytes starting at a char* or uByte*    */
-  /* Byte swap if necessary.                                          */
-  #define UBTOUSBW(b)  (memcpy((void *)&uswork, b, 2), BSWAP16 (uswork))
-  #define UBTOUIBW(b)  (memcpy((void *)&uiwork, b, 4), BSWAP32 (uiwork))
 
   /* Store a uInt, etc., into bytes starting at a char* or uByte*.    */
   /* Has to use uiwork because i may be an expression.		      */
   #define UBFROMUS(b, i)  (uswork=(i), memcpy(b, (void *)&uswork, 2))
   #define UBFROMUI(b, i)  (uiwork=(i), memcpy(b, (void *)&uiwork, 4))
-
-  /* Store a uInt, etc., into bytes starting at a char* or uByte*.    */
-  /* Byte swap if necessary.                                          */
-  /* Has to use uiwork because i may be an expression.		      */
-  #define UBFROMUSBW(b, i)  (uswork= BSWAP16 (i), memcpy(b, (void *)&uswork, 2))
-  #define UBFROMUIBW(b, i)  (uiwork= BSWAP32 (i), memcpy(b, (void *)&uiwork, 4))
 
   /* X10 and X100 -- multiply integer i by 10 or 100		      */
   /* [shifts are usually faster than multiply; could be conditional]  */
@@ -367,6 +345,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #define DFISSNAN(df)	  ((DFWORD(df, 0)&0x7e000000)==0x7e000000)
 
   /* Shared lookup tables					      */
+#include "decCommonSymbols.h"
   extern const uInt   DECCOMBMSD[64];	/* Combination field -> MSD   */
   extern const uInt   DECCOMBFROM[48];	/* exp+msd -> Combination     */
 
@@ -770,4 +749,6 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   /* [end of format-dependent macros and constants]		      */
   #endif
 
+#else
+  #error decNumberLocal included more than once
 #endif

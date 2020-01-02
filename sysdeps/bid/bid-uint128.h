@@ -121,7 +121,7 @@ __u128_from_string (char* sz)
 #else
 
 /* Multiprecision int 128 bits based on int 32 limbs.  */
-#include <libdecnumber/mini-gmp.h>
+#include "sysdeps/bid/mini-gmp.h"
 
 typedef mpz_t   u128_t;
 typedef mpz_ptr u128_ptr;

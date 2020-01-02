@@ -25,5 +25,4 @@
 
 #define _DECIMAL_SIZE 128
 #include <decimal128.h>
-#include <dfptypeconv128.h>
 #include "fmt_d32.c"

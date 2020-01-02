@@ -27,7 +27,6 @@
 # define _DECIMAL_SIZE 32
    /* needed to pick up DECNUMDIGITS before including decNumber.h  */
 # include <decimal32.h>
-# include <dfptypeconv32.h>
 #endif
 
 #include <fmt_dfp.h>

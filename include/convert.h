@@ -290,17 +290,14 @@ extern const _Decimal128 decpowof2[];
 #if (SRC == 128 && (defined DECIMAL_TO_DECIMAL || defined DECIMAL_TO_INTEGER)) || \
     (DEST == 128 && (defined DECIMAL_TO_DECIMAL || defined INTEGER_TO_DECIMAL))
 #include "decimal128.h"
-#include <dfptypeconv128.h>
 #endif
 #if (SRC == 64 && (defined DECIMAL_TO_DECIMAL || defined DECIMAL_TO_INTEGER)) || \
     (DEST == 64 && (defined DECIMAL_TO_DECIMAL || defined INTEGER_TO_DECIMAL))
 #include "decimal64.h"
-#include <dfptypeconv64.h>
 #endif
 #if (SRC == 32 && (defined DECIMAL_TO_DECIMAL || defined DECIMAL_TO_INTEGER)) || \
     (DEST == 32 && (defined DECIMAL_TO_DECIMAL || defined INTEGER_TO_DECIMAL))
 #include "decimal32.h"
-#include <dfptypeconv32.h>
 #endif
 
 #define DFP_EXCEPTIONS_ENABLED 1
