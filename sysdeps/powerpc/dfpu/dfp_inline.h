@@ -26,7 +26,7 @@
 
 #include <dfp/fenv.h>
 
-inline _Decimal128
+static inline _Decimal128
 ___quantized128 (_Decimal128 x, _Decimal128 y)
 {
   _Decimal128 result;
@@ -34,7 +34,7 @@ ___quantized128 (_Decimal128 x, _Decimal128 y)
   return result;
 };
 
-inline _Decimal64
+static inline _Decimal64
 ___quantized64 (_Decimal64 x, _Decimal64 y)
 {
   _Decimal64 result;
@@ -45,7 +45,7 @@ ___quantized64 (_Decimal64 x, _Decimal64 y)
 #define __quantized64(x, y) ___quantized64(x, y)
 #define __quantized128(x, y) ___quantized128(x, y)
 
-inline _Decimal128
+static inline _Decimal128
 ___isfinited128 (_Decimal128 x)
 {
   int cr0;
@@ -59,7 +59,7 @@ ___isfinited128 (_Decimal128 x)
   return (cr0 & 0x20000000) ? 1 : 0;
 };
 
-inline _Decimal64
+static inline _Decimal64
 ___isfinited64 (_Decimal64 x)
 {
   int cr0;
@@ -72,7 +72,7 @@ ___isfinited64 (_Decimal64 x)
   return (cr0 & 0x20000000) ? 1 : 0;
 };
 
-inline void
+static inline void
 __restore_rnd (double *state)
 {
   asm volatile ( "mtfsf 1, %0, 0, 1\n" : : "f" (*state));
