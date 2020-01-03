@@ -36,3 +36,4 @@ __bid_trunctdtf (_Decimal128 x) {
   return (res.f);
 }
 #endif
+hidden_def(__bid_trunctdtf);

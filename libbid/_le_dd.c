@@ -39,3 +39,4 @@ __bid_ledd2 (_Decimal64 x, _Decimal64 y) {
     res = 1;
   return (res);
 }
+hidden_def(__bid_ledd2);

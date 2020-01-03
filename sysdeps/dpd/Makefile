@@ -3,3 +3,41 @@ libdfp_files += dpd-private binpowof10 decpowof2
 ifeq ($(libdfp-has-timode),yes)
 libdfp_files += ticonstants
 endif
+
+# Build the DPD gcc instrinsic variants
+libdfp_files += addsd3 adddd3 addtd3 \
+		divsd3 divdd3 divtd3 \
+		eqsd2 eqdd2 eqtd2 \
+		extendsddd2 extendsdtd2 extendddtd2 \
+		extendsfsd extendsddf extendsdtf \
+		extendsfdd extenddfdd extendddtf \
+		extendsftd extenddftd extendtftd \
+		fixsdsi fixddsi fixtdsi \
+		fixsddi fixdddi fixtddi \
+		fixunssdsi fixunsddsi fixunstdsi \
+		fixunssddi fixunsdddi fixunstddi \
+		floatsisd floatsidd floatsitd \
+		floatdisd floatdidd floatditd \
+		floatunssisd floatunssidd floatunssitd \
+		floatunsdisd floatunsdidd floatunsditd \
+		gesd2 gedd2 getd2 \
+		gtsd2 gtdd2 gttd2 \
+		lesd2 ledd2 letd2 \
+		ltsd2 ltdd2 lttd2 \
+		mulsd3 muldd3 multd3 \
+		nesd2 nedd2 netd2 \
+		subsd3 subdd3 subtd3 \
+		truncddsd2 trunctddd2 trunctdsd2 \
+		truncsdsf truncdfsd trunctfsd \
+		truncddsf truncdddf trunctfdd \
+		trunctdsf trunctddf trunctdtf \
+		unordsd2 unorddd2 unordtd2
+
+ifeq ($(libdfp-has-timode),yes)
+libdfp_files += fixsdti fixddti \
+		   fixunssdti fixunsddti \
+		   fixtdti fixunstdti \
+		   floattitd floatunstitd \
+		   floattidd floatunstidd \
+		   floattisd floatunstisd
+endif

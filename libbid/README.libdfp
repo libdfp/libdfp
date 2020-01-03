@@ -1,0 +1,24 @@
+Some hints when syncing libbid:
+
+bid_gcc_intrinsics.h:
+
+    Add PLT-bypassing hints:
+
+    Add #include "libdfp_symbols.h"
+
+    vim: %s/.*\(__bid_[^ (]*\).*/\0 hidden_proto(\1);/
+
+
+Next, scan for these and append hidden_def when we find
+the implementations (with GNU grep):
+
+    for i in $(grep -oP "(?<=hidden_proto\()[^)]*" bid_gcc_intrinsics.h); do echo "hidden_def($i);" >> $(grep -e $i -l *c); done
+
+
+Likewise, ensure nothing is missing from the makefile,
+otherwise GCC will kindly, and quietly link in whatever
+was built inside libgcc. This may or may not get caught
+by tests.
+
+    check Makefile for missing files
+

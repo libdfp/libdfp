@@ -36,3 +36,4 @@ __bid_trunctfsd (TFtype x) {
   return (res.d);
 }
 #endif
+hidden_def(__bid_trunctfsd);

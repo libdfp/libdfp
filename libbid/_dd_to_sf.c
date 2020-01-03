@@ -34,3 +34,4 @@ __bid_truncddsf (_Decimal64 x) {
   res = __bid64_to_binary32 (ux.i);
   return (res);
 }
+hidden_def(__bid_truncddsf);

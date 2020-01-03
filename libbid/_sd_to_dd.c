@@ -34,3 +34,4 @@ __bid_extendsddd2 (_Decimal32 x) {
   res.i = __bid32_to_bid64 (ux.i);
   return (res.d);
 }
+hidden_def(__bid_extendsddd2);

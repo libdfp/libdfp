@@ -33,3 +33,4 @@ __bid_floatunssitd (USItype x) {
   return (res.d);
 }
 
+hidden_def(__bid_floatunssitd);

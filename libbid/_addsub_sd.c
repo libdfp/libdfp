@@ -52,3 +52,5 @@ __bid_subsd3 (_Decimal32 x, _Decimal32 y) {
   res.i = __bid64_to_bid32 (res64);
   return (res.d);
 }
+hidden_def(__bid_addsd3);
+hidden_def(__bid_subsd3);

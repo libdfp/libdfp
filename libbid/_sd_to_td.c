@@ -34,3 +34,4 @@ __bid_extendsdtd2 (_Decimal32 x) {
   res.i = __bid32_to_bid128 (ux.i);
   return (res.d);
 }
+hidden_def(__bid_extendsdtd2);

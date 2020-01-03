@@ -34,3 +34,4 @@ __bid_trunctddf (_Decimal128 x) {
   res = __bid128_to_binary64 (ux.i);
   return (res);
 }
+hidden_def(__bid_trunctddf);

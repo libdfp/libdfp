@@ -32,3 +32,4 @@ __bid_floatsitd (SItype x) {
   res.i = __bid128_from_int32 (x);
   return (res.d);
 }
+hidden_def(__bid_floatsitd);
