@@ -51,8 +51,31 @@ char *decimal128ToEngString (const decimal128 *, char *);
 decimal128 *decimal128FromNumber (decimal128 *, const decNumber *, decContext *);
 decNumber *decimal128ToNumber (const decimal128 *, decNumber *);
 
-void __host_to_ieee_128 (_Decimal128 in, decimal128 *out);
-void __ieee_to_host_128 (decimal128 in, _Decimal128 *out);
+/* The code for converting 128-bit values between DPD and BID presumes
+   that the 64-bit halves of the 128-bit value are in little-endian
+   order, so they need swapping on big-endian hosts.  */
+
+static void
+__host_to_ieee_128 (_Decimal128 in, decimal128 *out)
+{
+#if WORDS_BIGENDIAN
+  memcpy ((char *) out, (char *) &in + 8, 8);
+  memcpy ((char *) out + 8, (char *) &in, 8);
+#else
+  memcpy ((char *) out, (char *) &in, 16);
+#endif
+}
+
+static void
+__ieee_to_host_128 (decimal128 in, _Decimal128 *out)
+{
+#if WORDS_BIGENDIAN
+  memcpy ((char *) out, (char *) &in + 8, 8);
+  memcpy ((char *) out + 8, (char *) &in, 8);
+#else
+  memcpy ((char *) out, (char *) &in, 16);
+#endif
+}
 
 decimal128 *
 decimal128FromNumber (decimal128 *d128, const decNumber *dn,
