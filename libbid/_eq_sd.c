@@ -42,3 +42,4 @@ __bid_eqsd2 (_Decimal32 x, _Decimal32 y) {
     res = 0;
   return (res);
 }
+hidden_def(__bid_eqsd2);

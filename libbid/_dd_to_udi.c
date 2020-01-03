@@ -37,3 +37,4 @@ __bid_fixunsdddi (_Decimal64 x) {
   return (res);
 }
 
+hidden_def(__bid_fixunsdddi);

@@ -37,3 +37,4 @@ __bid_gedd2 (_Decimal64 x, _Decimal64 y) {
 
   return (res);
 }
+hidden_def(__bid_gedd2);

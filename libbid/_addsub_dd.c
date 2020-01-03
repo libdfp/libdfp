@@ -44,3 +44,5 @@ __bid_subdd3 (_Decimal64 x, _Decimal64 y) {
   res.i = __bid64_sub (ux.i, uy.i);
   return (res.d);
 }
+hidden_def(__bid_adddd3);
+hidden_def(__bid_subdd3);

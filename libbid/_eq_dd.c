@@ -39,3 +39,4 @@ __bid_eqdd2 (_Decimal64 x, _Decimal64 y) {
     res = 0;
   return (res);
 }
+hidden_def(__bid_eqdd2);

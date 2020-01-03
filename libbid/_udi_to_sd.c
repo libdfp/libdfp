@@ -34,3 +34,4 @@ __bid_floatunsdisd (UDItype x) {
   res.i = __bid64_to_bid32 (res64);
   return (res.d);
 }
+hidden_def(__bid_floatunsdisd);

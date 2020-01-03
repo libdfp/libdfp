@@ -31,3 +31,4 @@ __bid_extendxftd (XFtype x) {
   res.i = __binary80_to_bid128 (x);
   return (res.d);
 }
+hidden_def(__bid_extendxftd);

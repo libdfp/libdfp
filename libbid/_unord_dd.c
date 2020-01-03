@@ -35,3 +35,4 @@ __bid_unorddd2 (_Decimal64 x, _Decimal64 y) {
   res = __bid64_quiet_unordered (ux.i, uy.i);
   return (res);
 }
+hidden_def(__bid_unorddd2);

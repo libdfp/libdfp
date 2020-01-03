@@ -36,3 +36,4 @@ __bid_extendtftd (TFtype x) {
   return (res.d);
 }
 #endif
+hidden_def(__bid_extendtftd);

@@ -33,3 +33,4 @@ __bid_floatdidd (DItype x) {
   return (res.d);
 }
 
+hidden_def(__bid_floatdidd);

@@ -36,3 +36,4 @@ __bid_extendddtf (_Decimal64 x) {
   return (res.f);
 }
 #endif
+hidden_def(__bid_extendddtf);

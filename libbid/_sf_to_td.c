@@ -31,3 +31,4 @@ __bid_extendsftd (SFtype x) {
   res.i = __binary32_to_bid128 (x);
   return (res.d);
 }
+hidden_def(__bid_extendsftd);
