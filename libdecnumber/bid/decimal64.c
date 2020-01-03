@@ -51,8 +51,17 @@ char *decimal64ToEngString (const decimal64 *, char *);
 decimal64 *decimal64FromNumber (decimal64 *, const decNumber *, decContext *);
 decNumber *decimal64ToNumber (const decimal64 *, decNumber *);
 
-void __host_to_ieee_64 (_Decimal64 in, decimal64 *out);
-void __ieee_to_host_64 (decimal64 in, _Decimal64 *out);
+static void
+__host_to_ieee_64 (_Decimal64 in, decimal64 *out)
+{
+  memcpy ((char *) out, (char *) &in, 8);
+}
+
+static void
+__ieee_to_host_64 (decimal64 in, _Decimal64 *out)
+{
+  memcpy ((char *) out, (char *) &in, 8);
+}
 
 decimal64 *
 decimal64FromNumber (decimal64 *d64, const decNumber *dn,

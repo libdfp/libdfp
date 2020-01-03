@@ -51,8 +51,17 @@ char *decimal32ToEngString (const decimal32 *, char *);
 decimal32 *decimal32FromNumber (decimal32 *, const decNumber *, decContext *);
 decNumber *decimal32ToNumber (const decimal32 *, decNumber *);
 
-void __host_to_ieee_32 (_Decimal32 in, decimal32 *out);
-void __ieee_to_host_32 (decimal32 in, _Decimal32 *out);
+static void
+__host_to_ieee_32 (_Decimal32 in, decimal32 *out)
+{
+  memcpy ((char *) out, (char *) &in, 4);
+}
+
+static void
+__ieee_to_host_32 (decimal32 in, _Decimal32 *out)
+{ 
+  memcpy ((char *) out, (char *) &in, 4);
+} 
 
 decimal32 *
 decimal32FromNumber (decimal32 *d32, const decNumber *dn,
