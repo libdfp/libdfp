@@ -47,9 +47,12 @@ static const d_type round_env[] = {
   {__LINE__, FE_DEC_UPWARD, FE_DEC_UPWARD},
   {__LINE__, FE_DEC_DOWNWARD, FE_DEC_DOWNWARD},
   {__LINE__, FE_DEC_TONEARESTFROMZERO, FE_DEC_TONEARESTFROMZERO},
+#if !defined(__DECIMAL_BID_FORMAT__)
+  /* These are non-standard and unique to Z/PPC DFU. */
   {__LINE__, 5, 5},		/* Non-spec hardware rounding mode.  */
   {__LINE__, 6, 6},		/* Non-spec hardware rounding mode.  */
   {__LINE__, 7, 7},		/* Non-spec hardware rounding mode.  */
+#endif
 };
 
 static const int round_env_size = sizeof (round_env) / sizeof (round_env[0]);
