@@ -35,5 +35,5 @@ __bid_extendsdtf (_Decimal32 x) {
   res.i = __bid32_to_binary128 (ux.i);
   return (res.f);
 }
-#endif
 hidden_def(__bid_extendsdtf);
+#endif
