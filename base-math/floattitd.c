@@ -24,6 +24,7 @@
 
 #include <dfpacc.h>
 
+#include "symbol-hacks.h"
 #include "convert_helpers.h"
 
 /*
