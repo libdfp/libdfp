@@ -780,7 +780,9 @@ extern UINT128 round_const_table_128[][36];
 //////////////////////////////////////////////
 //  Status Flag Handling
 /////////////////////////////////////////////
+#ifndef __set_status_flags
 #define __set_status_flags(fpsc, status)  *(fpsc) |= status
+#endif
 #define is_inexact(fpsc)  ((*(fpsc))&INEXACT_EXCEPTION)
 
 __BID_INLINE__ UINT64
