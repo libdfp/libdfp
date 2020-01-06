@@ -552,6 +552,9 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #define DECIMAL_GLOBAL_EXCEPTION_FLAGS 1
 #define DECIMAL_GLOBAL_EXCEPTION_FLAGS_ACCESS_FUNCTIONS 1
 #define BID_HAS_GCC_DECIMAL_INTRINSICS 1
+extern void __dfp_set_status (int excepts);
+// Use a statement expression (GNU C) to quiet warnings
+#define __set_status_flags(fpsc, status) ({ __dfp_set_status(status); (void)fpsc; })
 // End libdfp options
 
 // Configuration Options
