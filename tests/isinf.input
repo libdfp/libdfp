@@ -1,6 +1,6 @@
 # name isinf
 # arg1 decimal
-# ret  int
+# ret  bool
 
 Inf                1
 -Inf               -1
