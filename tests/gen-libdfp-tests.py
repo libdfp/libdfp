@@ -278,9 +278,9 @@ def parse_file (filename):
 
     for earg in extra_args:
       if earg in cppcheckdict.keys():
-	op.cppchecks.append(cppcheckdict[earg])
+        op.cppchecks.append(cppcheckdict[earg])
       else:
-	op.extraflags.append(earg)
+        op.extraflags.append(earg)
 
     # Finally, if we ignore the results, coerce to a value
     # which won't make the compiler generate warnings:
