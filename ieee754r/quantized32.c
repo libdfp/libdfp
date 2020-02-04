@@ -34,6 +34,7 @@
 #include <math.h>
 #include <fenv.h>
 #include <mapround.h>
+#include <ieee754r_private.h>
 
 #define FUNCTION_NAME quantize
 
@@ -60,4 +61,5 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   return result;
 }
 
+hidden_def (INTERNAL_FUNCTION_NAME)
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

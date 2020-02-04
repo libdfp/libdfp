@@ -32,68 +32,6 @@
 typedef unsigned __int128  u128_t;
 typedef unsigned __int128 *u128_ptr;
 
-static inline u128_t
-__u128_from_string (char* sz)
-{
-  int radix = 10;
-  int size;
-  int i;
-  char ch;
-  unsigned int n;
-  u128_t a;
-  int minus = 0;
-
-  size = strlen (sz);
-
-  a = 0;
-  i = 0;
-
-  if (sz[i] == '-')
-    {
-      ++i;
-      minus = 1;
-    }
-
-  while (i < size)
-    {
-      ch = sz[i];
-
-      if (ch >= 'A' && ch <= 'Z')
-	{
-	  if (((ch - 'A') + 10) < radix)
-	    n = (ch - 'A') + 10;
-	  else
-	    break;
-	}
-      else if (ch >= 'a' && ch <= 'z')
-        {
-	  if (((ch - 'a') + 10) < radix)
-	    n = (ch - 'a') + 10;
-	  else
-	    break;
-	}
-      else if (ch >= '0' && ch <= '9')
-	{
-	  if ((ch - '0') < radix)
-	    n = (ch - '0');
-	  else
-	    break;
-	}
-      else
-	/* Completely invalid character  */
-	break;
-
-      a *= radix;
-      a += n;
-      ++i;
-    }
-
-  if (minus)
-    a = -a;
-
-  return a;
-}
-
 #define u128_init(__x)
 #define u128_init_from_u32(__ret, __hi, __mh, __ml, __lo)   \
   ({                                                        \
@@ -172,7 +110,6 @@ __u128_extract_64(mpz_t x, int word)
 }
 
 #define u128_init(__x)                mpz_init2 (__x, 128)
-//#define u128_init_from_str(__x,__str) mpz_init_set_str (__x, __str, 10)
 #define u128_set_u32(__x, __i)        mpz_set_ui (__x, __i)
 #define u128_to_u32(__x, __i)         ({ __i = mpz_get_ui (__x); })
 #define u128_hi(__x)                  __u128_extract_u32 (__x, 3)
@@ -187,70 +124,6 @@ __u128_extract_64(mpz_t x, int word)
 #define u128_mul_u32(__x, __y, __z)   ({ mpz_mul_ui (__z, __x, __y); })
 #define u128_mod_u32(__x, __y, __z)   ({ mpz_mod_ui (__z, __x, __y); })
 #define u128_div_u32(__x, __y, __z)   ({ mpz_fdiv_q_ui (__z, __x, __y); })
-
-static inline void
-__u128_from_string (mpz_t a, char* sz)
-{
-  int radix = 10;
-  int size;
-  int i;
-  char ch;
-  unsigned int n;
-  int minus = 0;
-
-  size = strlen (sz);
-
-  mpz_init2 (a, 128);
-  mpz_set_ui (a, 0);
-  i = 0;
-
-  if (sz[i] == '-')
-    {
-      ++i;
-      minus = 1;
-    }
-
-  while (i < size)
-    {
-      ch = sz[i];
-
-      if (ch >= 'A' && ch <= 'Z')
-	{
-	  if (((ch - 'A') + 10) < radix)
-	    n = (ch - 'A') + 10;
-	  else
-	    break;
-	}
-      else if (ch >= 'a' && ch <= 'z')
-        {
-	  if (((ch - 'a') + 10) < radix)
-	    n = (ch - 'a') + 10;
-	  else
-	    break;
-	}
-      else if (ch >= '0' && ch <= '9')
-	{
-	  if ((ch - '0') < radix)
-	    n = (ch - '0');
-	  else
-	    break;
-	}
-      else
-	/* Completely invalid character  */
-	break;
-
-      /* a *= radix;  */
-      mpz_mul_ui (a, a, radix);
-      /* a += n;  */
-      mpz_add_ui (a, a, n);
-      ++i;
-    }
-
-  if (minus)
-    mpz_neg (a, a);
-}
-
-#define u128_init_from_str(__x,__str) __u128_from_string (__x, __str)
 
 #endif /* __SIZEOF_INT128__  */
 
