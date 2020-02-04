@@ -22,7 +22,4 @@ libdfp_files += bid-private binpowof10 decpowof2
 
 ifeq ($(libdfp-has-timode),yes)
 libdfp_files += ticonstants
-else
-# TODO: this is used for numdigits.h.
-libdfp_files += mini-gmp
 endif
