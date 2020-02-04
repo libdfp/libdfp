@@ -25,7 +25,7 @@
 #include <decode.h>
 #include <numdigits.h>
 #include <math_private.h>
-#include <bid-uint128.h>
+#include <decimal128.h>
 
 /* This version is used by all BID implementations.  */
 
@@ -106,37 +106,28 @@ __decoded64 (_Decimal64 a, char *str)
 weak_alias (__decoded64, decoded64)
 hidden_def (__decoded64)
 
-
 char *
 __decoded128 (_Decimal128 a, char *str)
 {
   union ieee754r_Decimal128 d = { .td = a };
   int exp = -DECIMAL128_Bias;
   char sign;
-  u128_t coeff;
   unsigned int decunits[12]  = { 0 };
-  unsigned int hi;
-  int n;
+  int i = 0;
 
   sign = (d.ti[3] & BID_SIGN_MASK ? '-' : '+');
   if ((d.ti[3] & BID_SPEC_MASK) != BID_SPEC_MASK)
     {
-      if ((d.ti[3] & BID_EXPONENT_ENC_MASK) == BID_EXPONENT_ENC_MASK)
-	hi = 0x00020000UL | (d.ti[3] & 0x00007FFFUL);
-      else
-	hi = d.ti[3] & 0x0001FFFFUL;
-      u128_init_from_u32 (coeff, hi, d.ti[2], d.ti[1], d.ti[0]);
+    decNumber dn;
+    decimal128ToNumber((decimal128*)&a, &dn);
 
-      for (n = 0; u128_ne_u32 (coeff, 0) && (n < 12); ++n)
-	{
-	  u128_t tmp;
-	  u128_init (tmp);
-	  u128_mod_u32 (coeff, 1000, tmp);
-	  u128_to_u32 (tmp, decunits[n]);
-	  u128_div_u32 (coeff, 1000, coeff);
-        }
-
-      exp = getexpd128 (a);
+    /* This only works if DECDPUN == 3, as is the default */
+    for (int d = dn.digits; d > 0; d -= DECDPUN)
+      {
+        decunits[i] = dn.lsu[i];
+        i++;
+      }
+    exp = dn.exponent;
     }
 
   sprintf (str, "%c%01u,%03u,%03u,%03u,%03u,%03u,%03u,%03u,%03u,%03u,%03u,%03uE%+d",
