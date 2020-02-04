@@ -80,4 +80,11 @@ hidden_proto(__signbitd32)
 hidden_proto(__signbitd64)
 hidden_proto(__signbitd128)
 
+extern _Decimal32 __quantized32 (_Decimal32, _Decimal32);
+extern _Decimal64 __quantized64 (_Decimal64, _Decimal64);
+extern _Decimal128 __quantized128 (_Decimal128, _Decimal128);
+hidden_proto(__quantized32)
+hidden_proto(__quantized64)
+hidden_proto(__quantized128)
+
 #endif /* _IEEE754R_PRIVATE_H  */

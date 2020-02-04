@@ -32,7 +32,15 @@
 
 #include <bid-private.h>
 #include <get_digits.h>
-#include <bid-uint128.h>
+
+/* TODO: This is included to allow testing of inline funcs. */
+#ifndef NOT_IN_libdfp
+#include <math.h>
+#include <ieee754r_private.h>
+#else
+#include <math.h>
+#define __quantized128 quantized128
+#endif
 
 #define BID_SIG_MASK            0x80000000u
 #define BID_EXPONENT_ENC_MASK   0x60000000u
@@ -291,49 +299,6 @@ setdigitsd64 (_Decimal64 x, char *str)
   return d.dd;
 }
 
-
-static inline
-int __bid_required_bits_128 (u128_t value)
-{
-  /* Use 64-bits operations to keep it simple, another solution would
-   * be to construct a lookup table for int128.  */
-  uint64_t hi;
-  int ret;
-
-  hi = u128_hi (value);
-  if ((ret = __bid_required_bits_64 (hi)) == 0)
-    {
-      uint64_t lo = u128_lo (value);
-      return __bid_required_bits_64 (lo);
-    }
-  return ret + 64;
-}
-
-static inline _Decimal128
-setdigitsd128 (_Decimal128 x, char *str)
-{
-  u128_t number;
-  union ieee754r_Decimal128 d;
-  unsigned int sign;
-  int exp;
-
-  d.td = x;
-  u128_init_from_str (number, str);
-
-  exp = getexpd128 (x);
-  sign = (d.ti[3] & BID_SIG_MASK);
-  if (__bid_required_bits_128 (number) <= 113)
-    d.ti[3] = sign | (u128_hi(number) & 0x0001FFFF);
-  else
-    d.ti[3] = sign | (0x60020000U | (u128_hi(number) & 0x00007FFFU));
-  d.ti[2] = u128_mh(number);
-  d.ti[1] = u128_ml(number);
-  d.ti[0] = u128_lo(number);
-  d.td = setexpd128 (d.td, exp);
-
-  return d.td;
-}
-
 static inline _Decimal32
 left_justifyd32 (_Decimal32 x)
 {
@@ -406,6 +371,7 @@ left_justifyd128 (_Decimal128 x)
 {
   int firstdigit = 0, len;
   char digits[NDIGITS_128+NDIGITS_128-1] = { 0 };
+  _Decimal128 y;
 
   __get_digits_d128 (x, digits, NULL, NULL, NULL, NULL);
   while (digits[firstdigit] == '0')
@@ -428,8 +394,9 @@ left_justifyd128 (_Decimal128 x)
 	}
       if (firstdigit)
 	memset(digits + firstdigit + len, '0', firstdigit);
-      x = setdigitsd128 (x, digits + firstdigit);
-      x = setexpd128 (x, exp - firstdigit);
+
+      y = setexpd128 (x, exp - firstdigit);
+      x = __quantized128 (x, y);
     }
 
   return x;

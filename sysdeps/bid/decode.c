@@ -25,6 +25,7 @@
 #include <decode.h>
 #include <numdigits.h>
 #include <math_private.h>
+#include <bid-uint128.h>
 
 /* This version is used by all BID implementations.  */
 
