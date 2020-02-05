@@ -34,7 +34,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #define DECAUTHOR   "Mike Cowlishaw"		      /* Who to blame */
 
   #if !defined(DECCONTEXT)
-    #include "decContext.h"
+    #include <decContext.h>
   #endif
 
   /* Bit settings for decNumber.bits				      */
@@ -106,7 +106,10 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   /* decNumber public functions and macros			      */
   /* ---------------------------------------------------------------- */
 
-  #include "decNumberSymbols.h"
+
+  #ifdef IN_LIBGCC2
+    #include "decNumberSymbols.h"
+  #endif
 
   #ifdef __cplusplus
   extern "C" {

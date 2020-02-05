@@ -489,6 +489,9 @@ AC_TYPE_UINT8_T
 AC_CHECK_FUNCS([floor fesetround gettimeofday memset nl_langinfo setlocale \
 		sqrt strcasecmp strchr strdup strtol])
 
+# Use the existing libdecnumber machine to product libdecnumber.a
+AC_CONFIG_SUBDIRS(libdecnumber)
+
 # For _Float128 targets, we require yet newer glibc (2.26) and gcc (6.2)
 gcc_min=4
 gcc_min_minor=6
