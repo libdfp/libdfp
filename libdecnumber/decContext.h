@@ -51,7 +51,11 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
   #define DECCFULLNAME "Decimal Context Descriptor"   /* Verbose name */
   #define DECCAUTHOR   "Mike Cowlishaw" 	      /* Who to blame */
 
-  #include "gstdint.h"		   /* C99 standard integers	      */
+  #ifdef IN_LIBGCC2
+    #include "gstdint.h"	   /* C99 standard integers	      */
+  #else
+    #include <stdint.h>
+  #endif
   #include <stdio.h>		   /* for printf, etc.		      */
   #include <signal.h>		   /* for traps 		      */
 
@@ -243,7 +247,9 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 
   /* decContext routines					      */
 
-  #include "decContextSymbols.h"
+  #ifdef IN_LIBGCC2
+    #include "decContextSymbols.h"
+  #endif
 
   #ifdef __cplusplus
   extern "C" {

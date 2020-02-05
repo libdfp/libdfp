@@ -120,14 +120,14 @@ sysdep_dirs = @sysdep_dirs@
 
 # Find each sysdep directory or convenience directory with a Makefile in it.
 makefile_dirs := $(foreach odir,$(sysdep_dirs), $(dir $(wildcard $(top_srcdir)/$(odir)/Makefile))) $(top_srcdir)/decNumberMath/ \
-		 $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/libdecnumber \
-		 $(top_srcdir)/printf-hooks $(top_srcdir)/stdlib $(top_srcdir)/tests
+		 $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math/ $(top_srcdir)/libdecnumber/ \
+		 $(top_srcdir)/printf-hooks/ $(top_srcdir)/stdlib/ $(top_srcdir)/tests/
 
 # Like $makefile_dirs but add the $(top_srcdir) reference and strip out the redundant spaces.
 # This has to be = assigned.
 all_srcdirs = $(strip $(foreach dir,$(sysdep_dirs), $(top_srcdir)/$(dir))) \
 	      $(top_srcdir)/libdecnumber $(top_srcdir)/printf-hooks $(top_srcdir)/stdlib \
-	      $(top_srcdir)/decNumberMath/ $(top_srcdir)/ieee754r/ $(top_srcdir)/base-math $(top_srcdir)/ $(top_srcdir)/tests
+	      $(top_srcdir)/decNumberMath $(top_srcdir)/ieee754r $(top_srcdir)/base-math $(top_srcdir)/ $(top_srcdir)/tests
 
 backend_headers := libdecnumber
 
@@ -148,7 +148,7 @@ sp +=
 # are searched based on -I precedence during the compilation invocation.
 VPATH := $(subst $(sp),:,$(all_srcdirs))
 
-all: first libdfp
+all: first libdfp libdecnumber/libdecnumber.a
 
 # The sysdeps subdirs aren't recursively invoked, they're included so that
 # they can add files to the libdfp_files list.
@@ -159,6 +159,14 @@ include $(foreach dir,$(makefile_dirs), $(dir)/Makefile )
 first:
 	@echo VPATH=$(VPATH)
 	@echo Processing Makefiles: $(makefile_dirs)
+
+# Yes this is a bit of a hack, but gcc/libdecnumber/Makefile won't allow
+# CFLAGS to be overridden on a submake invocation.
+BACKEND_CFLAGS=$(cflags-cpu) $(picflag)
+
+libdecnumber/libdecnumber.a:
+	@echo "+Building DFP backend $@"
+	DEFS="-D__STDC_DEC_FP__=200704L $(CFLAGS-sysdeps) $(BACKEND_CFLAGS)" $(MAKE) -C libdecnumber
 
 libdfp: @enable_static@ @enable_shared@
 
@@ -404,6 +412,8 @@ clean:
 	rm -f $(libdfp_tests)
 	rm -f libdfp-test-ulps.h
 	rm -f *.ulp
+	rm -f $(top_builddir)/$(dfp_backend)/*.o
+	rm -f $(top_builddir)/$(dfp_backend)/*.a
 
 .PHONY: clean
 
@@ -413,6 +423,12 @@ distclean:
 	rm -f $(top_builddir)/config.log
 	rm -f $(top_builddir)/config.status
 	rm -f $(top_builddir)/Makefile
+	rm -f $(top_builddir)/$(dfp_backend)/config.h
+	rm -f $(top_builddir)/$(dfp_backend)/config.log
+	rm -f $(top_builddir)/$(dfp_backend)/config.status
+	rm -f $(top_builddir)/$(dfp_backend)/gstdint.h
+	rm -f $(top_builddir)/$(dfp_backend)/Makefile
+	rm -f $(top_builddir)/$(dfp_backend)/stamp-h1
 
 .PHONY: distclean
 
@@ -422,6 +438,7 @@ ifeq ("@enable_static@","static")
 	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(STATIC_LIB)
 endif
 	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(SHARED_REALNAME_LIB)
+	$(INSTALL) -t $(inst_libdir) $(top_builddir)/libdecnumber/libdecnumber.a
 	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_LINKERNAME_LIB)
 	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_SONAME_LIB)
 	$(INSTALL) -D -t $(inst_libdir)/pkgconfig $(top_builddir)/libdfp.pc
@@ -435,6 +452,10 @@ install-headers:
 	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
 	$(INSTALL) -t $(inst_includedir)/dfp/bits $(top_srcdir)/dfp/bits/*.h
 	$(INSTALL) -t $(inst_includedir)/dfp/decimal/ $(top_srcdir)/dfp/decimal/*
+	$(INSTALL) -d $(inst_includedir)/decnumber/
+	$(INSTALL) -t $(inst_includedir)/decnumber/ $(top_srcdir)/libdecnumber/decContext.h
+	$(INSTALL) -t $(inst_includedir)/decnumber/ $(top_srcdir)/libdecnumber/decConvert.h
+	$(INSTALL) -t $(inst_includedir)/decnumber/ $(top_srcdir)/libdecnumber/decNumber.h
 .PHONY: install-headers
 
 install-doc: $(top_srcdir)/ChangeLog.md
@@ -443,6 +464,10 @@ install-doc: $(top_srcdir)/ChangeLog.md
 	mv $(inst_docdir)dfp/README.user $(inst_docdir)dfp/README
 	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/ChangeLog.md
 	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.txt
+	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.libdfp.txt
+	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.libdecnumber.txt
+	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING3
+	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.RUNTIME
 .PHONY: install-doc
 
 $(top_srcdir)/ChangeLog.md:
