@@ -78,7 +78,8 @@ IEEE_FUNCTION_NAME (DEC_TYPE val)
   fraction = val - top;
   exp = tmp;
 
-  if (exp > (int)EXPINT_MAX)
+  /* via 1024 bits of mpfr and rtn: log(9.999999999999999e+384). */
+  if (val >= 886.49526080270759DD)
     return neg ? DFP_CONSTANT(0.0) : DFP_INF;
 
   if (fraction != 0.0DD)

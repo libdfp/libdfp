@@ -99,7 +99,12 @@ asm ("__bid_nedd2 = __GI___bid_nedd2");
 asm ("__bid_nesd2 = __GI___bid_nesd2");
 asm ("__bid_netd2 = __GI___bid_netd2");
 
+asm ("__bid_lesd2 = __GI___bid_lesd2");
+asm ("__bid_ledd2 = __GI___bid_ledd2");
 asm ("__bid_letd2 = __GI___bid_letd2");
+
+asm ("__bid_gesd2 = __GI___bid_gesd2");
+asm ("__bid_gedd2 = __GI___bid_gedd2");
 asm ("__bid_getd2 = __GI___bid_getd2");
 
 asm ("__bid_unordsd2 = __GI___bid_unordsd2");
