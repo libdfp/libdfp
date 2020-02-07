@@ -320,6 +320,12 @@ LIBDFP_1.0.13
  __bid_floatunstitd F
 LIBDFP_1.0.15
  LIBDFP_1.0.15 A
+ __bid_extendddtf F
+ __bid_extendsdtf F
+ __bid_extendtftd F
+ __bid_trunctdtf F
+ __bid_trunctfdd F
+ __bid_trunctfsd F
  fmaxmagd128 F
  fmaxmagd32 F
  fmaxmagd64 F

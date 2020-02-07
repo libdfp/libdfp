@@ -1,0 +1,11 @@
+libdfp {
+  LIBDFP_1.0.15 {
+    __dpd_extendsdkf2;
+    __dpd_extendddkf2;
+    __dpd_extendtdkf2;
+
+    __dpd_trunckfsd2;
+    __dpd_trunckfdd2;
+    __dpd_trunckftd2;
+  }
+}
