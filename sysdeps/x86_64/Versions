@@ -1,4 +1,14 @@
 libdfp {
+  LIBDFP_1.0.15 {
+    __bid_extendsdtf;
+    __bid_extendddtf;
+    __bid_trunctdtf;
+  
+    __bid_trunctfsd;
+    __bid_trunctfdd;
+    __bid_extendtftd;
+  }
+
   LIBDFP_1.0.0 {
     __bid_extendsdxf;
     __bid_extendddxf;

@@ -93,11 +93,7 @@ typedef __attribute__ ((aligned(16))) struct
 #endif
 
 #ifndef BID_HAS_TF_MODE
-#if defined __i386__
-#define BID_HAS_TF_MODE 0
-#else
 #define BID_HAS_TF_MODE 1
-#endif
 #endif
 
 #ifndef SFtype

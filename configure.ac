@@ -20,6 +20,11 @@ AC_CANONICAL_HOST
 config_os=$host_os
 machine=$host_cpu
 
+# The above does not guess ppc64le correctly.  Help it.
+if test "$machine" == powerpc64 && test "$ac_cv_c_bigendian" == no; then
+  machine=powerpc64le
+fi
+
 # Only allow a Linux host OS.  We don't support building libdfp on non-Linux
 # systems.
 if test "$config_os" != linux-gnu; then
@@ -169,7 +174,8 @@ changequote(,)dnl
 
 case "$machine" in
 	powerpc|powerpcle) base_machine=powerpc machine=powerpc/powerpc32 ;;
-	powerpc64|powerpc64le) base_machine=powerpc machine=powerpc/powerpc64 ;;
+	powerpc64) base_machine=powerpc machine=powerpc/powerpc64 ;;
+	powerpc64le) base_machine=powerpc machine=powerpc/powerpc64/le ;;
 	s390) base_machine=s390 machine=s390/s390-32 ;;
 	s390x) base_machine=s390 machine=s390/s390-64 ;;
 	i[34567]86) base_machine=i386 machine=i386/$machine ;;
@@ -510,16 +516,32 @@ AC_FUNC_MALLOC
 AC_FUNC_MBRTOWC
 AC_CHECK_FUNCS([floor gettimeofday memset nl_langinfo setlocale sqrt strchr strtol])
 
+# For _Float128 targets, we require yet newer glibc (2.26) and gcc (6.2)
+gcc_min=4
+gcc_min_minor=6
+gcc_extra=""
+glibc_ver="2.10"
+if test "$machine" == powerpc64le || test "$base_machine" == i386 || test "$machine" == x86_64; then
+  gcc_min=6
+  gcc_min_minor=2
+  gcc_extra="#if __GLIBC__ < 2 && __GLIBC_MINOR < 26
+             #error GLIBC 2.26 or newer required for this host
+             #endif"
+  glibc_ver="2.26"
+fi
+
 # Copy the glibc check for GCC minimum version:
 AC_CACHE_CHECK([if $CC is sufficient to build libdfp], libc_cv_compiler_ok, [
-AC_TRY_COMPILE([], [
-#if !defined __GNUC__ || __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6)
+AC_TRY_COMPILE([#include <stdio.h>], [
+#if !defined __GNUC__ || __GNUC__ < ${gcc_min} || (__GNUC__ == ${gcc_min} && __GNUC_MINOR__ < ${gcc_min_minor})
 #error insufficient compiler
-#endif],
+#endif
+${gcc_extra}],
            [libc_cv_compiler_ok=yes],
            [libc_cv_compiler_ok=no])])
 AS_IF([test $libc_cv_compiler_ok != yes],
-      [critic_missing="$critic_missing compiler"])
+      [AC_MSG_ERROR("Minimum gcc/glibc version not met (${gcc_min}.${gcc_min_minor}/${glibc_ver})")])
+
 
 # This tells autoconf to generate Makefile from the Makefile.in.  This is the
 # top level Makefile for the project.  This Makefile will then recurse into
