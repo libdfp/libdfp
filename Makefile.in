@@ -173,9 +173,9 @@ shared: $(top_builddir)/$(SHARED_REALNAME_LIB) \
 	@echo +Building shared lib and symlinks: $(notdir $^)
 
 WARNS := -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -Wno-long-long
-C_DEFINES := -D__STDC_WANT_DEC_FP__=1 -std=gnu99 -D_ISOC99_SOURCE -D__STDC_WANT_IEC_60559_DFP_EXT__=1
+C_DEFINES := -D__STDC_WANT_DEC_FP__=1 -std=gnu11 -D__STDC_WANT_IEC_60559_DFP_EXT__=1 -D__STDC_WANT_IEC_60559_BFP_EXT__=1
 ASM_DEFINES := -D__ELF__ -D__ASSEMBLER__ -DASSEMBLER -D__STDC_WANT_DEC_FP__=1 -D__STDC_WANT_IEC_60559_DFP_EXT__=1
-CXX_DEFINES := -D__STDC_WANT_DEC_FP__=1 -D_ISOC99_SOURCE -D__STDC_WANT_IEC_60559_DFP_EXT__=1
+CXX_DEFINES := -D__STDC_WANT_DEC_FP__=1 -D__STDC_WANT_IEC_60559_DFP_EXT__=1
 CXX_WARNS := -W -Wall -Wwrite-strings -Wmissing-format-attribute -Wno-long-long
 
 -include *.d
@@ -420,8 +420,10 @@ endif
 install-headers:
 	$(INSTALL) -d $(inst_includedir)
 	$(INSTALL) -d $(inst_includedir)/dfp
+	$(INSTALL) -d $(inst_includedir)/dfp/bits
 	$(INSTALL) -d $(inst_includedir)/dfp/decimal
 	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
+	$(INSTALL) -t $(inst_includedir)/dfp/bits $(top_srcdir)/dfp/bits/*.h
 	$(INSTALL) -t $(inst_includedir)/dfp/decimal/ $(top_srcdir)/dfp/decimal/*
 .PHONY: install-headers
 

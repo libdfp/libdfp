@@ -44,7 +44,6 @@ __dfp_get_round (void) {
 BID_THREAD _IDEC_flags _IDEC_glbflags = EXACT_STATUS;
 
 #if DECIMAL_GLOBAL_EXCEPTION_FLAGS_ACCESS_FUNCTIONS
-#define __STDC_WANT_IEC_60559_BFP_EXT__
 #include <fenv.h>
 
 void
