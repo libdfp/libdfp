@@ -524,6 +524,6 @@ AS_IF([test $libc_cv_compiler_ok != yes],
 # This tells autoconf to generate Makefile from the Makefile.in.  This is the
 # top level Makefile for the project.  This Makefile will then recurse into
 # the fragment Makefiles in the sysdeps directories.
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile libdfp.pc])
 
 AC_OUTPUT
