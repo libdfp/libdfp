@@ -6303,7 +6303,7 @@ fi
 # This tells autoconf to generate Makefile from the Makefile.in.  This is the
 # top level Makefile for the project.  This Makefile will then recurse into
 # the fragment Makefiles in the sysdeps directories.
-ac_config_files="$ac_config_files Makefile"
+ac_config_files="$ac_config_files Makefile libdfp.pc"
 
 
 cat >confcache <<\_ACEOF
@@ -7000,6 +7000,7 @@ do
   case $ac_config_target in
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "libdfp.pc") CONFIG_FILES="$CONFIG_FILES libdfp.pc" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
