@@ -23,6 +23,7 @@
 #endif
 
 #include <math.h>
+#include <ieee754r_private.h>
 
 #define FUNCTION_NAME quantize
 #include <dfpmacro.h>
@@ -65,4 +66,5 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 
   return (DEC_TYPE) result;
 }
+hidden_def (INTERNAL_FUNCTION_NAME)
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)
