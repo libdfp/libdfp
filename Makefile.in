@@ -2,7 +2,7 @@ ifneq (,)
 This Makefile requires GNU Make.
 endif
 
-top_srcdir := @top_srcdir@
+top_srcdir := $(realpath @top_srcdir@)
 top_builddir = .
 
 prefix = @prefix@
