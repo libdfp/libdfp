@@ -512,7 +512,6 @@ AC_TYPE_UINT64_T
 AC_TYPE_INT64_T
 
 # Checks for library functions.
-AC_FUNC_MALLOC
 AC_FUNC_MBRTOWC
 AC_CHECK_FUNCS([floor gettimeofday memset nl_langinfo setlocale sqrt strchr strtol])
 
