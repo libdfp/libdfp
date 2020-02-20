@@ -10,6 +10,7 @@ exec_prefix = @exec_prefix@
 libdir = @libdir@
 includedir = @includedir@
 docdir = @docdir@
+datarootdir = @datarootdir@
 
 # Where to install the library and object files.
 ifndef libdir
