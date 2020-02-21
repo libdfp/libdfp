@@ -1,7 +1,0 @@
-libdfp {
-  LIBDFP_PRIVATE {
-    __decrm_location;
-  }
-  LIBDFP_1.0.0 {
-  }
-}
