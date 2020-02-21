@@ -99,19 +99,25 @@ asm ("__dpd_eqdd2 = __GI___dpd_eqdd2");
 asm ("__dpd_eqsd2 = __GI___dpd_eqsd2");
 asm ("__dpd_eqtd2 = __GI___dpd_eqtd2");
 
-asm ("__dpd_ltdd2 = __GI___dpd_ltdd2");
 asm ("__dpd_ltsd2 = __GI___dpd_ltsd2");
+asm ("__dpd_ltdd2 = __GI___dpd_ltdd2");
 asm ("__dpd_lttd2 = __GI___dpd_lttd2");
 
 asm ("__dpd_gtsd2 = __GI___dpd_gtsd2");
+asm ("__dpd_gtdd2 = __GI___dpd_gtdd2");
 asm ("__dpd_gttd2 = __GI___dpd_gttd2");
 
+asm ("__dpd_lesd2 = __GI___dpd_lesd2");
+asm ("__dpd_ledd2 = __GI___dpd_ledd2");
 asm ("__dpd_letd2 = __GI___dpd_letd2");
+
+asm ("__dpd_gesd2 = __GI___dpd_gesd2");
+asm ("__dpd_gedd2 = __GI___dpd_gedd2");
 asm ("__dpd_getd2 = __GI___dpd_getd2");
 
-asm ("__dpd_netd2 = __GI___dpd_netd2");
 asm ("__dpd_nesd2 = __GI___dpd_nesd2");
 asm ("__dpd_nedd2 = __GI___dpd_nedd2");
+asm ("__dpd_netd2 = __GI___dpd_netd2");
 
 asm ("__dpd_unordsd2 = __GI___dpd_unordsd2");
 asm ("__dpd_unorddd2 = __GI___dpd_unorddd2");
