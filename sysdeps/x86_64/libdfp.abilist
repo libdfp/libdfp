@@ -382,7 +382,6 @@ LIBDFP_PRIVATE
  __decoded128 F
  __decoded32 F
  __decoded64 F
- __decrm_location F
  __fe_dec_getround F
  __fe_dec_setround F
  __fmt_d128 F
