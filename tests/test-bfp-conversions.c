@@ -306,12 +306,20 @@ static char * decodebinl(long double d, char *c) { sprintf(c,"%.29La",d); return
 
 #else
 
+/* ppc/ppc64 do no support _Float128. */
+#if TF_MODE_FLT128 || HAVE_KFMODE
+# define HAVE_FLT128(x) x,
+inline char * decodebin128(_Float128 d, char *c) { strfromf128(c,128,"%.29a",d); return c;}
+#else
+# define HAVE_FLT128(x)
+#endif
+
 #define FORMAT_NAME(x) \
 	_Generic((x), \
 		float: "float", \
 		double: "double", \
 		long double: "long double", \
-		_Float128: "_Float128", \
+		HAVE_FLT128(_Float128: "_Float128") \
 		_Decimal32: "_Decimal32", \
 		_Decimal64: "_Decimal64", \
 		_Decimal128: "_Decimal128")
@@ -321,14 +329,13 @@ static char * decodebinl(long double d, char *c) { sprintf(c,"%.29La",d); return
 		float: decodebin32, \
 		double: decodebin64, \
 		long double: decodebinl, \
-		_Float128: decodebin128, \
+		HAVE_FLT128(_Float128: decodebin128) \
 		_Decimal32: decoded32, \
 		_Decimal64: decoded64, \
 		_Decimal128: decoded128)(x,y)
 
 inline char * decodebin32(float d, char *c)      { strfromf(c,128,"%.6a",d); return c;}
 inline char * decodebin64(double d, char *c)     { strfromd(c,128,"%.14a",d); return c;}
-inline char * decodebin128(_Float128 d, char *c) { strfromf128(c,128,"%.29a",d); return c;}
 inline char * decodebinl(long double d, char *c) { strfroml(c,128,"%.29a",d); return c;}
 #endif
 
