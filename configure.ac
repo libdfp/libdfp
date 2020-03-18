@@ -25,6 +25,9 @@ if test "$machine" == powerpc64 && test "$ac_cv_c_bigendian" == no; then
   machine=powerpc64le
 fi
 
+# machine is used and rewritten when computing sysdirs.
+host_machine=${machine}
+
 # Only allow a Linux host OS.  We don't support building libdfp on non-Linux
 # systems.
 if test "$config_os" != linux-gnu; then
@@ -520,7 +523,7 @@ gcc_min=4
 gcc_min_minor=6
 gcc_extra=""
 glibc_ver="2.10"
-if test "$machine" == powerpc64le || test "$base_machine" == i386 || test "$machine" == x86_64; then
+if test "$host_machine" == powerpc64le || test "$base_machine" == i386 || test "$host_machine" == x86_64; then
   gcc_min=6
   gcc_min_minor=2
   gcc_extra="#if __GLIBC__ < 2 && __GLIBC_MINOR < 26
