@@ -375,7 +375,18 @@ tests: $(libdfp_tests:%=%.out)
 # those are built from those rules.
 check: tests
 
-.PHONY: check
+# Build all tests, but do not try running them (excepting ABI/PLT checks)
+cross-tests = check-localplt check-abi-libdfp
+cross-check:  $(filter-out $(cross-tests),$(libdfp_tests)) $(cross-tests:%=%.out)
+	$(top_srcdir)/scripts/merge-test-results.sh -s $(top_builddir)/ "" \
+	  $(sort $(cross-tests)) > tests.sum
+	@echo Details of failed tests:
+	@awk -v builddir=$(top_builddir) \
+	  '{ if ($$1 != "PASS:") printf "%s/%s.out ", builddir, $$2; }' \
+	  tests.sum | xargs -n 1 -t cat
+	$(call summarize-tests,tests.sum)
+
+.PHONY: check cross-check
 
 clean:
 	rm -f *.o
