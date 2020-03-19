@@ -59,6 +59,15 @@ AC_PATH_PROG([LDD], [ldd])
 AC_ARG_VAR(LDD,The path to the ldd used by the debug scripts.
 Defaults to that found in $$PATH)
 
+# Check for python3 if available, or else python.
+# Borrowed from glibc.
+AC_CHECK_PROGS([PYTHON_PROG],python3 python, no-python)
+if test $PYTHON_PROG == no-python; then
+  AC_MSG_ERROR([python is required])
+fi
+PYTHON="$PYTHON_PROG -B"
+
+AC_SUBST(PYTHON)
 AC_SUBST(CFLAGS)
 AC_SUBST(CXXFLAGS)
 AC_SUBST(CPPFLAGS)
