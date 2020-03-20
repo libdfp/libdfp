@@ -320,12 +320,18 @@ LIBDFP_1.0.13
  __dpd_floatunstitd F
 LIBDFP_1.0.15
  LIBDFP_1.0.15 A
+ __dpd_extendddkf F
  __dpd_extendddkf2 F
+ __dpd_extendkftd F
+ __dpd_extendsdkf F
  __dpd_extendsdkf2 F
  __dpd_extendtdkf2 F
+ __dpd_trunckfdd F
  __dpd_trunckfdd2 F
+ __dpd_trunckfsd F
  __dpd_trunckfsd2 F
  __dpd_trunckftd2 F
+ __dpd_trunctdkf F
  fmaxmagd128 F
  fmaxmagd32 F
  fmaxmagd64 F

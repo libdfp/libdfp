@@ -1,5 +1,6 @@
 libdfp {
   LIBDFP_1.0.15 {
+    # GCC < 9 generates these symbols for KF <-> *D
     __dpd_extendsdkf2;
     __dpd_extendddkf2;
     __dpd_extendtdkf2;
@@ -7,5 +8,16 @@ libdfp {
     __dpd_trunckfsd2;
     __dpd_trunckfdd2;
     __dpd_trunckftd2;
+
+    # GCC >= 9 generates these
+    # *D -> KF
+    __dpd_extendsdkf;
+    __dpd_extendddkf;
+    __dpd_trunctdkf;
+
+    # KF -> *D
+    __dpd_extendkftd;
+    __dpd_trunckfdd;
+    __dpd_trunckfsd;
   }
 }

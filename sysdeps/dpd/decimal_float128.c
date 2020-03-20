@@ -77,3 +77,15 @@ DECL_TO_F128 (td, kf, 128, __dpd_trunc);
 DECL_FROM_F128 (kf, sd, 32, __dpd_trunc);
 DECL_FROM_F128 (kf, dd, 64, __dpd_trunc);
 DECL_FROM_F128 (td, kf, 128, __dpd_extend);
+
+/* Note, each function has an alias to the GCC 9+ name of the
+   intrinsic.  GCC < 9 named these differently.  Also note the
+   naming of KF <-> TD functions was reversed too.  */
+strong_alias (__dpd_extendsdkf2, __dpd_extendsdkf);
+strong_alias (__dpd_extendddkf2, __dpd_extendddkf);
+strong_alias (__dpd_trunckftd2, __dpd_trunctdkf);
+
+strong_alias (__dpd_trunckfsd2, __dpd_trunckfsd);
+strong_alias (__dpd_trunckfdd2, __dpd_trunckfdd);
+strong_alias (__dpd_extendtdkf2, __dpd_extendkftd);
+
