@@ -522,28 +522,30 @@ AC_CHECK_FUNCS([floor gettimeofday memset nl_langinfo setlocale sqrt strchr strt
 gcc_min=4
 gcc_min_minor=6
 gcc_extra=""
-glibc_ver="2.10"
+glibc_min=2
+glibc_min_minor=10
 if test "$host_machine" == powerpc64le || test "$base_machine" == i386 || test "$host_machine" == x86_64; then
   gcc_min=6
   gcc_min_minor=2
-  gcc_extra="#if __GLIBC__ < 2 && __GLIBC_MINOR < 26
-             #error GLIBC 2.26 or newer required for this host
-             #endif"
-  glibc_ver="2.26"
+  glibc_min=2
+  glibc_min_minor=26
 fi
 
-# Copy the glibc check for GCC minimum version:
+# Based on the glibc check for GCC minimum version.
 AC_CACHE_CHECK([if $CC is sufficient to build libdfp], libc_cv_compiler_ok, [
-AC_TRY_COMPILE([#include <stdio.h>], [
+AC_TRY_COMPILE([#include <stdio.h>
+#include <features.h>], [
 #if !defined __GNUC__ || __GNUC__ < ${gcc_min} || (__GNUC__ == ${gcc_min} && __GNUC_MINOR__ < ${gcc_min_minor})
 #error insufficient compiler
+#endif
+#if !__GLIBC_PREREQ (${glibc_min}, ${glibc_min_minor})
+# error insufficient glibc version
 #endif
 ${gcc_extra}],
            [libc_cv_compiler_ok=yes],
            [libc_cv_compiler_ok=no])])
 AS_IF([test $libc_cv_compiler_ok != yes],
-      [AC_MSG_ERROR("Minimum gcc/glibc version not met (${gcc_min}.${gcc_min_minor}/${glibc_ver})")])
-
+      [AC_MSG_ERROR("Minimum gcc/glibc version not met (${gcc_min}.${gcc_min_minor}/${glibc_min}.${glibc_min_minor})")])
 
 # This tells autoconf to generate Makefile from the Makefile.in.  This is the
 # top level Makefile for the project.  This Makefile will then recurse into
