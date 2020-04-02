@@ -6265,17 +6265,16 @@ done
 gcc_min=4
 gcc_min_minor=6
 gcc_extra=""
-glibc_ver="2.10"
+glibc_min=2
+glibc_min_minor=10
 if test "$host_machine" == powerpc64le || test "$base_machine" == i386 || test "$host_machine" == x86_64; then
   gcc_min=6
   gcc_min_minor=2
-  gcc_extra="#if __GLIBC__ < 2 && __GLIBC_MINOR < 26
-             #error GLIBC 2.26 or newer required for this host
-             #endif"
-  glibc_ver="2.26"
+  glibc_min=2
+  glibc_min_minor=26
 fi
 
-# Copy the glibc check for GCC minimum version:
+# Based on the glibc check for GCC minimum version.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking if $CC is sufficient to build libdfp" >&5
 $as_echo_n "checking if $CC is sufficient to build libdfp... " >&6; }
 if ${libc_cv_compiler_ok+:} false; then :
@@ -6285,12 +6284,16 @@ else
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <stdio.h>
+#include <features.h>
 int
 main ()
 {
 
 #if !defined __GNUC__ || __GNUC__ < ${gcc_min} || (__GNUC__ == ${gcc_min} && __GNUC_MINOR__ < ${gcc_min_minor})
 #error insufficient compiler
+#endif
+#if !__GLIBC_PREREQ (${glibc_min}, ${glibc_min_minor})
+# error insufficient glibc version
 #endif
 ${gcc_extra}
   ;
@@ -6307,9 +6310,8 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_compiler_ok" >&5
 $as_echo "$libc_cv_compiler_ok" >&6; }
 if test $libc_cv_compiler_ok != yes; then :
-  as_fn_error $? "\"Minimum gcc/glibc version not met (${gcc_min}.${gcc_min_minor}/${glibc_ver})\"" "$LINENO" 5
+  as_fn_error $? "\"Minimum gcc/glibc version not met (${gcc_min}.${gcc_min_minor}/${glibc_min}.${glibc_min_minor})\"" "$LINENO" 5
 fi
-
 
 # This tells autoconf to generate Makefile from the Makefile.in.  This is the
 # top level Makefile for the project.  This Makefile will then recurse into
