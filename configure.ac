@@ -525,7 +525,15 @@ AC_TYPE_INT64_T
 
 # Checks for library functions.
 AC_FUNC_MBRTOWC
-AC_CHECK_FUNCS([floor gettimeofday memset nl_langinfo setlocale sqrt strchr strtol])
+AC_FUNC_ERROR_AT_LINE
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_TYPE_INT16_T
+AC_TYPE_SSIZE_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT8_T
+AC_CHECK_FUNCS([floor fesetround gettimeofday memset nl_langinfo setlocale \
+		sqrt strcasecmp strchr strdup strtol])
 
 # For _Float128 targets, we require yet newer glibc (2.26) and gcc (6.2)
 gcc_min=4
