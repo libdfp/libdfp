@@ -635,7 +635,6 @@ cxxdecimal
 libdfp_cv_cc_with_decimal_float
 machine
 base_machine
-with_fp
 ASFLAGS
 PYTHON
 PYTHON_PROG
@@ -713,7 +712,6 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 with_cpu
-with_fp
 enable_static
 enable_shared
 '
@@ -1360,7 +1358,6 @@ Optional Packages:
                           specified, configure will attempt to guess the
                           latest powerpc processor supported by the toolchain,
                           or use the soft dfp implementation.
-  --with-fp               if using floating point hardware [default=yes]
 
 Some influential environment variables:
   CC          C compiler command
@@ -5370,16 +5367,6 @@ $as_echo "$libdfp_cv_submachine_opt" >&6; }
 fi
 
 
-# Check whether --with-fp was given.
-if test "${with_fp+set}" = set; then :
-  withval=$with_fp; with_fp=$withval
-else
-  with_fp=yes
-fi
-
-
-
-
 case "$machine" in
 	powerpc|powerpcle) base_machine=powerpc machine=powerpc/powerpc32 ;;
 	powerpc64) base_machine=powerpc machine=powerpc/powerpc64 ;;
@@ -5569,21 +5556,17 @@ $as_echo_n "checking sysdep dirs... " >&6; }
 # ${srcdir}/libdecnumber/bid [libdecnumber headers]
 # ${srcdir}/libbid/? [libbid headers]
 # [MACHINE/SUBMACHINE]
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/fpu [platform directories]
+#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/ [platform directories]
 #   ${srcdir}/sysdeps/powerpc/powerpc64/power7/
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power6/fpu [platform directories]
+#   ${srcdir}/sysdeps/powerpc/powerpc64/power6/ [platform directories]
 #   ${srcdir}/sysdeps/powerpc/powerpc64/power6/
 #   ${srcdir}/sysdeps/powerpc/powerpc64/
-#   ${srcdir}/sysdeps/powerpc/powerpc32/power6/fpu [platform directories]
+#   ${srcdir}/sysdeps/powerpc/powerpc32/power6/ [platform directories]
 #   ${srcdir}/sysdeps/powerpc/powerpc32/power6/
 #   ${srcdir}/sysdeps/powerpc/powerpc32/
-# [BASE_MACHINE/[FPU|NOFPU]
+# [BASE_MACHINE/FPU]
 #   ${srcdir}/sysdeps/powerpc/dfpu
-#   ${srcdir}/sysdeps/powerpc/dfpu/bits
-#   ${srcdir}/sysdeps/powerpc/fpu
-#   ${srcdir}/sysdeps/powerpc/fpu/bits
-#   ${srcdir}/sysdeps/powerpc/nofpu
-#   ${srcdir}/sysdeps/powerpc/nofpu/bits
+#   ${srcdir}/sysdeps/powerpc/nodfpu
 # [BASE_MACHINE]
 #   ${srcdir}/sysdeps/powerpc/
 #   ${srcdir}/sysdeps/i386/
@@ -5608,23 +5591,14 @@ $as_echo_n "checking sysdep dirs... " >&6; }
 # GLIBC does.
 
 tail=$machine${submachine:+/$submachine}
-# Build the list of dfpu|fpu|nofpu directories.
+# Build the list of dfpu|nodfpu directories.
 while m=`echo $tail | sed 's@^\(.*\)/\([^/]*\)$@& \1@'`; test -n "$m"; do
   set $m
   # Only look for 'dfpu' directory if the system supports hardware dfp.
   if test "$with_dfp" = yes; then
-    mach="$mach /$1/dfpu/bits /$1/dfpu"
-    #mach="$mach /$1/dfpu"
+    mach="$mach /$1/dfpu"
   else
-    mach="$mach /$1/dfpu/bits /$1/nodfpu"
-  fi
-  # Prepend the machine's FPU directory unless --without-fp.
-  if test "$with_fp" = yes; then
-    mach="$mach /$1/fpu/bits /$1/fpu"
-    #mach="$mach /$1/fpu"
-  else
-    mach="$mach /$1/fpu/bits /$1/nofpu"
-    #mach="$mach /$1/nofpu"
+    mach="$mach /$1/nodfpu"
   fi
   mach="$mach /$1"
   tail="$2"

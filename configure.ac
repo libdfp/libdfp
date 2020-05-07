@@ -174,13 +174,6 @@ if test -n "$submachine"; then
   fi
 fi
 
-AC_ARG_WITH([fp],
-	    AS_HELP_STRING([--with-fp],
-			   [if using floating point hardware @<:@default=yes@:>@]),
-	    [with_fp=$withval],
-	    [with_fp=yes])
-AC_SUBST(with_fp)
-
 dnl We need to use [ and ] for other purposes for a while now.
 changequote(,)dnl
 
@@ -302,21 +295,17 @@ AC_MSG_CHECKING(sysdep dirs)
 # ${srcdir}/libdecnumber/bid [libdecnumber headers]
 # ${srcdir}/libbid/? [libbid headers]
 # [MACHINE/SUBMACHINE]
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/fpu [platform directories]
+#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/ [platform directories]
 #   ${srcdir}/sysdeps/powerpc/powerpc64/power7/
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power6/fpu [platform directories]
+#   ${srcdir}/sysdeps/powerpc/powerpc64/power6/ [platform directories]
 #   ${srcdir}/sysdeps/powerpc/powerpc64/power6/
 #   ${srcdir}/sysdeps/powerpc/powerpc64/
-#   ${srcdir}/sysdeps/powerpc/powerpc32/power6/fpu [platform directories]
+#   ${srcdir}/sysdeps/powerpc/powerpc32/power6/ [platform directories]
 #   ${srcdir}/sysdeps/powerpc/powerpc32/power6/
 #   ${srcdir}/sysdeps/powerpc/powerpc32/
-# [BASE_MACHINE/[FPU|NOFPU]
+# [BASE_MACHINE/FPU]
 #   ${srcdir}/sysdeps/powerpc/dfpu
-#   ${srcdir}/sysdeps/powerpc/dfpu/bits
-#   ${srcdir}/sysdeps/powerpc/fpu
-#   ${srcdir}/sysdeps/powerpc/fpu/bits
-#   ${srcdir}/sysdeps/powerpc/nofpu
-#   ${srcdir}/sysdeps/powerpc/nofpu/bits
+#   ${srcdir}/sysdeps/powerpc/nodfpu
 # [BASE_MACHINE]
 #   ${srcdir}/sysdeps/powerpc/
 #   ${srcdir}/sysdeps/i386/
@@ -343,23 +332,14 @@ AC_MSG_CHECKING(sysdep dirs)
 dnl We need to use [ and ] for other purposes for a while now.
 changequote(,)dnl
 tail=$machine${submachine:+/$submachine}
-# Build the list of dfpu|fpu|nofpu directories.
+# Build the list of dfpu|nodfpu directories.
 while m=`echo $tail | sed 's@^\(.*\)/\([^/]*\)$@& \1@'`; test -n "$m"; do
   set $m
   # Only look for 'dfpu' directory if the system supports hardware dfp.
   if test "$with_dfp" = yes; then
-    mach="$mach /$1/dfpu/bits /$1/dfpu"
-    #mach="$mach /$1/dfpu"
+    mach="$mach /$1/dfpu"
   else
-    mach="$mach /$1/dfpu/bits /$1/nodfpu"
-  fi
-  # Prepend the machine's FPU directory unless --without-fp.
-  if test "$with_fp" = yes; then
-    mach="$mach /$1/fpu/bits /$1/fpu"
-    #mach="$mach /$1/fpu"
-  else
-    mach="$mach /$1/fpu/bits /$1/nofpu"
-    #mach="$mach /$1/nofpu"
+    mach="$mach /$1/nodfpu"
   fi
   mach="$mach /$1"
   tail="$2"
