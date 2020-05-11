@@ -66,8 +66,6 @@ INSTALL := install
 base_machine = @base_machine@
 # e.g. powerpc32
 machine = @machine@
-# e.g. power6
-submachine = @submachine@
 
 # e.g. -mcpu=power6
 libdfp_cv_submachine_opt = @libdfp_cv_submachine_opt@
@@ -117,7 +115,7 @@ override ASFLAGS = $(+asflags)
 sysdep_dirs = @sysdep_dirs@
 
 # This is the precedence ordered list of subdirectories that configure
-# selected for searching based upon submachine, machine, base_machine.
+# selected for searching based upon machine, base_machine.
 # Add the ieee754r and decNumberMath convenience directories to the list.
 
 # Find each sysdep directory or convenience directory with a Makefile in it.
