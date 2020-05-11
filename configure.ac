@@ -98,45 +98,12 @@ AC_ARG_WITH([cpu],
   no)
     with_dfp=no
     ;;
-  power[[6-9]]|power6x)
-    submachine="$withval"
-    AC_MSG_NOTICE(configuring for the $submachine processor)
-    with_dfp=yes ;;
-  z9-ec|z10|z196|zEC12|z13|arch12|z14|arch13|z15)
-    submachine="$withval"
-    AC_MSG_NOTICE(configuring for the $submachine processor)
-    with_dfp=yes ;;
   *)
     submachine="$withval"
-    AC_MSG_NOTICE(configuring for the $submachine processor)
-    with_dfp=no ;;
+    ;;
   esac
 ],[
   case "$host_cpu" in
-  powerpc*)
-    # Test successively newer processors and select the
-    # best implementation.
-    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-      #ifndef _ARCH_PWR6
-      # error "Support for hardware dfp isn't available"
-      #endif
-      ]])], [with_dfp=yes; submachine=power6], [with_dfp=no])
-    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-      #ifndef _ARCH_PWR6X
-      # error "POWER6X not supported"
-      #endif
-      ]])], [submachine=power6x], [])
-    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-      #ifndef _ARCH_PWR7
-      # error "POWER7 not supported"
-      #endif
-      ]])], [submachine=power7], [])
-    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-      #ifndef _ARCH_PWR8
-      # error "POWER8 not supported"
-      #endif
-      ]])], [submachine=power8], [])
-    ;;
     s390|s390x)
     with_dfp=no
     # Check if the used compiler supports dfp instructions by converting
@@ -154,8 +121,6 @@ EOF
     fi
     rm -f conftest*
     ;;
-  *)
-    with_dfp=no ;;
   esac
 ])
 
@@ -172,6 +137,22 @@ if test -n "$submachine"; then
   if test "x$libdfp_cv_submachine_opt" = xno; then
     AC_MSG_ERROR([${CC-cc} does not support $submachine])
   fi
+fi
+
+# Test if the host as configured by the environment supports hard-dfp
+# by scanning assembler for soft-dfp
+if test -z "$with_dfp"; then
+  gcc_intrin=`echo "_Decimal128 x(_Decimal64 y) { return y; }" \
+              | ${CC-cc} ${CFLAGS} ${libdfp_cv_submachine_opt} -S -c -xc - -o - \
+              | grep extendddtd -m1`
+  case "$gcc_intrin" in
+    *extendddtd*)
+      with_dfp=no
+      ;;
+    *)
+      with_dfp=yes
+      ;;
+  esac
 fi
 
 dnl We need to use [ and ] for other purposes for a while now.
@@ -293,22 +274,16 @@ AC_MSG_CHECKING(sysdep dirs)
 # ${srcdir}/include [internal libdfp headers]
 # ${srcdir}/libdecnumber/dpd [libdecnumber headers]
 # ${srcdir}/libdecnumber/bid [libdecnumber headers]
-# ${srcdir}/libbid/? [libbid headers]
+# ${srcdir}/libbid/ [libbid headers]
 # [MACHINE/SUBMACHINE]
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/ [platform directories]
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power7/
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power6/ [platform directories]
-#   ${srcdir}/sysdeps/powerpc/powerpc64/power6/
+#   ${srcdir}/sysdeps/powerpc/powerpc64/le
 #   ${srcdir}/sysdeps/powerpc/powerpc64/
-#   ${srcdir}/sysdeps/powerpc/powerpc32/power6/ [platform directories]
-#   ${srcdir}/sysdeps/powerpc/powerpc32/power6/
 #   ${srcdir}/sysdeps/powerpc/powerpc32/
 # [BASE_MACHINE/FPU]
 #   ${srcdir}/sysdeps/powerpc/dfpu
 #   ${srcdir}/sysdeps/powerpc/nodfpu
 # [BASE_MACHINE]
 #   ${srcdir}/sysdeps/powerpc/
-#   ${srcdir}/sysdeps/i386/
 # [ENCODING]
 #   ${srcdir}/sysdeps/dpd [dpd specific implementations]
 #   ${srcdir}/sysdeps/bid [bid specific implementations]
@@ -324,7 +299,7 @@ AC_MSG_CHECKING(sysdep dirs)
 
 # Out of Tree Sources
 # ${srcdir}/libdecnumber [third-party GCC sources]
-# ${srcdir}/libbid       [third-party libBID sources]
+# ${srcdir}/libbid       [third-party GCC sources]
 
 # We only assume Linux support so we don't worry about all the os stuff that
 # GLIBC does.
@@ -364,7 +339,6 @@ for m in $mach ''; do
   fi
 done
 
-AC_SUBST(submachine)
 AC_SUBST(libdfp_cv_submachine_opt)
 
 # Close out the sysdeps directory.
