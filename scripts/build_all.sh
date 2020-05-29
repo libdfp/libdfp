@@ -23,6 +23,11 @@ powerpc64le_prefix=${bmg_dir}powerpc64le-linux-gnu/bin/powerpc64le-glibc-linux-g
 s390_prefix=${bmg_dir}s390x-linux-gnu/bin/s390x-glibc-linux-gnu-
 s390x_prefix=${s390_prefix}
 
+# Hack for the inherintly broken malloc autoconf tests which
+# never work in a real cross compile.
+ac_hacks="ac_cv_func_malloc_0_nonnull=yes
+	  ac_cv_func_realloc_0_nonnull=yes"
+
 function do_one()
 {
   tc=$2
@@ -38,7 +43,7 @@ function do_one()
   mkdir -p build-${dsuf} &> /dev/null || { echo "mkdir fail ${dsuf}"; return 1; }
   mkdir -p install-${dsuf} &> /dev/null || { echo "mkdir fail ${dsuf}"; return 1; }
   cd build-${dsuf}
-  ${SRCDIR}/configure --host=${host}-linux-gnu ${targetcpu} CC="${tc}gcc $extra" CXX="${tc}g++ $extra" 2>conf.err > conf.log && \
+  ${SRCDIR}/configure --host=${host}-linux-gnu ${targetcpu} CC="${tc}gcc $extra" CXX="${tc}g++ $extra" $ac_hacks 2>conf.err > conf.log && \
         echo "PASS config ${dsuf}" || { echo "FAIL config ${dsuf}"; return 1; }
   make -j20 2> make.err > make.log && echo "PASS compile ${dsuf}" || { echo "FAIL compile ${dsuf}"; return 1; }
   make -j20 cross-check 2> cross-check.err > cross-check.log && echo "PASS cross-check ${dsuf}" || { echo "FAIL cross-check ${dsuf}"; return 1; }
