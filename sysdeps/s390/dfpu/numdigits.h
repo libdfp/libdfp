@@ -148,43 +148,62 @@ __attribute__((unused))
 FUNC_D (left_justify) (DEC_TYPE x)
 {
 #if _DECIMAL_SIZE == 128
+# define LJ_INSN_REROUND "rrxtr"
+# define LJ_INSN_EXTRACT_EXPONENT "eextr"
+# define LJ_INSN_INSERT_EXPONENT "iextr"
+# define LJ_INSN_QUANTIZE "qaxtr"
+  /* The following magic numbers result from the precision of the
+     data type minus 1.  */
+# define LJ_ADJUST_EXPONENT 33
   register DEC_TYPE tmp asm ("f0") = x;
   register DEC_TYPE rnd asm ("f4");
-#elif _DECIMAL_SIZE == 64
+#else
+# define LJ_INSN_REROUND "rrdtr"
+# define LJ_INSN_EXTRACT_EXPONENT "eedtr"
+# define LJ_INSN_INSERT_EXPONENT "iedtr"
+# define LJ_INSN_QUANTIZE "qadtr"
+# if _DECIMAL_SIZE == 64
+#  define LJ_ADJUST_EXPONENT 15
   DEC_TYPE tmp = x;
   DEC_TYPE rnd;
-#else
+# else
+#  define LJ_ADJUST_EXPONENT 6
   _Decimal64 tmp = (_Decimal64)x;
   _Decimal64 rnd;
+# endif
 #endif
 
+  /* Note: The extract / insert biased exponent instructions work with a
+     64bit signed register.  But we just use a 32bit signed register as on 31bit
+     a 64bit datatype would be stored in a pair of two 32bit registers.
+     The biased exponent is always within a 32bit value. This also applies for
+     the negative values for NaN and infinity.  */
   int exp;
 
-  asm (
-       /* The following magic numbers result from the precision of the
-		   data type minus 1.  */
-#if _DECIMAL_SIZE != 128
-       "rrdtr %0,%2,%3,5\n\t"
-       "eedtr %1,%0\n\t"
-#if _DECIMAL_SIZE == 32
-       "ahi %1,-6\n\t"
-#else /* _DECIMAL_SIZE == 64 */
-       "ahi %1,-15\n\t"
-#endif
-       "iedtr %0,%0,%1\n\t"
-       "qadtr %0,%2,%0,5"
-#else /* _DECIMAL_SIZE == 128 */
-       "rrxtr %0,%2,%3,5\n\t"
-       "eextr %1,%0\n\t"
-       "ahi %1,-33\n\t"
-       "iextr %0,%0,%1\n\t"
-       "qaxtr %0,%2,%0,5"
-#endif
-       : "=f"(rnd), "=d"(exp), "+f"(tmp) : "d"(1));
+  asm (LJ_INSN_REROUND " %0,%1,%2,5\n\t" : "=f"(rnd) : "f"(tmp), "d"(1));
+  asm (LJ_INSN_EXTRACT_EXPONENT " %0,%1\n\t" : "=d"(exp) : "f"(rnd));
+
+  /* Check for NaN and infinity, The extract biased exponent instruction
+     returns < 0 for qnan, snan, and inf.  */
+  if (exp >= LJ_ADJUST_EXPONENT)
+    exp -= LJ_ADJUST_EXPONENT;
+  else if (exp < 0)
+    return x;
+  else
+    exp = 0;
+
+  asm ("lgfr %1,%1\n\t"	/* Extend 32bit to 64bit signed register.  */
+       LJ_INSN_INSERT_EXPONENT " %0,%0,%1\n\t" : "+f"(rnd), "+d"(exp));
+  asm (LJ_INSN_QUANTIZE " %0,%1,%0,5\n\t" : "+f"(rnd) : "f"(tmp));
 
 #if _DECIMAL_SIZE == 32
   return (_Decimal32)rnd;
 #else
   return rnd;
 #endif
+#undef LJ_INSN_REROUND
+#undef LJ_INSN_EXTRACT_EXPONENT
+#undef LJ_INSN_INSERT_EXPONENT
+#undef LJ_INSN_QUANTIZE
+#undef LJ_ADJUST_EXPONENT
 }
