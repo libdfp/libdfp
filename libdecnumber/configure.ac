@@ -20,7 +20,7 @@
 # <http://www.gnu.org/licenses/>.
 
 AC_PREREQ(2.64)
-AC_INIT(libdecnumber, [ ], gcc-bugs@gcc.gnu.org, libdecnumber)
+AC_INIT([libdfp/libdecnumber],[1.0.14],[https://github.com/libdfp/libdfp/issues])
 AC_CONFIG_SRCDIR(decNumber.h)
 AC_CONFIG_MACRO_DIR(../config)
 AC_CONFIG_AUX_DIR(..)
