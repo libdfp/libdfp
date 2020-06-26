@@ -166,7 +166,7 @@ BACKEND_CFLAGS=$(cflags-cpu) $(picflag)
 
 libdecnumber/libdecnumber.a:
 	@echo "+Building DFP backend $@"
-	DEFS="-D__STDC_DEC_FP__=200704L $(CFLAGS-sysdeps) $(BACKEND_CFLAGS)" $(MAKE) -C libdecnumber
+	DEFS="-D__STDC_DEC_FP__=200704L $(CFLAGS-sysdeps) $(BACKEND_CFLAGS)" $(MAKE) -C libdecnumber -f Makefile.libdecnumber
 
 libdfp: @enable_static@ @enable_shared@
 
