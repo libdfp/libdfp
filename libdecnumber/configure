@@ -4950,9 +4950,9 @@ fi
 
 # Output.
 
-ac_config_headers="$ac_config_headers config.h:config.in"
+ac_config_headers="$ac_config_headers libdecnumberconfig/config.h:config.in"
 
-ac_config_files="$ac_config_files Makefile"
+ac_config_files="$ac_config_files Makefile.libdecnumber:Makefile.in"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5671,8 +5671,8 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "gstdint.h") CONFIG_COMMANDS="$CONFIG_COMMANDS gstdint.h" ;;
-    "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h:config.in" ;;
-    "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "libdecnumberconfig/config.h") CONFIG_HEADERS="$CONFIG_HEADERS libdecnumberconfig/config.h:config.in" ;;
+    "Makefile.libdecnumber") CONFIG_FILES="$CONFIG_FILES Makefile.libdecnumber:Makefile.in" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -6551,7 +6551,7 @@ else
 fi
 
  ;;
-    "config.h":H) echo timestamp > stamp-h1 ;;
+    "libdecnumberconfig/config.h":H) echo timestamp > stamp-h1 ;;
 
   esac
 done # for ac_tag

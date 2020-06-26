@@ -56,7 +56,7 @@ ADDITIONAL_OBJS = @ADDITIONAL_OBJS@
 
 enable_decimal_float= @enable_decimal_float@
 
-INCLUDES = -I$(srcdir) -I.
+INCLUDES = -I$(srcdir) -I. -I$(top_builddir)/libdecnumberconfig
 
 ALL_CFLAGS = $(CFLAGS) $(WARN_CFLAGS) $(INCLUDES) $(CPPFLAGS) $(PICFLAG)
 

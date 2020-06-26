@@ -104,6 +104,6 @@ AC_SUBST(PICFLAG)
 
 # Output.
 
-AC_CONFIG_HEADERS(config.h:config.in, [echo timestamp > stamp-h1])
-AC_CONFIG_FILES(Makefile)
+AC_CONFIG_HEADERS(libdecnumberconfig/config.h:config.in, [echo timestamp > stamp-h1])
+AC_CONFIG_FILES(Makefile.libdecnumber:Makefile.in)
 AC_OUTPUT
