@@ -585,7 +585,7 @@ PACKAGE_STRING='libdfp 1.0.14'
 PACKAGE_BUGREPORT='https://github.com/libdfp/libdfp/issues'
 PACKAGE_URL=''
 
-ac_unique_file="generate-changelog.sh"
+ac_unique_file="libdfp.pc.in"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
