@@ -441,8 +441,8 @@ endif
 	$(INSTALL) -t $(inst_libdir) $(top_builddir)/libdecnumber/libdecnumber.a
 	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_LINKERNAME_LIB)
 	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_SONAME_LIB)
-	$(INSTALL) -D -t $(inst_libdir)/pkgconfig $(top_builddir)/libdfp.pc
-	$(INSTALL) -D -t $(inst_libdir)/pkgconfig $(top_builddir)/libdecnumber.pc
+	$(INSTALL) -m 644 -D -t $(inst_libdir)/pkgconfig $(top_builddir)/libdfp.pc
+	$(INSTALL) -m 644 -D -t $(inst_libdir)/pkgconfig $(top_builddir)/libdecnumber.pc
 .PHONY: install
 
 install-headers:
