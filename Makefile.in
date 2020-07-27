@@ -412,8 +412,8 @@ clean:
 	rm -f $(libdfp_tests)
 	rm -f libdfp-test-ulps.h
 	rm -f *.ulp
-	rm -f $(top_builddir)/$(dfp_backend)/*.o
-	rm -f $(top_builddir)/$(dfp_backend)/*.a
+	rm -f $(top_builddir)/libdecnumber/*.o
+	rm -f $(top_builddir)/libdecnumber/*.a
 
 .PHONY: clean
 
@@ -423,12 +423,12 @@ distclean:
 	rm -f $(top_builddir)/config.log
 	rm -f $(top_builddir)/config.status
 	rm -f $(top_builddir)/Makefile
-	rm -f $(top_builddir)/$(dfp_backend)/config.h
-	rm -f $(top_builddir)/$(dfp_backend)/config.log
-	rm -f $(top_builddir)/$(dfp_backend)/config.status
-	rm -f $(top_builddir)/$(dfp_backend)/gstdint.h
-	rm -f $(top_builddir)/$(dfp_backend)/Makefile
-	rm -f $(top_builddir)/$(dfp_backend)/stamp-h1
+	rm -f $(top_builddir)/libdecnumber/config.h
+	rm -f $(top_builddir)/libdecnumber/config.log
+	rm -f $(top_builddir)/libdecnumber/config.status
+	rm -f $(top_builddir)/libdecnumber/gstdint.h
+	rm -f $(top_builddir)/libdecnumber/Makefile
+	rm -f $(top_builddir)/libdecnumber/stamp-h1
 
 .PHONY: distclean
 
