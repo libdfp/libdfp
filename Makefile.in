@@ -2,7 +2,7 @@ ifneq (,)
 This Makefile requires GNU Make.
 endif
 
-top_srcdir := $(realpath @top_srcdir@)
+top_srcdir := @top_srcdir@
 top_builddir = .
 
 prefix = @prefix@
@@ -463,20 +463,21 @@ install-headers:
 	$(INSTALL) -t $(inst_includedir)/decnumber/ $(top_srcdir)/libdecnumber/decNumber.h
 .PHONY: install-headers
 
-install-doc: $(top_srcdir)/ChangeLog.md
+install-doc:
 	$(INSTALL) -d $(inst_docdir)dfp/
 	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/README.user
 	mv $(inst_docdir)dfp/README.user $(inst_docdir)dfp/README
-	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/ChangeLog.md
 	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.txt
 	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.libdfp.txt
 	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.libdecnumber.txt
 	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING3
 	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.RUNTIME
+	if [ ! -e $(top_srcdir)/ChangeLog.md ]; then \
+		(cd $(top_srcdir) && ./generate-changelog.sh); \
+	else \
+		cat $(top_srcdir)/ChangeLog.md; \
+	fi > $(inst_docdir)dfp/ChangeLog.md
 .PHONY: install-doc
-
-$(top_srcdir)/ChangeLog.md:
-	cd $(top_srcdir) && ./generate-changelog.sh > $(top_srcdir)/ChangeLog.md
 
 # Clean out the existing .SUFFIXES setting.
 .SUFFIXES:
