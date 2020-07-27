@@ -480,8 +480,12 @@ AC_TYPE_INT64_T
 # Checks for library functions.
 AC_FUNC_MBRTOWC
 AC_FUNC_ERROR_AT_LINE
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
+
+# Do not enable these.  They have never worked on cross builds
+# which require ugly workarounds.
+# AC_FUNC_MALLOC
+# AC_FUNC_REALLOC
+
 AC_TYPE_INT16_T
 AC_TYPE_SSIZE_T
 AC_TYPE_UINT16_T
