@@ -428,8 +428,10 @@ distclean:
 	rm -f $(top_builddir)/libdecnumber/config.log
 	rm -f $(top_builddir)/libdecnumber/config.status
 	rm -f $(top_builddir)/libdecnumber/gstdint.h
-	rm -f $(top_builddir)/libdecnumber/Makefile
+	rm -f $(top_builddir)/libdecnumber/Makefile.libdecnumber
 	rm -f $(top_builddir)/libdecnumber/stamp-h1
+	rm -f $(top_builddir)/libdecnumber.pc
+	rm -f $(top_builddir)/libdfp.pc
 
 .PHONY: distclean
 
