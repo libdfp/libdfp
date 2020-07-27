@@ -424,9 +424,10 @@ distclean:
 	rm -f $(top_builddir)/config.log
 	rm -f $(top_builddir)/config.status
 	rm -f $(top_builddir)/Makefile
-	rm -f $(top_builddir)/libdecnumber/config.h
 	rm -f $(top_builddir)/libdecnumber/config.log
 	rm -f $(top_builddir)/libdecnumber/config.status
+	rm -f $(top_builddir)/libdecnumber/libdecnumberconfig/config.h
+	rm -d $(top_builddir)/libdecnumber/libdecnumberconfig/
 	rm -f $(top_builddir)/libdecnumber/gstdint.h
 	rm -f $(top_builddir)/libdecnumber/Makefile.libdecnumber
 	rm -f $(top_builddir)/libdecnumber/stamp-h1
