@@ -397,6 +397,7 @@ cross-check:  $(filter-out $(cross-tests),$(libdfp_tests)) $(cross-tests:%=%.out
 clean:
 	rm -f *.o
 	rm -f *.os
+	rm -f *.d
 	rm -f $(STATIC_LIB)
 	rm -f $(SHARED_LINKERNAME_LIB)
 	rm -f $(SHARED_SONAME_LIB)
