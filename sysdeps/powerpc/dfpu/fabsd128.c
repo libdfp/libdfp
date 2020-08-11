@@ -24,13 +24,7 @@
 _Decimal128
 __fabsd128 (_Decimal128 x)
 {
-  /* Half part os decimal128 constainst the sign bit at same position as
-     binary64, so the instruction works for both formats.  */
-  _Decimal128 ret;
-  asm ("fabs  %0, %1\n"
-       : "=f"(ret)
-       : "f"(x));
-  return ret;
+  return __builtin_fabsd128 (x);
 }
 hidden_def (__fabsd128)
 weak_alias (__fabsd128, fabsd128)

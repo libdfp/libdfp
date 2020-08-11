@@ -24,11 +24,7 @@
 _Decimal64
 __fabsd64 (_Decimal64 x)
 {
-  /* Both binary64 and decimal64 have the sign bit at same position,
-     so the instruction works for both format.  */
-  asm ("fabs  %0, %0\n"
-       : "=&f"(x));
-  return x;
+  return __builtin_fabsd64 (x);
 }
 hidden_def (__fabsd64)
 weak_alias (__fabsd64, fabsd64)
