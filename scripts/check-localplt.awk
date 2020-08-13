@@ -57,6 +57,12 @@ NF != 2 && !(NF == 4 && ($3 == "RELA" || $3 == "REL")) {
       delete accept_type[key]
   } else if (key in accept) {
     delete accept[key]
+  } else if ($2 ~ /__dpd_.*/ || $2 ~ /__bid_.*/) {
+    # Intrinsic PLT references may not be avoidable.
+    # This happens if -flto is used, so record and make
+    # noise.  Most of these should have minimal performance
+    # impact anyways.
+    intrinsic_plt[key] = key
   } else {
     print "Extra PLT reference:", $0;
     if (result == 0)
@@ -71,6 +77,13 @@ END {
       print "Missing required PLT reference:", key;
       result = 1;
     }
+  }
+
+  # Don't make this fatal, but try to be annoying as it may not
+  # be possible to avoid.
+  for (key in intrinsic_plt) {
+      print "Warning: Extra PLT for instrinsic", key > "/dev/stderr"
+      print "Extra PLT reference", key
   }
 
   for (key in accept_type) {
