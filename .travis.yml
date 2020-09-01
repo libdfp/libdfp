@@ -1,0 +1,37 @@
+dist: focal
+language: c
+
+matrix:
+  include:
+    - name: "linux-amd64-gcc"
+      os: linux
+      arch: amd64
+      compiler: gcc
+      env: CFLAGS="-O2"
+    - name: "linux-ppc64le-gcc"
+      os: linux
+      arch: ppc64le
+      compiler: gcc
+      env: CFLAGS="-O2"
+    - name: "linux-ppc64le-gcc-sw"
+      os: linux
+      arch: ppc64le
+      compiler: gcc
+      env: CONFIGURE_OPTS="--with-cpu=no" CFLAGS="-O2"
+    - name: "linux-s390x-gcc"
+      os: linux
+      arch: s390x
+      compiler: gcc
+      env: CFLAGS="-O2"
+    - name: "linux-s390x-gcc-sw"
+      os: linux
+      arch: s390x
+      compiler: gcc
+      env: CONFIGURE_OPTS="--with-cpu=no" CFLAGS="-O2"
+
+script:
+  - mkdir $(pwd)/install
+  - ./configure $CONFIGURE_OPTS --prefix=$(pwd)/install
+  - make -j $(nproc)
+  - make install
+  - make -j $(nproc) check
