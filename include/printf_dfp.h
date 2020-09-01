@@ -53,4 +53,9 @@ hidden_proto (__dfp_ais)
 extern int __register_printf_dfp (void);
 hidden_proto(__register_printf_dfp)
 
+/* Modifiers for re-using printf hook as strfromdN */
+extern int mod_H;
+extern int mod_D;
+extern int mod_DD;
+
 #endif

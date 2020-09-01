@@ -270,9 +270,11 @@ static int pa_d128;
 static int pa_d64;
 static int pa_d32;
 
-static int mod_H;
-static int mod_D;
-static int mod_DD;
+/* Assign these a unique 2^n value in case printf registration is not used
+   as this support is used to implement strfromdN.  */
+int mod_H = 1;
+int mod_D = 2;
+int mod_DD = 4;
 
 void
 __d128_va (void *mem, va_list *ap)

@@ -52,7 +52,26 @@ __END_DECLS
 
 #endif /* __STDC_WANT_DEC_FP__  */
 
-#endif /* _DFP_STDLIB_H  */
+#if defined (__STDC_WANT_IEC_60559_DFP_EXT__)
+
+/* Convert a _Decimal32 to string. */
+extern int strfromd32 (char * __restrict s, size_t n,
+		       const char * __restrict format, _Decimal32 fp)
+     __THROW __nonnull ((3)) __wur;
+
+/* Convert a _Decimal64 to string. */
+extern int strfromd64 (char * __restrict s, size_t n,
+		       const char * __restrict format, _Decimal64 fp)
+     __THROW __nonnull ((3)) __wur;
+
+/* Convert a _Decimal128 to string. */
+extern int strfromd128 (char * __restrict s, size_t n,
+		       const char * __restrict format, _Decimal128 fp)
+     __THROW __nonnull ((3)) __wur;
+
+#endif
+
+#endif /* _DFP_STDLIB_H  || __STDC_WANT_IEC_60559_DFP_EXT__ */
 
 /* Pick up the system stdlib.h.  */
 #include_next <stdlib.h>
