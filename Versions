@@ -1,4 +1,9 @@
 libdfp {
+  LIBDFP_1.0.16 {
+    strfromd32;
+    strfromd64;
+    strfromd128;
+  }
   LIBDFP_1.0.0 {
     decoded32;
     decoded64;

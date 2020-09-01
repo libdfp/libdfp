@@ -159,7 +159,7 @@ static char buf[1024];
 /* _PC == Printf_dfp Compare with Position  */
 #define _PC_P(f,l,x,y,args...) do { \
   size_t __tmp; \
-  memset(buf,'\0',CHAR_MAX); \
+  memset(buf,'\0',sizeof(buf)); \
   /* Invokes printf dfp.  */  \
   __tmp = sprintf(buf, y, ##args); \
   _SC_P(f,l,x,buf); \
@@ -169,6 +169,43 @@ static char buf[1024];
 	    "  Result:   \"%zd\"\n    in: %s:%d.\n\n", \
 	    testnum,strlen(x),__tmp,f,l); \
     ++fail; \
+  } \
+} while (0)
+
+/* _SFC == strfromdN Compare with Position  */
+#define _SFC_P_N(f,l,x,fmt,fn,d,n,len) do { \
+  size_t __tmp; \
+  memset(buf,'\0',sizeof(buf)); \
+  /* Invokes printf dfp.  */  \
+  __tmp = fn(buf, n, fmt, d); \
+  _SC_P(f,l,x,buf); \
+  if (__tmp != len) { \
+    fprintf(stderr, "%-3d Error: " #fn " didn't return the correct size." \
+	    "  Expected: \"%zd\"\n           " \
+	    "  Result:   \"%zd\"\n    in: %s:%d.\n\n", \
+	    testnum,len,__tmp,f,l); \
+    ++fail; \
+  } \
+} while (0)
+
+#define _SFC_P(f,l,x,fmt,fn,d) _SFC_P_N(f,l,x,fmt,fn,d,sizeof(buf),strlen(x))
+
+/* Test strfromdN with an arbitray buffer of size 0.  */
+#define _SFC_P_NULL(f,l,mybuf,fmt,fn,d,len) do { \
+  size_t __tmp; \
+  __tmp = fn(mybuf, 0, fmt, d); \
+  testnum++; \
+  if (__tmp != len) { \
+    fprintf(stderr, "%-3d Error: " #fn " didn't return the correct size." \
+	    "  Expected: \"%zd\"\n  " \
+	    "  Result:   \"%zd\"\n    in: %s:%d.\n\n", \
+	    testnum,len,__tmp,f,l); \
+    ++fail; \
+  } else { \
+    fprintf(stdout, "%-3d Success: " #fn \
+	    "  Expected: \"%zd\"\n  " \
+	    "  Result:   \"%zd\"\n    in: %s:%d.\n\n", \
+	    testnum,len,__tmp,f,l); \
   } \
 } while (0)
 

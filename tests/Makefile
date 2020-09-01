@@ -42,7 +42,7 @@ libdfp_c_tests = test-printf test-amort test-decode test-inexact-exception \
 		 test-ldexp-d32 test-ldexp-d64 test-ldexp-d128 \
 		 test-fmaxmag-d32 test-fmaxmag-d64 test-fmaxmag-d128 \
 		 test-fminmag-d32 test-fminmag-d64 test-fminmag-d128 \
-		 test-math-macros \
+		 test-math-macros test-strfrom \
 		 test-nextup-d32 test-nextup-d64 test-nextup-d128 \
 		 test-nextdown-d32 test-nextdown-d64 test-nextdown-d128
 
