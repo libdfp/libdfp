@@ -60,7 +60,8 @@ RANLIB = @RANLIB@
 AWK = @AWK@
 LDFLAGS = @LDFLAGS@
 
-INSTALL := install
+INSTALL := @INSTALL@
+INSTALL_DATA := @INSTALL_DATA@
 
 # e.g. powerpc
 base_machine = @base_machine@
@@ -439,14 +440,14 @@ distclean:
 install: all install-doc install-headers
 	$(INSTALL) -d $(inst_libdir)
 ifeq ("@enable_static@","static")
-	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(STATIC_LIB)
+	$(INSTALL_DATA) -t $(inst_libdir) $(top_builddir)/$(STATIC_LIB)
 endif
 	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(SHARED_REALNAME_LIB)
-	$(INSTALL) -t $(inst_libdir) $(top_builddir)/libdecnumber/libdecnumber.a
+	$(INSTALL_DATA) -t $(inst_libdir) $(top_builddir)/libdecnumber/libdecnumber.a
 	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_LINKERNAME_LIB)
 	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_SONAME_LIB)
-	$(INSTALL) -m 644 -D -t $(inst_libdir)/pkgconfig $(top_builddir)/libdfp.pc
-	$(INSTALL) -m 644 -D -t $(inst_libdir)/pkgconfig $(top_builddir)/libdecnumber.pc
+	$(INSTALL_DATA) -D -t $(inst_libdir)/pkgconfig $(top_builddir)/libdfp.pc
+	$(INSTALL_DATA) -D -t $(inst_libdir)/pkgconfig $(top_builddir)/libdecnumber.pc
 .PHONY: install
 
 install-headers:
@@ -454,24 +455,24 @@ install-headers:
 	$(INSTALL) -d $(inst_includedir)/dfp
 	$(INSTALL) -d $(inst_includedir)/dfp/bits
 	$(INSTALL) -d $(inst_includedir)/dfp/decimal
-	$(INSTALL) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
-	$(INSTALL) -t $(inst_includedir)/dfp/bits $(top_srcdir)/dfp/bits/*.h
-	$(INSTALL) -t $(inst_includedir)/dfp/decimal/ $(top_srcdir)/dfp/decimal/*
+	$(INSTALL_DATA) -t $(inst_includedir)/dfp $(top_srcdir)/dfp/*.h
+	$(INSTALL_DATA) -t $(inst_includedir)/dfp/bits $(top_srcdir)/dfp/bits/*.h
+	$(INSTALL_DATA) -t $(inst_includedir)/dfp/decimal/ $(top_srcdir)/dfp/decimal/*
 	$(INSTALL) -d $(inst_includedir)/decnumber/
-	$(INSTALL) -t $(inst_includedir)/decnumber/ $(top_srcdir)/libdecnumber/decContext.h
-	$(INSTALL) -t $(inst_includedir)/decnumber/ $(top_srcdir)/libdecnumber/decConvert.h
-	$(INSTALL) -t $(inst_includedir)/decnumber/ $(top_srcdir)/libdecnumber/decNumber.h
+	$(INSTALL_DATA) -t $(inst_includedir)/decnumber/ $(top_srcdir)/libdecnumber/decContext.h
+	$(INSTALL_DATA) -t $(inst_includedir)/decnumber/ $(top_srcdir)/libdecnumber/decConvert.h
+	$(INSTALL_DATA) -t $(inst_includedir)/decnumber/ $(top_srcdir)/libdecnumber/decNumber.h
 .PHONY: install-headers
 
 install-doc:
 	$(INSTALL) -d $(inst_docdir)dfp/
-	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/README.user
+	$(INSTALL_DATA) -t $(inst_docdir)dfp/ $(top_srcdir)/README.user
 	mv $(inst_docdir)dfp/README.user $(inst_docdir)dfp/README
-	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.txt
-	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.libdfp.txt
-	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.libdecnumber.txt
-	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING3
-	$(INSTALL) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.RUNTIME
+	$(INSTALL_DATA) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.txt
+	$(INSTALL_DATA) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.libdfp.txt
+	$(INSTALL_DATA) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.libdecnumber.txt
+	$(INSTALL_DATA) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING3
+	$(INSTALL_DATA) -t $(inst_docdir)dfp/ $(top_srcdir)/COPYING.RUNTIME
 	if [ ! -e $(top_srcdir)/ChangeLog.md ]; then \
 		(cd $(top_srcdir) && ./generate-changelog.sh); \
 	else \
