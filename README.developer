@@ -357,30 +357,6 @@ In order to build 64-bit libdfp you can pass the following switch:
 
 	--build=powerpc64-linux-gnu
 
-The following switches define the DFP backend.
-
---with-backend={libdecnumber|libbid}
-
-	[OPTIONAL]
-
-	Defaults to host default.  Libbid is not valid on PowerPC or s390
-	hardware.
-
---enable-decimal-float={yes|dpd|bid}
-
-	[REQUIRED if --with-backend=libdecnumber]
-
-	If --with-backend=libbid then anything other than 'bid' or 'yes'
-	is invalid.
-
-	'bid' is not valid on PowerPC or s390 hardware.
-
-Valid Combinations:
-
-	--with-backend=libdecnumber --enable-decimal-float=dpd
-	--with-backend=libdecnumber --enable-decimal-float=bid
-	--with-backend=libbid --enable-decimal-float=bid
-
 --prefix=/opt/foo
 	[OPTIONAL]
 
@@ -435,14 +411,12 @@ Here are some easy-case configurations of libdfp using PATH:
 
 PATH=/opt/at4.0/bin:$PATH \
   CXXFLAGS="-m32 -O2 -g" CFLAGS="-m32 -O2 -g" \
-  ../libdfp-decimal/configure --with-backend=libdecnumber \
-  --enable-decimal-float=dpd --build=powerpc-linux-gnu \
+  ../libdfp-decimal/configure --build=powerpc-linux-gnu \
   --with-cpu=power6 2>&1 | tee _configure32_power6
 
 PATH=/opt/at4.0/bin:$PATH \
   CXXFLAGS="-m64 -O2 -g" CFLAGS="-m64 -O2 -g" \
-  ../libdfp-decimal/configure --with-backend=libdecnumber \
-  --enable-decimal-float=dpd --build=powerpc64-linux-gnu \
+  ../libdfp-decimal/configure --build=powerpc64-linux-gnu \
   --with-cpu=power6 2>&1 | tee _configure64_power6
 
 Here are some more complicated configurations of libdfp linking an
@@ -453,7 +427,6 @@ alternate GLIBC:
 CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -O2 -g" \
 CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m64 -O2 -g" \
 ~/eglibc/eglibc/libdfp/trunk/configure \
-  --with-backend=libdecnumber --enable-decimal-float=dpd \
   --libdir=/usr/lib64/ \
   --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
   --build=powerpc64-linux-gnu \
@@ -467,7 +440,6 @@ hardware-dfp:
 CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -O2 -g" \
 CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m64 -O2 -g" \
 ~/eglibc/eglibc/libdfp/trunk/configure \
-  --with-backend=libdecnumber --enable-decimal-float=dpd \
   --libdir=/usr/lib64/ \
   --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
   --build=powerpc64-linux-gnu \
@@ -481,7 +453,6 @@ hardware-dfp:
 CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -O2 -g" \
 CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m64 -O2 -g" \
 ~/eglibc/eglibc/libdfp/trunk/configure \
-  --with-backend=libdecnumber --enable-decimal-float=dpd \
   --libdir=/usr/lib64/ \
   --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
   --build=powerpc64-linux-gnu \
@@ -493,7 +464,6 @@ CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m64 -O2 -g" \
 CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -O2 -g" \
 CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m32 -O2 -g" \
 ~/eglibc/eglibc/libdfp/trunk/configure \
-  --with-backend=libdecnumber --enable-decimal-float=dpd \
   --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
   --build=powerpc-linux-gnu \
   --with-glibc-build=~/glibc-2.11/build/glibc32_power5 \
@@ -504,7 +474,6 @@ Or 32-bit POWER6 (hard-dfp):
 CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -O2 -g" \
 CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m32 -O2 -g" \
 ~/eglibc/eglibc/libdfp/trunk/configure \
-  --with-backend=libdecnumber --enable-decimal-float=dpd \
   --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
   --build=powerpc-linux-gnu \
   --with-glibc-build=~/glibc-2.11/build/glibc32_power6 \
@@ -515,7 +484,6 @@ Or 32-bit POWER7 (hard-dfp):
 CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -O2 -g" \
 CXX=/opt/at4.0/bin/gcc CXXFLAGS="-m32 -O2 -g" \
 ~/eglibc/eglibc/libdfp/trunk/configure \
-  --with-backend=libdecnumber --enable-decimal-float=dpd \
   --with-glibc-headers=~/ppc64-tc-utils/trunk/libdfp/include-2.10/ \
   --build=powerpc-linux-gnu \
   --with-glibc-build=~/glibc-2.11/build/glibc32_power7 \
