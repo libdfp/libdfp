@@ -407,17 +407,10 @@ In order to build 64-bit libdfp you can pass the following switch:
 	infrastructure to choose architecture specific overrides from the
 	sysdeps tree.
 
-Here are some easy-case configurations of libdfp using PATH:
+For most scenarios, running configure without any extra parameters will do the
+right thing, e.g:
 
-PATH=/opt/at4.0/bin:$PATH \
-  CXXFLAGS="-m32 -O2 -g" CFLAGS="-m32 -O2 -g" \
-  ../libdfp-decimal/configure --build=powerpc-linux-gnu \
-  --with-cpu=power6 2>&1 | tee _configure32_power6
-
-PATH=/opt/at4.0/bin:$PATH \
-  CXXFLAGS="-m64 -O2 -g" CFLAGS="-m64 -O2 -g" \
-  ../libdfp-decimal/configure --build=powerpc64-linux-gnu \
-  --with-cpu=power6 2>&1 | tee _configure64_power6
+../libdfp/configure | tee _configure
 
 Here are some more complicated configurations of libdfp linking an
 alternate GLIBC:
