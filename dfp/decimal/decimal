@@ -180,6 +180,286 @@ public:
 
 namespace std
 {
+
+  namespace
+  {
+    struct _Save_errno
+    {
+      _Save_errno() : _M_errno(errno) { errno = 0; }
+      ~_Save_errno() { if (errno == 0) errno = _M_errno; }
+      int _M_errno;
+    };
+
+    // calls setlocale(LC_ALL, "C") and returns a string containing the old
+    // locale name. Caller must delete[] the string. Returns NULL on error.
+    const char*
+    __set_C_locale()
+    {
+      char* __old = setlocale(LC_ALL, 0);
+      const size_t __len = strlen(__old) + 1;
+      char* __sav = new(nothrow) char[__len];
+      if (__sav)
+	{
+	  memcpy(__sav, __old, __len);
+	  setlocale(LC_ALL, "C");
+	}
+      return __sav;
+    }
+  }
+
+  template<>
+    void
+    __convert_to_v(const char* __s, decimal::decimal32& __v, ios_base::iostate& __err,
+		   const __c_locale&) throw()
+    {
+      // Assumes __s formatted for "C" locale.
+      const char* __sav = __set_C_locale();
+      if (!__sav)
+	{
+	  __err = ios_base::failbit;
+	  return;
+	}
+      char* __sanity;
+      bool __overflow = false;
+
+      __v = strtod32(__s, &__sanity);
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 23. Num_get overflow result.
+      if (__sanity == __s || *__sanity != '\0')
+	{
+	  __v = 0.0df;
+	  __err = ios_base::failbit;
+	}
+      else if (__overflow
+	       || __v == decimal::decimal32 {__builtin_infd32()}
+	       || __v == decimal::decimal32 {-__builtin_infd32()}
+	      )
+	{
+	  if (__v > decimal::decimal32 {0.0df})
+	    __v = DEC32_MAX;
+	  else
+	    __v = -DEC32_MAX;
+	  __err = ios_base::failbit;
+	}
+
+      setlocale(LC_ALL, __sav);
+      delete [] __sav;
+    }
+
+  template<>
+    void
+    __convert_to_v(const char* __s, decimal::decimal64& __v, ios_base::iostate& __err,
+		   const __c_locale&) throw()
+    {
+      // Assumes __s formatted for "C" locale.
+      const char* __sav = __set_C_locale();
+      if (!__sav)
+	{
+	  __err = ios_base::failbit;
+	  return;
+	}
+      char* __sanity;
+
+      __v = strtod64(__s, &__sanity);
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 23. Num_get overflow result.
+      if (__sanity == __s || *__sanity != '\0')
+	{
+	  __v = decimal::decimal64 {0.0dd};
+	  __err = ios_base::failbit;
+	}
+      else if (
+	       __v == decimal::decimal64 {__builtin_infd64()}
+	       || __v == decimal::decimal64 {-__builtin_infd64()} )
+	{
+	  if (__v > decimal::decimal64 {0.0dd})
+	    __v = DEC64_MAX;
+	  else
+	    __v = -DEC64_MAX;
+	  __err = ios_base::failbit;
+	}
+
+      setlocale(LC_ALL, __sav);
+      delete [] __sav;
+    }
+
+  template<>
+    void
+    __convert_to_v(const char* __s, decimal::decimal128& __v,
+		   ios_base::iostate& __err, const __c_locale&) throw()
+    {
+      // Assumes __s formatted for "C" locale.
+      const char* __sav = __set_C_locale();
+      if (!__sav)
+	{
+	  __err = ios_base::failbit;
+	  return;
+	}
+
+      char* __sanity;
+      __v = strtod128(__s, &__sanity);
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 23. Num_get overflow result.
+      if (__sanity == __s || *__sanity != '\0')
+	{
+	  __v = decimal::decimal128 {0.0dl};
+	  __err = ios_base::failbit;
+	}
+       else if (
+	  __v == decimal::decimal128 {__builtin_infd128()}
+	  || __v == decimal::decimal128 {-__builtin_infd128()} )
+	{
+	  if (__v > decimal::decimal128 {0.0dl})
+	    __v = DEC128_MAX;
+	  else
+	    __v = -DEC128_MAX;
+	  __err = ios_base::failbit;
+	}
+
+      setlocale(LC_ALL, __sav);
+      delete [] __sav;
+    }
+
+
+
+  template<typename _CharT, typename _InIter = std::istreambuf_iterator<_CharT>>
+  class dfp_num_get : public num_get<_CharT, _InIter> {
+      typedef _InIter iter_type;
+
+  protected:
+      virtual iter_type
+      do_get(iter_type, iter_type, ios_base&, ios_base::iostate&,
+        decimal::decimal32&) const;
+
+      virtual iter_type
+      do_get(iter_type, iter_type, ios_base&, ios_base::iostate&,
+        decimal::decimal64&) const;
+
+      virtual iter_type
+      do_get(iter_type, iter_type, ios_base&, ios_base::iostate&,
+        decimal::decimal128&) const;
+
+  public:
+      iter_type
+      get(iter_type in, iter_type end, ios_base& io,
+     ios_base::iostate& err, decimal::decimal32& v) const
+      { return this->do_get(in, end, io, err, v); }
+
+      iter_type
+      get(iter_type in, iter_type end, ios_base& io,
+          ios_base::iostate& err, decimal::decimal64& v) const
+      { return this->do_get(in, end, io, err, v); }
+
+      iter_type
+      get(iter_type in, iter_type end, ios_base& io,
+          ios_base::iostate& err, decimal::decimal128& v) const
+      { return this->do_get(in, end, io, err, v); }
+  };
+
+  template<typename _CharT, typename _InIter>
+    _InIter
+    dfp_num_get<_CharT, _InIter>::
+    do_get(iter_type __beg, iter_type __end, ios_base& __io,
+           ios_base::iostate& __err, decimal::decimal32& __v) const
+    {
+      string __xtrc;
+      __xtrc.reserve(32);
+      __beg = this->_M_extract_float(__beg, __end, __io, __err, __xtrc);
+      std::__convert_to_v(__xtrc.c_str(), __v, __err, locale::facet::_S_get_c_locale());
+      if (__beg == __end)
+        __err |= ios_base::eofbit;
+      return __beg;
+    }
+
+  template<typename _CharT, typename _InIter>
+    _InIter
+    dfp_num_get<_CharT, _InIter>::
+    do_get(iter_type __beg, iter_type __end, ios_base& __io,
+           ios_base::iostate& __err, decimal::decimal64& __v) const
+    {
+      string __xtrc;
+      __xtrc.reserve(32);
+      __beg = this->_M_extract_float(__beg, __end, __io, __err, __xtrc);
+      std::__convert_to_v(__xtrc.c_str(), __v, __err, locale::facet::_S_get_c_locale());
+      if (__beg == __end)
+        __err |= ios_base::eofbit;
+      return __beg;
+    }
+
+  template<typename _CharT, typename _InIter>
+    _InIter
+    dfp_num_get<_CharT, _InIter>::
+    do_get(iter_type __beg, iter_type __end, ios_base& __io,
+           ios_base::iostate& __err, decimal::decimal128& __v) const
+    {
+      string __xtrc;
+      __xtrc.reserve(32);
+      __beg = this->_M_extract_float(__beg, __end, __io, __err, __xtrc);
+      std::__convert_to_v(__xtrc.c_str(), __v, __err, locale::facet::_S_get_c_locale());
+      if (__beg == __end)
+        __err |= ios_base::eofbit;
+      return __beg;
+    }
+
+  template <class charT, class traits = char_traits<charT>>
+  class dfp_basic_istream;
+
+  namespace decimal
+  {
+    template <class charT, class traits>
+    std::dfp_basic_istream<charT, traits> &
+      operator>>(std::dfp_basic_istream<charT, traits> & is, decimal32 & d);
+  }
+
+  template <class charT, class traits>
+  class dfp_basic_istream : public basic_istream<charT, traits>
+  {
+
+    template<class X, class Y>
+    friend dfp_basic_istream<X, Y> &
+      decimal::operator>>(dfp_basic_istream<X, Y> & is, decimal::decimal32 & d);
+
+    template<class X, class Y, class T>
+    friend basic_istream<X, Y> &
+      decimal::operator>>(basic_istream<X, Y> & is, T & d);
+
+    template<typename _ValueT>
+    dfp_basic_istream<charT, traits> &
+    _M_extract(_ValueT& d);
+  };
+
+  template<typename _CharT, typename _Traits>
+    template<typename _ValueT>
+      dfp_basic_istream<_CharT, _Traits>&
+      dfp_basic_istream<_CharT, _Traits>::
+      _M_extract(_ValueT& __v)
+      {
+        typename basic_istream<_CharT, _Traits>::sentry __cerb(*this, false);
+        if (__cerb)
+          {
+            ios_base::iostate __err = ios_base::goodbit;
+            __try
+              {
+                locale dfp_locale {this->_M_ios_locale, new dfp_num_get<_CharT>()};
+                auto& facet {use_facet<dfp_num_get<_CharT>>(dfp_locale)};
+                facet.get(*this, 0, *this, __err, __v);
+              }
+            __catch(__cxxabiv1::__forced_unwind&)
+              {
+                this->_M_setstate(ios_base::badbit);
+                __throw_exception_again;
+              }
+            __catch(...)
+              { this->_M_setstate(ios_base::badbit); }
+            if (__err)
+              this->setstate(__err);
+          }
+        return *this;
+      }
+
 namespace decimal
 {
   //ISO/IEC TR 24733 - 3.2.11 Formatted output:
@@ -209,38 +489,42 @@ namespace decimal
     }
 
 //  ISO/IEC TR 27433 - 3.2.11 Formatted input:
+  template <class charT, class traits>
+    inline std::dfp_basic_istream<charT, traits> &
+      operator>>(std::dfp_basic_istream<charT, traits> & is, decimal32 & d)
+      { return is._M_extract(d); }
 
   template <class charT, class traits>
-    inline std::basic_istream<charT, traits> &
-      operator>>(std::basic_istream<charT, traits> & is, decimal32 & d)
-      {
-	char buf[CHAR_MAX];
-	memset(buf, '\0', CHAR_MAX);
-	is.read(buf,CHAR_MAX);
-	d.__setval(strtod32(buf, NULL));
-	return is;
-      }
+    inline std::dfp_basic_istream<charT, traits> &
+      operator>>(std::dfp_basic_istream<charT, traits> & is, decimal64 & d)
+      { return is._M_extract(d); }
 
   template <class charT, class traits>
-    inline std::basic_istream<charT, traits> &
-      operator>>(std::basic_istream<charT, traits> & is, decimal64 & d)
-      {
-	char buf[CHAR_MAX];
-	memset(buf, '\0', CHAR_MAX);
-	is.read(buf,CHAR_MAX);
-	d.__setval(strtod64(buf, NULL));
-	return is;
-      }
+    inline std::dfp_basic_istream<charT, traits> &
+      operator>>(std::dfp_basic_istream<charT, traits> & is, decimal128 & d)
+      { return is._M_extract(d); }
 
-  template <class charT, class traits>
+  template <class charT, class traits, class T>
     inline std::basic_istream<charT, traits> &
-      operator>>(std::basic_istream<charT, traits> & is, decimal128 & d)
+      operator>>(std::basic_istream<charT, traits> & is, T & d)
       {
-	char buf[CHAR_MAX];
-	memset(buf, '\0', CHAR_MAX);
-	is.read(buf,CHAR_MAX);
-	d.__setval(strtod128(buf, NULL));
-	return is;
+        static_assert(
+            std::is_same<T, decimal::decimal32>::value
+              || std::is_same<T, decimal::decimal64>::value
+              || std::is_same<T, decimal::decimal128>::value,
+            "This template function is only meant to be used with "
+            "decimal floating point types"
+        );
+
+        auto& dfpIstream {
+          static_cast<
+            dfp_basic_istream<charT, traits>&
+          >(is)
+        };
+
+        dfpIstream._M_extract(d);
+
+        return is;
       }
 
 } /* namespace decimal  */
