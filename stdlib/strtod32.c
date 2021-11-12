@@ -512,6 +512,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	}
 
       /* It is really a text we do not recognize.  */
+      freelocale(C_locale);
       RETURN (0.0, nptr);
     }
 
@@ -582,6 +583,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 #endif
       /* If TP is at the start of the digits, there was no correctly
 	 grouped prefix of the string; so no number found.  */
+      freelocale(C_locale);
       RETURN (negative ? -FLOAT_ZERO : FLOAT_ZERO,
               tp == start_of_digits ? (base == 16 ? cp - 1 : nptr) : tp);
     }
@@ -633,13 +635,19 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	  /* Less than the entire string was correctly grouped.  */
 
 	  if (tp == start_of_digits)
-	    /* No valid group of numbers at all: no valid number.  */
-	    RETURN (FLOAT_ZERO, nptr);
+	    {
+	      /* No valid group of numbers at all: no valid number.  */
+	      freelocale(C_locale);
+	      RETURN (FLOAT_ZERO, nptr);
+	    }
 
 	  if (tp < startp)
-	    /* The number is validly grouped, but consists
-	       only of zeroes.  The whole value is zero.  */
-	    RETURN (negative ? -FLOAT_ZERO : FLOAT_ZERO, tp);
+	    {
+	      /* The number is validly grouped, but consists
+		 only of zeroes.  The whole value is zero.  */
+	      freelocale(C_locale);
+	      RETURN (negative ? -FLOAT_ZERO : FLOAT_ZERO, tp);
+	    }
 
 	  /* Recompute DIG_NO so we won't read more digits than
 	     are properly grouped.  */
@@ -748,6 +756,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 		    ++cp;
 		  while (*cp >= L_('0') && *cp <= L_('9'));
 
+		  freelocale(C_locale);
 		  RETURN (result, cp);
 		  /* NOTREACHED */
 		}
@@ -1002,6 +1011,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 
 #endif
 
+  freelocale(C_locale);
   return negative? -d32:d32;
 }
 hidden_def(FUNCTION_L_INTERNAL)
