@@ -1,15 +1,8 @@
 Contribution Statement:
 
-Since Libdfp is a Free Software Foundation project any 'legally
-significant' contribution requires that the contributor go through the FSF
-Copyright Assignment process.
-
-This webpage describes the copyright assignment requirements:
-
-	http://www.gnu.org/prep/maintain/maintain.html#Legally-Significant
-
-The maintainer of this library also requires that each individual change be
-accompanied by a DCO that is outlined as follows.
+The maintainers of this library require that each individual change be
+accompanied by a DCO, or that the contributor has gone through the FSF
+copyright assignment process.  The DCO is described below.
 
 Process For Accepting Third Party Code Contributions:
 
