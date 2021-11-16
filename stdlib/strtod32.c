@@ -90,7 +90,6 @@ extern unsigned long long int ____wcstoull_l_internal (const wchar_t *, wchar_t 
 # define L_(Ch) L##Ch
 # define ISSPACE(Ch) iswspace_l ((Ch), loc)
 # define ISDIGIT(Ch) iswdigit_l ((Ch), loc)
-# define ISXDIGIT(Ch) iswxdigit_l ((Ch), loc)
 # define TOLOWER(Ch) towlower_l ((Ch), loc)
 //# define TOLOWER_C(Ch) towlower_l ((Ch), nl_C_locobj_ptr)
 # define TOLOWER_C(Ch) towlower_l ((Ch), C_locale)
@@ -107,7 +106,6 @@ extern unsigned long long int ____wcstoull_l_internal (const wchar_t *, wchar_t 
 # define L_(Ch) Ch
 # define ISSPACE(Ch) isspace_l ((Ch), loc)
 # define ISDIGIT(Ch) isdigit_l ((Ch), loc)
-# define ISXDIGIT(Ch) isxdigit_l ((Ch), loc)
 # define TOLOWER(Ch) tolower_l ((Ch), loc)
 # define TOLOWER_C(Ch) tolower_l ((Ch), C_locale)
 //# define TOLOWER_C(Ch) tolower_l ((Ch), _nl_C_locobj_ptr)
@@ -325,9 +323,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   int negative;			/* The sign of the number.  */
   int exponent;			/* Exponent of the number.  */
 
-  /* Numbers starting `0X' or `0x' have to be processed with base 16.  */
-  int base = 10;
-
   /* Running pointer after the last character processed in the string.  */
   const STRING_TYPE *cp, *tp;
   /* Start of significant part of the number.  */
@@ -516,18 +511,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       RETURN (0.0, nptr);
     }
 
-  /* First look whether we are faced with a hexadecimal number.  */
-  if (c == L_('0') && TOLOWER (cp[1]) == L_('x'))
-    {
-      /* Okay, it is a hexa-decimal number.  Remember this and skip
-	 the characters.  BTW: hexadecimal numbers must not be
-	 grouped.  */
-      base = 16;
-      cp += 2;
-      c = *cp;
-      grouping = NULL;
-    }
-
   /* Record the start of the digits, in case we will check their grouping.  */
   start_of_digits = startp = cp;
 
@@ -560,8 +543,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   /* If no other digit but a '0' is found the result is 0.0.
      Return current read pointer.  */
   if ((c < L_('0') || c > L_('9'))
-      && (base == 16 && (c < (CHAR_TYPE) TOLOWER (L_('a'))
-			 || c > (CHAR_TYPE) TOLOWER (L_('f'))))
 #ifdef USE_WIDE_CHAR
       && c != (wint_t) decimal
 #else
@@ -570,9 +551,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 		break;
 	    decimal[cnt] != '\0'; })
 #endif
-      && (base == 16 && (cp == start_of_digits
-			 || (CHAR_TYPE) TOLOWER (c) != L_('p')))
-      && (base != 16 && (CHAR_TYPE) TOLOWER (c) != L_('e')))
+      && ((CHAR_TYPE) TOLOWER (c) != L_('e')))
     {
 #ifdef USE_WIDE_CHAR
       tp = __correctly_grouped_prefixwc (start_of_digits, cp, thousands,
@@ -585,7 +564,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	 grouped prefix of the string; so no number found.  */
       freelocale(C_locale);
       RETURN (negative ? -FLOAT_ZERO : FLOAT_ZERO,
-              tp == start_of_digits ? (base == 16 ? cp - 1 : nptr) : tp);
+              tp == start_of_digits ? nptr : tp);
     }
 
   /* Remember first significant digit and read following characters until the
@@ -594,9 +573,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   dig_no = 0;
   while (1)
     {
-      if ((c >= L_('0') && c <= L_('9'))
-	  || (base == 16 && (wint_t) TOLOWER (c) >= L_('a')
-	      && (wint_t) TOLOWER (c) <= L_('f')))
+      if (c >= L_('0') && c <= L_('9'))
 	++dig_no;
       else
 	{
@@ -684,8 +661,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
     {
       cp += decimal_len;
       c = *cp;
-      while ((c >= L_('0') && c <= L_('9')) ||
-	     (base == 16 && TOLOWER (c) >= L_('a') && TOLOWER (c) <= L_('f')))
+      while (c >= L_('0') && c <= L_('9'))
 	{
 	  if (c != L_('0') && lead_zero == -1)
 	    lead_zero = dig_no - int_no;
@@ -698,8 +674,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   expp = cp;
 
   /* Read exponent.  */
-  if ((base == 16 && TOLOWER (c) == L_('p'))
-      || (base != 16 && TOLOWER (c) == L_('e')))
+  if (TOLOWER (c) == L_('e'))
     {
       int exp_negative = 0;
 
@@ -717,16 +692,9 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	  int exp_limit;
 
 	  /* Get the exponent limit. */
-#if 0
-	  if (base == 16)
-	    exp_limit = (exp_negative ?
-			 -MIN_EXP + MANT_DIG + 4 * int_no :
-			 MAX_EXP - 4 * int_no + lead_zero);
-	  else
-#endif
-	    exp_limit = (exp_negative ?
-			 -MIN_10_EXP + MANT_DIG + int_no :
-			 MAX_10_EXP - int_no + lead_zero);
+	  exp_limit = (exp_negative ?
+		       -MIN_10_EXP + MANT_DIG + int_no :
+		       MAX_10_EXP - int_no + lead_zero);
 
 	  do
 	    {
@@ -790,7 +758,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   if (dig_no == int_no && dig_no > 0 && exponent < 0)
     do
       {
-	while (! (base == 16 ? ISXDIGIT (expp[-1]) : ISDIGIT (expp[-1])))
+	while (! ISDIGIT (expp[-1]))
 	  --expp;
 
 	if (expp[-1] != L_('0'))
@@ -855,7 +823,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 #endif
       lead_zero = (lead_zero < 0? 0 : lead_zero);
       startp += lead_zero + decimal_len;
-      exponent -= base == 16 ? 4 * lead_zero : lead_zero;
+      exponent -= lead_zero;
       dig_no -= lead_zero;
     }
 
@@ -904,31 +872,25 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	    of characters to read.  */
 #ifdef USE_WIDE_CHAR
 	  if (*startp < L_('0') || *startp > L_('9'))
-	    if (base==10 || (*startp < L_('a') || *startp > L_('h')))
-	      ++startp;
+	    ++startp;
 #else
 	  if (*startp < L_('0') || *startp > L_('9'))
-	    if (base==10 || (*startp < L_('a') || *startp > L_('h')))
-	      {
-		int inner = 0;
-		if (thousands != NULL && *startp == *thousands
-		    && ({
-			  for (inner = 1; thousands[inner] != '\0'; ++inner)
-			    if (thousands[inner] != startp[inner])
-			      break;
-			  thousands[inner] == '\0';
-			})
-		    )
-		  startp += inner;
-		else
-		  startp += decimal_len;
-	      }
+	    {
+	      int inner = 0;
+	      if (thousands != NULL && *startp == *thousands
+		  && ({
+			for (inner = 1; thousands[inner] != '\0'; ++inner)
+			  if (thousands[inner] != startp[inner])
+			    break;
+			thousands[inner] == '\0';
+		      })
+		  )
+		startp += inner;
+	      else
+		startp += decimal_len;
+	    }
 #endif
-	  if(base == 10)
-	    d32 = d32 * base + (*startp - L_('0'));
-	  else
-	    d32 = d32 * base + (*startp >= L_('0') && *startp <= L_('9') ?
-			-L_('0') : 10-L_('a')) + *startp;
+	  d32 = d32 * 10 + (*startp - L_('0'));
 	  ++startp;
 	}
       while (--digcnt > 0);
@@ -947,12 +909,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 
       /*do
 	{
-	  if(base == 10)
-	    frac = frac/10 + *(startp+digcnt-1) - L_('0');
-	  else
-	    frac = frac/10 + (*(startp+digcnt-1) >= L_('0') && 
-		*(startp+digcnt-1) <= L_('9') ? -L_('0') : 10-L_('a'))
-		+ *(startp+digcnt-1);
+	  frac = frac/10 + *(startp+digcnt-1) - L_('0');
 	}
       while (--digcnt > 0);
       frac /= 10;
@@ -972,12 +929,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
         /* We need the extra digit to get proper rounding.  */
 	if (int_no < MANT_DIG + 1)
 	  {
-	    if(base == 10)
-	      d32 = d32*10 + (*startp - L_('0'));
-	    else
-	      d32 = d32*10 + (*startp >= L_('0') &&
-		*startp <= L_('9') ? -L_('0') : 10-L_('a'))
-		+ *startp;
+	    d32 = d32*10 + (*startp - L_('0'));
 	    ++startp;
 	    --exponent;
 	    int_no++;
