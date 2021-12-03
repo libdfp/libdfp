@@ -524,7 +524,7 @@ __printf_dfp (FILE *fp,
       if (info->left && width > 0)
 	PADN (' ', width);
 
-	return 0;
+      return 0;
     }
 
   /* The term "precision" refers to the number of significant digits right of
