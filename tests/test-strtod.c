@@ -45,33 +45,35 @@ typedef struct{
   _Decimal32 d32;
   _Decimal64 d64;
   _Decimal128 d128;
+  size_t rem;
 } d_type;
 
 d_type strtods[] =
 {
-  {__LINE__, "12.04", 12.04DF,12.04DD, 12.04DL},
-  {__LINE__, "1.0", 1.0DF, 1.0DD, 1.0DL },
-  {__LINE__, "1", 1.0DF, 1.0DD, 1.0DL },
-  {__LINE__, "0", 0.0DF, 0.0DD, 0.0DL },
-  {__LINE__, "0.0", 0.0DF, 0.0DD, 0.0DL },
-  {__LINE__, "-0.0001", -0.0001DF, -0.0001DD, -0.0001DL },
-  {__LINE__, "inf", DEC_INFINITY, DEC_INFINITY, DEC_INFINITY },
-  {__LINE__, "INFINITY", DEC_INFINITY, DEC_INFINITY, DEC_INFINITY },
-  {__LINE__, "0.0E+100", 0.0DF, 0.0DD, 0.0DL },
-  {__LINE__, "0.01", 0.01DF, 0.01DD, 0.01DL },
-  {__LINE__, "0.1", 0.1DF, 0.1DD, 0.1DL },
-  {__LINE__, "0.11", 0.11DF, 0.11DD, 0.11DL },
-  {__LINE__, "0.21", 0.21DF, 0.21DD, 0.21DL },
-  {__LINE__, "0.999999",     0.999999DF,     0.999999DD,     0.999999DL },
-  {__LINE__, "0.9999999",    0.9999999DF,    0.9999999DD,    0.9999999DL },
-  {__LINE__, "0.99999999",   1.000000DF,     0.99999999DD,   0.99999999DL },
-  {__LINE__, "0.999999999",  1.000000DF,     0.999999999DD,    0.999999999DL },
-  {__LINE__, "19e9", 19000000000.0DF, 19000000000.0DD, 19000000000.0DL },
-  {__LINE__, "3.14", 3.140000DF, 3.140000DD, 3.140000DL },
-  {__LINE__, "3.14e-2", 0.031400DF, 0.031400DD, 0.031400DL },
-  {__LINE__, "1234.5678910111213e-5", 0.01234568DF ,0.01234567891011121DD ,0.012345678910111213DL },
-  {__LINE__, "-1234.57", -1234.57DF, -1234.57DD, -1234.57DL},
-  {0,0,0,0,0 }
+  {__LINE__, "12.04", 12.04DF,12.04DD, 12.04DL, 0},
+  {__LINE__, "1.0", 1.0DF, 1.0DD, 1.0DL, 0},
+  {__LINE__, "1", 1.0DF, 1.0DD, 1.0DL, 0},
+  {__LINE__, "0", 0.0DF, 0.0DD, 0.0DL, 0},
+  {__LINE__, "0.0", 0.0DF, 0.0DD, 0.0DL, 0},
+  {__LINE__, "-0.0001", -0.0001DF, -0.0001DD, -0.0001DL, 0},
+  {__LINE__, "inf", DEC_INFINITY, DEC_INFINITY, DEC_INFINITY, 0},
+  {__LINE__, "INFINITY", DEC_INFINITY, DEC_INFINITY, DEC_INFINITY, 0},
+  {__LINE__, "0.0E+100", 0.0DF, 0.0DD, 0.0DL, 0},
+  {__LINE__, "0.01", 0.01DF, 0.01DD, 0.01DL, 0},
+  {__LINE__, "0.1", 0.1DF, 0.1DD, 0.1DL, 0},
+  {__LINE__, "0.11", 0.11DF, 0.11DD, 0.11DL, 0},
+  {__LINE__, "0.21", 0.21DF, 0.21DD, 0.21DL, 0},
+  {__LINE__, "0.999999",     0.999999DF,     0.999999DD,     0.999999DL, 0},
+  {__LINE__, "0.9999999",    0.9999999DF,    0.9999999DD,    0.9999999DL, 0},
+  {__LINE__, "0.99999999",   1.000000DF,     0.99999999DD,   0.99999999DL, 0},
+  {__LINE__, "0.999999999",  1.000000DF,     0.999999999DD,    0.999999999DL, 0},
+  {__LINE__, "19e9", 19000000000.0DF, 19000000000.0DD, 19000000000.0DL, 0},
+  {__LINE__, "3.14", 3.140000DF, 3.140000DD, 3.140000DL, 0},
+  {__LINE__, "3.14e-2", 0.031400DF, 0.031400DD, 0.031400DL, 0},
+  {__LINE__, "1234.5678910111213e-5", 0.01234568DF,0.01234567891011121DD, 0.012345678910111213DL, 0},
+  {__LINE__, "-1234.57", -1234.57DF, -1234.57DD, -1234.57DL, 0},
+  {__LINE__, "bogus", 0.DF, 0.DD, 0.DL, 5},
+  {0,0,0,0,0,0 }
 };
 
 const char DECLET32_NAN[] = "+0,000,000E-101";
@@ -125,21 +127,52 @@ d_nan_type strtods_nan[] =
   {0,0,0,0,0 }
 };
 
+// Validate the pointer returned in endptr is as expected.
+void check_endptr(const char *input, const char *endptr, size_t n, int line);
+
+void check_endptr(const char *input, const char *endptr, size_t n, int line) {
+    size_t l = strlen(input);
+    const char *input_end = input + l;
+    if (endptr < input || endptr > input_end)
+      {
+	fprintf (stderr, "%-3d Error: *endptr is not within input string\n", testnum);
+	fprintf (stderr, "    in: %s:%d.\n\n",__FILE__,line);
+      }
+    else
+      {
+	size_t rem = input_end - endptr;
+	if (rem != n)
+	  {
+	    fprintf (stderr, "%-3d Error: *endptr leaves %d characters. Expected %d.\n", testnum, (int) rem, (int) n);
+	    fprintf (stderr, "in: %s:%d.\n\n",__FILE__,line);
+	  }
+      }
+}
+
 int main(void) {
 
   d_type *dptr;
+  char *endptr = NULL;
 
   for (dptr = strtods; dptr->line; dptr++)
     {
-
-      fprintf(stdout, "strtod32(\"%s\",NULL) == %Hf\n  ", dptr->input, strtod32(dptr->input, NULL));
+      endptr = NULL;
+      fprintf(stdout,"strtod32(\"%s\",NULL) == %Hf\n  ",dptr->input,strtod32(dptr->input, NULL));
       _VC_P(__FILE__,dptr->line,dptr->d32,strtod32(dptr->input,NULL), "%Hf");
+      _VC_P(__FILE__,dptr->line,dptr->d32,strtod32(dptr->input,&endptr), "%Hf");
+      check_endptr(dptr->input, endptr, dptr->rem, dptr->line);
 
+      endptr = NULL;
       fprintf(stdout, "strtod64(\"%s\",NULL) == %Df\n  ", dptr->input, strtod64(dptr->input, NULL));
       _VC_P(__FILE__,dptr->line,dptr->d64, strtod64(dptr->input,NULL), "%Df");
+      _VC_P(__FILE__,dptr->line,dptr->d64, strtod64(dptr->input,&endptr), "%Df");
+      check_endptr(dptr->input, endptr, dptr->rem, dptr->line);
 
+      endptr = NULL;
       fprintf(stdout, "strtod128(\"%s\",NULL) == %DDf\n  ", dptr->input, strtod128(dptr->input, NULL));
       _VC_P(__FILE__,dptr->line,dptr->d128, strtod128(dptr->input,NULL), "%DDf");
+      _VC_P(__FILE__,dptr->line,dptr->d128, strtod128(dptr->input,&endptr), "%DDf");
+      check_endptr(dptr->input, endptr, dptr->rem, dptr->line);
     }
 
   d_nan_type *dnanptr;
