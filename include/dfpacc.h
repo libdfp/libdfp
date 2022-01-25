@@ -61,6 +61,20 @@ hidden_proto_enc (truncxfsd)
 _Decimal64 __BACKEND_(truncxfdd) (long double);
 hidden_proto_enc (truncxfdd)
 #else
+# if __LDBL_MANT_DIG__ == 113 && defined(__powerpc64__)
+__ibm128  __BACKEND_(extendsdtf) (_Decimal32);
+hidden_proto_enc (extendsdtf)
+__ibm128  __BACKEND_(extendddtf) (_Decimal64);
+hidden_proto_enc (extendddtf)
+__ibm128 __BACKEND_(trunctdtf) (_Decimal128);
+hidden_proto_enc (trunctdtf)
+_Decimal128  __BACKEND_(extendtftd) (__ibm128);
+hidden_proto_enc (extendtftd)
+_Decimal32 __BACKEND_(trunctfsd) (__ibm128);
+hidden_proto_enc (trunctfsd)
+_Decimal64 __BACKEND_(trunctfdd) (__ibm128);
+hidden_proto_enc (trunctfdd)
+# else
 /* TODO: these are available on x86 as _Float128 */
 long double  __BACKEND_(extendsdtf) (_Decimal32);
 hidden_proto_enc (extendsdtf)
@@ -74,6 +88,7 @@ _Decimal32 __BACKEND_(trunctfsd) (long double);
 hidden_proto_enc (trunctfsd)
 _Decimal64 __BACKEND_(trunctfdd) (long double);
 hidden_proto_enc (trunctfdd)
+# endif
 #endif
 
 /* This file contains the prototypes for the DFP arithmetic, conversion, and
