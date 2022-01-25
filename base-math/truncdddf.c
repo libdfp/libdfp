@@ -37,7 +37,7 @@
 
 CONVERT_WRAPPER(
 // truncdddf
-	long double temp;
+	ldouble temp;
 	SRC_TYPE a_norm;
 	long long mant;
 	int	exp, sexp;
@@ -94,7 +94,7 @@ CONVERT_WRAPPER(
 
 	mant = a_norm;			/* 16 digits of mantissa.  */
 	sexp = exp - 16;		/* Exponent adjusted for mantissa.  */
-	temp = mant;			/* mantissa as TF */
+	temp = TOIBM128(mant);		/* mantissa as TF */
 	if (sexp > 0)
 	  result = temp * BINPOWOF10[sexp];
 	else if (sexp < 0)

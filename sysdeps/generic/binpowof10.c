@@ -23,7 +23,15 @@
 
    Please see dfp/COPYING.txt for more information.  */
 
-const long double binpowof10 [] =
+#include <float.h>
+
+#if defined(__powerpc64__) && __LDBL_MANT_DIG__ == 113
+typedef __ibm128 ldouble;
+#else
+typedef long double ldouble;
+#endif
+
+const ldouble binpowof10 [] =
         {
         1e+00L,  /* 10**0 */
         1e+01L,  /* 10**1 */

@@ -54,6 +54,7 @@
 /* Inspired by GLIBC stdio-common/tfformat.c  */
 
 #include <stdlib.h>
+#include <float.h>
 
 #if defined __i386__ || defined __x86_64__
 # define HAVE_XFMODE 1
@@ -62,8 +63,12 @@
 # if defined _ARCH_PWR8 && defined __LITTLE_ENDIAN__ && (_CALL_ELF == 2)
 #  define HAVE_KFMODE 1
 # endif
-# define TF_MODE_IBM128 1
-# define TF_MODE_FLT128 0
+# if __LDBL_MANT_DIG__ == 106
+#  define TF_MODE_IBM128 1
+#  define TF_MODE_FLT128 0
+# else
+#  define HAVE_IFMODE 1
+# endif
 #endif
 
 #ifndef TF_MODE_IBM128
@@ -77,6 +82,10 @@
 
 #ifndef HAVE_KFMODE
 #define HAVE_KFMODE 0
+#endif
+
+#ifndef HAVE_IFMODE
+#define HAVE_IFMODE 0
 #endif
 
 #ifndef TF_SUF
@@ -99,7 +108,7 @@
 #define F_IBM128_SPECIAL (1<<2)
 
 #define _DECL_STRUCT(from, to, ...) \
-	struct from ## to ## _tests {			\
+	static struct from ## to ## _tests {			\
 	  int line;					\
 	  float in __attribute__((mode (from)));	\
 	  float out __attribute__((mode (to)));		\
@@ -314,12 +323,30 @@ inline char * decodebin128(_Float128 d, char *c) { strfromf128(c,128,"%.29a",d);
 # define HAVE_FLT128(x)
 #endif
 
+/* And handle the case on ppc64le where ldbl != ibm128 */
+#if HAVE_IFMODE
+typedef float __attribute__((mode(IF))) ibm128;
+
+inline char* decodeibm128(ibm128 d, char *c)
+{
+  /* Note, no helper glibc/libm functions in this mode.  Treat as two doubles.  */
+  double d0 = __builtin_unpack_ibm128(d, 0);
+  double d1 = __builtin_unpack_ibm128(d, 1);
+  sprintf(c,"ibm128(%.14a,%.14a;%.16e,%.16e)",d0,d1,d0,d1);
+  return c;
+}
+# define HAVE_IBM128(x) x,
+#else
+# define HAVE_IBM128(x)
+#endif
+
 #define FORMAT_NAME(x) \
 	_Generic((x), \
 		float: "float", \
 		double: "double", \
 		long double: "long double", \
 		HAVE_FLT128(_Float128: "_Float128") \
+		HAVE_IBM128(ibm128: "ibm128") \
 		_Decimal32: "_Decimal32", \
 		_Decimal64: "_Decimal64", \
 		_Decimal128: "_Decimal128")
@@ -330,6 +357,7 @@ inline char * decodebin128(_Float128 d, char *c) { strfromf128(c,128,"%.29a",d);
 		double: decodebin64, \
 		long double: decodebinl, \
 		HAVE_FLT128(_Float128: decodebin128) \
+		HAVE_IBM128(ibm128: decodeibm128) \
 		_Decimal32: decoded32, \
 		_Decimal64: decoded64, \
 		_Decimal128: decoded128)(x,y)
@@ -375,13 +403,23 @@ inline char * decodebinl(long double d, char *c) { strfroml(c,128,"%.29a",d); re
 
 /* Fixup variable precision IBM128 values.  Whether these should
    be allowed or not is debatable, but is the current behavior. */
-#if TF_MODE_IBM128
-# define REWRITE_IBM128_EXPECTED(tp) \
-  if(tp->extra.flags & F_IBM128_SPECIAL) \
-    tp->out = __builtin_pack_longdouble (tp->extra.ibm128[0], \
-					 tp->extra.ibm128[1]);
+#if TF_MODE_IBM128 || HAVE_IFMODE
+
+#if HAVE_IFMODE
+#define PACK_IBM128(a,b) __builtin_pack_ibm128(a,b)
 #else
-# define REWRITE_IBM128_EXPECTED(tp)
+#define PACK_IBM128(a,b) __builtin_pack_longdouble(a,b)
+#endif
+
+# define __REWRITE_IBM128_EXPECTED(tp) \
+  if(tp->extra.flags & F_IBM128_SPECIAL) \
+    tp->out = PACK_IBM128 (tp->extra.ibm128[0], tp->extra.ibm128[1]);
+#endif
+
+#if TF_MODE_IBM128
+#define REWRITE_IBM128_EXPECTED(tp) __REWRITE_IBM128_EXPECTED(tp)
+#else
+#define REWRITE_IBM128_EXPECTED(tp)
 #endif
 
 #define DO_TEST(from, to, func) _DO_TEST(from, to, func)
@@ -400,17 +438,42 @@ inline char * decodebinl(long double d, char *c) { strfroml(c,128,"%.29a",d); re
 int main (void)
 {
   DO_TEST(SD,DF,);
-  DO_TEST(DD,DF,);
-  DO_TEST(TF,TD,);
-
   DO_TEST(SD,TF,);
+  DO_TEST(DD,DF,);
   DO_TEST(DD,TF,);
   DO_TEST(TD,TF,);
+  DO_TEST(SF,SD,);
+  DO_TEST(SF,DD,);
+  DO_TEST(SF,TD,);
+  DO_TEST(DF,DD,);
+  DO_TEST(DF,TD,);
+  DO_TEST(TF,TD,);
 
-#if  HAVE_XFMODE
+#if HAVE_XFMODE
   DO_TEST(SD,XF,);
   DO_TEST(DD,XF,);
   DO_TEST(XF,TD,);
+#endif
+
+/* IFmode is the ibm128 format. The ABI still uses *tf* named functions.  */
+#if HAVE_IFMODE
+  #undef TF_MODE_IBM128
+  #undef TF_MODE_FLT128
+  #undef TF_SUF
+  #undef REWRITE_IBM128_EXPECTED
+  #define TF_MODE_IBM128 1
+  #define TF_MODE_FLT128 0
+  #define TF_SUF(x) x ## f128
+  #define REWRITE_IBM128_EXPECTED(tp) __REWRITE_IBM128_EXPECTED(tp)
+  DECL_STRUCT(IF, TD, TFTD_TESTS)
+  DECL_STRUCT(SD, IF, SDTF_TESTS)
+  DECL_STRUCT(DD, IF, DDTF_TESTS)
+  DECL_STRUCT(TD, IF, TDTF_TESTS)
+
+  DO_TEST(IF,TD,);
+  DO_TEST(SD,IF,);
+  DO_TEST(DD,IF,);
+  DO_TEST(TD,IF,);
 #endif
 
 /* KFmode is kludgey.  Just rename and redeclare the KFmode bits

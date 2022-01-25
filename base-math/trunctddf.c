@@ -38,7 +38,7 @@
 
 CONVERT_WRAPPER(
 // trunctddf
-	long double temp;	/* Need at least 16 decimal digits of accuracy.  */
+	ldouble temp;	/* Need at least 16 decimal digits of accuracy.  */
 	SRC_TYPE a_norm;
 	long long mant;
 	int	exp, sexp;
@@ -93,7 +93,7 @@ CONVERT_WRAPPER(
 
 	mant = a_norm;   /* Convert 17 digit mantissa to DI integer.  */
 	sexp = exp - 17; /* Exponent adjusted for mantissa.  */
-	temp = mant;
+	temp = TOIBM128(mant);
 	if (sexp > 0)
 	  temp *= BINPOWOF10[sexp];
 	else if (sexp < 0)
