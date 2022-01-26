@@ -62,8 +62,10 @@
 # if defined _ARCH_PWR8 && defined __LITTLE_ENDIAN__ && (_CALL_ELF == 2)
 #  define HAVE_KFMODE 1
 # endif
-# define TF_MODE_IBM128 1
-# define TF_MODE_FLT128 0
+# if __LDBL_MANT_DIG__ == 106
+#  define TF_MODE_IBM128 1
+#  define TF_MODE_FLT128 0
+# endif
 #endif
 
 #ifndef TF_MODE_IBM128
