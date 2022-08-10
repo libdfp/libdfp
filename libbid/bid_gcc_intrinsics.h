@@ -134,7 +134,11 @@ typedef __attribute__ ((aligned(16))) struct
 
 #if BID_HAS_TF_MODE
 #ifndef TFtype
+#ifdef __aarch64__
+#define TFtype long double
+#else
 #define TFtype __float128
+#endif /* __aarch64 */
 #endif
 #endif
 
