@@ -35,3 +35,4 @@ __bid_nedd2 (_Decimal64 x, _Decimal64 y) {
   res = __bid64_quiet_not_equal (ux.i, uy.i);
   return (res);
 }
+hidden_def(__bid_nedd2);

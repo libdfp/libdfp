@@ -33,3 +33,4 @@ __bid_floatunsditd (UDItype x) {
   return (res.d);
 }
 
+hidden_def(__bid_floatunsditd);

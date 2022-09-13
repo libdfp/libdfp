@@ -32,4 +32,5 @@ __bid_truncxfdd (XFtype x) {
   res.i = __binary80_to_bid64 (x);
   return (res.d);
 }
+hidden_def(__bid_truncxfdd);
 #endif

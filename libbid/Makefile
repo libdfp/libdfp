@@ -11,7 +11,8 @@ libdfp_files += _addsub_dd _dd_to_sf _dd_to_xf _di_to_td _eq_td _gt_td \
 				_sd_to_dd _sd_to_tf _sf_to_td _td_to_di _td_to_usi _udi_to_sd \
 				_usi_to_sd _dd_to_sd _dd_to_usi _di_to_sd _eq_sd _gt_sd _le_sd \
 				_mul_sd _sd_to_df _sd_to_udi _si_to_dd _td_to_sd _td_to_xf \
-				_udi_to_td _usi_to_td
+				_udi_to_td _usi_to_td _dd_to_hf _hf_to_dd _hf_to_sd _hf_to_sd \
+				_hf_to_td _sd_to_hf _td_to_hf
 
 libdfp_files += bid_decimal_globals bid_decimal_data \
          bid_binarydecimal bid_convert_data \

@@ -35,4 +35,5 @@ __bid_trunctfsd (TFtype x) {
   res.i = __binary128_to_bid32 (ux.i);
   return (res.d);
 }
+hidden_def(__bid_trunctfsd);
 #endif

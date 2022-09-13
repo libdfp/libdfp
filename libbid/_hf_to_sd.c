@@ -33,4 +33,5 @@ __bid_extendhfsd (HFtype x) {
   res.i = __binary32_to_bid32 (xsf);
   return (res.d);
 }
+hidden_def(__bid_extendhfsd);
 #endif

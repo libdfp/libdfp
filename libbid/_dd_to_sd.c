@@ -34,3 +34,4 @@ __bid_truncddsd2 (_Decimal64 x) {
   res.i = __bid64_to_bid32 (ux.i);
   return (res.d);
 }
+hidden_def(__bid_truncddsd2);

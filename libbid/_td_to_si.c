@@ -36,3 +36,4 @@ __bid_fixtdsi (_Decimal128 x) {
   return (res);
 }
 
+hidden_def(__bid_fixtdsi);

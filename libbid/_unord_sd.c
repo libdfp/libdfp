@@ -39,3 +39,4 @@ __bid_unordsd2 (_Decimal32 x, _Decimal32 y) {
   return (res);
 }
 
+hidden_def(__bid_unordsd2);

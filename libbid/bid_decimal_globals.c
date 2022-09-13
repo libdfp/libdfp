@@ -86,6 +86,24 @@ __dfp_raise_except (int mask) {
 
   _IDEC_glbflags |= flags;
 }
+
+void
+__dfp_set_status (int excepts) {
+  _IDEC_glbflags |= excepts;
+  if (excepts == INEXACT_EXCEPTION)
+    {
+      fesetexcept (FE_INEXACT);
+    }
+  else
+    {
+      int fexcepts = (excepts & INEXACT_EXCEPTION) ? FE_INEXACT : 0;
+      fexcepts = (excepts & OVERFLOW_EXCEPTION) ? FE_OVERFLOW : 0;
+      fexcepts = (excepts & UNDERFLOW_EXCEPTION) ? FE_UNDERFLOW : 0;
+      fexcepts = (excepts & ZERO_DIVIDE_EXCEPTION) ? FE_DIVBYZERO : 0;
+      fexcepts = (excepts & INVALID_EXCEPTION) ? FE_INVALID: 0;
+      fesetexcept (fexcepts);
+    }
+}
 #endif
 #endif
 
