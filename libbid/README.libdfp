@@ -13,6 +13,7 @@ Next, scan for these and append hidden_def when we find
 the implementations (with GNU grep):
 
     for i in $(grep -oP "(?<=hidden_proto\()[^)]*" bid_gcc_intrinsics.h); do echo "hidden_def($i);" >> $(grep -e $i -l *c); done
+    for i in _*.c; do echo "$i"; vim -c "#endif\n\(hidden_def.*\)$/\1\r#endif/ge" -c "w" -c "qall" $i; done
 
 
 Likewise, ensure nothing is missing from the makefile,

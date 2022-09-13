@@ -35,4 +35,5 @@ __bid_extendddxf (_Decimal64 x) {
   res = __bid64_to_binary80 (ux.i);
   return (res);
 }
+hidden_def(__bid_extendddxf);
 #endif

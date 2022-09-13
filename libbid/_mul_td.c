@@ -34,3 +34,4 @@ __bid_multd3 (_Decimal128 x, _Decimal128 y) {
   res.i = __bid128_mul (ux.i, uy.i);
   return (res.d);
 }
+hidden_def(__bid_multd3);

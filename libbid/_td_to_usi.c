@@ -38,3 +38,4 @@ __bid_fixunstdsi (_Decimal128 x) {
 }
 
 
+hidden_def(__bid_fixunstdsi);

@@ -35,4 +35,5 @@ __bid_extendtftd (TFtype x) {
   res.i = __binary128_to_bid128 (ux.i);
   return (res.d);
 }
+hidden_def(__bid_extendtftd);
 #endif

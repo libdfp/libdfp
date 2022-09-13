@@ -39,3 +39,4 @@ __bid_eqtd2 (_Decimal128 x, _Decimal128 y) {
     res = 0;
   return (res);
 }
+hidden_def(__bid_eqtd2);

@@ -34,3 +34,4 @@ __bid_extendsddf (_Decimal32 x) {
   res = __bid32_to_binary64 (ux.i);
   return (res);
 }
+hidden_def(__bid_extendsddf);

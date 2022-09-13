@@ -31,3 +31,4 @@ __bid_extenddftd (DFtype x) {
   res.i = __binary64_to_bid128 (x);
   return (res.d);
 }
+hidden_def(__bid_extenddftd);

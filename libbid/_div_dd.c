@@ -34,3 +34,4 @@ __bid_divdd3 (_Decimal64 x, _Decimal64 y) {
   res.i = __bid64_div (ux.i, uy.i);
   return (res.d);
 }
+hidden_def(__bid_divdd3);

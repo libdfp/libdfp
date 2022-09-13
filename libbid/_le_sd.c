@@ -42,3 +42,4 @@ __bid_lesd2 (_Decimal32 x, _Decimal32 y) {
     res = 1;
   return (res);
 }
+hidden_def(__bid_lesd2);

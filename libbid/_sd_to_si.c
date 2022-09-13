@@ -39,3 +39,4 @@ __bid_fixsdsi (_Decimal32 x) {
 }
 
 
+hidden_def(__bid_fixsdsi);

@@ -32,3 +32,4 @@ __bid_truncdfsd (DFtype x) {
   res.i = __binary64_to_bid32 (x);
   return (res.d);
 }
+hidden_def(__bid_truncdfsd);

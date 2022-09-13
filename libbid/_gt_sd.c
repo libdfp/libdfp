@@ -38,3 +38,4 @@ __bid_gtsd2 (_Decimal32 x, _Decimal32 y) {
   res = __bid64_quiet_greater (x64, y64);
   return (res);
 }
+hidden_def(__bid_gtsd2);

@@ -534,6 +534,29 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #define BID_HAS_GCC_DECIMAL_INTRINSICS 1
 #endif /* IN_LIBGCC2 */
 
+// We are in libdfp.
+#ifndef BID_BIG_ENDIAN
+#define BID_BIG_ENDIAN __FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__
+#endif
+
+#ifndef BID_THREAD
+#if defined (HAVE_CC_TLS) && defined (USE_TLS)
+#define BID_THREAD __thread
+#endif
+#endif
+
+#define _intptr_t_defined
+#define DECIMAL_CALL_BY_REFERENCE 0
+#define DECIMAL_GLOBAL_ROUNDING 1
+#define DECIMAL_GLOBAL_ROUNDING_ACCESS_FUNCTIONS 1
+#define DECIMAL_GLOBAL_EXCEPTION_FLAGS 1
+#define DECIMAL_GLOBAL_EXCEPTION_FLAGS_ACCESS_FUNCTIONS 1
+#define BID_HAS_GCC_DECIMAL_INTRINSICS 1
+extern void __dfp_set_status (int excepts);
+// Use a statement expression (GNU C) to quiet warnings
+#define __set_status_flags(fpsc, status) ({ __dfp_set_status(status); (void)fpsc; })
+// End libdfp options
+
 // Configuration Options
 
 #define SET_STATUS_FLAGS
