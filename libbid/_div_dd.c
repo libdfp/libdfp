@@ -1,4 +1,4 @@
-/* Copyright (C) 2007-2021 Free Software Foundation, Inc.
+/* Copyright (C) 2007-2022 Free Software Foundation, Inc.
 
 This file is part of GCC.
 
@@ -34,4 +34,3 @@ __bid_divdd3 (_Decimal64 x, _Decimal64 y) {
   res.i = __bid64_div (ux.i, uy.i);
   return (res.d);
 }
-hidden_def(__bid_divdd3);
