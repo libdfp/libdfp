@@ -1,4 +1,4 @@
-/* Copyright (C) 2007-2021 Free Software Foundation, Inc.
+/* Copyright (C) 2007-2022 Free Software Foundation, Inc.
 
 This file is part of GCC.
 
@@ -31,4 +31,3 @@ __bid_extendsftd (SFtype x) {
   res.i = __binary32_to_bid128 (x);
   return (res.d);
 }
-hidden_def(__bid_extendsftd);

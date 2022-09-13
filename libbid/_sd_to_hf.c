@@ -1,4 +1,4 @@
-/* Copyright (C) 2007-2022 Free Software Foundation, Inc.
+/* Copyright (C) 2022 Free Software Foundation, Inc.
 
 This file is part of GCC.
 
@@ -25,11 +25,14 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include "bid_functions.h"
 #include "bid_gcc_intrinsics.h"
 
-_Decimal64
-__bid_floatunsdidd (UDItype x) {
-  union decimal64 res;
+#if LIBGCC2_HAS_HF_MODE || BID_HAS_HF_MODE
+HFtype
+__bid_truncsdhf (_Decimal32 x) {
+  HFtype res;
+  union decimal32 ux;
 
-  res.i = __bid64_from_uint64 (x);
-  return (res.d);
+  ux.d = x;
+  res = __bid32_to_binary32 (ux.i);
+  return (res);
 }
-
+#endif

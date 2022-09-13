@@ -1,4 +1,4 @@
-/* Copyright (C) 2007-2021 Free Software Foundation, Inc.
+/* Copyright (C) 2007-2022 Free Software Foundation, Inc.
 
 This file is part of GCC.
 
@@ -35,5 +35,4 @@ __bid_extendsdtf (_Decimal32 x) {
   res.i = __bid32_to_binary128 (ux.i);
   return (res.f);
 }
-hidden_def(__bid_extendsdtf);
 #endif

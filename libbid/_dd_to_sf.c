@@ -1,4 +1,4 @@
-/* Copyright (C) 2007-2021 Free Software Foundation, Inc.
+/* Copyright (C) 2007-2022 Free Software Foundation, Inc.
 
 This file is part of GCC.
 
@@ -34,4 +34,3 @@ __bid_truncddsf (_Decimal64 x) {
   res = __bid64_to_binary32 (ux.i);
   return (res);
 }
-hidden_def(__bid_truncddsf);

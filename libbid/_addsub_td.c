@@ -1,4 +1,4 @@
-/* Copyright (C) 2007-2021 Free Software Foundation, Inc.
+/* Copyright (C) 2007-2022 Free Software Foundation, Inc.
 
 This file is part of GCC.
 
@@ -44,5 +44,3 @@ __bid_subtd3 (_Decimal128 x, _Decimal128 y) {
   res.i = __bid128_sub (ux.i, uy.i);
   return (res.d);
 }
-hidden_def(__bid_addtd3);
-hidden_def(__bid_subtd3);
