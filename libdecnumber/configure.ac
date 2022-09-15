@@ -23,7 +23,7 @@ AC_PREREQ(2.64)
 AC_INIT([libdfp/libdecnumber],[1.0.16],[https://github.com/libdfp/libdfp/issues])
 AC_CONFIG_SRCDIR(decNumber.h)
 AC_CONFIG_MACRO_DIR(../config)
-AC_CONFIG_AUX_DIR(..)
+AC_CONFIG_AUX_DIR(../scripts)
 
 # Checks for programs.
 AC_PROG_MAKE_SET
