@@ -452,7 +452,8 @@ __printf_dfp (FILE *fp,
 
   if (info->user & mod_D)
     {
-      _Decimal64 d64 = **(_Decimal64**)args[0];
+      _Decimal64 d64;
+      memcpy (&d64, *(void* const *)args[0], sizeof(d64));
       if (d64 == 0) is_zero = 1;
       nd = numdigitsd64(d64);
       __get_digits_d64 (d64, digits+1, &exp, &is_neg, &is_nan, &is_inf);
@@ -460,7 +461,8 @@ __printf_dfp (FILE *fp,
     }
   else if (info->user & mod_DD)
     {
-      _Decimal128 d128 = **(_Decimal128**)args[0];
+      _Decimal128 d128;
+      memcpy (&d128, *(void* const *)args[0], sizeof(d128));
       if (d128 == 0) is_zero = 1;
       nd = numdigitsd128(d128);
       __get_digits_d128 (d128, digits+1, &exp, &is_neg, &is_nan, &is_inf);
@@ -468,11 +470,12 @@ __printf_dfp (FILE *fp,
     }
   else if (info->user & mod_H)
     {
-       _Decimal32 d32 = **(_Decimal32**)args[0];
-       if (d32 == 0) is_zero = 1;
-       nd = numdigitsd32(d32);
-       __get_digits_d32 (d32, digits+1, &exp, &is_neg, &is_nan, &is_inf);
-       mw = __DEC32_MANT_DIG__ + 1;
+      _Decimal32 d32;
+      memcpy (&d32, *(void* const *)args[0], sizeof(d32));
+      if (d32 == 0) is_zero = 1;
+      nd = numdigitsd32(d32);
+      __get_digits_d32 (d32, digits+1, &exp, &is_neg, &is_nan, &is_inf);
+      mw = __DEC32_MANT_DIG__ + 1;
     }
   else /* We shouldn't get here, but it is possible.  */
     return -2;
