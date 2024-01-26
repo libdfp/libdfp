@@ -21,7 +21,7 @@
    Please see libdfp/COPYING.txt for more information. */
 
 /*
-   gcc gen-auto-dfp-tests.c -Wall -O2 -o gen-auto-dfp-tests -lmpfr -lgmp -I..
+   gcc gen-auto-dfp-tests.c -Wall -O2 -o gen-auto-dfp-tests -lmpfr -lgmp
 
    This framework is similar in spirit to the glibc math benchmarking
    program. As of writing, no readily available, and licensing compatible
@@ -61,17 +61,13 @@
 
 #include <mpfr.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <error.h>
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
-
-#define __STDC_WANT_IEC_60559_DFP_EXT__
-#define __STDC_WANT_DEC_FP__
-#include <dfp/math.h>
-
 
 /* libbid uses the level of precision converting. Let's start here. */
 #define DFP_MPFR_PREC 512
@@ -86,6 +82,8 @@
 enum func_type
 {
   mpfr_d_d,
+  mpfr_dd_d,
+  _func_type_cnt
 };
 
 /* Table 3.6 in IEEE 754-2008 */
@@ -94,6 +92,7 @@ struct dec_fmt_param
   int p;
   int emax;
   int emin;
+  int emin_normal;
   const char *name;
   mpfr_t frmax;
   mpfr_t frmin;
@@ -109,9 +108,9 @@ enum dec_type
 
 struct dec_fmt_param dec_fmt_param[] =
 {
-  {7, 96, -95 - 6, "decimal32"},
-  {16, 384, -383 - 15, "decimal64"},
-  {34, 6144, -6143 - 33, "decimal128"},
+  {7, 96, -95 - 6, -95, "decimal32"},
+  {16, 384, -383 - 15, -383, "decimal64"},
+  {34, 6144, -6143 - 33, -6143, "decimal128"},
 };
 #define DEC_MAX_FMT_STR (10)
 
@@ -137,8 +136,10 @@ typedef struct test
   int line;
   const char *stest; /* allocated */
   mpfr_t frin[decimal_fmt_cnt];
+  mpfr_t frin2[decimal_fmt_cnt];
   int excepts;
-  result_t input; /* TODO: only one type support now. */
+  result_t input;
+  result_t input2; /* TODO: only up to two args of same type supported now. */
   result_t result; /* TODO: only one type supported now. */
   struct testf *tf;
 } test_t;
@@ -146,6 +147,7 @@ typedef struct test
 union func_ptr
 {
   int (*mpfr_d_d) (mpfr_t out, mpfr_t const in, mpfr_rnd_t rnd);
+  int (*mpfr_dd_d) (mpfr_t out, mpfr_t const in1, mpfr_t const in2, mpfr_rnd_t rnd);
 };
 
 typedef struct testf
@@ -233,6 +235,9 @@ special_t dec_spec_vals[] =
 #define DECL_TESTF_D_D(func) { mpfr_d_d, { .mpfr_d_d = mpfr_ ## func,  }, \
                                #func, 0, NULL, NULL, 0, sizeof(#func) + 1 }
 
+#define DECL_TESTF_DD_D(func) { mpfr_dd_d, { .mpfr_dd_d = mpfr_ ## func,  }, \
+                               #func, 0, NULL, NULL, 0, sizeof(#func) + 1 }
+
 testf_t testlist[] =
 {
   DECL_TESTF_D_D(cos),
@@ -245,6 +250,7 @@ testf_t testlist[] =
   DECL_TESTF_D_D(log10),
   DECL_TESTF_D_D(log1p),
   DECL_TESTF_D_D(exp),
+  DECL_TESTF_DD_D(pow),
   { }
 };
 
@@ -258,27 +264,15 @@ xstrdup(char *in)
 }
 
 void
-alloc_test(testf_t *tf, const char *val, char *test)
+parse_next_val(mpfr_t frin[3], const char *val, char **endptr)
 {
-  test_t *t = NULL;
-  mpfr_t frin;
-  char *endptr;
+  mpfr_t frin_tmp;
 
-  tf->testno++;
-  tf->tests = realloc (tf->tests, tf->testno * sizeof (tf->tests[0]));
-  t = &tf->tests[tf->testno - 1];
-
-  if (!tf->tests)
-    error (EXIT_FAILURE, errno, "realloc");
-  memset (t, 0, sizeof (*t));
-  t->stest = test;
-  t->tf = tf;
-
-  /* Scan for specials, and skip conversion below. Ignore case. */
+  // val may contain more than 1 value
   for (special_t *sv = &dec_spec_vals[0]; sv->name; sv++)
     if (!strcasecmp(sv->name, val))
       {
-        sv->set_val (val, t->frin);
+        sv->set_val (val, frin);
         return;
       }
 
@@ -291,23 +285,62 @@ alloc_test(testf_t *tf, const char *val, char *test)
      exp 0x2.c5c85fdf473dep+8
      exp 7097827128933839730962063185870647e-31
   */
-  mpfr_init (frin);
-  mpfr_strtofr (frin, val, &endptr, 10, DFP_DEFAULT_RND);
-  if (endptr && *endptr == 0)
+  mpfr_init (frin_tmp);
+  mpfr_strtofr (frin_tmp, val, endptr, 10, DFP_DEFAULT_RND);
+  if (**endptr == 0 || **endptr == ' ')
     for (int fmt = 0; fmt < decimal_fmt_cnt; fmt++)
       {
         char str[128];
 
         /*
-          This wins no awards, but round-trip values through
-          strings to better approximate the _DecimalN value.
+          If the input is subnormal, round to the reduced number of digits when converting.
         */
-        mpfr_snprintf (str, sizeof(str) - 1, "%.*Re", dec_fmt_param[fmt].p - 1, frin);
-        mpfr_init_set_str (t->frin[fmt], str, 0, DFP_DEFAULT_RND);
+        mpfr_exp_t exp;
+        mpfr_get_str(str, &exp, 10, dec_fmt_param[fmt].p - 1, frin_tmp, DFP_DEFAULT_RND);
+        if (exp < dec_fmt_param[fmt].emin_normal && exp >= dec_fmt_param[fmt].emin)
+          {
+            mpfr_snprintf (str, sizeof(str) - 1, "%.*Re", exp - dec_fmt_param[fmt].emin - 1, frin_tmp);
+            mpfr_init_set_str (frin[fmt], str, 0, DFP_DEFAULT_RND);
+          }
+        else if (exp < dec_fmt_param[fmt].emin)
+          {
+            /* Too small for the format.  Round to zero and preserve sign.  */
+            mpfr_set_zero(frin[fmt], mpfr_signbit(frin_tmp) ? -1 : 0);
+          }
+        else
+          {
+            /*
+              This wins no awards, but round-trip values through
+              strings to better approximate the _DecimalN value.
+            */
+            mpfr_snprintf (str, sizeof(str) - 1, "%.*Re", dec_fmt_param[fmt].p - 1, frin_tmp);
+            mpfr_init_set_str (frin[fmt], str, 0, DFP_DEFAULT_RND);
+          }
       }
-  mpfr_clear(frin);
-  if (!endptr || *endptr != 0)
+  else
     error (EXIT_FAILURE, errno, "Failed to convert: %s", val);
+  mpfr_clear(frin_tmp);
+}
+
+void
+alloc_test(testf_t *tf, const char *val, char *test)
+{
+  test_t *t = NULL;
+  char *endptr = "";
+
+  tf->testno++;
+  tf->tests = realloc (tf->tests, tf->testno * sizeof (tf->tests[0]));
+  t = &tf->tests[tf->testno - 1];
+
+  if (!tf->tests)
+    error (EXIT_FAILURE, errno, "realloc");
+  memset (t, 0, sizeof (*t));
+  t->stest = test;
+  t->tf = tf;
+
+  parse_next_val(t->frin, val, &endptr);
+  if (*endptr == ' ')
+    parse_next_val(t->frin2, endptr+1, &endptr);
 }
 
 /*
@@ -354,8 +387,8 @@ parse_line(char *line, const char *filename, size_t lineno)
         error (EXIT_FAILURE, 0, "realloc failure");
       t->compat_tests[t->compat_testno - 1] = test;
     }
-  
-  return; 
+
+  return;
 
 failure:
   error_at_line (EXIT_FAILURE, 0, filename, lineno, "failed to parse '%s'", test);
@@ -363,7 +396,7 @@ failure:
     free (test);
 };
 
-/* Slightly misleaning... round bfp to dfp result using default rounding mode. */
+/* Slightly misleading... round bfp to dfp result using default rounding mode. */
 void
 round_result(mpfr_t in[decimal_fmt_cnt], decimal_value_t *out)
 {
@@ -374,8 +407,8 @@ round_result(mpfr_t in[decimal_fmt_cnt], decimal_value_t *out)
         sprintf (out->v[i], "%sNaN", mpfr_signbit (in[i]) ? "-" : "");
       else if (mpfr_cmpabs (in[i], dec_fmt_param[i].frmax) > 0)
         sprintf (out->v[i], "%sInf", mpfr_signbit (in[i]) ? "-" : "");
-      else if (mpfr_cmpabs(dec_fmt_param[i].frmin, in[i]) >= 0)
-        sprintf (out->v[i], "%s0", mpfr_signbit (in[i]) ? "-" : "");
+      else if (mpfr_cmpabs(dec_fmt_param[i].frmin, in[i]) > 0)
+        sprintf (out->v[i], "%s0.0", mpfr_signbit (in[i]) ? "-" : "");
       else
         {
           mpfr_exp_t exp;
@@ -384,9 +417,24 @@ round_result(mpfr_t in[decimal_fmt_cnt], decimal_value_t *out)
           /* Remove implicit radix point by shifting the exponent per format */
           mpfr_get_str (out->v[i], &exp, 10, dec_fmt_param[i].p, in[i], DFP_DEFAULT_RND);
           exp -= dec_fmt_param[i].p;
-          if (exp > dec_fmt_param[i].emax || exp < dec_fmt_param[i].emin)
-            error(EXIT_FAILURE, 0, "Conversion failure. Exponent out of range");
-          sprintf (out->v[i] + dec_fmt_param[i].p + adj, "e%d", (int) exp);
+
+          /* Sanity and subnormal check. */
+          if (exp < dec_fmt_param[i].emin)
+            {
+              /* This should be a subnormal number. Determine how many decimals to clip and rewrite the string. */
+              if (exp > (dec_fmt_param[i].emin - dec_fmt_param[i].p))
+                {
+                  int dig = dec_fmt_param[i].p - (dec_fmt_param[i].emin - exp);
+                  mpfr_get_str (out->v[i], &exp, 10, dig, in[i], DFP_DEFAULT_RND);
+                  sprintf (out->v[i] + dig + adj, "e%d", (int)(exp - dig));
+                }
+              else
+                error(EXIT_FAILURE, 0, "Conversion failure. Subnormal value rounds to 0. %se%d", out->v[i], (int)exp);
+	    }
+          else if (exp > dec_fmt_param[i].emax)
+            error(EXIT_FAILURE, 0, "Conversion failure. Exponent out of range %d > %d", (int)exp, dec_fmt_param[i].emax);
+          else
+            sprintf (out->v[i] + dec_fmt_param[i].p + adj, "e%d", (int) exp);
         }
     }
 }
@@ -413,6 +461,26 @@ compute(test_t *t)
             mpfr_clear (tmp[fmt]);
         }
         break;
+
+      case mpfr_dd_d:
+        {
+          mpfr_t tmp[decimal_fmt_cnt];
+
+          for (int fmt=0; fmt < decimal_fmt_cnt; fmt++)
+            {
+              mpfr_init (tmp[fmt]);
+              t->tf->func.mpfr_dd_d (tmp[fmt], t->frin[fmt], t->frin2[fmt], DFP_DEFAULT_RND);
+            }
+
+          round_result (t->frin, &t->input.d_);
+          round_result (t->frin2, &t->input2.d_);
+          round_result (tmp, &t->result.d_);
+
+          for (int fmt=0; fmt < decimal_fmt_cnt; fmt++)
+            mpfr_clear (tmp[fmt]);
+        }
+        break;
+
       default:
         error (EXIT_FAILURE, 0, "Unknown function type %d", (int)t->tf->ftype);
         break;
@@ -480,9 +548,13 @@ gen_output(const char *fprefix)
       if (!out)
         error(EXIT_FAILURE, errno, "failed to open for writing %s", fname);
 
-      fprintf (out, "# name %s\n"
-                    "# arg1 decimal\n"
-                    "# ret  decimal\n", tf->fname);
+      char *argstr[_func_type_cnt] =
+        {
+	  "# arg1 decimal\n# ret  decimal",
+	  "# arg1 decimal\n# arg2 decimal\n# ret  decimal",
+        };
+
+      fprintf (out, "# name %s\n%s\n", tf->fname, argstr[tf->ftype]);
 
       for (int i = 0; i < tf->testno; i++)
         {
@@ -498,6 +570,14 @@ gen_output(const char *fprefix)
                   fprintf (out, "%-*s %-*s %-*s\n", DEC_MAX_STR, t->input.d_.v[fmt],
                                                     DEC_MAX_STR, t->result.d_.v[fmt],
                                                     DEC_MAX_FMT_STR, dec_fmt_param[fmt].name);
+                  break;
+
+                case mpfr_dd_d:
+                  /* fprintf (out, "= %s %s %s %s : %s\n", t->tf->fname, fmt_str[fmt], t->input.d_.v[fmt], t->input.d_.v[fmt], t->result.d_.v[fmt]); */
+                  fprintf (out, "%-*s %-*s %-*s %-*s\n", DEC_MAX_STR, t->input.d_.v[fmt],
+                                                         DEC_MAX_STR, t->input2.d_.v[fmt],
+                                                         DEC_MAX_STR, t->result.d_.v[fmt],
+                                                         DEC_MAX_FMT_STR, dec_fmt_param[fmt].name);
                   break;
 
                 default:

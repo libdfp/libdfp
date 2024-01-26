@@ -1,2 +1,2 @@
 # The is a generated file from gen-auto-dfp-tests
-libdfp-auto-tests = cos acos sin log log10 log1p exp
+libdfp-auto-tests = cos acos sin log log10 log1p exp pow

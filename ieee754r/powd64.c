@@ -35,6 +35,10 @@
 
 #include <dfpmacro.h>
 
+#include <stdint.h>
+
+
+
 static DEC_TYPE
 intpow (DEC_TYPE val, int N)
 {
@@ -53,6 +57,14 @@ intpow (DEC_TYPE val, int N)
   return result;
 }
 
+/* Only for _Decimal64 and smaller today. */
+static bool
+isodd (DEC_TYPE y)
+{
+  DEC_TYPE y_int = FUNC_D (__rint)(y);
+  unsigned long int y_abs_int = FUNC_D (__fabs)(y_int);
+  return y_int == y && y_abs_int < 9999999999999999ULL && (y_abs_int & 1) == 1;
+}
 
 static DEC_TYPE
 IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
@@ -63,139 +75,96 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 
   int x_class = FUNC_D (__fpclassify) (x);
   int y_class = FUNC_D (__fpclassify) (y);
-  if ((x_class == FP_NAN) || (x_class == FP_INFINITE)
-      || (y_class == FP_NAN) || (y_class == FP_INFINITE))
+  if (!(x_class == FP_NORMAL && y_class == FP_NORMAL))
     {
-      if ((x_class == FP_NAN) || (y_class == FP_NAN))
-	return DEC_NAN;
-      if (x == 1.DD)
-	return 1.DD;
-      if (y == 0.DD)
-	return 1.DD;
-      if (y_class == FP_INFINITE && (x_class != FP_NAN))
+      if (y_class == FP_SUBNORMAL && y_class == FP_SUBNORMAL)
 	{
-	  DEC_TYPE x_abs = FUNC_D (__fabs) (x);
+	  /* Handle normally */
+	}
+      else if (x == 1.DD)
+	{
+	  /* For any y, including a NaN. */
+	  return x;
+	}
+      else if (y_class == FP_NAN || x_class == FP_NAN)
+	{
+	  return y_class == FP_ZERO ? 1.DD : x + y;
+	}
+      else if (y_class == FP_ZERO)
+	{
+	  return x_class == FP_NAN ? x : 1.DD;
+	}
+      else if (x_class == FP_ZERO)
+	{
+	  if (y_class == FP_INFINITE)
+	    return y < 0.DD ? DEC_INFINITY : 0.DD;
+	  if (isodd(y))
+	    return y < 0.DD ? DEC_INFINITY : FUNC_D (__copysign)(0.DD, x);
+	  return y < 0.DD ? DEC_INFINITY : 0.DD;
+	}
+      else if (y_class == FP_INFINITE)
+	{
 	  if (x == -1.DD)
 	    return 1.DD;
-	  if (y < 0.DD)
-	    {			/* y == -inf */
-	      if (x_abs < 1.DD)
-		return DEC_INFINITY;
-	      if (x_abs > 1.DD)
-		return 0.DD;
-	    }
+	  else if (x < -1.DD || x > 1.DD)
+	    return y > 0.DD ? DEC_INFINITY : 0.DD;
 	  else
-	    {			/* y == +inf */
-	      if (x_abs < 1.DD)
-		return 0.DD;
-	      if (x_abs > 1.DD)
-		return DEC_INFINITY;
-	    }
+	    return y > 0.DD ? 0.DD : DEC_INFINITY;
 	}
-      if (x_class == FP_INFINITE && (y_class != FP_NAN))
+      else if (x_class == FP_INFINITE)
 	{
-	  DEC_TYPE y_int = FUNC_D (__trunc) (y);
-	  if (y_int == y)
-	    {			/* y is an int including 0. */
-	      long long int_y = y_int;
-	      int odd_y = (int) (int_y & 1LL);
-	      if (odd_y)
-		{		/* y is an odd integer */
-		  if ((y < 0.DD) && (x < 0.DD))
-		    return -0.DD;
-		  if ((y > 0.DD) && (x < 0.DD))
-		    return -DEC_INFINITY;
-		}
-	      else
-		{		/* y not an odd integer */
-		  if ((y < 0.DD) && (x < 0.DD))
-		    return 0.DD;
-		  if ((y > 0.DD) && (x < 0.DD))
-		    return DEC_INFINITY;
-		}
-	    }
-	  else
-	    {
-	      if (x > 0.DD)
-		{		/* x == +inf */
-		  if (y < 0.DD)
-		    return 0.DD;
-		  else
-		    return DEC_INFINITY;
-		}
-	    }
+	  if (x > 0.DD)
+	    return y < 0.DD ? 0.DD : DEC_INFINITY;
+	  /* If x is -INF, the result is determined by the sign of y and whether y is an odd integer. */
+	  if (isodd(y))
+	    return y < 0.DD ? -0.DD : x;
+	  return y < 0.DD ? 0.DD : -x;
+	}
+      else
+	{
+	  /* This should be reachable. */
 	  return DEC_NAN;
 	}
     }
-  /* handle the eazy case */
-  if (y_class == FP_ZERO)
-    return 1.DD;
 
-  /* Split y into integer and fraction and use the identity:
+  /* x and y are non-zero, finite, and not one.
+     Split y into integer and fraction and use the identity:
      x ^ (m+n) == ( x^m ) * (x^n) */
   y_int = FUNC_D (__rint) (y);
   y_frac = y - y_int;
+  result = 1.DD;
 
-#ifdef __DEBUG_PRINT__
-  printf ("y_int=%Df,y_frac=%Df)\n", y_int, y_frac);
-#endif
-  if (y_frac == 0.DD)
+  /* Compute x^(int(y)) first */
+  if (y_int != 0.DD)
     {				/* y is an integer */
-      /* FIXME does not handle case where y_int is out of range for
-         int */
-      int int_y = y_int;	/* convert to int */
-      if (y_int > 0.DD)
+      long int int_y = y_int;	/* convert to int */
+      if (int_y > 0)
 	{
-	  int odd_y = int_y & 1;
-	  if (x == 0.0DD)
-	    {
-	      if (odd_y)
-		result = x;
-	      else
-		result = 0.DD;
-	    }
-	  else
-	    {
-	      result = intpow (x, int_y);
-	    }
+	  result = intpow (x, int_y);
 	}
       else
-	{			/* y is negative so use a^-x == 1/(a^x) */
-	  int odd_y = int_y & 1;
-#ifdef __DEBUG_PRINT__
-	  printf ("int_y=%d, odd_y=%d)\n", int_y, odd_y);
-#endif
-	  if (x == 0.DD)
-	    {			/* pole error */
-	      result = HUGE_VAL_D64;
-	      if (odd_y)
-		result = FUNC_D (__copysign) (result, x);
-	    }
-	  else
-	    result = 1.DD / intpow (x, -int_y);
+	{
+          /* y is negative so use a^-x == 1/(a^x)
+	     Split int_y into two parts to avoid overflowing the divisor (e.x 2^-1279). */
+	  long int y1 = (-int_y)/2;
+	  DEC_TYPE v1 = intpow (x, y1);
+	  DEC_TYPE v2 = v1;
+          if ((y1 & 1) == 1)
+	    v2 *= x;
+	  DEC_TYPE v3 = v2 * v1;
+          if ( FUNC_D (__isnormal)(v3))
+            result = DFP_CONSTANT(1.0) / v3;
+          else
+	    result = (DFP_CONSTANT(1.0) / v1) * (DFP_CONSTANT(1.0) / v2);
 	}
-      /* else y == 0.0, and handled as special case above. */
     }
-  else
-    {				/* y is not a integer */
-      if (x == 1.DD)
-	result = 1.DD;
-      else if (x == 0.DD)
-	{
-	  if (y > 0.DD)
-	    result = 0.DD;
-	  else if (y < 0.DD)
-	    result = HUGE_VAL_D64;	/* pole error */
-	  /* else y == 0.0, and handled as special case above. */
-	}
-      else
-	{			/* FIXME lots of additional special cases here!  */
-	  int int_y = y_int;	/* convert to int */
-	  DEC_TYPE log_x;
 
-	  log_x = FUNC_D (__log) (x);
-	  result = intpow (x, int_y) * FUNC_D (__exp) (y_frac * log_x);
-	}
+  /* Compute exp(ln(x)*y_frac) and combine with integral power. */
+  if (y_frac != 0.DD)
+    {
+      /* If x is negative, log_x should propogate a NaN upwards. */
+      DEC_TYPE log_x = FUNC_D (__log) (x);
+      result = result * FUNC_D (__exp) (y_frac * log_x);
     }
 
   return result;
