@@ -159,3 +159,38 @@ log1p NaN
 log1p Inf
 log1p -1.0
 log1p -2.0
+
+# Handle the common IEEE 754-2019 special cases of pow listed in 9.2.1.
+pow 2 0
+pow 2 -0
+pow 0 -1
+pow -0 -1
+pow 0 -Inf
+pow -0 -Inf
+pow 0 Inf
+pow -0 Inf
+pow 0 3
+pow -0 3
+pow -1 Inf
+pow -1 -Inf
+pow 1 NaN
+pow 1 3
+pow 0.9 Inf
+pow 1.1 Inf
+pow -1.1 Inf
+pow 0.9 -Inf
+pow 1.1 -Inf
+pow -1.1 -Inf
+pow Inf -0.1
+pow Inf 0.1
+pow -Inf -1
+pow -Inf 3
+pow -Inf -4
+pow -Inf 4
+
+pow 2 -1279
+pow 2 -1278.9
+pow 1e-398 -1e-398
+pow 1.2345678 1.2345678
+pow 1.234567890123456 1.234567890123456
+pow 3.234567890123456 0.2345678901234567
