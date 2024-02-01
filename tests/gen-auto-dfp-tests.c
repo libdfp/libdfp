@@ -21,7 +21,7 @@
    Please see libdfp/COPYING.txt for more information. */
 
 /*
-   gcc gen-auto-dfp-tests.c -Wall -O2 -o gen-auto-dfp-tests -lmpfr -lgmp
+   gcc gen-auto-dfp-tests.c -Wall -O2 -o gen-auto-dfp-tests -lmpfr -lgmp -ldecnumber
 
    This framework is similar in spirit to the glibc math benchmarking
    program. As of writing, no readily available, and licensing compatible
@@ -59,6 +59,8 @@
 
 */
 
+#define _GNU_SOURCE
+
 #include <mpfr.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -69,9 +71,14 @@
 #include <string.h>
 #include <ctype.h>
 
-/* libbid uses the level of precision converting. Let's start here. */
+/* libbid uses the level of precision converting. Let's start here.  */
 #define DFP_MPFR_PREC 512
 #define DFP_DEFAULT_RND MPFR_RNDN
+
+/* Use libdecnumber as the oracle for testing functions where possible.  */
+#define DECNUMDIGITS 34
+#include <decnumber/decContext.h>
+#include <decnumber/decNumber.h>
 
 /*
   TODO: only mpfr now. Assuming libdecnumber is sufficiently correctly for
@@ -83,6 +90,7 @@ enum func_type
 {
   mpfr_d_d,
   mpfr_dd_d,
+  dec_dd_d,
   _func_type_cnt
 };
 
@@ -94,6 +102,7 @@ struct dec_fmt_param
   int emin;
   int emin_normal;
   const char *name;
+  int dctxtiv; /* Second argument to decContextDefault */
   mpfr_t frmax;
   mpfr_t frmin;
 };
@@ -108,9 +117,9 @@ enum dec_type
 
 struct dec_fmt_param dec_fmt_param[] =
 {
-  {7, 96, -95 - 6, -95, "decimal32"},
-  {16, 384, -383 - 15, -383, "decimal64"},
-  {34, 6144, -6143 - 33, -6143, "decimal128"},
+  {7, 96, -95 - 6, -95, "decimal32", DEC_INIT_DECIMAL32},
+  {16, 384, -383 - 15, -383, "decimal64", DEC_INIT_DECIMAL64},
+  {34, 6144, -6143 - 33, -6143, "decimal128", DEC_INIT_DECIMAL128},
 };
 #define DEC_MAX_FMT_STR (10)
 
@@ -137,6 +146,8 @@ typedef struct test
   const char *stest; /* allocated */
   mpfr_t frin[decimal_fmt_cnt];
   mpfr_t frin2[decimal_fmt_cnt];
+  decNumber din[decimal_fmt_cnt];
+  decNumber din2[decimal_fmt_cnt];
   int excepts;
   result_t input;
   result_t input2; /* TODO: only up to two args of same type supported now. */
@@ -148,6 +159,7 @@ union func_ptr
 {
   int (*mpfr_d_d) (mpfr_t out, mpfr_t const in, mpfr_rnd_t rnd);
   int (*mpfr_dd_d) (mpfr_t out, mpfr_t const in1, mpfr_t const in2, mpfr_rnd_t rnd);
+  decNumber* (*dec_dd_d) (decNumber*, const decNumber*, const decNumber*, decContext*);
 };
 
 typedef struct testf
@@ -162,7 +174,7 @@ typedef struct testf
   size_t compat_chr_skip;
 } testf_t;
 
-typedef void (*special_init_func)(const char *v, mpfr_t in[decimal_fmt_cnt]);
+typedef void (*special_init_func)(const char *v, mpfr_t in[decimal_fmt_cnt], decNumber din[decimal_fmt_cnt]);
 
 typedef struct special
 {
@@ -170,51 +182,75 @@ typedef struct special
   special_init_func set_val;
 } special_t;
 
-void get_nan(const char *v, mpfr_t in[decimal_fmt_cnt])
+
+void get_nan(const char *v, mpfr_t in[decimal_fmt_cnt], decNumber din[decimal_fmt_cnt])
 {
   for(int i = 0; i < decimal_fmt_cnt; i++)
     {
       mpfr_init_set_si (in[i], 0, DFP_DEFAULT_RND);
       mpfr_set_nan (in[i]);
       mpfr_setsign (in[i], in[i], v[0] == '-' ? 1 : 0, DFP_DEFAULT_RND);
+      decNumberZero(&din[i]);
+      din[i].bits |= DECNAN | (v[0] == '-' ? DECNEG : 0);
     }
 }
 
 /* Add a mark to the payload. */
-void get_snan(const char *v, mpfr_t in[decimal_fmt_cnt])
+void get_snan(const char *v, mpfr_t in[decimal_fmt_cnt], decNumber din[decimal_fmt_cnt])
 {
   for(int i = 0; i < decimal_fmt_cnt; i++)
     {
       mpfr_init_set_si (in[i], 0, DFP_DEFAULT_RND);
       mpfr_set_nan (in[i]);
       mpfr_setsign (in[i], in[i], v[0] == '-' ? 1 : 0, DFP_DEFAULT_RND);
+      decNumberZero(&din[i]);
+      din[i].bits |= DECNAN | DECSNAN | (v[0] == '-' ? DECNEG : 0);
     }
 }
 
-void get_min(const char *v, mpfr_t in[decimal_fmt_cnt])
+void get_min(const char *v, mpfr_t in[decimal_fmt_cnt], decNumber din[decimal_fmt_cnt])
 {
+  decNumber dtmp;
+  decContext dctxt;
+
+  decNumberZero (&dtmp);
+
   for(int i = 0; i < decimal_fmt_cnt; i++)
     {
       mpfr_init_set (in[i], dec_fmt_param[i].frmin, DFP_DEFAULT_RND);
       mpfr_setsign (in[i], in[i], v[0] == '-' ? 1 : 0, DFP_DEFAULT_RND);
+      decContextDefault (&dctxt, dec_fmt_param[i].dctxtiv);
+      decNumberNextPlus (&din[i], &dtmp, &dctxt);
+      din[i].bits |= (v[0] == '-' ? DECNEG : 0);
     }
 }
 
-void get_max(const char *v, mpfr_t in[decimal_fmt_cnt])
+void get_max(const char *v, mpfr_t in[decimal_fmt_cnt], decNumber din[decimal_fmt_cnt])
 {
+  decNumber dtmp;
+  decContext dctxt;
+
+  decNumberZero (&dtmp);
+  dtmp.bits |= DECINF;
+
   for(int i = 0; i < decimal_fmt_cnt; i++)
     {
       mpfr_init_set (in[i], dec_fmt_param[i].frmax, DFP_DEFAULT_RND);
       mpfr_setsign (in[i], in[i], v[0] == '-' ? 1 : 0, DFP_DEFAULT_RND);
+      decContextDefault (&dctxt, dec_fmt_param[i].dctxtiv);
+      decNumberNextMinus (&din[i], &dtmp, &dctxt);
+      din[i].bits |= (v[0] == '-' ? DECNEG : 0);
     }
 }
 
-void get_inf(const char *v, mpfr_t in[decimal_fmt_cnt])
+void get_inf(const char *v, mpfr_t in[decimal_fmt_cnt], decNumber din[decimal_fmt_cnt])
 {
   for(int i = 0; i < decimal_fmt_cnt; i++)
     {
       mpfr_init (in[i]);
       mpfr_set_inf (in[i], v[0] == '-' ? -1 : 0);
+      decNumberZero(&din[i]);
+      din[i].bits |= DECINF | (v[0] == '-' ? DECNEG : 0);
     }
 }
 
@@ -238,6 +274,10 @@ special_t dec_spec_vals[] =
 #define DECL_TESTF_DD_D(func) { mpfr_dd_d, { .mpfr_dd_d = mpfr_ ## func,  }, \
                                #func, 0, NULL, NULL, 0, sizeof(#func) + 1 }
 
+#define DECL_TESTF_DEC_DD_D(func, decname) \
+                              { dec_dd_d, { .dec_dd_d =  decNumber ## decname,  }, \
+                                #func, 0, NULL, NULL, 0, sizeof(#func) + 1 }
+
 testf_t testlist[] =
 {
   DECL_TESTF_D_D(cos),
@@ -251,11 +291,12 @@ testf_t testlist[] =
   DECL_TESTF_D_D(log1p),
   DECL_TESTF_D_D(exp),
   DECL_TESTF_DD_D(pow),
+  DECL_TESTF_DEC_DD_D(nextafter, NextToward),
   { }
 };
 
 char *
-xstrdup(char *in)
+xstrdup(const char *in)
 {
   char * out = strdup (in);
   if (!out)
@@ -264,17 +305,31 @@ xstrdup(char *in)
 }
 
 void
-parse_next_val(mpfr_t frin[3], const char *val, char **endptr)
+parse_next_val(mpfr_t frin[3], decNumber din[3], const char *val, char **endptr)
 {
   mpfr_t frin_tmp;
+  char *decstr = xstrdup (val);
+  *strchrnul (decstr,' ') = 0;
+
 
   // val may contain more than 1 value
   for (special_t *sv = &dec_spec_vals[0]; sv->name; sv++)
-    if (!strcasecmp(sv->name, val))
+    if (!strcasecmp(sv->name, decstr))
       {
-        sv->set_val (val, frin);
+        sv->set_val (val, frin, din);
+        *endptr = (char*)&val[strlen(sv->name)];
+        free (decstr);
         return;
       }
+
+  // Parse the value into libdecnumber. It handles special values.
+  for (int fmt = 0; fmt < decimal_fmt_cnt; fmt++)
+    {
+      decContext dctxt;
+      decContextDefault (&dctxt, dec_fmt_param[fmt].dctxtiv);
+      decNumberFromString (&din[fmt], decstr, &dctxt);
+    }
+  free(decstr);
 
   /* For now, only accept decimal inputs as radix-2 operands can cause
      false errors if they fall between 2 dfp values.
@@ -338,9 +393,9 @@ alloc_test(testf_t *tf, const char *val, char *test)
   t->stest = test;
   t->tf = tf;
 
-  parse_next_val(t->frin, val, &endptr);
+  parse_next_val(t->frin, t->din, val, &endptr);
   if (*endptr == ' ')
-    parse_next_val(t->frin2, endptr+1, &endptr);
+    parse_next_val(t->frin2, t->din2, endptr+1, &endptr);
 }
 
 /*
@@ -430,12 +485,35 @@ round_result(mpfr_t in[decimal_fmt_cnt], decimal_value_t *out)
                 }
               else
                 error(EXIT_FAILURE, 0, "Conversion failure. Subnormal value rounds to 0. %se%d", out->v[i], (int)exp);
-	    }
+            }
           else if (exp > dec_fmt_param[i].emax)
             error(EXIT_FAILURE, 0, "Conversion failure. Exponent out of range %d > %d", (int)exp, dec_fmt_param[i].emax);
           else
             sprintf (out->v[i] + dec_fmt_param[i].p + adj, "e%d", (int) exp);
         }
+    }
+}
+
+void
+decnum_to_str(const decNumber *d, char *out)
+{
+  if (decNumberIsNegative(d))
+    *out++ = '-';
+
+  if (decNumberIsSNaN(d))
+     strcpy (out, "sNaN");
+  else if (decNumberIsQNaN(d))
+     strcpy (out, "NaN");
+  else if (decNumberIsInfinite(d))
+     strcpy (out, "Inf");
+  else
+    {
+      decNumber e;
+
+      decNumberCopyAbs(&e, d);
+      e.exponent = 0;
+      decNumberToString(&e, out);
+      sprintf(&out[e.digits],"e%d",d->exponent);
     }
 }
 
@@ -481,6 +559,23 @@ compute(test_t *t)
         }
         break;
 
+      case dec_dd_d:
+        {
+          for (int fmt=0; fmt < decimal_fmt_cnt; fmt++)
+            {
+              decContext c;
+              decNumber r;
+
+              decContextDefault(&c, dec_fmt_param[fmt].dctxtiv);
+              t->tf->func.dec_dd_d (&r, &t->din[fmt], &t->din2[fmt], &c);
+
+              decnum_to_str(&t->din[fmt], t->input.d_.v[fmt]);
+              decnum_to_str(&t->din2[fmt], t->input2.d_.v[fmt]);
+              decnum_to_str(&r, t->result.d_.v[fmt]);
+            }
+        }
+        break;
+
       default:
         error (EXIT_FAILURE, 0, "Unknown function type %d", (int)t->tf->ftype);
         break;
@@ -492,8 +587,8 @@ void
 init_fmt(void)
 {
   decimal_value_t d;
- 
-  /* get approximate maximum finite value in radix-2 */ 
+
+  /* get approximate maximum finite value in radix-2 */
   for (int i = 0; i < decimal_fmt_cnt; i++)
     {
       int p = dec_fmt_param[i].p;
@@ -550,8 +645,9 @@ gen_output(const char *fprefix)
 
       char *argstr[_func_type_cnt] =
         {
-	  "# arg1 decimal\n# ret  decimal",
-	  "# arg1 decimal\n# arg2 decimal\n# ret  decimal",
+          "# arg1 decimal\n# ret  decimal",
+          "# arg1 decimal\n# arg2 decimal\n# ret  decimal",
+          "# arg1 decimal\n# arg2 decimal\n# ret  decimal",
         };
 
       fprintf (out, "# name %s\n%s\n", tf->fname, argstr[tf->ftype]);
@@ -572,6 +668,7 @@ gen_output(const char *fprefix)
                                                     DEC_MAX_FMT_STR, dec_fmt_param[fmt].name);
                   break;
 
+                case dec_dd_d:
                 case mpfr_dd_d:
                   /* fprintf (out, "= %s %s %s %s : %s\n", t->tf->fname, fmt_str[fmt], t->input.d_.v[fmt], t->input.d_.v[fmt], t->result.d_.v[fmt]); */
                   fprintf (out, "%-*s %-*s %-*s %-*s\n", DEC_MAX_STR, t->input.d_.v[fmt],

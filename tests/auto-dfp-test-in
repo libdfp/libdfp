@@ -198,3 +198,20 @@ pow 1.000000000000001 -2147483648
 pow 1.000000000000001 -4294967296
 # LONG_MAX+1, the test suite will round up for decimal32/64.
 pow 1.000000000000001 9223372036854775807
+
+nextafter -min -1
+nextafter -min 0
+nextafter min 1
+nextafter min 0
+nextafter min min
+nextafter max max
+nextafter -2e-398 -1
+nextafter -max max
+nextafter inf -inf
+nextafter -inf inf
+nextafter 0 -0
+nextafter 0 inf
+nextafter 0 -inf
+nextafter NaN NaN
+nextafter 0 NaN
+nextafter NaN 0

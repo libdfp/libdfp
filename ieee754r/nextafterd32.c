@@ -42,37 +42,50 @@
 static DEC_TYPE
 IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
-  if (x == y)
-    return x;
-  if (x == DEC_NAN || y == DEC_NAN)
-    {
-      if (x == DEC_NAN)
-	return y;
-      return x;
-    }
   DEC_TYPE epsilon = SUBNORMAL_MIN;
-  if (x == -SUBNORMAL_MIN)
-    return -0;
+
+  if (x == y)
+    {
+      /* Special case: (0,-0) = -0, (-0,0) = 0.  */
+      if (x == 0)
+        {
+          int negx = FUNC_D(__signbit)(x);
+          int negy = FUNC_D(__signbit)(y);
+
+          if (!negx && negy)
+            return -0.D;
+          if (negx && !negy)
+            return 0.D;
+        }
+       return x;
+    }
+  if (x != x)
+    return x;
+  if (y != y)
+    return y;
 
   if (x > y)
     {
+      if (x == SUBNORMAL_MIN) /* Special case: this value always return 0.  */
+        return 0.D;
       if (x == DEC_INFINITY)
 	return DEC_MAX;
-      if (x == SUBNORMAL_MIN)
-	return 0;
       if (x == -DEC_MAX)
 	return -DEC_INFINITY;
-      epsilon *= -1;
+      epsilon = -epsilon;
     }
   else
     {
-      if (!FUNC_D (__isfinite) (x) && x < 0)
-	return -1 * DEC_MAX;	//nextup(-Inf) = -DEC_MAX
+      if (x == -SUBNORMAL_MIN) /* Special case: this value always return -0.  */
+        return -0.D;
+      if (x == -DEC_INFINITY)
+	return -DEC_MAX;
       if (x == DEC_MAX)
 	return DEC_INFINITY;
     }
   if (x == 0)
     return epsilon;
+
   DEC_TYPE justified = FUNC_D (left_justify) (x);
   int exponent = FUNC_D (getexp) (justified);
   epsilon = FUNC_D (setexp) (epsilon, exponent);
