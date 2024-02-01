@@ -29,7 +29,11 @@ decimal32 1
 decimal64 0
 
 test exp
-decimal128 1
+decimal128 0
 decimal32 0
 decimal64 3
 
+test pow
+decimal128 0
+decimal32 0
+decimal64 1
