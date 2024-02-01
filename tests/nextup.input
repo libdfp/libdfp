@@ -7,7 +7,7 @@
 
 #if x is the negative number of least magnitude in the type of x,
 # nextup(x) is −0 if the type has  signed  zeros  and  is  0  otherwise.
--DEC_SUBNORMAL_MIN                                  -0
+-DEC_SUBNORMAL_MIN                                  -0.0
 
 1                                                   1.000001 decimal32
 2                                                   2.000001 decimal32
