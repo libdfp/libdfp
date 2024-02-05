@@ -23,68 +23,66 @@
 
    Please see libdfp/COPYING.txt for more information.  */
 
-#include <math.h>
-#include <ieee754r_private.h>
 
-#ifndef _DECIMAL_SIZE
-#define _DECIMAL_SIZE 64
-#include <decimal64.h>
+#if defined(_DECIMAL_SIZE) && _DECIMAL_SIZE != 64
+#error "This implementation only works for _Decimal64"
 #endif
+
+#define _DECIMAL_SIZE 64
 
 #define FUNCTION_NAME pow
 
+#include <math.h>
+#include <ieee754r_private.h>
+#include <decimal64.h>
 #include <dfpmacro.h>
-
+#include <limits.h>
 #include <stdint.h>
 
+/* The actual value is 9223372036854775807, this needs to round down for exact
+   conversion.  */
+#define D64_INT64_MAX   9223372036854775000.DD
 
-
-static DEC_TYPE
-intpow (DEC_TYPE val, int N)
+/* Compute integer powers with higher precision to minimize rounding error.  */
+static _Decimal128
+intpow (_Decimal128 val, uint64_t exp)
 {
-  DEC_TYPE result = 1;
-  DEC_TYPE p = val;
-  int mask = 1;
+  _Decimal128 result = 1;
+  _Decimal128 p = val;
 
-  while (mask <= N)
-    {
-      if (mask & N)
-	result *= p;
-      p *= p;
-      mask <<= 1;
-    }
+  for ( ; exp; exp >>= 1, p*=p)
+    if (exp&1)
+      result *= p;
 
   return result;
 }
 
 /* Only for _Decimal64 and smaller today. */
 static bool
-isodd (DEC_TYPE y)
+isodd (_Decimal64 y)
 {
-  DEC_TYPE y_int = FUNC_D (__rint)(y);
-  unsigned long int y_abs_int = FUNC_D (__fabs)(y_int);
-  return y_int == y && y_abs_int < 9999999999999999ULL && (y_abs_int & 1) == 1;
+  unsigned long int y_abs_int = __fabsd64 (y);
+  return __rintd64 (y) == y && __fabsd64 (y) <= 9999999999999999.DD && (y_abs_int & 1) == 1;
 }
 
-static DEC_TYPE
-IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
+static _Decimal64
+IEEE_FUNCTION_NAME (_Decimal64 x, _Decimal64 y)
 {
-  DEC_TYPE result = DEC_NAN;
-  DEC_TYPE y_int;
-  DEC_TYPE y_frac;
+  _Decimal64 result = DEC_NAN;
+  _Decimal64 y_int;
+  _Decimal64 y_frac;
 
-  int x_class = FUNC_D (__fpclassify) (x);
-  int y_class = FUNC_D (__fpclassify) (y);
+  /* For any y, including a NaN. */
+  if (x == 1.DD)
+    return x;
+
+  int x_class = __fpclassifyd64 (x);
+  int y_class = __fpclassifyd64 (y);
   if (!(x_class == FP_NORMAL && y_class == FP_NORMAL))
     {
       if (y_class == FP_SUBNORMAL && y_class == FP_SUBNORMAL)
 	{
 	  /* Handle normally */
-	}
-      else if (x == 1.DD)
-	{
-	  /* For any y, including a NaN. */
-	  return x;
 	}
       else if (y_class == FP_NAN || x_class == FP_NAN)
 	{
@@ -99,7 +97,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 	  if (y_class == FP_INFINITE)
 	    return y < 0.DD ? DEC_INFINITY : 0.DD;
 	  if (isodd(y))
-	    return y < 0.DD ? DEC_INFINITY : FUNC_D (__copysign)(0.DD, x);
+	    return y < 0.DD ? DEC_INFINITY : __copysignd64(0.DD, x);
 	  return y < 0.DD ? DEC_INFINITY : 0.DD;
 	}
       else if (y_class == FP_INFINITE)
@@ -130,59 +128,56 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   /* x and y are non-zero, finite, and not one.
      Split y into integer and fraction and use the identity:
      x ^ (m+n) == ( x^m ) * (x^n) */
-  y_int = FUNC_D (__rint) (y);
-  y_frac = y - y_int;
+  y_int = __rintd64 (y);
   result = 1.DD;
 
-  /* Compute x^(int(y)) first */
-  if (y_int != 0.DD)
-    {				/* y is an integer */
-      long int int_y = y_int;	/* convert to int */
-      if (int_y > 0)
+  /* Compute x^(int(y)) first, if abs(int(y)) fits inside a long int.  */
+  if (__fabsd64 (y_int) <= D64_INT64_MAX)
+    {
+      int64_t int_y = y_int;	/* convert to int */
+      if (int_y == 0)
+	{
+	  /* Do nothing. result is already 1. */
+	}
+      else if (int_y > 0)
 	{
 	  result = intpow (x, int_y);
 	}
       else
 	{
-          /* y is negative so use a^-x == 1/(a^x)
-	     Split int_y into two parts to avoid overflowing the divisor (e.x 2^-1279). */
-	  long int y1 = (-int_y)/2;
-	  DEC_TYPE v1 = intpow (x, y1);
-	  DEC_TYPE v2 = v1;
-          if ((y1 & 1) == 1)
-	    v2 *= x;
-	  DEC_TYPE v3 = v2 * v1;
-          if ( FUNC_D (__isnormal)(v3))
-            result = DFP_CONSTANT(1.0) / v3;
-          else
-	    result = (DFP_CONSTANT(1.0) / v1) * (DFP_CONSTANT(1.0) / v2);
+	  result = (_Decimal64)(1.DL / intpow (x, -int_y));
 	}
     }
+  else
+    {
+      /* TODO: the following will likely be inaccurate, but hopefully not blatantly wrong.
+               Fixing this requires a better implementation.  */
+      y_int = 0.DD;
+    }
+
+  y_frac = y - y_int;
 
   /* Compute exp(ln(x)*y_frac) and combine with integral power. */
   if (y_frac != 0.DD)
     {
       /* If x is negative, log_x should propogate a NaN upwards. */
-      DEC_TYPE log_x = FUNC_D (__log) (x);
-      result = result * FUNC_D (__exp) (y_frac * log_x);
+      _Decimal64 log_x = __logd64 (x);
+      result = result * __expd64 (y_frac * log_x);
     }
 
   return result;
 }
 
-DEC_TYPE
-INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
+_Decimal64
+INTERNAL_FUNCTION_NAME (_Decimal64 x, _Decimal64 y)
 {
-  DEC_TYPE z = IEEE_FUNCTION_NAME (x, y);
+  _Decimal64 z = IEEE_FUNCTION_NAME (x, y);
   /* Pole error: x = 0, y < 0 (non-inf). Set ERANGE in accordance with C99 */
-  if (x == DFP_CONSTANT (0.0) && FUNC_D (__isfinite) (y)
-      && y < DFP_CONSTANT (0.0))
+  if (x == 0.DD && __isfinited64 (y) && y < 0.DD)
     DFP_ERRNO (ERANGE);
-  if (!FUNC_D (__isfinite) (z) && FUNC_D (__isfinite) (x)
-      && FUNC_D (__isfinite) (y))
+  if (!__isfinited64 (z) && __isfinited64 (x) && __isfinited64 (y))
     {
-      if (FUNC_D (__isnan) (z))	/*  Domain error was triggered, x < 0 and y was not an
-				   odd int */
+      if (__isnand64 (z))	/*  Domain error was triggered, x < 0 and y was not an odd int */
 	DFP_ERRNO (EDOM);
       else			/*  Overflow */
 	DFP_ERRNO (ERANGE);
