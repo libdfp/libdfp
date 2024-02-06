@@ -68,7 +68,7 @@ isodd (_Decimal64 y)
 static _Decimal64
 IEEE_FUNCTION_NAME (_Decimal64 x, _Decimal64 y)
 {
-  _Decimal64 result = DEC_NAN;
+  _Decimal128 result = DEC_NAN;
   _Decimal64 y_int;
   _Decimal64 y_frac;
 
@@ -129,7 +129,7 @@ IEEE_FUNCTION_NAME (_Decimal64 x, _Decimal64 y)
      Split y into integer and fraction and use the identity:
      x ^ (m+n) == ( x^m ) * (x^n) */
   y_int = __rintd64 (y);
-  result = 1.DD;
+  result = 1.DL;
 
   /* Compute x^(int(y)) first, if abs(int(y)) fits inside a long int.  */
   if (__fabsd64 (y_int) <= D64_INT64_MAX)
@@ -145,7 +145,7 @@ IEEE_FUNCTION_NAME (_Decimal64 x, _Decimal64 y)
 	}
       else
 	{
-	  result = (_Decimal64)(1.DL / intpow (x, -int_y));
+	  result = 1.DL / intpow (x, -int_y);
 	}
     }
   else
@@ -157,12 +157,12 @@ IEEE_FUNCTION_NAME (_Decimal64 x, _Decimal64 y)
 
   y_frac = y - y_int;
 
-  /* Compute exp(ln(x)*y_frac) and combine with integral power. */
+  /* Compute exp(ln(x)*y_frac) and combine with integral power with the highest available precision. */
   if (y_frac != 0.DD)
     {
       /* If x is negative, log_x should propogate a NaN upwards. */
-      _Decimal64 log_x = __logd64 (x);
-      result = result * __expd64 (y_frac * log_x);
+      _Decimal128 log_x = __logd128 (x);
+      result = result * __expd128 ((_Decimal128)y_frac * log_x);
     }
 
   return result;
