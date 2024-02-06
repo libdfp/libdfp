@@ -34,6 +34,7 @@
 #include <float.h>
 #include <errno.h>
 #include <ieee754r_private.h>
+#include <dfpfenv_private.h>
 
 #define FUNCTION_NAME nextafter
 
@@ -43,6 +44,8 @@ static DEC_TYPE
 IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
   DEC_TYPE epsilon = SUBNORMAL_MIN;
+  int nrm = FE_DEC_UPWARD;
+  int orm;
 
   if (x == y)
     {
@@ -59,20 +62,18 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
         }
        return x;
     }
-  if (x != x)
+  else if (x != x)
     return x;
-  if (y != y)
+  else if (y != y)
     return y;
-
-  if (x > y)
+  else if (x > y)
     {
       if (x == SUBNORMAL_MIN) /* Special case: this value always return 0.  */
         return 0.D;
       if (x == DEC_INFINITY)
 	return DEC_MAX;
-      if (x == -DEC_MAX)
-	return -DEC_INFINITY;
       epsilon = -epsilon;
+      nrm = FE_DEC_DOWNWARD;
     }
   else
     {
@@ -80,16 +81,15 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
         return -0.D;
       if (x == -DEC_INFINITY)
 	return -DEC_MAX;
-      if (x == DEC_MAX)
-	return DEC_INFINITY;
     }
-  if (x == 0)
-    return epsilon;
 
-  DEC_TYPE justified = FUNC_D (left_justify) (x);
-  int exponent = FUNC_D (getexp) (justified);
-  epsilon = FUNC_D (setexp) (epsilon, exponent);
-  return x + epsilon;
+  /* Add or subtract the minimal amount, and round in direction of epsilon.  */
+  orm = __fe_dec_getround ();
+  __fe_dec_setround (nrm);
+  epsilon += x;
+  __fe_dec_setround (orm);
+
+  return epsilon;
 }
 
 DEC_TYPE

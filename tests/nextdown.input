@@ -7,7 +7,7 @@
 
 DEC_SUBNORMAL_MIN                                   0
 
-1                                                   0.999999 decimal32
+1                                                   0.9999999 decimal32
 2                                                   1.999999 decimal32
 
 3                                                   2.999999 decimal32
