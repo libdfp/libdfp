@@ -211,6 +211,10 @@ nextafter min 1
 nextafter min 0
 nextafter min min
 nextafter max max
+nextafter min -inf
+nextafter min inf
+nextafter -min -inf
+nextafter -min inf
 nextafter -2e-398 -1
 nextafter -max max
 nextafter inf -inf
@@ -221,3 +225,10 @@ nextafter 0 -inf
 nextafter NaN NaN
 nextafter 0 NaN
 nextafter NaN 0
+nextafter 1 0
+nextafter -1 0
+nextafter -1 -2
+nextafter 1234567 -inf
+nextafter 1234567 +inf
+nextafter -1234567 -inf
+nextafter -1234567 +inf
