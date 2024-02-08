@@ -46,79 +46,46 @@
 #  define _FBLOGNAN    FP_ILOGBNAN
 #endif
 
-#include <decContext.h>
-#include <decNumber.h>
-#include <math.h>
-#include <limits.h>
-#include <errno.h>
-
-#include <decNumberMath.h>
-
 #ifndef FUNCTION_NAME
 #  define FUNCTION_NAME ilogb
 #endif
 
+#include <errno.h>
+#include <limits.h>
+#include <math.h>
 #include <dfpmacro.h>
+#include <ieee754r_private.h>
 
 _RETURN_TYPE
 INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
-  DEC_TYPE result;
-  decContext context;
-  decNumber dn_result;
-  decNumber dn_x;
-  decNumber dn_absx;
-  decNumber dn_logx;
-  decNumber dn_one;
-  decNumber dn_cmp;
-  enum rounding round;
+  /* Assume an int can hold any decimal type exponent. */
+  int c = FUNC_D (__fpclassify) (x);
+  int exp;
 
-  FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (decNumberIsZero (&dn_x))
+  if (c != FP_NORMAL)
     {
-      DFP_EXCEPT (FE_INVALID);
-      DFP_ERRNO (EDOM);
-      return _FBLOG0;
+      if (x != x)
+	{
+	  DFP_ERRNO (EDOM);
+	  return _FBLOGNAN;
+	}
+      else if (c == FP_ZERO)
+	{
+	  DFP_ERRNO (EDOM);
+	  return _FBLOG0;
+	}
+      else if (c == FP_INFINITE)
+	{
+	  DFP_ERRNO (EDOM);
+	  return FUNC_D (__signbit) (x) ? _MIN_VALUE : _MAX_VALUE;
+	}
+      /* And handle subnormals like any other finite value. */
     }
-  if (decNumberIsInfinite (&dn_x))
-    {
-      DFP_EXCEPT (FE_INVALID);
-      DFP_ERRNO (EDOM);
-      return decNumberIsNegative (&dn_x) ? _MIN_VALUE : _MAX_VALUE;
-    }
-  if (decNumberIsNaN (&dn_x))
-    {
-      DFP_EXCEPT (FE_INVALID);
-      DFP_ERRNO (EDOM);
-      return _FBLOGNAN;
-    }
-
-  decContextDefault (&context, DEFAULT_CONTEXT);
-
-  decNumberAbs (&dn_absx, &dn_x, &context);
-
-  /* For DFP, we use radix 10 instead of whatever FLT_RADIX happens to be */
-  decNumberLog10 (&dn_logx, &dn_absx, &context);
-
-  /* Capture the case where truncation will return the wrong result,
-     by rounding up if -1.0 < x < 1.0  */
-  round = DEC_ROUND_DOWN;
-  decNumberFromInt32 (&dn_one, 1);
-  decNumberCompare (&dn_cmp, &dn_x, &dn_one, &context);
-  if (-decNumberIsNegative(&dn_cmp))
-    {
-      decNumberFromInt32 (&dn_one, -1);
-      decNumberCompare (&dn_cmp, &dn_x, &dn_one, &context);
-      if (!decNumberIsNegative(&dn_cmp) && !decNumberIsZero(&dn_cmp))
-	round = DEC_ROUND_UP;
-    }
-  context.round = round;
-
-  decNumberToIntegralValue (&dn_result, &dn_logx, &context);
-
-  FUNC_CONVERT_FROM_DN (&dn_result, &result, &context);
-  /* Use _Decimal* to int casting.  */
-  return (_RETURN_TYPE) result;
+  /* A simpler approach would be to truncate the value to 1 digit in the least
+     significant digit and return the exponent, frexp essentially does that.  */
+  FUNC_D (__frexp) (x, &exp);
+  return exp - 1;
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

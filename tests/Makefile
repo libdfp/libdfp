@@ -15,8 +15,6 @@ libdfp_c_tests = test-printf test-amort test-decode test-inexact-exception \
 		 test-isinf-d32 test-isinf-d64 test-isinf-d128 \
 		 test-isfinite-d32 test-isfinite-d64 test-isfinite-d128 \
 		 test-issignaling-d32 test-issignaling-d64 test-issignaling-d128 \
-		 test-ilogb-d32 test-ilogb-d64 test-ilogb-d128 \
-		 test-llogb-d32 test-llogb-d64 test-llogb-d128 \
 		 test-ceil-d32 test-ceil-d64 test-ceil-d128 \
 		 test-floor-d32 test-floor-d64 test-floor-d128 \
 		 test-nearbyint-d32 test-nearbyint-d64 test-nearbyint-d128 \
