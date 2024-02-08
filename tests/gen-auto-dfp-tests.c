@@ -91,6 +91,8 @@ enum func_type
   mpfr_d_d,
   mpfr_dd_d,
   dec_dd_d,
+  dec_d_si,
+  dec_d_sl,
   _func_type_cnt
 };
 
@@ -160,6 +162,8 @@ union func_ptr
   int (*mpfr_d_d) (mpfr_t out, mpfr_t const in, mpfr_rnd_t rnd);
   int (*mpfr_dd_d) (mpfr_t out, mpfr_t const in1, mpfr_t const in2, mpfr_rnd_t rnd);
   decNumber* (*dec_dd_d) (decNumber*, const decNumber*, const decNumber*, decContext*);
+  void (*dec_d_si) (char*, const decNumber*, decContext*);
+  void (*dec_d_li) (char*, const decNumber*, decContext*);
 };
 
 typedef struct testf
@@ -181,6 +185,36 @@ typedef struct special
   const char *name;
   special_init_func set_val;
 } special_t;
+
+/* There is no real oracle for ilog10, so one is made with decnumber. */
+void decnumber_ilog10(char *out, const decNumber *in, decContext *ctxt)
+{
+  if (decNumberIsZero (in))
+    strcpy (out, "FP_ILOGB0");
+  else if (decNumberIsInfinite (in) && decNumberIsNegative (in))
+    strcpy (out, "INT_MIN");
+  else if (decNumberIsInfinite (in) && !decNumberIsNegative (in))
+    strcpy (out, "INT_MAX");
+  else if (decNumberIsNaN (in))
+    strcpy (out, "FP_ILOGBNAN");
+  else
+    sprintf (out,"%d", in->digits + in->exponent - 1);
+}
+
+/* Likewise for the effectively identical llog10. */
+void decnumber_llog10(char *out, const decNumber *in, decContext *ctxt)
+{
+  if (decNumberIsZero (in))
+    strcpy (out, "FP_LLOGB0");
+  else if (decNumberIsInfinite (in) && decNumberIsNegative (in))
+    strcpy (out, "LONG_MIN");
+  else if (decNumberIsInfinite (in) && !decNumberIsNegative (in))
+    strcpy (out, "LONG_MAX");
+  else if (decNumberIsNaN (in))
+    strcpy (out, "FP_LLOGBNAN");
+  else
+    sprintf (out,"%d", in->digits + in->exponent - 1);
+}
 
 
 void get_nan(const char *v, mpfr_t in[decimal_fmt_cnt], decNumber din[decimal_fmt_cnt])
@@ -278,6 +312,14 @@ special_t dec_spec_vals[] =
                               { dec_dd_d, { .dec_dd_d =  decNumber ## decname,  }, \
                                 #func, 0, NULL, NULL, 0, sizeof(#func) + 1 }
 
+#define DECL_TESTF_DEC_D_SI(func, decname) \
+                              { dec_d_si, { .dec_d_si = decname, }, \
+                                #func, 0, NULL, NULL, 0, sizeof(#func) + 1 }
+
+#define DECL_TESTF_DEC_D_SL(func, decname) \
+                              { dec_d_sl, { .dec_d_si = decname, }, \
+                                #func, 0, NULL, NULL, 0, sizeof(#func) + 1 }
+
 testf_t testlist[] =
 {
   DECL_TESTF_D_D(cos),
@@ -292,6 +334,8 @@ testf_t testlist[] =
   DECL_TESTF_D_D(exp),
   DECL_TESTF_DD_D(pow),
   DECL_TESTF_DEC_DD_D(nextafter, NextToward),
+  DECL_TESTF_DEC_D_SI(ilogb, decnumber_ilog10),
+  DECL_TESTF_DEC_D_SL(llogb, decnumber_llog10),
   { }
 };
 
@@ -576,6 +620,21 @@ compute(test_t *t)
         }
         break;
 
+      case dec_d_sl:
+        /* This has the same calling conventions as dec_d_si, fallthrough. */
+      case dec_d_si:
+        {
+          for (int fmt=0; fmt < decimal_fmt_cnt; fmt++)
+            {
+              decContext c;
+
+              decContextDefault(&c, dec_fmt_param[fmt].dctxtiv);
+              t->tf->func.dec_d_si (t->result.d_.v[fmt], &t->din[fmt], &c);
+              decnum_to_str(&t->din[fmt], t->input.d_.v[fmt]);
+            }
+        }
+        break;
+
       default:
         error (EXIT_FAILURE, 0, "Unknown function type %d", (int)t->tf->ftype);
         break;
@@ -648,6 +707,8 @@ gen_output(const char *fprefix)
           "# arg1 decimal\n# ret  decimal",
           "# arg1 decimal\n# arg2 decimal\n# ret  decimal",
           "# arg1 decimal\n# arg2 decimal\n# ret  decimal",
+          "# arg1 decimal\n# ret  int",
+          "# arg1 decimal\n# ret  longint",
         };
 
       fprintf (out, "# name %s\n%s\n", tf->fname, argstr[tf->ftype]);
@@ -661,6 +722,8 @@ gen_output(const char *fprefix)
             {
               switch (t->tf->ftype)
                 {
+                case dec_d_si:
+                case dec_d_sl:
                 case mpfr_d_d:
                   /* fprintf (out, "= %s %s %s : %s\n", t->tf->fname, fmt_str[fmt], t->input.d_.v[fmt], t->result.d_.v[fmt]); */
                   fprintf (out, "%-*s %-*s %-*s\n", DEC_MAX_STR, t->input.d_.v[fmt],
