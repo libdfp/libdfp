@@ -37,6 +37,7 @@
 
 #include <dfpmacro.h>
 #include "dfpacc.h"
+#include "mapround.h"
 DEC_TYPE
 PREFIXED_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
@@ -44,6 +45,7 @@ PREFIXED_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
   decNumber dn_x, dn_y, dn_result;
   decContext context;
   decContextDefault(&context, DEFAULT_CONTEXT);
+  context.round = __dn_getround();
 
   FUNC_CONVERT_TO_DN(&x, &dn_x);
   FUNC_CONVERT_TO_DN(&y, &dn_y);
