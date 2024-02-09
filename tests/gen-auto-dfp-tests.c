@@ -91,6 +91,7 @@ enum func_type
   mpfr_d_d,
   mpfr_dd_d,
   dec_dd_d,
+  dec_dD_d,
   dec_d_si,
   dec_d_sl,
   _func_type_cnt
@@ -312,6 +313,10 @@ special_t dec_spec_vals[] =
                               { dec_dd_d, { .dec_dd_d =  decNumber ## decname,  }, \
                                 #func, 0, NULL, NULL, 0, sizeof(#func) + 1 }
 
+#define DECL_TESTF_DEC_DD128_D(func, decname) \
+                              { dec_dD_d, { .dec_dd_d =  decNumber ## decname,  }, \
+                                #func, 0, NULL, NULL, 0, sizeof(#func) + 1 }
+
 #define DECL_TESTF_DEC_D_SI(func, decname) \
                               { dec_d_si, { .dec_d_si = decname, }, \
                                 #func, 0, NULL, NULL, 0, sizeof(#func) + 1 }
@@ -334,6 +339,7 @@ testf_t testlist[] =
   DECL_TESTF_D_D(exp),
   DECL_TESTF_DD_D(pow),
   DECL_TESTF_DEC_DD_D(nextafter, NextToward),
+  DECL_TESTF_DEC_DD128_D(nexttoward, NextToward),
   DECL_TESTF_DEC_D_SI(ilogb, decnumber_ilog10),
   DECL_TESTF_DEC_D_SL(llogb, decnumber_llog10),
   { }
@@ -603,6 +609,24 @@ compute(test_t *t)
         }
         break;
 
+      case dec_dD_d:
+        {
+          /* A special case where the second argument is always _Decimal128.  e.x nexttoward.  */
+          for (int fmt=0; fmt < decimal_fmt_cnt; fmt++)
+            {
+              decContext c;
+              decNumber r;
+
+              decContextDefault(&c, dec_fmt_param[fmt].dctxtiv);
+              t->tf->func.dec_dd_d (&r, &t->din[fmt], &t->din2[decimal128], &c);
+
+              decnum_to_str(&t->din[fmt], t->input.d_.v[fmt]);
+              decnum_to_str(&t->din2[decimal128], t->input2.d_.v[fmt]);
+              decnum_to_str(&r, t->result.d_.v[fmt]);
+            }
+        }
+        break;
+
       case dec_dd_d:
         {
           for (int fmt=0; fmt < decimal_fmt_cnt; fmt++)
@@ -707,6 +731,7 @@ gen_output(const char *fprefix)
           "# arg1 decimal\n# ret  decimal",
           "# arg1 decimal\n# arg2 decimal\n# ret  decimal",
           "# arg1 decimal\n# arg2 decimal\n# ret  decimal",
+          "# arg1 decimal\n# arg2 decimal128\n# ret  decimal",
           "# arg1 decimal\n# ret  int",
           "# arg1 decimal\n# ret  longint",
         };
@@ -732,6 +757,7 @@ gen_output(const char *fprefix)
                   break;
 
                 case dec_dd_d:
+                case dec_dD_d:
                 case mpfr_dd_d:
                   /* fprintf (out, "= %s %s %s %s : %s\n", t->tf->fname, fmt_str[fmt], t->input.d_.v[fmt], t->input.d_.v[fmt], t->result.d_.v[fmt]); */
                   fprintf (out, "%-*s %-*s %-*s %-*s\n", DEC_MAX_STR, t->input.d_.v[fmt],

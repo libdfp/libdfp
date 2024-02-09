@@ -24,9 +24,8 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #define _DECIMAL_SIZE 64
-
-/* Always include this since we need a _Decimal128 converted to a decNumber */
+#define SUBNORMAL_MIN DEC64_SUBNORMAL_MIN
+#define DEC_MAX DEC64_MAX
 #include <decimal128.h>
 #include <decimal64.h>
-
 #include "nexttowardd32.c"

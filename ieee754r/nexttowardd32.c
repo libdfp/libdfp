@@ -24,67 +24,73 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #ifndef _DECIMAL_SIZE
-/* Always include this since we need a _Decimal128 converted to a decNumber */
-#  include <decimal128.h>
-#  include <decimal32.h>
-#  define _DECIMAL_SIZE 32
+# include <decimal128.h>
+# include <decimal32.h>
+# define _DECIMAL_SIZE 32
+# define SUBNORMAL_MIN DEC32_SUBNORMAL_MIN
+# define DEC_MAX DEC32_MAX
 #endif
 
-#include <decContext.h>
-#include <decNumber.h>
 #include <math.h>
-#include <errno.h>
 #include <float.h>
+#include <errno.h>
 #include <ieee754r_private.h>
+#include <dfpfenv_private.h>
 
 #define FUNCTION_NAME nexttoward
-
 #include <dfpmacro.h>
 
 static DEC_TYPE
 IEEE_FUNCTION_NAME (DEC_TYPE x, _Decimal128 y)
 {
-  decContext context;
-  decNumber dn_result;
-  DEC_TYPE result;
-  DEC_TYPE epsilon;
-  decNumber dn_x;
-  decNumber dn_y;
-  decNumber dn_epsilon;
-/*  int comparison; */
+  DEC_TYPE epsilon = SUBNORMAL_MIN;
+  _Decimal128 x128 = x;
+  int nrm = FE_DEC_UPWARD;
+  int orm;
 
-  FUNC_CONVERT_TO_DN(&x, &dn_x);
-  decimal128ToNumber((decimal128*)&y, &dn_y);
+  if (x128 == y)
+    {
+      /* Special case: (0,-0) = -0, (-0,0) = 0.  */
+      if (x128 == 0)
+        {
+          int negx = FUNC_D(__signbit)(x);
+          int negy = FUNC_D(__signbit)(y);
 
-  /*  Early exit for nan's */
-  if (decNumberIsNaN(&dn_x))
+          if (!negx && negy)
+            return -0.D;
+          if (negx && !negy)
+            return 0.D;
+        }
+       return x;
+    }
+  else if (x != x)
     return x;
-  if (decNumberIsNaN(&dn_y))
+  else if (y != y)
     return y;
-
-  /*comparison = decCompare(&dn_x, &dn_y); */
-  /*  Early exit for equal values */
-  /*if (comparison == 0) */
-  if (x==y)
-    return x;
-
-  epsilon = DFP_EPSILON;
-  FUNC_CONVERT_TO_DN(&epsilon, &dn_epsilon);
-
-  dn_epsilon.exponent += dn_x.digits+dn_x.exponent-1;
-
-  decContextDefault(&context, DEFAULT_CONTEXT);
-  /*if (comparison > 0)*/
-  if (x>y)
-    decNumberSubtract(&dn_result,&dn_x,&dn_epsilon,&context);
+  else if (x128 > y)
+    {
+      if (x == SUBNORMAL_MIN) /* Special case: this value always return 0.  */
+        return 0.D;
+      if (x == DEC_INFINITY)
+	return DEC_MAX;
+      epsilon = -epsilon;
+      nrm = FE_DEC_DOWNWARD;
+    }
   else
-    decNumberAdd(&dn_result,&dn_x,&dn_epsilon,&context);
+    {
+      if (x == -SUBNORMAL_MIN) /* Special case: this value always return -0.  */
+        return -0.D;
+      if (x == -DEC_INFINITY)
+	return -DEC_MAX;
+    }
 
-  FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
-  if (context.status & DEC_Overflow)
-    DFP_EXCEPT (FE_OVERFLOW);
+  /* Add or subtract the minimal amount for type of x, and round in direction of epsilon.  */
+  orm = __fe_dec_getround ();
+  __fe_dec_setround (nrm);
+  epsilon += x;
+  __fe_dec_setround (orm);
 
-  return result;
+  return epsilon;
 }
 
 DEC_TYPE

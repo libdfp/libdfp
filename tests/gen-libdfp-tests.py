@@ -119,26 +119,26 @@ class DecimalType(Type):
     # Infinity
     if "Inf" in arg:
       prefix = "minus" if ("-" in arg) else "plus"
-      return "{ .%s = %s_infty }" % (DECIMAL.decfield, prefix)
+      return "{ .%s = %s_infty }" % (self.decfield, prefix)
     # Replace <number>E[+-]DEC_[MAX|MIN]_EXP by a expected number, i.e,
     # 1E-DEC_MIN_EXP -> 1E-383
     if "DEC_MAX_EXP" in arg:
-      arg = arg.replace ("DEC_MAX_EXP", DECIMAL.maxexp)
+      arg = arg.replace ("DEC_MAX_EXP", self.maxexp)
     if "DEC_MIN_EXP_SUB" in arg:
-      arg = arg.replace ("DEC_MIN_EXP_SUB", DECIMAL.minexpsub)
+      arg = arg.replace ("DEC_MIN_EXP_SUB", self.minexpsub)
     if "DEC_MIN_EXP" in arg:
-      arg = arg.replace ("DEC_MIN_EXP", DECIMAL.minexp)
+      arg = arg.replace ("DEC_MIN_EXP", self.minexp)
     # Macro fox max, min, tiny values
     if "DEC_MAX" in arg:
-      arg = arg.replace ("DEC_MAX", DECIMAL.maxvalue);
+      arg = arg.replace ("DEC_MAX", self.maxvalue);
     if "DEC_MIN" in arg:
-      arg = arg.replace ("DEC_MIN", DECIMAL.minvalue);
+      arg = arg.replace ("DEC_MIN", self.minvalue);
     if "DEC_SUBNORMAL_MIN" in arg:
-      arg = arg.replace ("DEC_SUBNORMAL_MIN", DECIMAL.subnormal);
+      arg = arg.replace ("DEC_SUBNORMAL_MIN", self.subnormal);
     # Normal value
     if not self.intnum_re.match (arg):
-      arg += DECIMAL.suffix
-    return "{ .%s = %s }" % (DECIMAL.decfield, arg)
+      arg += self.suffix
+    return "{ .%s = %s }" % (self.decfield, arg)
 
 
 DecimalTypes = {
@@ -226,7 +226,7 @@ def parse_file (filename):
     if fields[1].startswith("name"):
       func.name = fields[2]
     if fields[1].startswith("arg"):
-      if fields[2].startswith("decimal"):
+      if fields[2] == "decimal":
         func.args.append(DecimalTypes[fields[2] + DECIMAL.tname])
       else:
         func.args.append(DecimalTypes[fields[2]])
@@ -395,7 +395,7 @@ def print_func_call(func):
   for i in range(0, len(func.args)):
     line += "operations[i].arg%i" % i
     if "decimal" in func.args[i].name:
-      line += "." + DECIMAL.decfield
+      line += "." + func.args[i].decfield
     line += ", "
 
   line += "operations[i].e%s, operations[i].extraflags);" % func.ret_field()

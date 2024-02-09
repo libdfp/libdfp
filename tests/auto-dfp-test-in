@@ -238,6 +238,37 @@ nextafter 1234567 +inf
 nextafter -1234567 -inf
 nextafter -1234567 +inf
 
+nexttoward -min -1
+nexttoward -min 0
+nexttoward min 1
+nexttoward min 0
+nexttoward min min
+nexttoward max max
+nexttoward min -inf
+nexttoward min inf
+nexttoward -min -inf
+nexttoward -min inf
+nexttoward -2e-398 -1
+nexttoward -max max
+nexttoward inf -inf
+nexttoward -inf inf
+nexttoward 0 -0
+nexttoward 0 inf
+nexttoward 0 -inf
+nexttoward NaN NaN
+nexttoward 0 NaN
+nexttoward NaN 0
+nexttoward 1 0
+nexttoward -1 0
+nexttoward -1 -2
+nexttoward 1234567 -inf
+nexttoward 1234567 +inf
+nexttoward -1234567 -inf
+nexttoward -1234567 +inf
+nexttoward 1234567 1234567.00000000000000000000001
+nexttoward 1234567.000001 1234567.00000000000000000000001
+nexttoward 1234567.000001 1234566.99999999999999999999999
+
 ilogb inf
 ilogb -inf
 ilogb NaN
