@@ -24,6 +24,7 @@
    Please see libdfp/COPYING.txt for more information.  */
 
 #define _DECIMAL_SIZE 128
+#define SUBNORMAL_MIN DEC128_SUBNORMAL_MIN
+#define DEC_MAX DEC128_MAX
 #include <decimal128.h>
-
 #include "nexttowardd32.c"
