@@ -37,9 +37,8 @@
 #include <dfpfenv_private.h>
 
 #define FUNCTION_NAME nextafter
-
 #include <dfpmacro.h>
-#include <numdigits.h>
+
 static DEC_TYPE
 IEEE_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 {
