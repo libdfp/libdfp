@@ -1,4 +1,4 @@
-/* Returns a reprentation of NaN in the _Decimal32 format
+/* Returns a representation of NaN in the _Decimal32 format
 
    Copyright (C) 2006 IBM Corporation.
    Copyright (C) 2007-2015 Free Software Foundation, Inc.
