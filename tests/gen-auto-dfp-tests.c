@@ -337,6 +337,7 @@ testf_t testlist[] =
   DECL_TESTF_D_D(log10),
   DECL_TESTF_D_D(log1p),
   DECL_TESTF_D_D(exp),
+  DECL_TESTF_D_D(exp2),
   DECL_TESTF_DD_D(pow),
   DECL_TESTF_DEC_DD_D(nextafter, NextToward),
   DECL_TESTF_DEC_DD128_D(nexttoward, NextToward),
