@@ -28,4 +28,4 @@
 #define DSUFF DD
 #define SIGNED 1
 
-#include "fixsdti.c"
+#include <fixsdti.c>

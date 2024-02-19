@@ -1,10 +1,6 @@
-/* Convert a signed 128-bit binary integer into nearest representable
-   IEEE754R 64-bit Densely Packed Decimal Floating-point (DFP).
+/* fix*ti implementation for powerpc64.
 
-   Copyright (C) 2015 Free Software Foundation, Inc.
    This file is part of the Decimal Floating Point C Library.
-
-   Contributed by Paul E. Murphy (murphyp@linux.vnet.ibm.com)
 
    The Decimal Floating Point C Library is free software; you can
    redistribute it and/or modify it under the terms of the GNU Lesser
@@ -20,9 +16,37 @@
    if not, write to the Free Software Foundation, Inc., 51 Franklin
    Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-   Please see dfp/COPYING.txt for more information.  */
+   Please see libdfp/COPYING.txt for more information.  */
 
-#define FUNC floattidd
-#define RET_TYPE _Decimal64
-#define RET_SIZE 64
-#include <floattitd.c>
+#ifndef SRC_SIZE
+#  define SRC_SIZE 32
+#  define FUNC fixsdti
+#  define SHIFT_EXP 7
+#  define DSUFF DF
+#  define SIGNED 1
+#endif
+
+/* For Power10 and newer, use an optimized routine for signed 128b integers.  */
+#if defined (_ARCH_PWR10) && SIGNED == 1
+
+# define _DECIMAL_SIZE SRC_SIZE
+# include <dfpacc.h>
+# include <dfpmacro.h>
+
+INT128 __BACKEND_(FUNC) (DEC_TYPE a)
+{
+  _Decimal128 v = a;
+  union v128i128 {
+    vector __int128 v128;
+    __int128 i128;
+  } r;
+  asm ( "drintnq 0, %0, %0, 1\n\t" : "+d" (v) );
+  asm ( "dctfixqq %[e],%[c]\n\t"    : [e] "=v" (r.v128) : [c] "d" (v) );
+  return r.i128;
+}
+hidden_def (__BACKEND_(FUNC))
+
+
+#else
+# include "base-math/fixsdti.c"
+#endif

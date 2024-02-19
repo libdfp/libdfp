@@ -53,12 +53,13 @@
 /* TODO: For now, BID does not have dpd conversions.  */
 #ifndef __DECIMAL_BID_FORMAT__
 #define HAS_TITD 1
+#define BACKEND(x) __dpd_##x
+#else
+#define BACKEND(x) __bid_##x
 #endif
 
 #define _WANT_VC 1		/* Pick up the _VC_P(x,y,fmt) macro.  */
 #include "scaffold.c"		/* Pick up the _VC_P(x,y,fmt) macro.  */
-
-#include "dfpacc.h"
 
 /* We're going to be comparing fields so we need to extract the data.  This is a
  * sneaky way to get around the fact that get_digits_d* isn't exported from
@@ -150,6 +151,9 @@ TEST_STRUCT(32) = {
   {"%He", 1, __LINE__, "0", 0.DF},
 };
 
+#define INT128 __int128
+#define UINT128 unsigned __int128
+
 /* Mediocre string to ti/unsti function. */
 static INT128
 intifyti (char const *str)
@@ -172,25 +176,36 @@ intifyti (char const *str)
   return val;
 }
 
+extern _Decimal32 BACKEND (floattisd) (INT128);
+extern _Decimal64 BACKEND (floattidd) (INT128);
+extern _Decimal128 BACKEND (floattitd) (INT128);
+extern _Decimal32 BACKEND (floatunstisd) (UINT128);
+extern _Decimal64 BACKEND (floatunstidd) (UINT128);
+extern _Decimal128 BACKEND (floatunstitd) (UINT128);
+
 #define RUN_TESTS(SIZE, SUF) \
   for (i = 0; i < (int)(sizeof (d##SIZE) / sizeof (d##SIZE[0])); ++i) \
     { \
-      _Decimal ## SIZE x; \
+      _Decimal ## SIZE x, x_dfp; \
       char const *fmt; \
       if (d##SIZE[i].uns) \
 	{ \
-	  fmt = "floatunsti"#SUF" (%s) in: %s:%d\n"; \
+	  fmt = "floatunsti"#SUF" (%s) %s in: %s:%d\n"; \
 	  UINT128 x_ti = intifyti (d##SIZE[i].x); \
 	  x = x_ti; \
+          x_dfp = BACKEND (floatunsti##SUF) (x_ti); \
 	} \
       else \
 	{ \
-	  fmt = "floatti"#SUF"(%s) in: %s:%d\n"; \
+	  fmt = "floatti"#SUF" (%s) %s in: %s:%d\n"; \
 	  INT128 x_ti = intifyti (d##SIZE[i].x); \
 	  x = x_ti; \
+          x_dfp = BACKEND (floatti##SUF) (x_ti); \
 	} \
-      fprintf (stdout, fmt, d##SIZE[i].x, __FILE__, __LINE__); \
+      fprintf (stdout, fmt, d##SIZE[i].x, "gcc", __FILE__, __LINE__); \
       _VC_P (__FILE__, d##SIZE[i].line, d##SIZE[i].e, x, d##SIZE[i].format); \
+      fprintf (stdout, fmt, d##SIZE[i].x, "libdfp", __FILE__, __LINE__); \
+      _VC_P (__FILE__, d##SIZE[i].line, d##SIZE[i].e, x_dfp, d##SIZE[i].format); \
     }
 
 int
