@@ -28,4 +28,4 @@
 #define FUNC fixtdti
 #define RTYPE INT128
 
-#include "fixsdti.c"
+#include <fixsdti.c>

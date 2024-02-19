@@ -25,4 +25,4 @@
 #define FUNC floattisd
 #define RET_TYPE _Decimal32
 #define RET_SIZE 32
-#include "floattitd.c"
+#include <floattitd.c>

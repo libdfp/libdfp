@@ -51,7 +51,9 @@
 #undef DEC_TYPE
 
 #include "scaffold.c"
-#include "dfpacc.h"
+
+#define INT128 __int128
+#define UINT128 unsigned __int128
 
 union tidi
 {
@@ -229,11 +231,34 @@ stringifyunsti (UINT128 val)
 typedef INT128 ti;
 typedef UINT128 unsti;
 
+#ifndef __DECIMAL_BID_FORMAT__
+#define BACKEND(x) __dpd_##x
+#else
+#define BACKEND(x) __bid_##x
+#endif
+
+extern ti BACKEND (fixtdti) (_Decimal128);
+extern ti BACKEND (fixddti) (_Decimal64);
+extern ti BACKEND (fixsdti) (_Decimal32);
+extern unsti BACKEND (fixunstdti) (_Decimal128);
+extern unsti BACKEND (fixunsddti) (_Decimal64);
+extern unsti BACKEND (fixunssdti) (_Decimal32);
+
+// Test the gcc intrinsic, and the libdfp version.
+
 #define RUN_TEST_SERIES(_t, _type, _name)                          \
   for (i = 0; i < (int)(sizeof(_t)/sizeof(_t[0])); ++i)            \
     {                                                              \
       _type r = _t[i].x;                                           \
+      r = _t[i].x;                                           \
       fprintf (stdout, #_name " (%DDgDL) in: %s:%d\n",             \
+	       (_Decimal128) _t[i].x, __FILE__, __LINE__ - 1);     \
+      _SC_P (__FILE__, _t[i].line, _t[i].e, stringify##_type (r)); \
+    }                                                              \
+  for (i = 0; i < (int)(sizeof(_t)/sizeof(_t[0])); ++i)            \
+    {                                                              \
+      _type r = BACKEND (_name) (_t[i].x);                         \
+      fprintf (stdout, #_name " (libdfp) (%DDgDL) in: %s:%d\n",    \
 	       (_Decimal128) _t[i].x, __FILE__, __LINE__ - 1);     \
       _SC_P (__FILE__, _t[i].line, _t[i].e, stringify##_type (r)); \
     }
