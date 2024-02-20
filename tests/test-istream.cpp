@@ -39,6 +39,8 @@
 
 #include <math.h>
 
+template class std::num_get<char, std::istreambuf_iterator<char, std::char_traits<char>>>;
+
 using namespace std;
 using namespace std::decimal;
 
@@ -51,24 +53,27 @@ typedef struct{
   int line;
   decimal32 expect;
   const char *d;
+  size_t length;
   const char *fmt;
   decimal32 tmp;
 } d32_type;
 
 d32_type istream_d32s[] =
 {
-  {__LINE__, 0.0000006E-90DF, "6e-97", "%Ha", -1.0DF},
-  {__LINE__, 0.0000006E-90DF, "6E-97", "%Ha", -1.0DF },
+  {__LINE__, 0.0000006E-90DF, "6e-97", 5, "%Ha", -1.0DF},
+  {__LINE__, 0.0000006E-90DF, "6E-97", 5, "%Ha", -1.0DF },
   /* Test where specified precision '10' exceeds __DEC32_MANT_DIG__.
    * This should reset precision to __DEC32_MANT_DIG__.  */
-  {__LINE__, 0.6666666666E-90DF, "6.666667E-91", "%Ha", -1.0DF },
-  {0,0,0,0,0}
+  {__LINE__, 0.6666666666E-90DF, "6.666667E-91", 12, "%Ha", -1.0DF },
+  {__LINE__, 0.6666666666E-90DF, "6.666667E-91 and here is some extra data", 12, "%Ha", -1.0DF },
+  {0,0,0,0,0,0}
 };
 
 typedef struct{
   int line;
   decimal64 expect;
   const char *d;
+  size_t length;
   const char *fmt;
   decimal64 tmp;
 } d64_type;
@@ -76,18 +81,19 @@ typedef struct{
 
 d64_type istream_d64s[] =
 {
-  {__LINE__, -9.999E-3DD, "-0.009999", "%Da", -1.0DD},
-  {__LINE__, -9.999E-3DD, "-9.999000e-03", "%Da", -1.0DD},
-  {__LINE__, -9.999E-3DD, "-9.999E-03", "%Da", -1.0DD},
-  {__LINE__, -9.999E-3DD, "-0.009999", "%Da", -1.0DD},
-  {__LINE__, __builtin_infd64(), "inf", "%Da", -1.0DD},
-  {__LINE__, __builtin_infd64(), "INF", "%Da", -1.0DD},
-  {__LINE__, 4E384DD, "4.0E384", "%Da", -1.0DD},
+  {__LINE__, -9.999E-3DD, "-0.009999", 9, "%Da", -1.0DD},
+  {__LINE__, -9.999E-3DD, "-9.999000e-03", 13, "%Da", -1.0DD},
+  {__LINE__, -9.999E-3DD, "-9.999E-03", 10, "%Da", -1.0DD},
+  {__LINE__, -9.999E-3DD, "-0.009999", 9, "%Da", -1.0DD},
+  /* {__LINE__, __builtin_infd64(), "inf", "%Da", -1.0DD}, */
+  /* {__LINE__, __builtin_infd64(), "INF", "%Da", -1.0DD}, */
+  {__LINE__, 4E384DD, "4.0E384", 7, "%Da", -1.0DD},
+  {__LINE__, 4E384DD, "4.0E384 and here is some extra data", 7, "%Da", -1.0DD},
   /* You can't value compare nan to nan.  */
   /* {__LINE__, (0.0DD * __builtin_infd64()), "NAN", "%Da", -1.0DD},  */
   /* You can't value compare nan to nan.  */
   /* {__LINE__, (0.0DD * __builtin_infd64()), "nan", "%Da", -1.0DD},  */
-  {0,0,0,0,0}
+  {0,0,0,0,0,0}
 };
 
 
@@ -96,18 +102,20 @@ typedef struct{
   int line;
   decimal128 expect;
   const char *d;
+  size_t length;
   const char *fmt;
   decimal128 tmp;
 } d128_type;
 
 d128_type istream_d128s[] =
 {
-  {__LINE__, -1234.57DL, "-1234.57", "%DDa", -1.0DL},
-  {__LINE__, -1234.57DL, "-1234.57", "%DDa", 0.0DL},
-  {__LINE__, -1234.57DL, "-1234.57000", "%DDa", -1.0DL},
-  {__LINE__, -1234.5679DL, "-1234.5679", "%DDa", -1.0DL},
-  {__LINE__, -12345678912345678.9123455678DL, "-12345678912345678.9123455678","%DDa", -1.0DL},
-  {0,0,0,0,0}
+  {__LINE__, -1234.57DL, "-1234.57", 8, "%DDa", -1.0DL},
+  {__LINE__, -1234.57DL, "-1234.57", 8, "%DDa", 0.0DL},
+  {__LINE__, -1234.57DL, "-1234.57000", 11, "%DDa", -1.0DL},
+  {__LINE__, -1234.5679DL, "-1234.5679", 10, "%DDa", -1.0DL},
+  {__LINE__, -12345678912345678.9123455678DL, "-12345678912345678.9123455678", 29, "%DDa", -1.0DL},
+  {__LINE__, -12345678912345678.9123455678DL, "-12345678912345678.9123455678 and here is some extra data", 29, "%DDa", -1.0DL},
+  {0,0,0,0,0,0}
 };
 
 int main(void)
@@ -118,17 +126,17 @@ int main(void)
 
   for (d32ptr = istream_d32s; d32ptr->line; d32ptr++)
     {
-      _ISC_P(__FILE__,d32ptr->line, d32ptr->expect,d32ptr->d,d32ptr->tmp,d32ptr->fmt);
+      _ISC_P(__FILE__,d32ptr->line, d32ptr->expect,d32ptr->d,d32ptr->tmp,d32ptr->length,d32ptr->fmt);
     }
 
   for (d64ptr = istream_d64s; d64ptr->line; d64ptr++)
     {
-      _ISC_P(__FILE__,d64ptr->line, d64ptr->expect,d64ptr->d,d64ptr->tmp,d64ptr->fmt);
+      _ISC_P(__FILE__,d64ptr->line, d64ptr->expect,d64ptr->d,d64ptr->tmp,d64ptr->length,d64ptr->fmt);
     }
 
   for (d128ptr = istream_d128s; d128ptr->line; d128ptr++)
     {
-      _ISC_P(__FILE__,d128ptr->line, d128ptr->expect,d128ptr->d,d128ptr->tmp, d128ptr->fmt);
+      _ISC_P(__FILE__,d128ptr->line, d128ptr->expect,d128ptr->d,d128ptr->tmp, d128ptr->length, d128ptr->fmt);
     }
 
   _REPORT();

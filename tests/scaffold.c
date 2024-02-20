@@ -120,14 +120,38 @@ static int testnum = 0;
 #include <sstream>
 #define _WANT_VC 1
 
-#define _ISC_P(f,l,x,y,z,fmt) do {				\
+#define _ISC_P(f,l,x,y,z,length,fmt) do {			\
   std::stringstream s;						\
   /* Clear the stringstream.  */				\
   s.str(std::string());						\
   /* Push the string to test onto the stream.  */		\
   s << y;							\
+  								\
+  std::stringstream::pos_type expectedPosition { 		\
+    s.tellg() 							\
+      + static_cast<std::stringstream::pos_type>(length) 	\
+  };								\
+  								\
   /* invoke operator>>(istream &,decimal[32|64|128] &)  */	\
   s >> z;							\
+  /* this clear should not be needed, pending operator<< fix */	\
+  s.clear(); 							\
+  								\
+  /* Ensure that the stream is in the expected position  */	\
+  std::stringstream::pos_type position {s.tellg()}; 		\
+  if ( position != expectedPosition ) 				\
+    { 								\
+      std::cerr							\
+        << std::left << std::setw(3) << testnum << std::right	\
+        << " Error:   Expected stream position: " 		\
+        << expectedPosition << "\n";				\
+      std::cerr 						\
+        << "              Result stream position:   " 		\
+        << position << "\n";					\
+      fprintf (stderr, "in: %s:%i\n\n", f, l);			\
+      ++fail; 							\
+    }								\
+  								\
   _VC_P_CPP(f,l,x,z,fmt);					\
 } while(0)
 
@@ -146,7 +170,7 @@ static int testnum = 0;
  * Equivalent to the following example:
  *
  */
-#define _ISC(x,y,z,fmt) _ISC_P (__FILE__,__LINE__,x,y,z,fmt)
+#define _ISC(x,y,z,length,fmt) _ISC_P (__FILE__,__LINE__,x,y,z,length,fmt)
 #endif /* _ISC  */
 #endif /* __cplusplus  */
 #endif /* _WANT_ISC */
