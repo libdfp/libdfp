@@ -217,6 +217,71 @@ void decnumber_llog10(char *out, const decNumber *in, decContext *ctxt)
     sprintf (out,"%d", in->digits + in->exponent - 1);
 }
 
+/* This is the algorithm proposed in Nelson H.F. Beebe's The Mathematical-Function Computation Handbook.
+   Note, that for decimal floating point, it requires 1 extra digit of precision beyond the input format
+   for correctness (unlike binary float).  */
+decNumber *
+decNumberFmod(decNumber *result, const decNumber *x, const decNumber *y, decContext *ctxt)
+{
+  /* This requires 35 digits to correctly compute any <=34 digit remainder. */
+  if (decNumberIsSpecial (x) || decNumberIsSpecial(y) || decNumberIsZero(y))
+    {
+      result->bits = DECNAN;
+      return result;
+    }
+
+  /* The remainder may contain 1 extra digit. Add extra room for at least 1 more. */
+  struct {
+  	decNumber d;
+        decNumberUnit extra;
+  } r, yabs, xabs, cmp, yabs_scaled;
+  int ny;
+
+  decNumberAbs (&xabs.d, x, ctxt);
+  decNumberAbs (&yabs.d, y, ctxt);
+
+  decNumberCompare (result, &xabs.d, &yabs.d, ctxt);
+
+  if (decNumberIsZero (result))
+    {
+      decNumberCopySign (result, result, x);
+      return result;
+    }
+  else if (result->bits & DECNEG)
+    {
+      decNumberCopy (result, x);
+      return result;
+    }
+
+  /* All special cases accounted for, find the remainder.  */
+  decNumberCopy (&r.d, &xabs.d);
+  decNumberCopy (&yabs_scaled.d, &yabs.d);
+  ny = yabs.d.exponent + yabs.d.digits - 1;
+
+  /* Expand the precision to while computing the remainder.  */
+  ctxt->digits = DECNUMDIGITS + 1;
+
+  decNumberCompare (&cmp.d, &r.d, &yabs.d, ctxt);
+  while (!(cmp.d.bits & DECNEG)) /* r >= yabs */
+    {
+      int n = (r.d.exponent + r.d.digits - 1) - ny;
+      /* Rescale yabs to the nearest power of 10 less than r.  */
+      yabs_scaled.d.exponent = yabs.d.exponent + n;
+      decNumberCompare (&cmp.d, &yabs_scaled.d, &r.d, ctxt);
+      if (!decNumberIsZero (&cmp.d) && !(cmp.d.bits & DECNEG))
+        yabs_scaled.d.exponent--;
+
+      decNumberSubtract (&r.d, &r.d, &yabs_scaled.d, ctxt); /* r = r - yabs_scaled */
+      decNumberCompare (&cmp.d, &r.d, &yabs.d, ctxt); /* cmp = r ? yabs */
+    }
+
+  ctxt->digits = DECNUMDIGITS;
+  decNumberNormalize (result, &r.d, ctxt);
+  if (x->bits & DECNEG)
+    result->bits |= DECNEG;
+  return result;
+}
+
 
 void get_nan(const char *v, mpfr_t in[decimal_fmt_cnt], decNumber din[decimal_fmt_cnt])
 {
@@ -339,6 +404,9 @@ testf_t testlist[] =
   DECL_TESTF_D_D(exp),
   DECL_TESTF_D_D(exp2),
   DECL_TESTF_DD_D(pow),
+  /* Use a local implementation of fmod using decNumber and extended precision. binary fmod needs a huge amount of
+     precision for correctness in decimal, and decNumberRemainder fails for sufficiently far apart values.  */
+  DECL_TESTF_DEC_DD_D(fmod, Fmod),
   DECL_TESTF_DEC_DD_D(nextafter, NextToward),
   DECL_TESTF_DEC_DD128_D(nexttoward, NextToward),
   DECL_TESTF_DEC_D_SI(ilogb, decnumber_ilog10),

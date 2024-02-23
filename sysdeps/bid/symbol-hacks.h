@@ -52,6 +52,7 @@ asm ("__bid_extendsddf = __GI___bid_extendsddf");
 asm ("__bid_extenddftd = __GI___bid_extenddftd");
 asm ("__bid_extenddfdd = __GI___bid_extenddfdd");
 asm ("__bid_extendsdtd2 = __GI___bid_extendsdtd2");
+asm ("__bid_extendsddd2 = __GI___bid_extendsddd2");
 asm ("__bid_extendddtd2 = __GI___bid_extendddtd2");
 
 asm ("__bid_fixsdsi = __GI___bid_fixsdsi");
