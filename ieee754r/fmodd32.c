@@ -51,49 +51,27 @@ PSUM2 (_Decimal128 x, _Decimal128 y)
   _Decimal128 sum, err;
   dp128_pair_t ret;
 
+  /* The simplified version where x > y, always. */
   sum = x + y;
-
-  if (__fabsd128 (x) >= __fabsd128 (y))
-    {
-      err = x - sum;
-      err += y;
-    }
-  else
-    {
-      err = y - sum;
-      err += x;
-    }
+  err = x - sum;
+  err += y;
 
   ret.hi = sum;
-  ret.lo = (err == 0.DD) ? __copysignd128 (err, sum) : err;
+  ret.lo = err;
   return ret;
 }
 
 static dp128_pair_t
-PSUB (dp128_pair_t x, dp128_pair_t y)
+PSUB (dp128_pair_t x, _Decimal128 y)
 {
   _Decimal128 r, s;
 
-  r = x.hi - y.hi;
+  r = x.hi - y;
 
-  /* Ignore nan/inf checks, x and y are always finite. */
-  if (__fabsd128 (x.hi) > __fabsd128 (y.hi))
-    {
-      s = x.hi - r;
-      s -= y.hi;
-      s -= y.lo;
-      s += x.lo;
-    }
-  else
-    {
-      s = -y.hi - r;
-      s += x.hi;
-      s += x.lo;
-      s -= y.lo;
-    }
-
-  if (s == 0.DD)
-    s = __copysignd128 (s, r);
+  /* The simplified version where x > y, always. */
+  s = x.hi - r;
+  s -= y;
+  s += x.lo;
 
   return PSUM2 (r, s);
 }
@@ -167,11 +145,11 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x, DEC_TYPE y)
 	  if (r_rem != 0 && t >= yabs128)
 	    {
 	      /* Subtract using pair precision until exact, (1-9) operations. */
-	      dp128_pair_t xp = { r, 0.DD }, yp = { yabs_scaled, 0.DD };
+	      dp128_pair_t xp = { t, r_rem };
 	      int n = 0;
 	      do
 		{
-		  xp = PSUB (xp, yp);
+		  xp = PSUB (xp, yabs_scaled);
 		  n++;
 		}
 	      while (n < 10 && xp.lo != 0.DD);
