@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 logfile=${PWD}/release.$(date +%y-%m-%d-%T).log
 
@@ -22,14 +22,20 @@ if ! git archive --format=tar --prefix=${PROJVER}/ HEAD > ${PROJVER}.tar ; then
 	exit 1
 fi
 
+# Set the uid:gid to 0:0 to avoid contaminating it with the creator's id.
+TAR_EXTRA_OPTS="--owner=0 --group=0"
+
 # Generate a changelog and append it.
 mkdir ${PROJVER}
 ./generate-changelog.sh > ${PROJVER}/ChangeLog.md
-tar rf ${PROJVER}.tar ${PROJVER}/ChangeLog.md
+tar rf ${PROJVER}.tar \
+	${TAR_EXTRA_OPTS} \
+	${PROJVER}/ChangeLog.md
 
 # Remove any files which needn't exist.
 tar f ${PROJVER}.tar \
-    --delete ${PROJVER}/{make-release.sh,generate-changelog.sh,ChangeLog.old.md}
+	${TAR_EXTRA_OPTS} \
+	--delete ${PROJVER}/{make-release.sh,generate-changelog.sh,ChangeLog.old.md}
 rm -rf ${PROJVER}
 gzip -f ${PROJVER}.tar
 
