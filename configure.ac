@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([libdfp],[1.0.16],[https://github.com/libdfp/libdfp/issues])
+AC_INIT([libdfp],[1.0.17],[https://github.com/libdfp/libdfp/issues])
 AC_CONFIG_SRCDIR([libdfp.pc.in])
 
 # This is used for libdecnumber.
