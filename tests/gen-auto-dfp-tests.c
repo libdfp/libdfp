@@ -224,7 +224,7 @@ decNumber *
 decNumberFmod(decNumber *result, const decNumber *x, const decNumber *y, decContext *ctxt)
 {
 
-  decNumberZero (&result);
+  decNumberZero (result);
 
   /* This requires 35 digits to correctly compute any <=34 digit remainder. */
   if (decNumberIsSpecial (x) || decNumberIsSpecial(y) || decNumberIsZero(y))
