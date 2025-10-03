@@ -76,6 +76,10 @@
 # define __DEC_MIN_EXP__ __DEC32_MIN_EXP__
 #endif
 
+// The compiler should round to the desired 0 value of the type.
+# define FLOAT_ZERO_TINY	0.e-100000DL
+# define FLOAT_ZERO_HUGE	0.e100000DL
+
 #define DEC_TYPE	FLOAT
 #define _DECIMAL_SIZE	FLOAT_SIZE
 #include <numdigits.h>
@@ -508,7 +512,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 
       /* It is really a text we do not recognize.  */
       freelocale(C_locale);
-      RETURN (0.0, nptr);
+      RETURN (FLOAT_ZERO, nptr);
     }
 
   /* Record the start of the digits, in case we will check their grouping.  */
@@ -699,6 +703,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	  do
 	    {
 	      exponent *= 10;
+	      exponent += c - L_('0');
 
 	      if (exponent > exp_limit)
 		/* The exponent is too large/small to represent a valid
@@ -710,7 +715,10 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 		     might have written "0.0e100000" which is in fact
 		     zero.  */
 		  if (lead_zero == -1)
-		    result = negative ? -FLOAT_ZERO : FLOAT_ZERO;
+		    {
+		      result = (exp_negative) ? FLOAT_ZERO_TINY : FLOAT_ZERO_HUGE;
+		      result = (negative) ? -result : result;
+		    }
 		  else
 		    {
 		      /* Overflow or underflow.  */
@@ -729,7 +737,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 		  /* NOTREACHED */
 		}
 
-	      exponent += c - L_('0');
 	      c = *++cp;
 	    }
 	  while (c >= L_('0') && c <= L_('9'));
@@ -784,6 +791,10 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	  freelocale(C_locale);
           return negative ? -FLOAT_ZERO : FLOAT_ZERO;
 	}
+
+      // Clamp positive 0eX to maximum biased exponent.
+      int exp_max = MAX_10_EXP - MANT_DIG;
+      exponent = (exponent > exp_max) ? exp_max : exponent;
 
 #if NUMDIGITS_SUPPORT==0
       d32 += 1;
