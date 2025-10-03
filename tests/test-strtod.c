@@ -43,45 +43,59 @@ typedef struct{
   int line;
   const char *input;
   _Decimal32 d32;
+  int qexp32;
   _Decimal64 d64;
+  int qexp64;
   _Decimal128 d128;
+  int qexp128;
   size_t rem;
 } d_type;
 
 d_type strtods[] =
 {
-  {__LINE__, "12.04", 12.04DF,12.04DD, 12.04DL, 0},
-  {__LINE__, "1.0", 1.0DF, 1.0DD, 1.0DL, 0},
-  {__LINE__, "1", 1.0DF, 1.0DD, 1.0DL, 0},
-  {__LINE__, "0", 0.0DF, 0.0DD, 0.0DL, 0},
-  {__LINE__, "0.0", 0.0DF, 0.0DD, 0.0DL, 0},
-  {__LINE__, "-0.0001", -0.0001DF, -0.0001DD, -0.0001DL, 0},
-  {__LINE__, "inf", DEC_INFINITY, DEC_INFINITY, DEC_INFINITY, 0},
-  {__LINE__, "INFINITY", DEC_INFINITY, DEC_INFINITY, DEC_INFINITY, 0},
-  {__LINE__, "0.0E+100", 0.0DF, 0.0DD, 0.0DL, 0},
-  {__LINE__, "0.01", 0.01DF, 0.01DD, 0.01DL, 0},
-  {__LINE__, "0.1", 0.1DF, 0.1DD, 0.1DL, 0},
-  {__LINE__, "0.11", 0.11DF, 0.11DD, 0.11DL, 0},
-  {__LINE__, "0.21", 0.21DF, 0.21DD, 0.21DL, 0},
-  {__LINE__, "0.999999",     0.999999DF,     0.999999DD,     0.999999DL, 0},
-  {__LINE__, "0.9999999",    0.9999999DF,    0.9999999DD,    0.9999999DL, 0},
-  {__LINE__, "0.99999999",   1.000000DF,     0.99999999DD,   0.99999999DL, 0},
-  {__LINE__, "0.999999999",  1.000000DF,     0.999999999DD,    0.999999999DL, 0},
-  {__LINE__, "19e9", 19000000000.0DF, 19000000000.0DD, 19000000000.0DL, 0},
-  {__LINE__, "3.14", 3.140000DF, 3.140000DD, 3.140000DL, 0},
-  {__LINE__, "3.14e-2", 0.031400DF, 0.031400DD, 0.031400DL, 0},
-  {__LINE__, "1234.5678910111213e-5", 0.01234568DF,0.01234567891011121DD, 0.012345678910111213DL, 0},
-  {__LINE__, "-1234.57", -1234.57DF, -1234.57DD, -1234.57DL, 0},
-  {__LINE__, "bogus", 0.DF, 0.DD, 0.DL, 5},
+  {__LINE__, "12.04", 12.04DF, -2, 12.04DD, -2, 12.04DL, -2, 0},
+  {__LINE__, "1.0", 1.0DF, -1, 1.0DD, -1, 1.0DL, -1, 0},
+  {__LINE__, "1", 1.0DF, 0, 1.0DD, 0, 1.0DL, 0, 0},
+  {__LINE__, "0", 0.0DF, 0, 0.0DD, 0, 0.0DL, 0, 0},
+  {__LINE__, "0.0", 0.0DF, -1, 0.0DD, -1, 0.0DL, -1, 0},
+  {__LINE__, "-0.0001", -0.0001DF, -4, -0.0001DD, -4, -0.0001DL, -4, 0},
+  {__LINE__, "inf", DEC_INFINITY, 0, DEC_INFINITY, 0, DEC_INFINITY, 0, 0},
+  {__LINE__, "INFINITY", DEC_INFINITY, 0, DEC_INFINITY, 0, DEC_INFINITY, 0, 0},
+  {__LINE__, "0.0E+100", 0.0DF, 90, 0.0DD, 99, 0.0DL, 99, 0},
+  {__LINE__, "0e+97", 0.0DF, 90, 0.0DD, 97, 0.0DL, 97, 0},
+  {__LINE__, "0e+395", 0.0DF, 90, 0.0DD, 369, 0.0DL, 395, 0},
+  {__LINE__, "0e+6145", 0.0DF, 90, 0.0DD, 369, 0.0DL, 6111, 0},
+  {__LINE__, "-0e+97", -0.0DF, 90, -0.0DD, 97, -0.0DL, 97, 0},
+  {__LINE__, "-0e+92", -0.0DF, 90, -0.0DD, 92, -0.0DL, 92, 0},
+  {__LINE__, "-0e+90", -0.0DF, 90, -0.0DD, 90, -0.0DL, 90, 0},
+  {__LINE__, "-0e+89", -0.0DF, 89, -0.0DD, 89, -0.0DL, 89, 0},
+  {__LINE__, "0e-102", 0.0DF, -101, 0.0DD, -102, 0.0DL, -102, 0},
+  {__LINE__, "-0e-102", -0.0DF, -101, -0.0DD, -102, -0.0DL, -102, 0},
+  {__LINE__, "0e-399", 0.0DF, -101, 0.0DD, -398, 0.0DL, -399, 0},
+  {__LINE__, "0e-6177", 0.0DF, -101, 0.0DD, -398, 0.0DL, -6176, 0},
+  {__LINE__, "0.01", 0.01DF, -2, 0.01DD, -2, 0.01DL, -2, 0},
+  {__LINE__, "0.1", 0.1DF, -1, 0.1DD, -1, 0.1DL, -1, 0},
+  {__LINE__, "0.11", 0.11DF, -2, 0.11DD, -2, 0.11DL, -2, 0},
+  {__LINE__, "0.21", 0.21DF, -2, 0.21DD, -2, 0.21DL, -2, 0},
+  {__LINE__, "0.999999",     0.999999DF, -6, 0.999999DD, -6, 0.999999DL, -6, 0},
+  {__LINE__, "0.9999999",    0.9999999DF, -7, 0.9999999DD, -7, 0.9999999DL, -7, 0},
+  {__LINE__, "0.99999999",   1.000000DF, -6, 0.99999999DD, -8, 0.99999999DL, -8, 0},
+  {__LINE__, "0.999999999",  1.000000DF, -6, 0.999999999DD, -9, 0.999999999DL, -9, 0},
+  {__LINE__, "19e9", 19000000000.0DF, 9, 19000000000.0DD, 9, 19000000000.0DL, 9, 0},
+  {__LINE__, "3.14", 3.140000DF, -2, 3.140000DD, -2, 3.140000DL, -2, 0},
+  {__LINE__, "3.14e-2", 0.031400DF, -4, 0.031400DD, -4, 0.031400DL, -4, 0},
+  {__LINE__, "1234.5678910111213e-5", 0.01234568DF, -8, 0.01234567891011121DD, -17, 0.012345678910111213DL, -18, 0},
+  {__LINE__, "-1234.57", -1234.57DF, -2, -1234.57DD, -2, -1234.57DL, -2, 0},
+  {__LINE__, "bogus", 0.DF, 0, 0.DD, 0, 0.DL, 0, 5},
 
   /* TS 18661-2 strtodN accepts only base-10 strings. */
-  {__LINE__, "0x123", 0.DF, 0.DD, 0.DL, 4},
-  {__LINE__, "0X123", 0.DF, 0.DD, 0.DL, 4},
-  {__LINE__, "1x123", 1.DF, 1.DD, 1.DL, 4},
-  {__LINE__, "1X123", 1.DF, 1.DD, 1.DL, 4},
-  {__LINE__, "10x123", 10.DF, 10.DD, 10.DL, 4},
-  {__LINE__, "10X123", 10.DF, 10.DD, 10.DL, 4},
-  {0,0,0,0,0,0 }
+  {__LINE__, "0x123", 0.DF, 0, 0.DD, 0, 0.DL, 0, 4},
+  {__LINE__, "0X123", 0.DF, 0, 0.DD, 0, 0.DL, 0, 4},
+  {__LINE__, "1x123", 1.DF, 0, 1.DD, 0, 1.DL, 0, 4},
+  {__LINE__, "1X123", 1.DF, 0, 1.DD, 0, 1.DL, 0, 4},
+  {__LINE__, "10x123", 10.DF, 0, 10.DD, 0, 10.DL, 0, 4},
+  {__LINE__, "10X123", 10.DF, 0, 10.DD, 0, 10.DL, 0, 4},
+  {0,0,0,0,0,0,0,0,0 }
 };
 
 const char DECLET32_NAN[] = "+0,000,000E-101";
@@ -145,6 +159,7 @@ void check_endptr(const char *input, const char *endptr, size_t n, int line) {
       {
 	fprintf (stderr, "%-3d Error: *endptr is not within input string\n", testnum);
 	fprintf (stderr, "    in: %s:%d.\n\n",__FILE__,line);
+	++fail;
       }
     else
       {
@@ -153,9 +168,37 @@ void check_endptr(const char *input, const char *endptr, size_t n, int line) {
 	  {
 	    fprintf (stderr, "%-3d Error: *endptr leaves %d characters. Expected %d.\n", testnum, (int) rem, (int) n);
 	    fprintf (stderr, "in: %s:%d.\n\n",__FILE__,line);
+	    ++fail;
 	  }
       }
 }
+
+static void check_qexp(int line, int expected_qexp, int qexp, int type) {
+  if (qexp != expected_qexp)
+    {
+      fprintf (stderr, "%-3d Error: expected quantum exponent %d, got %d for _Decimal%d\n", testnum, expected_qexp, qexp, type);
+      fprintf (stderr, "in: %s:%d.\n\n",__FILE__,line);
+      ++fail;
+    }
+}
+
+static void check_zero_sign(int line, int type, bool same_sign, bool is_zero) {
+  if (is_zero && !same_sign)
+    {
+      fprintf (stderr, "%-3d Error: incorrect zero sign returned for _Decimal%d\n", testnum, type);
+      fprintf (stderr, "in: %s:%d.\n\n",__FILE__,line);
+      ++fail;
+    }
+}
+
+#define CHECK_QEXP(dptr,result,type) check_qexp(dptr->line, dptr->qexp ## type, \
+					 llquantexpd ## type (result), \
+					 type)
+#define CHECK_ZERO_SIGN(dptr,result,type) \
+	check_zero_sign(dptr->line, \
+			type, \
+			signbit(result) == signbit(dptr->d ## type), \
+			result == 0.DL)
 
 int main(void) {
 
@@ -165,30 +208,39 @@ int main(void) {
   for (dptr = strtods; dptr->line; dptr++)
     {
       endptr = NULL;
-      fprintf(stdout,"strtod32(\"%s\",NULL) == %Hf\n  ",dptr->input,strtod32(dptr->input, NULL));
-      _VC_P(__FILE__,dptr->line,dptr->d32,strtod32(dptr->input,NULL), "%Hf");
-      _VC_P(__FILE__,dptr->line,dptr->d32,strtod32(dptr->input,&endptr), "%Hf");
-      check_endptr(dptr->input, endptr, dptr->rem, dptr->line);
+      _Decimal32 result32 = strtod32(dptr->input, NULL);
+      fprintf(stdout,"strtod32(\"%s\",NULL) == %Hf\n  ", dptr->input, result32);
+      _VC_P(__FILE__, dptr->line, dptr->d32, result32, "%Hf");
+      _VC_P(__FILE__, dptr->line, dptr->d32, strtod32(dptr->input, &endptr), "%Hf");
+      check_endptr(dptr->input, endptr, dptr->rem,dptr->line);
+      CHECK_ZERO_SIGN(dptr, result32, 32);
+      CHECK_QEXP(dptr, result32, 32);
 
       endptr = NULL;
-      fprintf(stdout, "strtod64(\"%s\",NULL) == %Df\n  ", dptr->input, strtod64(dptr->input, NULL));
-      _VC_P(__FILE__,dptr->line,dptr->d64, strtod64(dptr->input,NULL), "%Df");
-      _VC_P(__FILE__,dptr->line,dptr->d64, strtod64(dptr->input,&endptr), "%Df");
+      _Decimal64 result64 = strtod64(dptr->input, NULL);
+      fprintf(stdout, "strtod64(\"%s\",NULL) == %Df\n  ", dptr->input, result64);
+      _VC_P(__FILE__,dptr->line,dptr->d64, result64, "%Df");
+      _VC_P(__FILE__,dptr->line,dptr->d64, strtod64(dptr->input, &endptr), "%Df");
       check_endptr(dptr->input, endptr, dptr->rem, dptr->line);
+      CHECK_ZERO_SIGN(dptr, result64, 64);
+      CHECK_QEXP(dptr, result64, 64);
 
       endptr = NULL;
-      fprintf(stdout, "strtod128(\"%s\",NULL) == %DDf\n  ", dptr->input, strtod128(dptr->input, NULL));
-      _VC_P(__FILE__,dptr->line,dptr->d128, strtod128(dptr->input,NULL), "%DDf");
-      _VC_P(__FILE__,dptr->line,dptr->d128, strtod128(dptr->input,&endptr), "%DDf");
+      _Decimal128 result128 = strtod128(dptr->input, NULL);
+      fprintf(stdout, "strtod128(\"%s\",NULL) == %DDf\n  ", dptr->input, result128);
+      _VC_P(__FILE__,dptr->line,dptr->d128, result128, "%DDf");
+      _VC_P(__FILE__,dptr->line,dptr->d128, strtod128(dptr->input, &endptr), "%DDf");
       check_endptr(dptr->input, endptr, dptr->rem, dptr->line);
+      CHECK_ZERO_SIGN(dptr, result128, 128);
+      CHECK_QEXP(dptr, result128, 128);
     }
 
   d_nan_type *dnanptr;
   for (dnanptr = strtods_nan; dnanptr->line; dnanptr++)
     {
-      _DC_P(__FILE__,dnanptr->line,dnanptr->d32,strtod32(dnanptr->input,NULL));
-      _DC_P(__FILE__,dnanptr->line,dnanptr->d64, strtod64(dnanptr->input,NULL));
-      _DC_P(__FILE__,dnanptr->line,dnanptr->d128, strtod128(dnanptr->input,NULL));
+      _DC_P(__FILE__, dnanptr->line,dnanptr->d32, strtod32(dnanptr->input, NULL));
+      _DC_P(__FILE__, dnanptr->line,dnanptr->d64, strtod64(dnanptr->input, NULL));
+      _DC_P(__FILE__, dnanptr->line,dnanptr->d128, strtod128(dnanptr->input, NULL));
     }
 
   _REPORT();
