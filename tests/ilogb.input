@@ -4,9 +4,9 @@
 Inf                                       INT_MAX                                   decimal32 
 Inf                                       INT_MAX                                   decimal64 
 Inf                                       INT_MAX                                   decimal128
--Inf                                      INT_MIN                                   decimal32 
--Inf                                      INT_MIN                                   decimal64 
--Inf                                      INT_MIN                                   decimal128
+-Inf                                      INT_MAX                                   decimal32 
+-Inf                                      INT_MAX                                   decimal64 
+-Inf                                      INT_MAX                                   decimal128
 NaN                                       FP_ILOGBNAN                               decimal32 
 NaN                                       FP_ILOGBNAN                               decimal64 
 NaN                                       FP_ILOGBNAN                               decimal128
@@ -64,7 +64,7 @@ NaN                                       FP_ILOGBNAN                           
 Inf                                       INT_MAX                                   decimal32 
 1542332e118                               124                                       decimal64 
 1542332e118                               124                                       decimal128
--Inf                                      INT_MIN                                   decimal32 
+-Inf                                      INT_MAX                                   decimal32 
 -1542332e118                              124                                       decimal64 
 -1542332e118                              124                                       decimal128
 0e-101                                    FP_ILOGB0                                 decimal32 
@@ -76,7 +76,7 @@ Inf                                       INT_MAX                               
 Inf                                       INT_MAX                                   decimal32 
 1542332e122                               128                                       decimal64 
 1542332e122                               128                                       decimal128
--Inf                                      INT_MIN                                   decimal32 
+-Inf                                      INT_MAX                                   decimal32 
 -1542332e122                              128                                       decimal64 
 -1542332e122                              128                                       decimal128
 0e-101                                    FP_ILOGB0                                 decimal32 
@@ -88,8 +88,8 @@ Inf                                       INT_MAX                               
 Inf                                       INT_MAX                                   decimal32 
 Inf                                       INT_MAX                                   decimal64 
 19433e1020                                1024                                      decimal128
--Inf                                      INT_MIN                                   decimal32 
--Inf                                      INT_MIN                                   decimal64 
+-Inf                                      INT_MAX                                   decimal32 
+-Inf                                      INT_MAX                                   decimal64 
 -19433e1020                               1024                                      decimal128
 0e-101                                    FP_ILOGB0                                 decimal32 
 0e-398                                    FP_ILOGB0                                 decimal64 
@@ -100,8 +100,8 @@ Inf                                       INT_MAX                               
 Inf                                       INT_MAX                                   decimal32 
 Inf                                       INT_MAX                                   decimal64 
 194338e1024                               1029                                      decimal128
--Inf                                      INT_MIN                                   decimal32 
--Inf                                      INT_MIN                                   decimal64 
+-Inf                                      INT_MAX                                   decimal32 
+-Inf                                      INT_MAX                                   decimal64 
 -194338e1024                              1029                                      decimal128
 0e-101                                    FP_ILOGB0                                 decimal32 
 0e-398                                    FP_ILOGB0                                 decimal64 
