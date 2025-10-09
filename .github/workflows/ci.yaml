@@ -1,0 +1,31 @@
+name: libdfp CI on x86-64
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure libdfp
+      run: |
+        mkdir build
+        cd build
+        ../configure
+
+    - name: Build libdfp
+      working-directory: build
+      run: make -j4
+
+    - name: Run libdfp test suite
+      working-directory: build
+      run: make check -j4
