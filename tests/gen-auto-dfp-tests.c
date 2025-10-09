@@ -192,9 +192,7 @@ void decnumber_ilog10(char *out, const decNumber *in, decContext *ctxt)
 {
   if (decNumberIsZero (in))
     strcpy (out, "FP_ILOGB0");
-  else if (decNumberIsInfinite (in) && decNumberIsNegative (in))
-    strcpy (out, "INT_MIN");
-  else if (decNumberIsInfinite (in) && !decNumberIsNegative (in))
+  else if (decNumberIsInfinite (in))
     strcpy (out, "INT_MAX");
   else if (decNumberIsNaN (in))
     strcpy (out, "FP_ILOGBNAN");
@@ -207,9 +205,7 @@ void decnumber_llog10(char *out, const decNumber *in, decContext *ctxt)
 {
   if (decNumberIsZero (in))
     strcpy (out, "FP_LLOGB0");
-  else if (decNumberIsInfinite (in) && decNumberIsNegative (in))
-    strcpy (out, "LONG_MIN");
-  else if (decNumberIsInfinite (in) && !decNumberIsNegative (in))
+  else if (decNumberIsInfinite (in))
     strcpy (out, "LONG_MAX");
   else if (decNumberIsNaN (in))
     strcpy (out, "FP_LLOGBNAN");

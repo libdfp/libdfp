@@ -35,9 +35,6 @@
 #ifndef _MAX_VALUE
 #  define _MAX_VALUE   INT_MAX
 #endif
-#ifndef _MIN_VALUE
-#  define _MIN_VALUE   INT_MIN
-#endif
 
 #ifndef _FBLOG0
 #  define _FBLOG0      FP_ILOGB0
@@ -67,18 +64,21 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
     {
       if (x != x)
 	{
+	  DFP_EXCEPT (FE_INVALID);
 	  DFP_ERRNO (EDOM);
 	  return _FBLOGNAN;
 	}
       else if (c == FP_ZERO)
 	{
+	  DFP_EXCEPT (FE_INVALID);
 	  DFP_ERRNO (EDOM);
 	  return _FBLOG0;
 	}
       else if (c == FP_INFINITE)
 	{
+	  DFP_EXCEPT (FE_INVALID);
 	  DFP_ERRNO (EDOM);
-	  return FUNC_D (__signbit) (x) ? _MIN_VALUE : _MAX_VALUE;
+	  return _MAX_VALUE;
 	}
       /* And handle subnormals like any other finite value. */
     }
