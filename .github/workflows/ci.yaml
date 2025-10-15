@@ -10,8 +10,11 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        node: [ubuntu-latest, ubuntu-24.04-s390x, ubuntu-24.04-ppc64le, ubuntu-24.04-ppc64le-p10]
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.node }}
 
     steps:
     - uses: actions/checkout@v4
