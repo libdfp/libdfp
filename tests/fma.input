@@ -1,0 +1,6 @@
+# name fma
+# arg1 decimal
+# arg2 decimal
+# arg3 decimal
+# ret  decimal
+DEC_MAX 2 -DEC_MAX DEC_MAX
