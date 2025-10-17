@@ -64,6 +64,13 @@
    COMMON_TEST_CLEANUP;                                                 \
   } while (0)
 
+#define RUN_TEST_fff_f(FUNC_NAME, ARG_STR, ARG1, ARG2, ARG3, EXPECTED, EXTRAFLAGS) \
+  do {                                                                  \
+   COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
+   check_float (test_name, FUNC (FUNC_NAME) (ARG1, ARG2, ARG3), EXPECTED, EXTRAFLAGS); \
+   COMMON_TEST_CLEANUP;                                                 \
+  } while (0)
+
 #define RUN_TEST_f_i(FUNC_NAME, ARG_STR, ARG, EXPECTED, EXTRAFLAGS)	\
   do {                                                                  \
    COMMON_TEST_SETUP (FUNC_NAME, ARG_STR);                              \
