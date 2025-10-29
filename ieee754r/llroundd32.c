@@ -52,8 +52,8 @@
 # define __ROUND_MODE DEC_ROUND_HALF_UP
 #endif
 
-static __ROUND_RETURN_TYPE
-IEEE_FUNCTION_NAME (DEC_TYPE x)
+__ROUND_RETURN_TYPE
+INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 {
   DEC_TYPE result;
   decContext context;
@@ -61,37 +61,34 @@ IEEE_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (decNumberIsNaN (&dn_x) || decNumberIsInfinite (&dn_x)
-	|| x > __MAX_VALUE || x < __MIN_VALUE)
+  if (decNumberIsNaN (&dn_x) || decNumberIsInfinite (&dn_x))
     {
       DFP_EXCEPT (FE_INVALID);
+      DFP_ERRNO (EDOM);
       return (__ROUND_RETURN_TYPE) x;
     }
 
   decContextDefault (&context, DEFAULT_CONTEXT);
   context.round = __ROUND_MODE;
-  decNumberToIntegralValue (&dn_result,&dn_x,&context);
+  decNumberToIntegralExact (&dn_result,&dn_x,&context);
 
   FUNC_CONVERT_FROM_DN(&dn_result, &result, &context);
 
-#ifdef POSTFIX_CHECK
-  POSTFIX_CHECK;
+  // Extend the result to _Decimal128 to ensure MAX and MIN values are not rounded
+  // with smaller decimal formats.
+  if ((_Decimal128) result > __MAX_VALUE || (_Decimal128) result < __MIN_VALUE)
+    {
+      DFP_ERRNO (EDOM);
+    }
+
+#ifdef SET_INEXACT
+  if (context.status & DEC_Inexact)
+    {
+      DFP_EXCEPT (FE_INEXACT);
+    }
 #endif
 
-  /* Use _Decimal* to __ROUND_RETURN_TYPE casting.  */
   return (__ROUND_RETURN_TYPE)result;
-
-/*  return (__ROUND_RETURN_TYPE)decNumberToInteger (&dn_result); */
-}
-
-__ROUND_RETURN_TYPE
-INTERNAL_FUNCTION_NAME (DEC_TYPE x)
-{
-  __ROUND_RETURN_TYPE z = IEEE_FUNCTION_NAME (x);
-  if (FUNC_D(__isnan) (x) || FUNC_D(__isinf) (x)
-	|| x > __MAX_VALUE || x < __MIN_VALUE)
-    DFP_ERRNO (EDOM);
-  return z;
 }
 
 weak_alias (INTERNAL_FUNCTION_NAME, EXTERNAL_FUNCTION_NAME)

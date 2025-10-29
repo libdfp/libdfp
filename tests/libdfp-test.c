@@ -31,7 +31,8 @@
 #define NO_OVERFLOW_EXCEPTION		0x400
 #define ERRNO_UNCHANGED			0x8000
 #define ERRNO_ERANGE			0x20000
-#define IGNORE_RESULT			0x40000
+#define ERRNO_DOM			0x40000
+#define IGNORE_RESULT			0x80000
 
 
 /* Common setup for an individual test.  */
@@ -359,6 +360,8 @@ test_errno (const char *test_name, int errno_value, int exceptions)
     test_single_errno (test_name, errno_value, 0, "unchanged");
   if (exceptions & ERRNO_ERANGE)
     test_single_errno (test_name, errno_value, ERANGE, "ERANGE");
+  if (exceptions & ERRNO_DOM)
+    test_single_errno (test_name, errno_value, EDOM, "EDOM");
 }
 
 static void
