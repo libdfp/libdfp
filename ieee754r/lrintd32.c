@@ -37,14 +37,6 @@
 #define __MAX_VALUE	LONG_MAX
 #include <mapround.h>
 #define __ROUND_MODE	__dn_getround()
-
-#define POSTFIX_CHECK					\
-  do							\
-    {							\
-      if (x != result)					\
-	{						\
-	  DFP_EXCEPT (FE_INEXACT);			\
-	}						\
-    } while (0)
+#define SET_INEXACT
 
 #include "llroundd32.c"
