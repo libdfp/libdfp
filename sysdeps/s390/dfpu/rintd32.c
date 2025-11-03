@@ -45,6 +45,13 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 #endif
 
 #if defined RET_TYPE_MIN_VALUE && defined RET_TYPE_MAX_VALUE
+  if (__isnan (x) || __isinf (x))
+    {
+      DFP_EXCEPT (FE_INVALID);
+      DFP_ERRNO (EDOM);
+      return (RET_TYPE) x;
+    }
+
   /* Round according current dfp mode without inexact exception as we need to do
      the out of bounds check first.  If the invalid exception is raised, the
      inexact exception is not allowed to be raised.  */
@@ -57,9 +64,10 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 	   : "+f" (tmp));
 
   /* Check, if value is out of bounds in target format.  */
-  if (__builtin_expect (tmp < RET_TYPE_MIN_VALUE || tmp > RET_TYPE_MAX_VALUE,
-			0))
+  if (__builtin_expect ((_Decimal128)tmp < RET_TYPE_MIN_VALUE ||
+			(_Decimal128)tmp > RET_TYPE_MAX_VALUE, 0))
     {
+      DFP_ERRNO (EDOM);
       DFP_EXCEPT (FE_INVALID);
       return (tmp < RET_TYPE_MIN_VALUE)
 	? RET_TYPE_MIN_VALUE
