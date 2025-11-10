@@ -45,8 +45,14 @@
 /* math.h provides prototypes for the classification macros below. */
 #include <math.h>
 
+/* Provide these if not indirectly defined by the toolchain provided float.h */
+#ifndef DEC_INFINITY
 #define DEC_INFINITY	__builtin_infd32()
+#endif
+#ifndef DEC_NAN
 #define DEC_NAN		__builtin_nand32("")
+#endif
+
 #define HUGE_VAL_D32	__builtin_infd32()
 #define HUGE_VAL_D64	__builtin_infd64()
 #define HUGE_VAL_D128	__builtin_infd128()
