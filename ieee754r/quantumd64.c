@@ -38,7 +38,7 @@ __quantumd64 (_Decimal64 x)
   _Decimal64 result;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (decNumberIsNaN (&dn_x) || decNumberIsZero (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     return x;
   if (decNumberIsInfinite (&dn_x))
     return DEC_INFINITY;
