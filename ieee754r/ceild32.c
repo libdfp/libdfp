@@ -45,8 +45,7 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (decNumberIsNaN (&dn_x) || decNumberIsInfinite (&dn_x)
-		|| decNumberIsZero (&dn_x) )
+  if (decNumberIsNaN (&dn_x) || decNumberIsInfinite (&dn_x))
     return x+x;
 
   decContextDefault (&context, DEFAULT_CONTEXT);

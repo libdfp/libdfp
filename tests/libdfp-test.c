@@ -33,6 +33,7 @@
 #define ERRNO_ERANGE			0x20000
 #define ERRNO_DOM			0x40000
 #define IGNORE_RESULT			0x80000
+#define VERIFY_QUANTUM			0x100000
 
 
 /* Common setup for an individual test.  */
@@ -250,7 +251,7 @@ print_float (FLOAT f)
   else if (isnan (f))
     printf ("qNaN\n");
   else
-    printf ("% .20" PRINTF_EXPR "  %" PRINTF_XEXPR "\n", f, f);
+    printf ("% .20" PRINTF_EXPR "  %" PRINTF_XEXPR " (qe=%d)\n", f, f, (int)FUNC(llquantexp) (f));
 }
 
 /* Update statistic counters.  */
@@ -409,6 +410,9 @@ check_float (const char *test_name, FLOAT computed, FLOAT expected,
           ok = 0;
           print_ulps (test_name, ulps);
         }
+
+      if (extraflags & VERIFY_QUANTUM)
+        ok = FUNC(samequantum) (computed, expected) ? ok : 0;
 
       if (FUNC(ceil) (ulps) > max_aggr_ulp)
         max_aggr_ulp = FUNC(ceil) (ulps);
