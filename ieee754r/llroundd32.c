@@ -61,11 +61,12 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
   decNumber dn_x;
 
   FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (decNumberIsNaN (&dn_x) || decNumberIsInfinite (&dn_x))
+  if (decNumberIsNaN (&dn_x))
     {
       DFP_EXCEPT (FE_INVALID);
       DFP_ERRNO (EDOM);
-      return (__ROUND_RETURN_TYPE) x;
+      // This is undefined behavior, return 0.
+      return 0;
     }
 
   decContextDefault (&context, DEFAULT_CONTEXT);
@@ -76,9 +77,19 @@ INTERNAL_FUNCTION_NAME (DEC_TYPE x)
 
   // Extend the result to _Decimal128 to ensure MAX and MIN values are not rounded
   // with smaller decimal formats.
-  if ((_Decimal128) result > __MAX_VALUE || (_Decimal128) result < __MIN_VALUE)
+  if ((_Decimal128) result > __MAX_VALUE)
     {
       DFP_ERRNO (EDOM);
+      if (decNumberIsInfinite (&dn_result))
+	DFP_EXCEPT (FE_INVALID);
+      return __MAX_VALUE;
+    }
+  if ((_Decimal128) result < __MIN_VALUE)
+    {
+      if (decNumberIsInfinite (&dn_result))
+	DFP_EXCEPT (FE_INVALID);
+      DFP_ERRNO (EDOM);
+      return __MAX_VALUE;
     }
 
 #ifdef SET_INEXACT
