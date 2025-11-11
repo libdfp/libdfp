@@ -1,1 +1,0 @@
-libdfp-has-timode = no

@@ -73,56 +73,18 @@ AC_SUBST(CXXFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(ASFLAGS)
 
-
-# This will invoke the sysdeps/$machine/<processor>/ machinery.
-submachine=
-with_dfp=
-# This tells us whether we know we have a hardware decimal floating point
-# unit.  We know this based upon the submachine.
-AC_MSG_CHECKING([for hardware decimal floating point unit])
 AC_ARG_WITH([cpu],
 	    AS_HELP_STRING([--with-cpu=CPU],
-			   [Select the CPU to run on. Accepted values
-			    are similar to those accepted by gcc's -mcpu
-			    option. power6 and newer, and some z processors
-			    are supported. no is also accepted to indicate
-			    software only dfp should be used.
-
-			    If this option is not specified, configure will
-			    attempt to guess the latest powerpc processor
-			    supported by the toolchain, or use the soft
-			    dfp implementation.]),
-	    [dnl
+			   [Select the CPU to run on.
+			    Accepted values are similar
+			    to those accepted by gcc's -mcpu option.]),
+  [
   case "$withval" in
-  yes|'') AC_MSG_ERROR([--with-cpu requires an argument]) ;;
-  no)
-    with_dfp=no
-    ;;
-  *)
-    submachine="$withval"
-    ;;
+    yes|'') AC_MSG_ERROR([--with-cpu requires an argument]) ;;
+    *) submachine="$withval" ;;
   esac
-],[
-  case "$host_cpu" in
-    s390|s390x)
-    with_dfp=no
-    # Check if the used compiler supports dfp instructions by converting
-    # from dfp to bfp. If supported, the pfpo instruction is used.
-    # Note: On s390 (31bit) we have to use -mzarch for this instruction.
-    cat > conftest.c <<EOF
-double test (_Decimal64 in) { return (double) in; }
-EOF
-    if AC_TRY_COMMAND([${CC-cc} ${CFLAGS} -mzarch -c conftest.c]);
-    then
-      if AC_TRY_COMMAND([objdump -d conftest.o 2>&1 | grep pfpo > /dev/null]);
-      then
-	with_dfp=yes
-      fi
-    fi
-    rm -f conftest*
-    ;;
-  esac
-])
+  ],
+  [])
 
 if test -n "$submachine"; then
   AC_CACHE_CHECK([for compiler option for CPU variant],
@@ -139,36 +101,7 @@ if test -n "$submachine"; then
   fi
 fi
 
-# Test if the host as configured by the environment supports hard-dfp
-# by scanning assembler for soft-dfp
-if test -z "$with_dfp"; then
-  gcc_intrin=`echo "_Decimal128 x(_Decimal64 y) { return y; }" \
-              | ${CC-cc} ${CFLAGS} ${libdfp_cv_submachine_opt} -S -c -xc - -o - \
-              | grep extendddtd -m1`
-  case "$gcc_intrin" in
-    *extendddtd*)
-      with_dfp=no
-      ;;
-    *)
-      with_dfp=yes
-      ;;
-  esac
-fi
-
-dnl We need to use [ and ] for other purposes for a while now.
-changequote(,)dnl
-
-case "$machine" in
-	powerpc|powerpcle) base_machine=powerpc machine=powerpc/powerpc32 ;;
-	powerpc64) base_machine=powerpc machine=powerpc/powerpc64 ;;
-	powerpc64le) base_machine=powerpc machine=powerpc/powerpc64/le ;;
-	s390) base_machine=s390 machine=s390/s390-32 ;;
-	s390x) base_machine=s390 machine=s390/s390-64 ;;
-	i[34567]86) base_machine=i386 machine=i386/$machine ;;
-	*) base_machine=$machine ;;
-esac
-changequote([,])dnl
-AC_SUBST(base_machine)
+AC_SUBST(libdfp_cv_submachine_opt)
 AC_SUBST(machine)
 
 # Don't even bother configuring if the compiler can't handle Decimal
@@ -275,21 +208,11 @@ AC_MSG_CHECKING(sysdep dirs)
 # ${srcdir}/libdecnumber/dpd [libdecnumber headers]
 # ${srcdir}/libdecnumber/bid [libdecnumber headers]
 # ${srcdir}/libbid/ [libbid headers]
-# [MACHINE/SUBMACHINE]
-#   ${srcdir}/sysdeps/powerpc/powerpc64/le
-#   ${srcdir}/sysdeps/powerpc/powerpc64/
-#   ${srcdir}/sysdeps/powerpc/powerpc32/
-# [BASE_MACHINE/FPU]
-#   ${srcdir}/sysdeps/powerpc/dfpu
-#   ${srcdir}/sysdeps/powerpc/nodfpu
 # [BASE_MACHINE]
-#   ${srcdir}/sysdeps/powerpc/
+#   ${srcdir}/sysdeps/powerpc64le/
 # [ENCODING]
 #   ${srcdir}/sysdeps/dpd [dpd specific implementations]
 #   ${srcdir}/sysdeps/bid [bid specific implementations]
-# ${srcdir}/sysdeps/soft-dfp/dpd [soft-dfp dpd arithmetic, conversion, and comparison fns]
-# ${srcdir}/sysdeps/soft-dfp/bid [soft-dfp bid arithmetic, conversion, and comparison fns]
-# ${srcdir}/sysdeps/soft-dfp [soft-dfp arithmetic, conversion, and comparison fns]
 # ${srcdir}/dfp [headers files that will be installed.  These follow the
 #		 sysdep overrides so that sysdeps override directories show up
 #		 before the install headers in #include_next <header>.
@@ -301,52 +224,8 @@ AC_MSG_CHECKING(sysdep dirs)
 # ${srcdir}/libdecnumber [third-party GCC sources]
 # ${srcdir}/libbid       [third-party GCC sources]
 
-# We only assume Linux support so we don't worry about all the os stuff that
-# GLIBC does.
-
-dnl We need to use [ and ] for other purposes for a while now.
-changequote(,)dnl
-tail=$machine${submachine:+/$submachine}
-# Build the list of dfpu|nodfpu directories.
-while m=`echo $tail | sed 's@^\(.*\)/\([^/]*\)$@& \1@'`; test -n "$m"; do
-  set $m
-  # Only look for 'dfpu' directory if the system supports hardware dfp.
-  if test "$with_dfp" = yes; then
-    mach="$mach /$1/dfpu"
-  else
-    mach="$mach /$1/nodfpu"
-  fi
-  mach="$mach /$1"
-  tail="$2"
-done
-
-dnl We are done with glob and regexp uses of [ and ]; return to autoconf.
-changequote([,])dnl
-
-# Thankfully we don't support add-ons or non-Linux operating systems so this
-# is relatively simple compared to what it could be.  We also don't care if
-# the machine or submachine don't show up in the sysdeps directory.  The base
-# configuration doesn't require it.
-sysnames=
-try_srcdir="${srcdir}/"
-for m in $mach ''; do
-  # We don't want to add /src/sysdeps yet.
-  if test -n "$m"; then
-    try="sysdeps${m}"
-    if test -d "${try_srcdir}${try}"; then
-      sysnames="$sysnames $try"
-    fi
-  fi
-done
-
-AC_SUBST(libdfp_cv_submachine_opt)
-
-# Close out the sysdeps directory.
-#sysnames="$sysnames sysdeps"
-
 # Add the default directories.
-default_sysnames="sysdeps/generic"
-sysnames="$sysnames $default_sysnames"
+sysnames="sysdeps/$machine sysdeps/generic"
 
 set $sysnames
 names=
@@ -502,7 +381,7 @@ gcc_min_minor=6
 gcc_extra=""
 glibc_min=2
 glibc_min_minor=10
-if test "$host_machine" == powerpc64le || test "$base_machine" == i386 || test "$host_machine" == x86_64; then
+if test "$host_machine" == powerpc64le || test "$host_machine" == x86_64; then
   gcc_min=6
   gcc_min_minor=2
   glibc_min=2
