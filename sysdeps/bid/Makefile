@@ -23,3 +23,5 @@ libdfp_files += bid-private binpowof10 decpowof2
 ifeq ($(libdfp-has-timode),yes)
 libdfp_files += ticonstants
 endif
+
+libdfp_files += decroundtls candtruncd32 candtruncd64

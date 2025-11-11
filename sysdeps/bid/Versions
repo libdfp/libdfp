@@ -36,4 +36,13 @@ libdfp {
     __bid_fixddti;
     __bid_fixtdti;
   }
+
+  LIBDFP_1.0.0 {
+    __bid_extendsfsd; __bid_extendsddf;
+    __bid_extendsfdd; __bid_extenddfdd;
+    __bid_extendsftd; __bid_extenddftd;
+    __bid_truncsdsf; __bid_truncdfsd;
+    __bid_truncddsf; __bid_truncdddf;
+    __bid_trunctdsf; __bid_trunctddf;
+  }
 }
