@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <math.h>
+#include <wchar.h>
 
 #include "decode.h"
 
@@ -150,9 +151,7 @@ d_nan_type strtods_nan[] =
 };
 
 // Validate the pointer returned in endptr is as expected.
-void check_endptr(const char *input, const char *endptr, size_t n, int line);
-
-void check_endptr(const char *input, const char *endptr, size_t n, int line) {
+static void check_endptr(const char *input, const char *endptr, size_t n, int line) {
     size_t l = strlen(input);
     const char *input_end = input + l;
     if (endptr < input || endptr > input_end)
@@ -167,6 +166,27 @@ void check_endptr(const char *input, const char *endptr, size_t n, int line) {
 	if (rem != n)
 	  {
 	    fprintf (stderr, "%-3d Error: *endptr leaves %d characters. Expected %d.\n", testnum, (int) rem, (int) n);
+	    fprintf (stderr, "in: %s:%d.\n\n",__FILE__,line);
+	    ++fail;
+	  }
+      }
+}
+
+static void check_wendptr(const wchar_t *input, const wchar_t *endptr, size_t n, int line) {
+    size_t l = wcslen(input);
+    const wchar_t *input_end = input + l;
+    if (endptr < input || endptr > input_end)
+      {
+	fprintf (stderr, "%-3d Error: *wendptr is not within input string\n", testnum);
+	fprintf (stderr, "    in: %s:%d.\n\n",__FILE__,line);
+	++fail;
+      }
+    else
+      {
+	size_t rem = input_end - endptr;
+	if (rem != n)
+	  {
+	    fprintf (stderr, "%-3d Error: *wendptr leaves %d characters. Expected %d.\n", testnum, (int) rem, (int) n);
 	    fprintf (stderr, "in: %s:%d.\n\n",__FILE__,line);
 	    ++fail;
 	  }
@@ -191,6 +211,15 @@ static void check_zero_sign(int line, int type, bool same_sign, bool is_zero) {
     }
 }
 
+static void copy_to_wstr(wchar_t *dest, const char *src, size_t dest_len) {
+  size_t cvt_status = mbstowcs(dest, src, dest_len);
+  if (((size_t)-1 == cvt_status) || (dest_len == cvt_status))
+    {
+      fprintf (stderr, "failed to convert %s to wchar (%zu)\n", src, cvt_status);
+      exit (1);
+    }
+}
+
 #define CHECK_QEXP(dptr,result,type) check_qexp(dptr->line, dptr->qexp ## type, \
 					 llquantexpd ## type (result), \
 					 type)
@@ -200,44 +229,43 @@ static void check_zero_sign(int line, int type, bool same_sign, bool is_zero) {
 			signbit(result) == signbit(dptr->d ## type), \
 			result == 0.DL)
 
+#define WCHAR_BUF_LEN (256)
+
+#define RUN_ONE_TEST(pfx,wid,inptr,eptr,checker, pf_mod) \
+      endptr = NULL; \
+      _Decimal ## wid result ## wid ## pfx = pfx ## tod ## wid (inptr, NULL); \
+      fprintf (stdout, #pfx "tod" #wid "(\"%s\",NULL) == " pf_mod  "\n  ", dptr->input, result ## wid ## pfx); \
+      _VC_P (__FILE__, dptr->line, dptr->d ## wid, result ## wid ## pfx, pf_mod); \
+      _VC_P (__FILE__, dptr->line, dptr->d ## wid, pfx ## tod ## wid (inptr, &eptr), pf_mod); \
+      checker (inptr, eptr, dptr->rem, dptr->line); \
+      CHECK_ZERO_SIGN (dptr, result ## wid ## pfx, wid); \
+      CHECK_QEXP (dptr, result ## wid ## pfx, wid);
+
 int main(void) {
 
   d_type *dptr;
   char *endptr = NULL;
+  wchar_t *wendptr = NULL;
+
+  wchar_t winput[WCHAR_BUF_LEN];
 
   for (dptr = strtods; dptr->line; dptr++)
     {
-      endptr = NULL;
-      _Decimal32 result32 = strtod32(dptr->input, NULL);
-      fprintf(stdout,"strtod32(\"%s\",NULL) == %Hf\n  ", dptr->input, result32);
-      _VC_P(__FILE__, dptr->line, dptr->d32, result32, "%Hf");
-      _VC_P(__FILE__, dptr->line, dptr->d32, strtod32(dptr->input, &endptr), "%Hf");
-      check_endptr(dptr->input, endptr, dptr->rem,dptr->line);
-      CHECK_ZERO_SIGN(dptr, result32, 32);
-      CHECK_QEXP(dptr, result32, 32);
+      copy_to_wstr (winput, dptr->input, WCHAR_BUF_LEN);
 
-      endptr = NULL;
-      _Decimal64 result64 = strtod64(dptr->input, NULL);
-      fprintf(stdout, "strtod64(\"%s\",NULL) == %Df\n  ", dptr->input, result64);
-      _VC_P(__FILE__,dptr->line,dptr->d64, result64, "%Df");
-      _VC_P(__FILE__,dptr->line,dptr->d64, strtod64(dptr->input, &endptr), "%Df");
-      check_endptr(dptr->input, endptr, dptr->rem, dptr->line);
-      CHECK_ZERO_SIGN(dptr, result64, 64);
-      CHECK_QEXP(dptr, result64, 64);
-
-      endptr = NULL;
-      _Decimal128 result128 = strtod128(dptr->input, NULL);
-      fprintf(stdout, "strtod128(\"%s\",NULL) == %DDf\n  ", dptr->input, result128);
-      _VC_P(__FILE__,dptr->line,dptr->d128, result128, "%DDf");
-      _VC_P(__FILE__,dptr->line,dptr->d128, strtod128(dptr->input, &endptr), "%DDf");
-      check_endptr(dptr->input, endptr, dptr->rem, dptr->line);
-      CHECK_ZERO_SIGN(dptr, result128, 128);
-      CHECK_QEXP(dptr, result128, 128);
+      RUN_ONE_TEST (str, 32, dptr->input, endptr, check_endptr, "%Hf")
+      RUN_ONE_TEST (wcs, 32, winput, wendptr, check_wendptr, "%Hf")
+      RUN_ONE_TEST (str, 64, dptr->input, endptr, check_endptr, "%Df")
+      RUN_ONE_TEST (wcs, 64, winput, wendptr, check_wendptr, "%Df")
+      RUN_ONE_TEST (str, 128, dptr->input, endptr, check_endptr, "%DDf")
+      RUN_ONE_TEST (wcs, 128, winput, wendptr, check_wendptr, "%DDf")
     }
 
   d_nan_type *dnanptr;
   for (dnanptr = strtods_nan; dnanptr->line; dnanptr++)
     {
+      copy_to_wstr (winput, dnanptr->input, WCHAR_BUF_LEN);
+
       _DC_P(__FILE__, dnanptr->line,dnanptr->d32, strtod32(dnanptr->input, NULL));
       _DC_P(__FILE__, dnanptr->line,dnanptr->d64, strtod64(dnanptr->input, NULL));
       _DC_P(__FILE__, dnanptr->line,dnanptr->d128, strtod128(dnanptr->input, NULL));
