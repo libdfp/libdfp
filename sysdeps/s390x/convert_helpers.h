@@ -176,20 +176,10 @@ getmantd64(_Decimal64 dd, long *exp)
        : "+f" (dd) ,"=d" (tmp) );
 
   /* Convert mantissa of dd to fixed.  */
-#ifdef __s390x__
   /* On 64bit, long long int is stored in one register.  */
   asm ("cgdtr %[mant],0,%[dfp]\n\t"
        : [mant] "=d" (mantissa)
        : [dfp] "f" (dd));
-#else
-  /* On 31bit, long long int is stored in a register pair!
-     Extract mantissa to 64bit tmp register and store it to memory.  */
-  asm ("cgdtr %[tmp],0,%[dfp]\n\t"
-       "stg %[tmp],%[mant]\n\t" /* Store 64bit register to memory.  */
-       : [tmp] "=&d" (tmp)
-       : [dfp] "f" (dd), [mant] "T" (&mantissa)
-       : "memory");
-#endif
 
   *exp = e - 398;
 
