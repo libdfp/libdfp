@@ -346,7 +346,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 #endif
   /* The radix character of the current locale.  */
 #ifdef USE_WIDE_CHAR
-  const char *decimalmb;
+  union { const char *mb; int wc; } decimalwc;
   wchar_t decimal;
 #else
   const char *decimal;
@@ -397,8 +397,8 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 
   /* Find the locale's decimal point character.  */
 #ifdef USE_WIDE_CHAR
-  decimalmb = nl_langinfo(_NL_NUMERIC_DECIMAL_POINT_WC);
-  mbrtowc(&decimal,decimalmb, CHAR_MAX, NULL);
+  decimalwc.mb = nl_langinfo(_NL_NUMERIC_DECIMAL_POINT_WC);
+  decimal = decimalwc.wc;
   assert (decimal != L'\0');
 # define decimal_len 1
 #else
