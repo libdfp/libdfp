@@ -63,9 +63,7 @@ LDFLAGS = @LDFLAGS@
 INSTALL := @INSTALL@
 INSTALL_DATA := @INSTALL_DATA@
 
-# e.g. powerpc
-base_machine = @base_machine@
-# e.g. powerpc32
+# e.g. powerpc64le
 machine = @machine@
 
 # e.g. -mcpu=power6
@@ -116,7 +114,7 @@ override ASFLAGS = $(+asflags)
 sysdep_dirs = @sysdep_dirs@
 
 # This is the precedence ordered list of subdirectories that configure
-# selected for searching based upon machine, base_machine.
+# selected for searching based upon machine.
 # Add the ieee754r and decNumberMath convenience directories to the list.
 
 # Find each sysdep directory or convenience directory with a Makefile in it.

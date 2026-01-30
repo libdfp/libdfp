@@ -489,7 +489,6 @@ The Libdfp configure script is responsible for building the search order
 that is used by the Make system for selecting files out of the source tree.
 
 The configure script automatically knows how to search for
-	base_machine (e.g. powerpc)
 	machine (e.g. powerpc32)
 	submachine (e.g. power6, power7)
 
