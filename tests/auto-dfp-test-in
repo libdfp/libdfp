@@ -54,11 +54,22 @@ atan 1e-20
 atan 1e-50
 atan 2e-23
 atan 2e-32
+atan 1e2
+atan 1e4
+atan 1e8
+atan 1e16
+atan 1e32
 atan 1.732051
 atan 0.5773503
 atan Inf
 atan -Inf
 atan NaN
+atan 2.5
+atan 1.2345
+atan 0.12345
+atan 0.012345
+atan 0.4999999
+atan -0.4999999
 
 exp 0
 exp -0

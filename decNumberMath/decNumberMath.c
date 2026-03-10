@@ -697,7 +697,7 @@ decNumber* decNumberTan (decNumber *result, decNumber *y, decContext *set)
   return result;
 } /* decNumberTan  */
 
-decNumber* decNumberAtan (decNumber *result, decNumber *x, decContext *set) 
+decNumber* decNumberAtan (decNumber *result, decNumber *x, decContext *set)
 {
   //                 x^3   x^5   x^7
   // arctan(x) = x - --- + --- - --- + ...
@@ -705,7 +705,7 @@ decNumber* decNumberAtan (decNumber *result, decNumber *x, decContext *set)
   //
   // This power series works well, if x is close to zero (|x|<0.5).
   // If x is larger, the series converges too slowly,
-  // so in order to get a smaller x, we apply the identity 
+  // so in order to get a smaller x, we apply the identity
   //
   //                      sqrt(1+x^2) - 1
   // arctan(x) = 2*arctan ---------------
@@ -714,26 +714,37 @@ decNumber* decNumberAtan (decNumber *result, decNumber *x, decContext *set)
   // twice. The first application gives us a new x with x < 1.
   // The second application gives us a new x with x < 0.4142136.
   // For that x, we use the power series and multiply the result by four.
-  
-  decNumber f, g, mx2, one, two, term;
+
+  decNumber f, g, mx2, one, two, half, term;
   int i;
 
   decNumberFromString (&one, "1", set);
   decNumberFromString (&two, "2", set);
+  decNumberFromString (&half, "0.5", set);
 
   if (decNumberIsZero (x)) {
     decNumberCopy (result, x);
     return result;
   }
 
-  for (i=0; i<2; i++) {
-    decNumber y;
-    decNumberMultiply (&y, x, x, set);     // y = x^2
-    decNumberAdd (&y, &y, &one, set);      // y = y+1
-    decNumberSquareRoot (&y, &y, set);     // y = sqrt(y)
-    decNumberSubtract (&y, &y, &one, set); // y = y-1
-    decNumberDivide (x, &y, x, set);       // x = y/x
+  decNumber cmp;
+  decNumber x_abs;
+  decNumberCopyAbs (&x_abs, x);
+  decNumberCompare (&cmp, &x_abs, &half, set);
+  int is_small_x = decNumberIsNegative (&cmp);
+
+  // If |x| >= 0.5, apply the earlier mentioned identity to reduce range.
+  if (!is_small_x) {
+    for (i=0; i<2; i++) {
+      decNumber y;
+      decNumberMultiply (&y, x, x, set);     // y = x^2
+      decNumberAdd (&y, &y, &one, set);      // y = y+1
+      decNumberSquareRoot (&y, &y, set);     // y = sqrt(y)
+      decNumberSubtract (&y, &y, &one, set); // y = y-1
+      decNumberDivide (x, &y, x, set);       // x = y/x
+    }
   }
+
   // f(0) = x
   // f(i) = f(i-1) * (-x^2)
   //
@@ -747,6 +758,7 @@ decNumber* decNumberAtan (decNumber *result, decNumber *x, decContext *set)
   decNumberCopy (result, x); // sum  = x 
   decNumberMultiply (&mx2, x, x, set); // mx2 = x^2
   decNumberMinus (&mx2, &mx2, set);    // mx2 = -x^2  
+
   // Since x is less than sqrt(2)-1 = 0.4142...,
   // each term is smaller than the previous term by a factor of about 6,
   // so two iterations are more than enough to increase the precision 
@@ -762,8 +774,11 @@ decNumber* decNumberAtan (decNumber *result, decNumber *x, decContext *set)
     // sum = sum + term
     decNumberAdd (result, result, &term, set);
   }
-  // Multiply result by four.
-  decNumberAdd (result, result, result, set);
-  decNumberAdd (result, result, result, set);
+
+  if (!is_small_x) {
+    // Multiply result by four.
+    decNumberAdd (result, result, result, set);
+    decNumberAdd (result, result, result, set);
+  }
   return result;
 } /* decNumberAtan  */
