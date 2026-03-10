@@ -41,6 +41,25 @@ sin 10
 sin 0
 sin 3.14
 
+# Issue #218: atand(small) should not return NaN
+atan 0
+atan -0
+atan 1
+atan -1
+atan 0.5
+atan -0.5
+atan 1e-30
+atan -1e-30
+atan 1e-20
+atan 1e-50
+atan 2e-23
+atan 2e-32
+atan 1.732051
+atan 0.5773503
+atan Inf
+atan -Inf
+atan NaN
+
 exp 0
 exp -0
 exp 1
