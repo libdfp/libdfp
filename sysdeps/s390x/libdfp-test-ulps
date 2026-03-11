@@ -13,6 +13,11 @@ decimal128 0
 decimal32 0
 decimal64 0
 
+test atan
+decimal128 44
+decimal32 44
+decimal64 105
+
 test log
 decimal128 0
 decimal32 0
@@ -33,7 +38,38 @@ decimal128 0
 decimal32 0
 decimal64 3
 
+test exp2
+decimal128 0
+decimal32 0
+decimal64 0
+
 test pow
 decimal128 0
 decimal32 0
-decimal64 1
+decimal64 0
+
+test fmod
+decimal128 0
+decimal32 0
+decimal64 0
+
+test nextafter
+decimal128 0
+decimal32 0
+decimal64 0
+
+test nexttoward
+decimal128 0
+decimal32 0
+decimal64 0
+
+test ilogb
+decimal128 0
+decimal32 0
+decimal64 0
+
+test llogb
+decimal128 0
+decimal32 0
+decimal64 0
+
