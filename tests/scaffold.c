@@ -27,6 +27,7 @@
 
 static int fail = 0;
 static int testnum = 0;
+static int verbose = 1; // TODO: Old tests are verbose, update tests to accept a verbose option.
 
 /* String compare macros  */
 #ifndef _SC
@@ -41,9 +42,9 @@ static int testnum = 0;
 #define _SC_P(f,l,x,y) do { \
   ++testnum; \
   if(strcmp(x,y)) { \
-    fprintf(stderr, "%-3d Error:   Expected: \"%s\"\n             Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,x,y,f,l); \
+    fprintf(stdout, "%-3d Error:   Expected: \"%s\"\n             Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,x,y,f,l); \
     ++fail; \
-  } else { \
+  } else if (verbose) { \
     fprintf(stdout, "%-3d Success: Expected: \"%s\"\n             Result:   \"%s\"\n    in: %s:%d.\n\n", testnum,x,y,f,l); \
   } \
 } while (0)
@@ -164,7 +165,7 @@ static char buf[1024];
   __tmp = sprintf(buf, y, ##args); \
   _SC_P(f,l,x,buf); \
   if (__tmp != strlen(x)) { \
-    fprintf(stderr, "%-3d Error: fprintf didn't return the correct size." \
+    fprintf(stdout, "%-3d Error: fprintf didn't return the correct size." \
 	    "  Expected: \"%zd\"\n           " \
 	    "  Result:   \"%zd\"\n    in: %s:%d.\n\n", \
 	    testnum,strlen(x),__tmp,f,l); \
@@ -180,7 +181,7 @@ static char buf[1024];
   __tmp = fn(buf, n, fmt, d); \
   _SC_P(f,l,x,buf); \
   if (__tmp != len) { \
-    fprintf(stderr, "%-3d Error: " #fn " didn't return the correct size." \
+    fprintf(stdout, "%-3d Error: " #fn " didn't return the correct size." \
 	    "  Expected: \"%zd\"\n           " \
 	    "  Result:   \"%zd\"\n    in: %s:%d.\n\n", \
 	    testnum,len,__tmp,f,l); \
@@ -196,12 +197,12 @@ static char buf[1024];
   __tmp = fn(mybuf, 0, fmt, d); \
   testnum++; \
   if (__tmp != len) { \
-    fprintf(stderr, "%-3d Error: " #fn " didn't return the correct size." \
+    fprintf(stdout, "%-3d Error: " #fn " didn't return the correct size." \
 	    "  Expected: \"%zd\"\n  " \
 	    "  Result:   \"%zd\"\n    in: %s:%d.\n\n", \
 	    testnum,len,__tmp,f,l); \
     ++fail; \
-  } else { \
+  } else if (verbose) { \
     fprintf(stdout, "%-3d Success: " #fn \
 	    "  Expected: \"%zd\"\n  " \
 	    "  Result:   \"%zd\"\n    in: %s:%d.\n\n", \
@@ -230,30 +231,30 @@ static char buf[1024];
 
 /* Approximate Value Compare (takes a variation limit)  */
 #ifdef _WANT_AVC
-static char bufx[CHAR_MAX];
-static char bufy[CHAR_MAX];
-static char bufz[CHAR_MAX];
+static char bufx[512];
+static char bufy[512];
+static char bufz[512];
 #ifndef _AVC
 /* _AVC_P == Approximate Value Compare with Position  */
 #define _AVC_P(f,l,x,y,lim,fmt,lfmt) do { \
   ++testnum; \
-  memset(bufx,'\0',CHAR_MAX); \
-  memset(bufy,'\0',CHAR_MAX); \
-  memset(bufz,'\0',CHAR_MAX); \
+  memset(bufx,'\0',512); \
+  memset(bufy,'\0',512); \
+  memset(bufz,'\0',512); \
   /* Invokes printf dfp.  */  \
   sprintf(bufx, fmt, x); \
   sprintf(bufy, fmt, y); \
   sprintf(bufz, lfmt, lim); \
   if((y < (x-lim)) && (x > (y+lim))) { \
-    fprintf(stderr, "%-3d Error: Expected: \"%s\"\n", testnum, bufx); \
-    fprintf(stderr, "             Result: \"%s\"\n", bufy); \
-    fprintf(stderr, "                lim: \"%s\"\n", bufz); \
-    fprintf(stderr, "    in: %s:%d.\n\n", f,l); \
+    fprintf(stdout, "%-3d Error: Expected: \"%s\"\n", testnum, bufx); \
+    fprintf(stdout, "             Result: \"%s\"\n", bufy); \
+    fprintf(stdout, "                lim: \"%s\"\n", bufz); \
+    fprintf(stdout, "    in: %s:%d.\n\n", f,l); \
     ++fail; \
-  } else { \
+  } else if (verbose) { \
     fprintf(stdout, "%-3d Success: Expected: \"%s\"\n", testnum, bufx); \
     fprintf(stdout, "               Result: \"%s\"\n", bufy); \
-    fprintf(stderr, "                  lim: \"%s\"\n", bufz); \
+    fprintf(stdout, "                  lim: \"%s\"\n", bufz); \
     fprintf(stdout, "    in: %s:%d.\n\n", f,l); \
   } \
 } while (0)
@@ -271,33 +272,35 @@ static char bufz[CHAR_MAX];
 #endif /* _WANT_AVC  */
 
 #ifdef _WANT_VC
-static char bufx[CHAR_MAX];
-static char bufy[CHAR_MAX];
+static char bufx[512];
+static char bufy[512];
 #ifndef _VC
 /* _VC_P == Value Compare with Position  */
 #define _VC_P(f,l,x,y,fmt) do {                                 \
   ++testnum;                                                    \
-  memset(bufx,'\0',CHAR_MAX);                                   \
-  memset(bufy,'\0',CHAR_MAX);                                   \
+  memset(bufx,'\0',512);                                        \
+  memset(bufy,'\0',512);                                        \
   /* Invokes printf dfp.  */                                    \
   sprintf(bufx, fmt, x);                                        \
   sprintf(bufy, fmt, y);                                        \
   if ((isnan(x) && isnan(y)) ||                                 \
       (x == y))                                                 \
     {                                                           \
-      fprintf (stdout, "%-3d Success: Expected: \"%s\"\n",      \
+      if (verbose) {                                            \
+        fprintf (stdout, "%-3d Success: Expected: \"%s\"\n",    \
+          testnum, bufx);                                       \
+        fprintf (stdout, "              Result:   \"%s\"\n",    \
+          bufy);                                                \
+        fprintf (stdout, "in: %s:%i\n\n", f, l);                \
+      }                                                         \
+    }                                                           \
+  else                                                          \
+    {                                                           \
+      fprintf (stdout, "%-3d Error:   Expected: \"%s\"\n",      \
         testnum, bufx);                                         \
       fprintf (stdout, "              Result:   \"%s\"\n",      \
         bufy);                                                  \
       fprintf (stdout, "in: %s:%i\n\n", f, l);                  \
-    }                                                           \
-  else                                                          \
-    {                                                           \
-      fprintf (stderr, "%-3d Error:   Expected: \"%s\"\n",      \
-        testnum, bufx);                                         \
-      fprintf (stderr, "              Result:   \"%s\"\n",      \
-        bufy);                                                  \
-      fprintf (stderr, "in: %s:%i\n\n", f, l);                  \
       ++fail;                                                   \
     }                                                           \
 } while (0)
@@ -305,27 +308,29 @@ static char bufy[CHAR_MAX];
 /* _VC_P_CPP == Value Compare with Position for C++ types  */
 #define _VC_P_CPP(f,l,x,y,fmt) do {                             \
   ++testnum;                                                    \
-  memset(bufx,'\0',CHAR_MAX);                                   \
-  memset(bufy,'\0',CHAR_MAX);                                   \
+  memset(bufx,'\0',512);                                        \
+  memset(bufy,'\0',512);                                        \
   /* Invokes printf dfp.  */                                    \
   sprintf(bufx, fmt, x);                                        \
   sprintf(bufy, fmt, y);                                        \
   if ((isnan(x.__getval()) && isnan(y.__getval())) ||           \
       (x == y))                                                 \
     {                                                           \
-      fprintf (stdout, "%-3d Success: Expected: \"%s\"\n",      \
+      if (verbose) {                                            \
+        fprintf (stdout, "%-3d Success: Expected: \"%s\"\n",    \
+          testnum, bufx);                                       \
+        fprintf (stdout, "              Result:   \"%s\"\n",    \
+          bufy);                                                \
+        fprintf (stdout, "in: %s:%i\n\n", f, l);                \
+      }                                                         \
+    }                                                           \
+  else                                                          \
+    {                                                           \
+      fprintf (stdout, "%-3d Error:   Expected: \"%s\"\n",      \
         testnum, bufx);                                         \
       fprintf (stdout, "              Result:   \"%s\"\n",      \
         bufy);                                                  \
       fprintf (stdout, "in: %s:%i\n\n", f, l);                  \
-    }                                                           \
-  else                                                          \
-    {                                                           \
-      fprintf (stderr, "%-3d Error:   Expected: \"%s\"\n",      \
-        testnum, bufx);                                         \
-      fprintf (stderr, "              Result:   \"%s\"\n",      \
-        bufy);                                                  \
-      fprintf (stderr, "in: %s:%i\n\n", f, l);                  \
     }                                                           \
 } while (0)
 
@@ -355,21 +360,21 @@ static char bufy[CHAR_MAX];
 
 /* TODO: Finish this.  It doesn't do anything yet.  The purpose is to be able to
  * get the result in the expected precision.  */
-static char bufx[CHAR_MAX];
-static char bufy[CHAR_MAX];
+static char bufx[512];
+static char bufy[512];
 #ifndef _QC
 /* _QC_P == Quantize Compare with Position  */
 #define _QC_P(f,l,x,y,fmt,type) do { \
   ++testnum; \
-  memset(bufx,'\0',CHAR_MAX); \
-  memset(bufy,'\0',CHAR_MAX); \
+  memset(bufx,'\0',512); \
+  memset(bufy,'\0',512); \
   /* Invokes printf dfp.  */  \
   sprintf(bufx, fmt, x); \
   sprintf(bufy, fmt, y); \
   if(x!=y) { \
-    fprintf(stderr, "%-3d Error:   Expected: \"%s\"\n             Result:    \"%s\"\n    in: %s:%d.\n\n", testnum, bufx,bufy,f,l); \
+    fprintf(stdout, "%-3d Error:   Expected: \"%s\"\n             Result:    \"%s\"\n    in: %s:%d.\n\n", testnum, bufx,bufy,f,l); \
     ++fail; \
-  } else { \
+  } else if (verbose) { \
     fprintf(stdout, "%-3d Success: Expected: \"%s\"\n             Result:    \"%s\"\n    in: %s:%d.\n\n", testnum, bufx,bufy,f,l); \
   } \
 } while (0)
@@ -387,7 +392,7 @@ static char bufy[CHAR_MAX];
 
 
 #ifdef _WANT_DC
-static char dbuf[CHAR_MAX];
+static char dbuf[512];
 #ifndef _DC
 /* _DC == Decoded[32|64|128] Compare
  */
@@ -399,7 +404,7 @@ static char dbuf[CHAR_MAX];
  * is pre-determined.  Don't call this on Non-_Decimal values.  The outcome is
  * undefined.  */
 #define _DC_P(f,l,x,y) do { \
-  memset(dbuf,'\0',CHAR_MAX); \
+  memset(dbuf,'\0',512); \
   /* Invoke the correct decoded{32|64|128]() based on arg size.  */ \
   (sizeof (y) == sizeof (_Decimal128)? decoded128(y,&dbuf[0]): \
     (sizeof (y) == sizeof (_Decimal64)? decoded64(y,&dbuf[0]): \
@@ -431,7 +436,7 @@ static char dbuf[CHAR_MAX];
 /* Don't print anything if there are no failures.  */
 #define _REPORT() do { \
     if(fail) { \
-      fprintf(stderr, "Found %d failures.\n", fail); \
+      fprintf(stdout, "Found %d failures.\n", fail); \
     } \
 } while (0)
 
