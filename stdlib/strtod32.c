@@ -750,36 +750,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	cp = expp;
     }
 
-
-  /* We don't want to have to work with trailing zeroes after the radix.  */
-#if 0  /* Actually, for DFP, we do. */
-  if (dig_no > int_no)
-    {
-      while (expp[-1] == L_('0'))
-	{
-	  --expp;
-	  /*--exponent;*/  /* FIXME: This can't be here */
-	  --dig_no;
-	}
-      assert (dig_no >= int_no);
-    }
-
-  if (dig_no == int_no && dig_no > 0 && exponent < 0)
-    do
-      {
-	while (! ISDIGIT (expp[-1]))
-	  --expp;
-
-	if (expp[-1] != L_('0'))
-	  break;
-
-	--expp;
-	--dig_no;
-	--int_no;
-	++exponent;
-      }
-    while (dig_no > 0 && exponent < 0);
-#endif
  number_parsed:
 
   /* The whole string is parsed.  Store the address of the next character.  */
@@ -798,16 +768,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       int exp_max = MAX_10_EXP - MANT_DIG;
       exponent = (exponent > exp_max) ? exp_max : exponent;
 
-#if NUMDIGITS_SUPPORT==0
-      d32 += 1;
-      while(exponent-- > 0)  /* FIXME: this doesn't work right for exponent>0 */
-	d32 *= 10;
-      while(++exponent < 0)
-	d32 /= 10;
-      d32 -= d32;
-#else
       d32 = FUNC_D(setexp) (d32, exponent);
-#endif
 
       freelocale(C_locale);
       return negative ? -d32 : d32;
@@ -915,19 +876,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       /* Read the decimal part as a FLOAT.  */
       int digcnt = dig_no - int_no;
       
-  /* There might be radix characters in
-	    the string.  But these all can be ignored because we know the
-	    format of the number is correct and we have an exact number
-	    of characters to read.  */
-
-      /*do
-	{
-	  frac = frac/10 + *(startp+digcnt-1) - L_('0');
-	}
-      while (--digcnt > 0);
-      frac /= 10;
-
-      d32 += frac;*/
       int_no = 0;
       do
         {
@@ -951,12 +899,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
     while (--digcnt > 0);
     }
 
-#if NUMDIGITS_SUPPORT==0
-  while(exponent-- > 0)
-    d32 *= 10;
-  while(++exponent < 0)
-    d32 /= 10;
-#else
   /* Computed underflow after normalization.  */
   if ( exponent <  (__DEC_MIN_EXP__ - __DEC_MANT_DIG__))
     {
@@ -973,8 +915,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       d32 = FUNC_D(left_justify) (d32);
 
   d32 = FUNC_D(setexp) (d32, FUNC_D (getexp) (d32) + exponent);
-
-#endif
 
   freelocale(C_locale);
   return negative? -d32:d32;
