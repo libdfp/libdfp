@@ -42,6 +42,8 @@
 
 #include "dfp_inline.h"
 
+#define EMAX_RAW PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Emax_raw))
+
 static DEC_TYPE
 IEEE_FUNCTION_NAME (DEC_TYPE x, int y)
 {
@@ -50,10 +52,22 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, int y)
   int minexp = PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Emin));
   int p = PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Pmax));
 
-#if NUMDIGITS_SUPPORT==1
   newexp = FUNC_D (getexp) (x) + y;
-  if (newexp > PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Emax)))
+  if (__builtin_isnan (x) || __builtin_isinf (x))
+    return x + x; 
+  else if (x == DFP_CONSTANT(0.))
     {
+       /* The C23 standard says nothing about which 0 to return. Adjust and
+	* clamp it based on the format.  This simplifies usage with strtodN. */
+       newexp = newexp < minexp ? minexp : newexp;
+       newexp = newexp > EMAX_RAW ? EMAX_RAW : newexp;
+       result = FUNC_D(setexp) (x, newexp);
+    }
+  else if (newexp > EMAX_RAW)
+    {
+    /* Some values might fit. Shift the exponent via multiplication. */
+    if (newexp <= PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Emax)))
+      return FUNC_D(setexp) (x, 34) * FUNC_D(setexp) (1.DL, newexp - 34);
     result = FUNC_D(__copysign)(DFP_HUGE_VAL, x);
     DFP_EXCEPT (FE_OVERFLOW);
     }
@@ -73,33 +87,6 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, int y)
     }
   else
     result = FUNC_D(setexp) (x, newexp);
-
-#else
-  decContext context;
-  decNumber dn_x;
-
-  FUNC_CONVERT_TO_DN (&x, &dn_x);
-  if (___decNumberIsNaN (&dn_x) || ___decNumberIsZero (&dn_x) ||
-	___decNumberIsInfinite (&dn_x))
-    return x+x;
-  if (y == 0)
-    return x;
-
-  /* ldexp(x,y) is just x*10**y, which is equivalent to increasing the exponent
-   * by y.  */
-  newexp = dn_x.exponent + y;
-  if(newexp > INT_MAX)
-    newexp = INT_MAX;
-  if(newexp < -INT_MAX)
-    newexp = -INT_MAX;
-  dn_x.exponent = newexp;
-
-  decContextDefault (&context, DEFAULT_CONTEXT);
-  FUNC_CONVERT_FROM_DN (&dn_x, &result, &context);
-
-  if (context.status & DEC_Overflow)
-    DFP_EXCEPT (FE_OVERFLOW);
-#endif
 
   return result;
 }
