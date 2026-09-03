@@ -484,6 +484,8 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 		/* The closing brace is missing.  Only match the NAN
 		   part.  */
 		cp = startp;
+	      else if (*cp == L_(')'))
+		cp++;
 #if 0
 	      else
 		{
