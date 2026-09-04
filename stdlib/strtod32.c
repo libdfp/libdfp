@@ -335,6 +335,8 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   const STRING_TYPE *expp;
   /* Total number of digit and number of digits in integer part.  */
   int dig_no, int_no, lead_zero;
+  /* Total number of digits read into mantissa. */
+  int dig_read;
   /* Contains the last character read.  */
   CHAR_TYPE c;
   __locale_t C_locale;
@@ -484,6 +486,8 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 		/* The closing brace is missing.  Only match the NAN
 		   part.  */
 		cp = startp;
+	      else if (*cp == L_(')'))
+		cp++;
 #if 0
 	      else
 		{
@@ -748,36 +752,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	cp = expp;
     }
 
-
-  /* We don't want to have to work with trailing zeroes after the radix.  */
-#if 0  /* Actually, for DFP, we do. */
-  if (dig_no > int_no)
-    {
-      while (expp[-1] == L_('0'))
-	{
-	  --expp;
-	  /*--exponent;*/  /* FIXME: This can't be here */
-	  --dig_no;
-	}
-      assert (dig_no >= int_no);
-    }
-
-  if (dig_no == int_no && dig_no > 0 && exponent < 0)
-    do
-      {
-	while (! ISDIGIT (expp[-1]))
-	  --expp;
-
-	if (expp[-1] != L_('0'))
-	  break;
-
-	--expp;
-	--dig_no;
-	--int_no;
-	++exponent;
-      }
-    while (dig_no > 0 && exponent < 0);
-#endif
  number_parsed:
 
   /* The whole string is parsed.  Store the address of the next character.  */
@@ -796,16 +770,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       int exp_max = MAX_10_EXP - MANT_DIG;
       exponent = (exponent > exp_max) ? exp_max : exponent;
 
-#if NUMDIGITS_SUPPORT==0
-      d32 += 1;
-      while(exponent-- > 0)  /* FIXME: this doesn't work right for exponent>0 */
-	d32 *= 10;
-      while(++exponent < 0)
-	d32 /= 10;
-      d32 -= d32;
-#else
       d32 = FUNC_D(setexp) (d32, exponent);
-#endif
 
       freelocale(C_locale);
       return negative ? -d32 : d32;
@@ -858,13 +823,14 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
     }
 
   /* Obvious underflow before normalization.  */
-  if (exponent < MIN_10_EXP - MANT_DIG + 1 )
+  if (exponent < (MIN_10_EXP - MANT_DIG))
     {
       __set_errno (ERANGE);
       freelocale(C_locale);
       return FLOAT_ZERO;
     }
   /* Read in the integer portion of the input string */
+  dig_read = 0;
   if (int_no > 0)
     {
       /* Read the integer part as a d32.  */
@@ -902,6 +868,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	    }
 #endif
 	  d32 = d32 * 10 + (*startp - L_('0'));
+	  dig_read++;
 	  ++startp;
 	}
       while (--digcnt > 0);
@@ -912,20 +879,11 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
     {
       /* Read the decimal part as a FLOAT.  */
       int digcnt = dig_no - int_no;
+
+      /* The rounding value. */
+      FLOAT rnd = 0.;
+      bool is_5 = false;
       
-  /* There might be radix characters in
-	    the string.  But these all can be ignored because we know the
-	    format of the number is correct and we have an exact number
-	    of characters to read.  */
-
-      /*do
-	{
-	  frac = frac/10 + *(startp+digcnt-1) - L_('0');
-	}
-      while (--digcnt > 0);
-      frac /= 10;
-
-      d32 += frac;*/
       int_no = 0;
       do
         {
@@ -937,26 +895,44 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	startp += decimal_len;
 #endif
 
-        /* We need the extra digit to get proper rounding.  */
-	if (int_no < MANT_DIG + 1)
+	if (dig_read < MANT_DIG)
 	  {
 	    d32 = d32*10 + (*startp - L_('0'));
 	    ++startp;
 	    --exponent;
 	    int_no++;
+	    dig_read++;
+	  }
+	else
+	  {
+            /* Figure out the rounding value. */
+            if (dig_read == MANT_DIG)
+	      {
+		rnd = (*startp - L_('0')) * (FLOAT)(0.1DF);
+
+		/* If it is not 5, we're done. */
+		is_5 = *startp == L_('5');
+		if (!is_5)
+		  break;
+	      }
+	    else if (is_5 && *startp != L_('0'))
+	      {
+		rnd = 0.6;
+		break;
+	      }
+	    dig_read++;
+	    ++startp;
 	  }
 	}
-    while (--digcnt > 0);
+      while (--digcnt > 0);
+
+      /* Apply rounding, only if non-zero. */
+      if (rnd != FLOAT_ZERO)
+        d32 += rnd;
     }
 
-#if NUMDIGITS_SUPPORT==0
-  while(exponent-- > 0)
-    d32 *= 10;
-  while(++exponent < 0)
-    d32 /= 10;
-#else
-  /* Computed underflow after normalization.  */
-  if ( exponent <  (__DEC_MIN_EXP__ - __DEC_MANT_DIG__))
+  /* Flush to zero if the value is smaller than the rounding digit.  */
+  if ( (exponent + dig_read) <  (__DEC_MIN_EXP__ - __DEC_MANT_DIG__))
     {
       __set_errno (ERANGE);
       freelocale(C_locale);
@@ -970,9 +946,13 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   if (exponent > (__DEC_MAX_EXP__ - __DEC_MANT_DIG__))
       d32 = FUNC_D(left_justify) (d32);
 
-  d32 = FUNC_D(setexp) (d32, FUNC_D (getexp) (d32) + exponent);
+  /* Rescale exponent (and possibly round) based on exponent. */
+  FLOAT d32_mant = d32;
+  d32 = FUNC_D(__ldexp) (d32, exponent);
 
-#endif
+  /* Setting the exponent may result in underflow too.  */
+  if (d32 == FLOAT_ZERO && d32_mant != FLOAT_ZERO)
+    __set_errno (ERANGE);
 
   freelocale(C_locale);
   return negative? -d32:d32;

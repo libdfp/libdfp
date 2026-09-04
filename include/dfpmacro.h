@@ -130,6 +130,11 @@
 #define DFP_NAN			(DEC_TYPE)DEC_NAN
 #define DFP_INF			(DEC_TYPE)DEC_INFINITY
 
+/* Limits of the raw unbiased exponent for each format. */
+#define DECIMAL32_Emax_raw  90
+#define DECIMAL64_Emax_raw  369
+#define DECIMAL128_Emax_raw 6111
+
 #ifndef PASTE
 /* Ideally these shouldn't need to be used elsewhere outside of this file */
 # define PASTE(x,y) PASTE2(x,y)

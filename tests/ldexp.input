@@ -6,7 +6,21 @@
 1.0 1 10.0
 1.0 0 1.0
 1.0 -1 0.1
+6e-398 -1 DEC_SUBNORMAL_MIN		decimal64
 
+# Verify large right justified numbers.
+1.e90              1 10.e90             decimal32
+1.e369             1 10.e369            decimal64
+1.e6111            1 10.e6111           decimal128
+1.e96              1 Inf                decimal32
+1.e384             1 Inf                decimal64
+1.e6144            1 Inf                decimal128
+
+# Special case inputs
+NaN                1     NaN
+Inf                1     Inf 
+-Inf               1     -Inf
+0                  10000 0
 
 # Verify subnormal exponent math is correct
 DEC_MIN            1 1E-94             decimal32
