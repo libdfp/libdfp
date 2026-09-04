@@ -53,7 +53,7 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, int y)
   int p = PASTE(DECIMAL,PASTE(_DECIMAL_SIZE,_Pmax));
 
   newexp = FUNC_D (getexp) (x) + y;
-  if (__builtin_isnan (x) || __builtin_isinf (x))
+  if (FUNC_D (__isnan) (x) || !FUNC_D (__isfinite) (x))
     return x + x; 
   else if (x == DFP_CONSTANT(0.))
     {
