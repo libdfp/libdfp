@@ -335,6 +335,8 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   const STRING_TYPE *expp;
   /* Total number of digit and number of digits in integer part.  */
   int dig_no, int_no, lead_zero;
+  /* Total number of digits read into mantissa. */
+  int dig_read;
   /* Contains the last character read.  */
   CHAR_TYPE c;
   __locale_t C_locale;
@@ -828,6 +830,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       return FLOAT_ZERO;
     }
   /* Read in the integer portion of the input string */
+  dig_read = 0;
   if (int_no > 0)
     {
       /* Read the integer part as a d32.  */
@@ -865,6 +868,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	    }
 #endif
 	  d32 = d32 * 10 + (*startp - L_('0'));
+	  dig_read++;
 	  ++startp;
 	}
       while (--digcnt > 0);
@@ -875,6 +879,10 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
     {
       /* Read the decimal part as a FLOAT.  */
       int digcnt = dig_no - int_no;
+
+      /* The rounding value. */
+      FLOAT rnd = 0.;
+      bool is_5 = false;
       
       int_no = 0;
       do
@@ -887,16 +895,40 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	startp += decimal_len;
 #endif
 
-        /* We need the extra digit to get proper rounding.  */
-	if (int_no < MANT_DIG + 1)
+	if (dig_read < MANT_DIG)
 	  {
 	    d32 = d32*10 + (*startp - L_('0'));
 	    ++startp;
 	    --exponent;
 	    int_no++;
+	    dig_read++;
+	  }
+	else
+	  {
+            /* Figure out the rounding value. */
+            if (dig_read == MANT_DIG)
+	      {
+		rnd = (*startp - L_('0')) * (FLOAT)(0.1DF);
+
+		/* If it is not 5, we're done. */
+		is_5 = *startp == L_('5');
+		if (!is_5)
+		  break;
+	      }
+	    else if (is_5 && *startp != L_('0'))
+	      {
+		rnd = 0.6;
+		break;
+	      }
+	    dig_read++;
+	    ++startp;
 	  }
 	}
-    while (--digcnt > 0);
+      while (--digcnt > 0);
+
+      /* Apply rounding, only if non-zero. */
+      if (rnd != FLOAT_ZERO)
+        d32 += rnd;
     }
 
   /* Computed underflow after normalization.  */
@@ -914,7 +946,8 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   if (exponent > (__DEC_MAX_EXP__ - __DEC_MANT_DIG__))
       d32 = FUNC_D(left_justify) (d32);
 
-  d32 = FUNC_D(setexp) (d32, FUNC_D (getexp) (d32) + exponent);
+  /* Rescale exponent (and possibly round) based on exponent. */
+  d32 = FUNC_D(__ldexp) (d32, exponent);
 
   freelocale(C_locale);
   return negative? -d32:d32;
