@@ -6,6 +6,7 @@
 1.0 1 10.0
 1.0 0 1.0
 1.0 -1 0.1
+6e-398 -1 DEC_SUBNORMAL_MIN		decimal64
 
 # Verify large right justified numbers.
 1.e90              1 10.e90             decimal32
