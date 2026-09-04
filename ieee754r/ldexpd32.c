@@ -74,14 +74,16 @@ IEEE_FUNCTION_NAME (DEC_TYPE x, int y)
   else if (newexp < minexp)
     {
     /* Check if the result might be subnormal. */
-    if( newexp > (minexp - p))
+    if( newexp >= (minexp - p))
       {
         result = FUNC_D(setexp) (x, minexp);
         /* Use a multiply so we correctly round whatever may shifts out. */
         tiny = FUNC_D(setexp) (1.DL, newexp - minexp);
-        return result * tiny;
+	result *= tiny;
+	if (result != DFP_CONSTANT(0.))
+          return result;
       }
-    result = DFP_CONSTANT(0.0);
+    result = DFP_CONSTANT(0.);
     DFP_EXCEPT (FE_UNDERFLOW);
     return result;
     }
