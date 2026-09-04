@@ -823,7 +823,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
     }
 
   /* Obvious underflow before normalization.  */
-  if (exponent < MIN_10_EXP - MANT_DIG + 1 )
+  if (exponent < (MIN_10_EXP - MANT_DIG))
     {
       __set_errno (ERANGE);
       freelocale(C_locale);
@@ -931,8 +931,8 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
         d32 += rnd;
     }
 
-  /* Computed underflow after normalization.  */
-  if ( exponent <  (__DEC_MIN_EXP__ - __DEC_MANT_DIG__))
+  /* Flush to zero if the value is smaller than the rounding digit.  */
+  if ( (exponent + dig_read) <  (__DEC_MIN_EXP__ - __DEC_MANT_DIG__))
     {
       __set_errno (ERANGE);
       freelocale(C_locale);
@@ -947,7 +947,12 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       d32 = FUNC_D(left_justify) (d32);
 
   /* Rescale exponent (and possibly round) based on exponent. */
+  FLOAT d32_mant = d32;
   d32 = FUNC_D(__ldexp) (d32, exponent);
+
+  /* Setting the exponent may result in underflow too.  */
+  if (d32 == FLOAT_ZERO && d32_mant != FLOAT_ZERO)
+    __set_errno (ERANGE);
 
   freelocale(C_locale);
   return negative? -d32:d32;
