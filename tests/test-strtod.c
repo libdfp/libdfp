@@ -231,8 +231,113 @@ d_type strtods[] =
      bit, so _Decimal32 rounds 1.2345665|0001 to 1.234566 instead of 1.234567. */
   {__LINE__, "1.23456650001", 1.234567DF, -6, 1.23456650001DD, -11, 1.23456650001DL, -11, 0},
 
+  /* --- Long integer components ---
+     Numbers whose *integer* part has more digits than the destination format
+     can hold.  strtodN() accumulates the integer digits one at a time, so
+     every digit past the format's precision is a rounding opportunity; only
+     the very first one is allowed to change the result.  The correctly
+     rounded answer always depends on all of the remaining digits (the sticky
+     bit), never on the intermediate roundings.  */
+
+  /* Integer parts that simply exceed the precision of one or more formats. */
+  {__LINE__, "1234567890", 1.234568E9DF, 3, 1.234567890E9DD, 0, 1.234567890E9DL, 0, 0},
+  {__LINE__, "123456789012345678", 1.234568E17DF, 11, 1.234567890123457E17DD, 2,
+   1.23456789012345678E17DL, 0, 0},
+  {__LINE__, "12345678901234567890123456789012345", 1.234568E34DF, 28,
+   1.234567890123457E34DD, 19, 1.234567890123456789012345678901234E34DL, 1, 0},
+
+  /* 37 nines: the rounding carry ripples the whole way out of the coefficient
+     and bumps the exponent for every format. */
+  {__LINE__, "9999999999999999999999999999999999999", 1.000000E37DF, 31,
+   1.000000000000000E37DD, 22, 1.000000000000000000000000000000000E37DL, 4, 0},
+
+  /* Exact ties in the integer part: one guard digit of 5 and nothing after
+     it, so the tie breaks toward the even coefficient digit. */
+  {__LINE__, "12345645", 1.234564E7DF, 1, 1.2345645E7DD, 0, 1.2345645E7DL, 0, 0},
+  {__LINE__, "1234567890123456500", 1.234568E18DF, 12, 1.234567890123456E18DD, 3,
+   1.234567890123456500E18DL, 0, 0},
+
+  /* Guard digit 5 in the integer part *followed* by more nonzero digits: the
+     value is strictly above the halfway point and must round up.  Rounding
+     digit-by-digit turns the 5 into a tie, rounds it to even, and then loses
+     the trailing digits, giving a result one ULP too small. */
+  {__LINE__, "123456455", 1.234565E8DF, 2, 1.23456455E8DD, 0, 1.23456455E8DL, 0, 0},
+  {__LINE__, "1234564550", 1.234565E9DF, 3, 1.234564550E9DD, 0, 1.234564550E9DL, 0, 0},
+  {__LINE__, "12345645000001", 1.234565E13DF, 7, 1.2345645000001E13DD, 0,
+   1.2345645000001E13DL, 0, 0},
+  {__LINE__, "123456789012345655", 1.234568E17DF, 11, 1.234567890123457E17DD, 2,
+   1.23456789012345655E17DL, 0, 0},
+  {__LINE__, "1234567890123456789012345678901234550", 1.234568E36DF, 30,
+   1.234567890123457E36DD, 21, 1.234567890123456789012345678901235E36DL, 3, 0},
+
+  /* A long integer part with a fraction after it.  The fractional digits are
+     past the precision of the smaller formats but still contribute the sticky
+     bit that decides the rounding of the integer part. */
+  {__LINE__, "12345665.9", 1.234567E7DF, 1, 1.23456659E7DD, -1, 1.23456659E7DL, -1, 0},
+  {__LINE__, "12345675.9", 1.234568E7DF, 1, 1.23456759E7DD, -1, 1.23456759E7DL, -1, 0},
+  {__LINE__, "12345678901234565.5", 1.234568E16DF, 10, 1.234567890123457E16DD, 1,
+   1.23456789012345655E16DL, -1, 0},
+  {__LINE__, "99999999999999999999.99999999999999999999", 1.000000E20DF, 14,
+   1.000000000000000E20DD, 5, 1.000000000000000000000000000000000E20DL, -13, 0},
+
+  /* Long integer part combined with an exponent, in both directions. */
+  {__LINE__, "12345678901234567890e10", 1.234568E29DF, 23, 1.234567890123457E29DD, 14,
+   1.2345678901234567890E29DL, 10, 0},
+  {__LINE__, "12345678901234567890e-10", 1.234568E9DF, 3, 1.234567890123457E9DD, -6,
+   1.2345678901234567890E9DL, -10, 0},
+  {__LINE__, "1234567890123456789012345678901234e-100", 1.234568E-67DF, -73,
+   1.234567890123457E-67DD, -82, 1.234567890123456789012345678901234E-67DL, -100, 0},
+
+  /* Leading zeroes must not count toward the integer digit count. */
+  {__LINE__, "00000000000012345678901234567890", 1.234568E19DF, 13,
+   1.234567890123457E19DD, 4, 1.2345678901234567890E19DL, 0, 0},
+
+  /* Negative sign in front of a long integer. */
+  {__LINE__, "-1234567890123456789012345678901234567890", -1.234568E39DF, 33,
+   -1.234567890123457E39DD, 24, -1.234567890123456789012345678901235E39DL, 6, 0},
+
+  /* A long integer that is exactly representable: only the leading digit is
+     significant, so no rounding happens and the quantum is the written one
+     (clamped down for _Decimal32, whose largest quantum exponent is 90). */
+  {__LINE__, "100000000000000000000", 1.000000E20DF, 14, 1.000000000000000E20DD, 5,
+   1.00000000000000000000E20DL, 0, 0},
+
+  /* 121 and 120 integer digits pulled back into range by a negative exponent.
+     The digit count alone exceeds every format's exponent range, so the
+     normalisation of int_no against the exponent has to happen before the
+     range check. */
+  {__LINE__, "1"  "0000000000" "0000000000" "0000000000" "0000000000"
+	     "0000000000" "0000000000" "0000000000" "0000000000"
+	     "0000000000" "0000000000" "0000000000" "0000000000" "e-40",
+   1.000000E80DF, 74, 1.000000000000000E80DD, 65,
+   1.000000000000000000000000000000000E80DL, 47, 0},
+  {__LINE__, "9999999999" "9999999999" "9999999999" "9999999999"
+	     "9999999999" "9999999999" "9999999999" "9999999999"
+	     "9999999999" "9999999999" "9999999999" "9999999999" "e-40",
+   1.000000E80DF, 74, 1.000000000000000E80DD, 65,
+   1.000000000000000000000000000000000E80DL, 47, 0},
+
   {0,0,0,0,0,0,0,0,0 }
 };
+
+/* Runs of nines used to build integer parts long enough to reach each
+   format's maximum exponent.  */
+#define N10	"9999999999"
+#define N100	N10 N10 N10 N10 N10 N10 N10 N10 N10 N10
+#define N1000	N100 N100 N100 N100 N100 N100 N100 N100 N100 N100
+#define Z10	"0000000000"
+
+/* Exactly __DEC32_MAX_EXP__ (97) nines, and one digit fewer.  */
+#define NINES_D32_OVER	N10 N10 N10 N10 N10 N10 N10 N10 N10 "9999999"
+#define NINES_D32_FIT	N10 N10 N10 N10 N10 N10 N10 N10 N10 "999999"
+/* Exactly __DEC64_MAX_EXP__ (385) nines, and one digit fewer.  */
+#define NINES_D64_OVER	N100 N100 N100 N10 N10 N10 N10 N10 N10 N10 N10 "99999"
+#define NINES_D64_FIT	N100 N100 N100 N10 N10 N10 N10 N10 N10 N10 N10 "9999"
+/* Exactly __DEC128_MAX_EXP__ (6145) nines, and one digit fewer.  */
+#define NINES_D128_OVER	N1000 N1000 N1000 N1000 N1000 N1000 N100 \
+			N10 N10 N10 N10 "99999"
+#define NINES_D128_FIT	N1000 N1000 N1000 N1000 N1000 N1000 N100 \
+			N10 N10 N10 N10 "9999"
 
 const char DECLET32_NAN[] = "+0,000,000E-101";
 const char DECLET64_NAN[] = "+0,000,000,000,000,000E-398";
@@ -332,6 +437,83 @@ d_nan_type strtods_nan[] =
   /* Same flaw at the _Decimal128 subnormal boundary.  The D128 field is buggy. */
   {__LINE__, "6E-6177", DECLET_ZERO_D32, DECLET_ZERO_D64, "+0,000,000,000,000,000,000,000,000,000,000,001E-6176" }, /* D128 -> 1E-6176 */
   {__LINE__, "1.5E-6176", DECLET_ZERO_D32, DECLET_ZERO_D64, "+0,000,000,000,000,000,000,000,000,000,000,002E-6176" }, /* D128 -> 2E-6176 */
+
+  /* --- Long integer components, exact coefficient and quantum ---
+     The same inputs as the "Long integer components" block in strtods[],
+     checked here for the exact coefficient/exponent pair rather than just
+     numeric equality. */
+
+  /* Truncating a long integer must keep the coefficient full width and move
+     the quantum exponent up, not renormalise the coefficient. */
+  {__LINE__, "1234567890", "+1,234,568E+3", "+0,000,001,234,567,890E+0",
+   "+0,000,000,000,000,000,000,000,001,234,567,890E+0" },
+  {__LINE__, "123456789012345678", "+1,234,568E+11", "+1,234,567,890,123,457E+2",
+   "+0,000,000,000,000,000,123,456,789,012,345,678E+0" },
+  {__LINE__, "12345678901234567890123456789012345", "+1,234,568E+28",
+   "+1,234,567,890,123,457E+19", "+1,234,567,890,123,456,789,012,345,678,901,234E+1" },
+
+  /* Carry out of the top digit leaves a 1 followed by zeroes. */
+  {__LINE__, "9999999999999999999999999999999999999", "+1,000,000E+31",
+   "+1,000,000,000,000,000E+22", "+1,000,000,000,000,000,000,000,000,000,000,000E+4" },
+
+  /* Exact ties in the integer part round to even. */
+  {__LINE__, "12345645", "+1,234,564E+1", "+0,000,000,012,345,645E+0",
+   "+0,000,000,000,000,000,000,000,000,012,345,645E+0" },
+  {__LINE__, "1234567890123456500", "+1,234,568E+12", "+1,234,567,890,123,456E+3",
+   "+0,000,000,000,000,001,234,567,890,123,456,500E+0" },
+
+  /* Guard digit 5 followed by nonzero digits rounds up. */
+  {__LINE__, "123456455", "+1,234,565E+2", "+0,000,000,123,456,455E+0",
+   "+0,000,000,000,000,000,000,000,000,123,456,455E+0" },
+  {__LINE__, "1234564550", "+1,234,565E+3", "+0,000,001,234,564,550E+0",
+   "+0,000,000,000,000,000,000,000,001,234,564,550E+0" },
+  {__LINE__, "12345645000001", "+1,234,565E+7", "+0,012,345,645,000,001E+0",
+   "+0,000,000,000,000,000,000,012,345,645,000,001E+0" },
+  {__LINE__, "123456789012345655", "+1,234,568E+11", "+1,234,567,890,123,457E+2",
+   "+0,000,000,000,000,000,123,456,789,012,345,655E+0" },
+  {__LINE__, "1234567890123456789012345678901234550", "+1,234,568E+30",
+   "+1,234,567,890,123,457E+21", "+1,234,567,890,123,456,789,012,345,678,901,235E+3" },
+
+  /* Fractional digits supply the sticky bit for a long integer part. */
+  {__LINE__, "12345665.9", "+1,234,567E+1", "+0,000,000,123,456,659E-1",
+   "+0,000,000,000,000,000,000,000,000,123,456,659E-1" },
+  {__LINE__, "12345675.9", "+1,234,568E+1", "+0,000,000,123,456,759E-1",
+   "+0,000,000,000,000,000,000,000,000,123,456,759E-1" },
+  {__LINE__, "12345678901234565.5", "+1,234,568E+10", "+1,234,567,890,123,457E+1",
+   "+0,000,000,000,000,000,123,456,789,012,345,655E-1" },
+  {__LINE__, "99999999999999999999.99999999999999999999", "+1,000,000E+14",
+   "+1,000,000,000,000,000E+5", "+1,000,000,000,000,000,000,000,000,000,000,000E-13" },
+
+  /* Long integer part with an exponent. */
+  {__LINE__, "12345678901234567890e10", "+1,234,568E+23", "+1,234,567,890,123,457E+14",
+   "+0,000,000,000,000,012,345,678,901,234,567,890E+10" },
+  {__LINE__, "12345678901234567890e-10", "+1,234,568E+3", "+1,234,567,890,123,457E-6",
+   "+0,000,000,000,000,012,345,678,901,234,567,890E-10" },
+  {__LINE__, "1234567890123456789012345678901234e-100", "+1,234,568E-73",
+   "+1,234,567,890,123,457E-82", "+1,234,567,890,123,456,789,012,345,678,901,234E-100" },
+
+  /* Leading zeroes do not count as integer digits. */
+  {__LINE__, "00000000000012345678901234567890", "+1,234,568E+13",
+   "+1,234,567,890,123,457E+4", "+0,000,000,000,000,012,345,678,901,234,567,890E+0" },
+  {__LINE__, "-1234567890123456789012345678901234567890", "-1,234,568E+33",
+   "-1,234,567,890,123,457E+24", "-1,234,567,890,123,456,789,012,345,678,901,235E+6" },
+
+  /* Exactly representable long integer: _Decimal32 has to clamp the quantum
+     exponent to 90 and pad the coefficient, the wider formats do not. */
+  {__LINE__, "100000000000000000000", "+1,000,000E+14", "+1,000,000,000,000,000E+5",
+   "+0,000,000,000,000,100,000,000,000,000,000,000E+0" },
+
+  /* 121/120 integer digits brought back into range by "e-40". */
+  {__LINE__, "1"  "0000000000" "0000000000" "0000000000" "0000000000"
+	     "0000000000" "0000000000" "0000000000" "0000000000"
+	     "0000000000" "0000000000" "0000000000" "0000000000" "e-40",
+   "+1,000,000E+74", "+1,000,000,000,000,000E+65",
+   "+1,000,000,000,000,000,000,000,000,000,000,000E+47" },
+  {__LINE__, "9999999999" "9999999999" "9999999999" "9999999999"
+	     "9999999999" "9999999999" "9999999999" "9999999999"
+	     "9999999999" "9999999999" "9999999999" "9999999999" "e-40",
+   "+1,000,000E+74", "+1,000,000,000,000,000E+65",
+   "+1,000,000,000,000,000,000,000,000,000,000,000E+47" },
   {0,0,0,0,0 }
 };
 
@@ -382,6 +564,30 @@ errno_test overflow_errno_tests[] = {
 
   /* A very long exponent field must be handled without integer overflow. */
   {__LINE__, "1E999999999999999999999", ERANGE, TEST_ALL, "Exponent field far beyond int range"},
+
+  /* --- Overflow driven by a long integer component ---
+     A written integer of __DECn_MAX_EXP__ digits is one digit too long for
+     the format, but the digit count alone does not decide it: 10^Emax is
+     representable while (10^Emax - 1) rounds up to 10^Emax ... which is not.
+     Both must be classified by the rounded value, and the overflow must set
+     ERANGE like any other. */
+  {__LINE__, NINES_D32_FIT, 0, TEST_D32, "D32 96-digit integer is not overflow"},
+  {__LINE__, NINES_D32_OVER, ERANGE, TEST_D32, "D32 97-digit integer rounds up to overflow"},
+  {__LINE__, NINES_D64_FIT, 0, TEST_D64, "D64 384-digit integer is not overflow"},
+  {__LINE__, NINES_D64_OVER, ERANGE, TEST_D64, "D64 385-digit integer rounds up to overflow"},
+  {__LINE__, NINES_D128_FIT, 0, TEST_D128, "D128 6144-digit integer is not overflow"},
+  {__LINE__, NINES_D128_OVER, ERANGE, TEST_D128, "D128 6145-digit integer rounds up to overflow"},
+
+  /* The same integers scaled down by one decade are comfortably in range. */
+  {__LINE__, NINES_D32_OVER "e-1", 0, TEST_D32, "D32 97-digit integer scaled by e-1"},
+  {__LINE__, NINES_D64_OVER "e-1", 0, TEST_D64, "D64 385-digit integer scaled by e-1"},
+  {__LINE__, NINES_D128_OVER "e-1", 0, TEST_D128, "D128 6145-digit integer scaled by e-1"},
+
+  /* 1E96 and 1E97 spelled out as 97- and 98-digit integers. */
+  {__LINE__, "1" Z10 Z10 Z10 Z10 Z10 Z10 Z10 Z10 Z10 "000000",
+   0, TEST_D32, "D32 1E96 written as a 97-digit integer is not overflow"},
+  {__LINE__, "1" Z10 Z10 Z10 Z10 Z10 Z10 Z10 Z10 Z10 "0000000",
+   ERANGE, TEST_D32, "D32 1E97 written as a 98-digit integer overflows"},
   {0, NULL, 0, 0, NULL},
 
   /* Underflow to zero should set errno to ERANGE */
@@ -459,6 +665,22 @@ endptr_test endptr_tests[] = {
 
   /* Long fully-valid tokens are consumed in their entirety. */
   {__LINE__, "9999999999999999999999999999999999999999", 40, TEST_ALL, "Long integer fully consumed"},
+
+  /* Long integer components are consumed whatever the value does: whether the
+     digits round in range, overflow, or get scaled by a fraction/exponent,
+     endptr must still land on the first non-numeric character. */
+  {__LINE__, NINES_D32_FIT, 96, TEST_ALL, "96-digit integer fully consumed"},
+  {__LINE__, NINES_D32_OVER, 97, TEST_ALL, "97-digit overflowing integer fully consumed"},
+  {__LINE__, NINES_D64_OVER, 385, TEST_ALL, "385-digit integer fully consumed"},
+  {__LINE__, NINES_D128_OVER, 6145, TEST_ALL, "6145-digit integer fully consumed"},
+  {__LINE__, NINES_D128_OVER "e-1", 6148, TEST_ALL, "6145-digit integer with exponent fully consumed"},
+  {__LINE__, NINES_D32_OVER "xyz", 97, TEST_ALL, "97-digit integer then letters"},
+  {__LINE__, "12345678901234567890123456789012345.6789", 40, TEST_ALL,
+   "Long integer with fraction fully consumed"},
+  {__LINE__, "12345678901234567890123456789012345.6789e+12", 44, TEST_ALL,
+   "Long integer with fraction and exponent fully consumed"},
+  {__LINE__, "00000000000012345678901234567890", 32, TEST_ALL,
+   "Leading zeroes and long integer fully consumed"},
 
   /* Leading whitespace is skipped; all five characters are consumed. */
   {__LINE__, "\f\v123", 5, TEST_ALL, "Form-feed and vertical-tab whitespace skipped"},
