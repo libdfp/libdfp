@@ -829,107 +829,60 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       freelocale(C_locale);
       return FLOAT_ZERO;
     }
-  /* Read in the integer portion of the input string */
+
   dig_read = 0;
-  if (int_no > 0)
+  FLOAT rnd = 0.;
+  int rnd_dig = 0;
+
+  /* The number has been validated.  We know the number of integer digits,
+   * and the number of fractional digits.  */
+  while (dig_read < dig_no)
     {
-      /* Read the integer part as a d32.  */
-      int digcnt = int_no;
-
-      while (int_no > MAX_10_EXP + 1)
-	{
-	  digcnt--;
-	  exponent++;
-	}
-      do
-	{
-	  /* There might be thousands separators or radix characters in
-	    the string.  But these all can be ignored because we know the
-	    format of the number is correct and we have an exact number
-	    of characters to read.  */
-#ifdef USE_WIDE_CHAR
-	  if (*startp < L_('0') || *startp > L_('9'))
-	    ++startp;
-#else
-	  if (*startp < L_('0') || *startp > L_('9'))
-	    {
-	      int inner = 0;
-	      if (thousands != NULL && *startp == *thousands
-		  && ({
-			for (inner = 1; thousands[inner] != '\0'; ++inner)
-			  if (thousands[inner] != startp[inner])
-			    break;
-			thousands[inner] == '\0';
-		      })
-		  )
-		startp += inner;
-	      else
-		startp += decimal_len;
-	    }
-#endif
-	  d32 = d32 * 10 + (*startp - L_('0'));
-	  dig_read++;
-	  ++startp;
-	}
-      while (--digcnt > 0);
-
-    }
-  /* If we haven't filled our datatype, read in the fractional digits */
-  if (int_no <= MANT_DIG && dig_no > int_no)
-    {
-      /* Read the decimal part as a FLOAT.  */
-      int digcnt = dig_no - int_no;
-
-      /* The rounding value. */
-      FLOAT rnd = 0.;
-      bool is_5 = false;
-      
-      int_no = 0;
-      do
-        {
-#ifdef USE_WIDE_CHAR
+      /* Skip non-digit characters.  */
       if (*startp < L_('0') || *startp > L_('9'))
-	++startp;
-#else
-      if (*startp < '0' || *startp > '9')
-	startp += decimal_len;
-#endif
-
-	if (dig_read < MANT_DIG)
-	  {
-	    d32 = d32*10 + (*startp - L_('0'));
-	    ++startp;
-	    --exponent;
-	    int_no++;
-	    dig_read++;
-	  }
-	else
-	  {
-            /* Figure out the rounding value. */
-            if (dig_read == MANT_DIG)
-	      {
-		rnd = (*startp - L_('0')) * (FLOAT)(0.1DF);
-
-		/* If it is not 5, we're done. */
-		is_5 = *startp == L_('5');
-		if (!is_5)
-		  break;
-	      }
-	    else if (is_5 && *startp != L_('0'))
-	      {
-		rnd = 0.6;
-		break;
-	      }
-	    dig_read++;
-	    ++startp;
-	  }
+        {
+	  ++startp;
+	  continue;
 	}
-      while (--digcnt > 0);
 
-      /* Apply rounding, only if non-zero. */
-      if (rnd != FLOAT_ZERO)
-        d32 += rnd;
+      if (dig_read < MANT_DIG)
+	{
+          d32 = d32 * 10 + (*startp - L_('0'));
+          dig_read++;
+	}
+      else if (dig_read == MANT_DIG)
+        {
+          /* The rounding digit.  */
+	  rnd_dig++;
+          dig_read++;
+	  rnd = (*startp - L_('0')) * (FLOAT)(0.1DF);
+	  /* If it is not 5 or 0, no need to find a tie breaker.  */
+	  if (!(*startp == L_('5')) || (*startp == L_('0')))
+	    break;
+	}
+      else
+	{
+	  /* The guard digit: round a non-zero remainder to 0.01.  */
+	  rnd_dig++;
+          dig_read++;
+	  if (*startp != L_('0'))
+            {
+               rnd += (FLOAT) 0.01DF;
+	       break;
+	    }
+	}
+      startp++;
     }
+
+  /* Apply rounding, only if non-zero. */
+  if (rnd != FLOAT_ZERO)
+    d32 += rnd;
+
+  /* Adjust exponent if rounding occurred */
+  if (int_no > MANT_DIG)
+    exponent += int_no - MANT_DIG;
+  else if (dig_read > int_no)
+    exponent -= dig_read - rnd_dig - int_no;
 
   /* Flush to zero if the value is smaller than the rounding digit.  */
   if ( (exponent + dig_read) <  (__DEC_MIN_EXP__ - __DEC_MANT_DIG__))
