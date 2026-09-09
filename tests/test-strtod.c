@@ -788,7 +788,7 @@ static void copy_to_wstr(wchar_t *dest, const char *src, size_t dest_len) {
 			signbit(result) == signbit(dptr->d ## type), \
 			result == 0.DL)
 
-#define WCHAR_BUF_LEN (256)
+#define WCHAR_BUF_LEN (7000)
 
 #define RUN_ONE_TEST(pfx,wid,inptr,eptr,checker, pf_mod) \
       endptr = NULL; \
@@ -803,24 +803,43 @@ static void copy_to_wstr(wchar_t *dest, const char *src, size_t dest_len) {
 static void run_errno_tests(void) {
   errno_test *test;
   test_type_flags types[] = {TEST_D32, TEST_D64, TEST_D128};
+  wchar_t winput[WCHAR_BUF_LEN];
 
   for (test = overflow_errno_tests; test->input != NULL; test++) {
+    copy_to_wstr (winput, test->input, WCHAR_BUF_LEN);
     for (int t = 0; t < _TEST_TYPE_CNT; t++) {
       if (!(test->types & types[t]))
         continue;
 
       testnum++;
       errno = 0;
+      int werrno = 0;
       switch (types[t]) {
-        case TEST_D32: strtod32(test->input, NULL); break;
-        case TEST_D64: strtod64(test->input, NULL); break;
-        case TEST_D128: strtod128(test->input, NULL); break;
+        case TEST_D32:
+          wcstod32(winput, NULL);
+	  werrno = errno;
+	  errno = 0;
+          strtod32(test->input, NULL);
+          break;
+        case TEST_D64:
+          strtod64(test->input, NULL);
+	  werrno = errno;
+	  errno = 0;
+          wcstod64(winput, NULL);
+          break;
+        case TEST_D128:
+          strtod128(test->input, NULL);
+	  werrno = errno;
+	  errno = 0;
+          wcstod128(winput, NULL);
+          break;
       }
       /* Check errno */
-      if (test->expected_errno != errno) {
+      if (test->expected_errno != errno || werrno != errno) {
         fprintf(stdout, "%-3d Error: %s (D%d) - unexpected errno result\n", testnum, test->description, types[t]*32);
         fprintf(stdout, "    Input: \"%s\"\n", test->input);
         fprintf(stdout, "    Expected errno %d, got %d\n", test->expected_errno, errno);
+        fprintf(stdout, "    wcs got %d\n", werrno);
         fprintf(stdout, "    in: %s:%d\n\n", __FILE__, test->line);
         ++fail;
       }
@@ -831,39 +850,34 @@ static void run_errno_tests(void) {
 static void run_endptr_tests(void) {
   endptr_test *test;
   test_type_flags types[] = {TEST_D32, TEST_D64, TEST_D128};
+  wchar_t winput[WCHAR_BUF_LEN];
 
   for (test = endptr_tests; test->input != NULL; test++) {
+    copy_to_wstr (winput, test->input, WCHAR_BUF_LEN);
+
     for (int t = 0; t < _TEST_TYPE_CNT; t++) {
       if (!(test->types & types[t]))
         continue;
 
       ++testnum;
       char *endptr = NULL;
-        switch (types[t]) {
-          case TEST_D32: strtod32(test->input, &endptr); break;
-          case TEST_D64: strtod64(test->input, &endptr); break;
-          case TEST_D128: strtod128(test->input, &endptr); break;
-        }
-
-        if (endptr == NULL) {
-          fprintf(stdout, "%-3d Error: %s (D%d)\n", testnum, test->description, types[t]*32);
-          fprintf(stdout, "    Input: \"%s\"\n", test->input);
-          fprintf(stdout, "    endptr is NULL\n");
-          fprintf(stdout, "    in: %s:%d\n\n", __FILE__, test->line);
-          ++fail;
-          continue;
-        }
-
-        size_t chars_parsed = endptr - test->input;
-        if (chars_parsed != test->expected_chars_parsed) {
-          fprintf(stdout, "%-3d Error: %s (D%d)\n", testnum, test->description, types[t]*32);
-          fprintf(stdout, "    Input: \"%s\"\n", test->input);
-          fprintf(stdout, "    Expected %zu chars parsed, got %zu\n",
-                  test->expected_chars_parsed, chars_parsed);
-          fprintf(stdout, "    endptr points to: \"%s\"\n", endptr);
-          fprintf(stdout, "    in: %s:%d\n\n", __FILE__, test->line);
-          ++fail;
-        }
+      wchar_t *wendptr = NULL;
+      switch (types[t]) {
+        case TEST_D32:
+          strtod32(test->input, &endptr);
+          wcstod32(winput, &wendptr);
+          break;
+        case TEST_D64:
+          strtod64(test->input, &endptr);
+          wcstod64(winput, &wendptr);
+          break;
+        case TEST_D128:
+          strtod128(test->input, &endptr);
+          wcstod128(winput, &wendptr);
+          break;
+      }
+      check_endptr(test->input, endptr, strlen(test->input) - test->expected_chars_parsed, test->line);
+      check_wendptr(winput, wendptr, wcslen(winput) - test->expected_chars_parsed, test->line);
     }
   }
 }
