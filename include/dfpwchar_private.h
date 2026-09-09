@@ -26,17 +26,9 @@
 #ifndef _DFPWCHAR_PRIVATE_H
 #define _DFPWCHAR_PRIVATE_H
 
-extern _Decimal32 __wcstod32_internal (const wchar_t * __restrict nptr, wchar_t ** __restrict endptr, int group);
-extern _Decimal64 __wcstod64_internal (const wchar_t * __restrict nptr, wchar_t ** __restrict endptr, int group);
-extern _Decimal128 __wcstod128_internal (const wchar_t * __restrict nptr, wchar_t ** __restrict endptr, int group);
-
-hidden_proto (__wcstod32_internal)
-hidden_proto (__wcstod64_internal)
-hidden_proto (__wcstod128_internal)
-
-extern _Decimal32 __wcstod32_l_internal (const wchar_t * __restrict nptr, wchar_t ** __restrict endptr, int group, locale_t loc);
-extern _Decimal64 __wcstod64_l_internal (const wchar_t * __restrict nptr, wchar_t ** __restrict endptr, int group, locale_t loc);
-extern _Decimal128 __wcstod128_l_internal (const wchar_t * __restrict nptr, wchar_t ** __restrict endptr, int group, locale_t loc);
+extern _Decimal32 __wcstod32_l_internal (const wchar_t * __restrict nptr, wchar_t ** __restrict endptr, locale_t loc);
+extern _Decimal64 __wcstod64_l_internal (const wchar_t * __restrict nptr, wchar_t ** __restrict endptr, locale_t loc);
+extern _Decimal128 __wcstod128_l_internal (const wchar_t * __restrict nptr, wchar_t ** __restrict endptr, locale_t loc);
 
 hidden_proto (__wcstod32_l_internal)
 hidden_proto (__wcstod64_l_internal)

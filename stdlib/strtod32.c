@@ -156,171 +156,10 @@ extern unsigned long long int ____wcstoull_l_internal (const wchar_t *, wchar_t 
 			   _a > _b ? _a : _b; })
 #endif
 
-/* Find the maximum prefix of the string between BEGIN and END which
-   satisfies the grouping rules.  It is assumed that at least one digit
-   follows BEGIN directly.  */
-
-static const STRING_TYPE *
-#ifdef USE_WIDE_CHAR
-__correctly_grouped_prefixwc (const STRING_TYPE *begin, const STRING_TYPE *end,
-			      wchar_t thousands,
-#else
-__correctly_grouped_prefixmb (const STRING_TYPE *begin, const STRING_TYPE *end,
-			      const char *thousands,
-#endif
-			      const char *grouping)
-{
-#ifndef USE_WIDE_CHAR
-  size_t thousands_len;
-  int cnt;
-#endif
-
-  if (grouping == NULL)
-    return end;
-
-#ifndef USE_WIDE_CHAR
-  thousands_len = strlen (thousands);
-#endif
-
-  while (end > begin)
-    {
-      const STRING_TYPE *cp = end - 1;
-      const char *gp = grouping;
-
-      /* Check first group.  */
-      while (cp >= begin)
-	{
-#ifdef USE_WIDE_CHAR
-	  if (*cp == thousands)
-	    break;
-#else
-	  if (cp[thousands_len - 1] == *thousands)
-	    {
-	      for (cnt = 1; thousands[cnt] != '\0'; ++cnt)
-		if (thousands[cnt] != cp[thousands_len - 1 - cnt])
-		  break;
-	      if (thousands[cnt] == '\0')
-		break;
-	    }
-#endif
-	  --cp;
-	}
-
-      /* We allow the representation to contain no grouping at all even if
-	 the locale specifies we can have grouping.  */
-      if (cp < begin)
-	return end;
-
-      if (end - cp == (int) *gp + 1)
-	{
-	  /* This group matches the specification.  */
-
-	  const STRING_TYPE *new_end;
-
-	  if (cp < begin)
-	    /* There is just one complete group.  We are done.  */
-	    return end;
-
-	  /* CP points to a thousands separator character.  The preceding
-	     remainder of the string from BEGIN to NEW_END is the part we
-	     will consider if there is a grouping error in this trailing
-	     portion from CP to END.  */
-	  new_end = cp - 1;
-
-	  /* Loop while the grouping is correct.  */
-	  while (1)
-	    {
-	      /* Get the next grouping rule.  */
-	      ++gp;
-	      if (*gp == 0)
-		/* If end is reached use last rule.  */
-	        --gp;
-
-	      /* Skip the thousands separator.  */
-	      --cp;
-
-	      if (*gp == CHAR_MAX
-#if CHAR_MIN < 0
-		  || *gp < 0
-#endif
-		  )
-	        {
-	          /* No more thousands separators are allowed to follow.  */
-	          while (cp >= begin)
-		    {
-#ifdef USE_WIDE_CHAR
-		      if (*cp == thousands)
-			break;
-#else
-		      for (cnt = 0; thousands[cnt] != '\0'; ++cnt)
-			if (thousands[cnt] != cp[thousands_len - cnt - 1])
-			  break;
-		      if (thousands[cnt] == '\0')
-			break;
-#endif
-		      --cp;
-		    }
-
-	          if (cp < begin)
-		    /* OK, only digits followed.  */
-		    return end;
-	        }
-	      else
-	        {
-		  /* Check the next group.  */
-	          const STRING_TYPE *group_end = cp;
-
-		  while (cp >= begin)
-		    {
-#ifdef USE_WIDE_CHAR
-		      if (*cp == thousands)
-			break;
-#else
-		      for (cnt = 0; thousands[cnt] != '\0'; ++cnt)
-			if (thousands[cnt] != cp[thousands_len - cnt - 1])
-			  break;
-		      if (thousands[cnt] == '\0')
-			break;
-#endif
-		      --cp;
-		    }
-
-		  if (cp < begin && group_end - cp <= (int) *gp)
-		    /* Final group is correct.  */
-		    return end;
-
-		  if (cp < begin || group_end - cp != (int) *gp)
-		    /* Incorrect group.  Punt.  */
-		    break;
-		}
-	    }
-
-	  /* The trailing portion of the string starting at NEW_END
-	     contains a grouping error.  So we will look for a correctly
-	     grouped number in the preceding portion instead.  */
-	  end = new_end;
-	}
-      else
-	{
-	  /* Even the first group was wrong; determine maximum shift.  */
-	  if (end - cp > (int) *gp + 1)
-	    end = cp + (int) *gp + 1;
-	  else if (cp < begin)
-	    /* This number does not fill the first group, but is correct.  */
-	    return end;
-	  else
-	    /* CP points to a thousands separator character.  */
-	    end = cp;
-	}
-    }
-
-  return MAX (begin, end);
-}
-
 /* This is of the form __strtod32_l_internal() */
 FLOAT
 FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
-		int group, locale_t loc)
+		locale_t loc)
 {
   FLOAT d32 = FLOAT_ZERO;
 
@@ -354,48 +193,12 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   const char *decimal;
   size_t decimal_len;
 #endif
-  /* The thousands character of the current locale.  */
-#ifdef USE_WIDE_CHAR
-  const char *thousandsmb = NULL;
-  wchar_t thousands = L'\0';
-#else
-  const char *thousands = NULL;
+#ifndef USE_WIDE_CHAR
   /* Used in several places.  */
   int cnt;
 #endif
-  /* The numeric grouping specification of the current locale,
-     in the format described in <locale.h>.  */
-  const char *grouping;
 
   C_locale = newlocale(LC_ALL_MASK, setlocale (LC_ALL, NULL),NULL);
-
-  if (group)
-    {
-      //grouping = _NL_CURRENT (LC_NUMERIC, GROUPING);
-      grouping = nl_langinfo (__GROUPING);
-      if (*grouping <= 0 || *grouping == CHAR_MAX)
-	grouping = NULL;
-      else
-	{
-	  /* Figure out the thousands separator character.  */
-#ifdef USE_WIDE_CHAR
-	  thousandsmb = nl_langinfo(_NL_NUMERIC_THOUSANDS_SEP_WC);
-	  mbrtowc(&thousands,thousandsmb, CHAR_MAX, NULL);
-
-	  if (thousands == L'\0')
-	    grouping = NULL;
-#else
-	  thousands = nl_langinfo (__THOUSANDS_SEP);
-	  if (*thousands == '\0')
-	    {
-	      thousands = NULL;
-	      grouping = NULL;
-	    }
-#endif
-	}
-    }
-  else
-    grouping = NULL;
 
   /* Find the locale's decimal point character.  */
 #ifdef USE_WIDE_CHAR
@@ -519,34 +322,12 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       RETURN (FLOAT_ZERO, nptr);
     }
 
-  /* Record the start of the digits, in case we will check their grouping.  */
+  /* Record the start of the digits.  */
   start_of_digits = startp = cp;
 
   /* Ignore leading zeroes.  This helps us to avoid useless computations.  */
-#ifdef USE_WIDE_CHAR
-  while (c == L'0' || ((wint_t) thousands != L'\0' && c == (wint_t) thousands))
+  while (c == L_('0'))
     c = *++cp;
-#else
-  if (thousands == NULL)
-    while (c == '0')
-      c = *++cp;
-  else
-    {
-      /* We also have the multibyte thousands string.  */
-      while (1)
-	{
-	  if (c != '0')
-	    {
-	      for (cnt = 0; thousands[cnt] != '\0'; ++cnt)
-		if (c != thousands[cnt])
-		  break;
-	      if (thousands[cnt] != '\0')
-		break;
-	    }
-	  c = *++cp;
-	}
-    }
-#endif
 
   /* If no other digit but a '0' is found the result is 0.0.
      Return current read pointer.  */
@@ -561,15 +342,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 #endif
       && ((CHAR_TYPE) TOLOWER (c) != L_('e')))
     {
-#ifdef USE_WIDE_CHAR
-      tp = __correctly_grouped_prefixwc (start_of_digits, cp, thousands,
-					 grouping);
-#else
-      tp = __correctly_grouped_prefixmb (start_of_digits, cp, thousands,
-					 grouping);
-#endif
-      /* If TP is at the start of the digits, there was no correctly
-	 grouped prefix of the string; so no number found.  */
+      tp = cp;
       freelocale(C_locale);
       RETURN (negative ? -FLOAT_ZERO : FLOAT_ZERO,
               tp == start_of_digits ? nptr : tp);
@@ -584,69 +357,9 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       if (c >= L_('0') && c <= L_('9'))
 	++dig_no;
       else
-	{
-#ifdef USE_WIDE_CHAR
-	  if ((wint_t) thousands == L'\0' || c != (wint_t) thousands)
-	    /* Not a digit or separator: end of the integer part.  */
-	    break;
-#else
-	  if (thousands == NULL)
-	    break;
-	  else
-	    {
-	      for (cnt = 0; thousands[cnt] != '\0'; ++cnt)
-		if (thousands[cnt] != cp[cnt])
-		  break;
-	      if (thousands[cnt] != '\0')
-		break;
-	    }
-#endif
-	}
+	/* Not a digit or separator: end of the integer part.  */
+	break;
       c = *++cp;
-    }
-
-  if (grouping && dig_no > 0)
-    {
-      /* Check the grouping of the digits.  */
-#ifdef USE_WIDE_CHAR
-      tp = __correctly_grouped_prefixwc (start_of_digits, cp, thousands,
-					 grouping);
-#else
-      tp = __correctly_grouped_prefixmb (start_of_digits, cp, thousands,
-					 grouping);
-#endif
-      if (cp != tp)
-	{
-	  /* Less than the entire string was correctly grouped.  */
-
-	  if (tp == start_of_digits)
-	    {
-	      /* No valid group of numbers at all: no valid number.  */
-	      freelocale(C_locale);
-	      RETURN (FLOAT_ZERO, nptr);
-	    }
-
-	  if (tp < startp)
-	    {
-	      /* The number is validly grouped, but consists
-		 only of zeroes.  The whole value is zero.  */
-	      freelocale(C_locale);
-	      RETURN (negative ? -FLOAT_ZERO : FLOAT_ZERO, tp);
-	    }
-
-	  /* Recompute DIG_NO so we won't read more digits than
-	     are properly grouped.  */
-	  cp = tp;
-	  dig_no = 0;
-	  for (tp = startp; tp < cp; ++tp)
-	    if (*tp >= L_('0') && *tp <= L_('9'))
-	      ++dig_no;
-
-	  int_no = dig_no;
-	  lead_zero = 0;
-
-	  goto number_parsed;
-	}
     }
 
   /* We have the number digits in the integer part.  Whether these are all or
@@ -751,8 +464,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
       else
 	cp = expp;
     }
-
- number_parsed:
 
   /* The whole string is parsed.  Store the address of the next character.  */
   if (endptr)
@@ -912,23 +623,6 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 }
 hidden_def(FUNCTION_L_INTERNAL)
 
-/* This is of the form __strtod32_internal() */
-FLOAT
-FUNCTION_INTERNAL (const STRING_TYPE *nptr, STRING_TYPE **endptr, int group)
-{
-  char * curlocale;
-  __locale_t cur_locale_t;
-  FLOAT ret_val;
-
-  curlocale = setlocale(LC_ALL,NULL);
-  cur_locale_t = newlocale(LC_ALL_MASK, curlocale, NULL);
-
-  ret_val = FUNCTION_L_INTERNAL (nptr,endptr,group,cur_locale_t);
-  freelocale(cur_locale_t);
-  return ret_val;
-}
-hidden_def(FUNCTION_INTERNAL)
-
 /* This is of the form strtod32() */
 FLOAT
 #ifdef weak_function
@@ -943,7 +637,7 @@ FUNCTION_NAME (const STRING_TYPE *nptr, STRING_TYPE **endptr)
   curlocale = setlocale(LC_ALL,NULL);
   cur_locale_t = newlocale(LC_ALL_MASK, curlocale, NULL);
 
-  ret_val = FUNCTION_L_INTERNAL(nptr, endptr, 0, cur_locale_t);
+  ret_val = FUNCTION_L_INTERNAL(nptr, endptr, cur_locale_t);
   freelocale(cur_locale_t);
   return ret_val;
 }

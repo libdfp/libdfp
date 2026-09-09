@@ -28,17 +28,9 @@
 
 #include <features.h>
 
-extern _Decimal32 __strtod32_internal (const char * __restrict nptr, char ** __restrict endptr, int group);
-extern _Decimal64 __strtod64_internal (const char * __restrict nptr, char ** __restrict endptr, int group);
-extern _Decimal128 __strtod128_internal (const char * __restrict nptr, char ** __restrict endptr, int group);
-
-hidden_proto (__strtod32_internal)
-hidden_proto (__strtod64_internal)
-hidden_proto (__strtod128_internal)
-
-extern _Decimal32 __strtod32_l_internal (const char * __restrict nptr, char ** __restrict endptr, int group, locale_t loc);
-extern _Decimal64 __strtod64_l_internal (const char * __restrict nptr, char ** __restrict endptr, int group, locale_t loc);
-extern _Decimal128 __strtod128_l_internal (const char * __restrict nptr, char ** __restrict endptr, int group, locale_t loc);
+extern _Decimal32 __strtod32_l_internal (const char * __restrict nptr, char ** __restrict endptr, locale_t loc);
+extern _Decimal64 __strtod64_l_internal (const char * __restrict nptr, char ** __restrict endptr, locale_t loc);
+extern _Decimal128 __strtod128_l_internal (const char * __restrict nptr, char ** __restrict endptr, locale_t loc);
 
 hidden_proto (__strtod32_l_internal)
 hidden_proto (__strtod64_l_internal)
