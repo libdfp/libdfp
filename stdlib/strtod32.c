@@ -198,7 +198,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
   int cnt;
 #endif
 
-  C_locale = newlocale(LC_ALL_MASK, setlocale (LC_ALL, NULL),NULL);
+  C_locale = newlocale(LC_ALL_MASK, "C", NULL);
 
   /* Find the locale's decimal point character.  */
 #ifdef USE_WIDE_CHAR
@@ -282,7 +282,7 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 	      do
 		++cp;
 	      while ((*cp >= L_('0') && *cp <= L_('9'))
-		     || (TOLOWER (*cp) >= L_('a') && TOLOWER (*cp) <= L_('z'))
+		     || (TOLOWER_C (*cp) >= L_('a') && TOLOWER_C (*cp) <= L_('z'))
 		     || *cp == L_('_'));
 
 	      if (*cp != L_(')'))
