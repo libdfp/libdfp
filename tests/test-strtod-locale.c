@@ -65,6 +65,7 @@
 #define LOC_C	"C"
 #define LOC_DE	"de_DE.UTF-8"
 #define LOC_PS	"ps_AF.UTF-8"
+#define LOC_TR	"tr_TR.UTF-8"
 
 typedef enum {
   TEST_D32 = 1 << 0,
@@ -83,7 +84,8 @@ typedef struct {
   _Decimal128 expect;	/* Expected value.  Unless an entry is restricted to a
 			   single width it is exactly representable as a
 			   _Decimal32, so all three widths share it.  */
-  int qexp;		/* Expected quantum exponent.  */
+  int qexp;		/* Expected quantum exponent.  Ignored if EXPECT is
+			   not finite.  */
   test_type_flags types;
 } strtod_locale_test;
 
@@ -156,6 +158,43 @@ strtod_locale_test tests[] =
   {__LINE__, LOC_PS, INPUT_MB ("0" RADIX_HI), 1, 0, 0.DL, 0, TEST_ALL},
   {__LINE__, LOC_PS, INPUT_MB (RADIX_HI "25"), 0, 0, 0.DL, 0, TEST_ALL},
 
+  /* Infinities and NaNs, for reference in the C locale.  */
+  {__LINE__, LOC_C, INPUT ("inf"), 3, 3, DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_C, INPUT ("-INFINITY"), 9, 9, -DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_C, INPUT ("NaN"), 3, 3, DEC_NAN, 0, TEST_ALL},
+  {__LINE__, LOC_C, INPUT ("nan(1_a)"), 8, 8, DEC_NAN, 0, TEST_ALL},
+
+  /* Neither the value nor the length of the radix character may affect
+     them.  */
+  {__LINE__, LOC_DE, INPUT ("Inf"), 3, 3, DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_DE, INPUT ("-infinity"), 9, 9, -DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_DE, INPUT ("nan"), 3, 3, DEC_NAN, 0, TEST_ALL},
+  {__LINE__, LOC_PS, INPUT ("INF"), 3, 3, DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_PS, INPUT ("-Infinity"), 9, 9, -DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_PS, INPUT ("NAN"), 3, 3, DEC_NAN, 0, TEST_ALL},
+
+  /* The radix character is not a digit, so it neither starts a number nor
+     extends one, and it is not part of an n-char-sequence.  */
+  {__LINE__, LOC_PS, INPUT ("inf" RADIX), 3, 3, DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_PS, INPUT (RADIX "inf"), 0, 0, 0.DL, 0, TEST_ALL},
+  {__LINE__, LOC_PS, INPUT ("nan(" RADIX ")"), 3, 3, DEC_NAN, 0, TEST_ALL},
+  {__LINE__, LOC_DE, INPUT ("nan(1,5)"), 3, 3, DEC_NAN, 0, TEST_ALL},
+
+  /* "inf" and "nan" are matched ignoring case, which must follow the C
+     locale's case mapping rather than the current locale's: tr_TR maps "I" to
+     U+0131 DOTLESS I, not to "i".  */
+  {__LINE__, LOC_TR, INPUT ("inf"), 3, 3, DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_TR, INPUT ("INF"), 3, 3, DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_TR, INPUT ("Inf"), 3, 3, DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_TR, INPUT ("+INFINITY"), 9, 9, DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_TR, INPUT ("iNfInItY"), 8, 8, DEC_INFINITY, 0, TEST_ALL},
+  {__LINE__, LOC_TR, INPUT ("nan"), 3, 3, DEC_NAN, 0, TEST_ALL},
+  {__LINE__, LOC_TR, INPUT ("NAN"), 3, 3, DEC_NAN, 0, TEST_ALL},
+  {__LINE__, LOC_TR, INPUT ("nan(I)"), 6, 6, DEC_NAN, 0, TEST_ALL},
+
+  /* U+0131 uppercases to "I" in tr_TR, but it is still not "i".  */
+  {__LINE__, LOC_TR, INPUT ("ınf"), 0, 0, 0.DL, 0, TEST_ALL},
+
   {0, NULL, NULL, 0, 0, 0, 0, 0, 0}
 };
 
@@ -193,7 +232,8 @@ check_int (int line, const char *what, int got, int expected)
 
 /* Convert IN with PFX ## tod ## WID and check the value, quantum exponent,
    sign and endptr.  WANT is in bytes for strtodN, wide characters for
-   wcstodN.  */
+   wcstodN.  A non-finite result has no quantum exponent, and the sign of a
+   NaN is not locale dependent, so both are only checked where they apply.  */
 #define RUN_ONE(pfx, ctype, wid, in, want, fmt)				      \
   do {									      \
     ctype *ep = NULL;							      \
@@ -201,10 +241,12 @@ check_int (int line, const char *what, int got, int expected)
     _Decimal ## wid res = pfx ## tod ## wid ((in), &ep);		      \
 									      \
     _VC_P (__FILE__, t->line, (_Decimal ## wid) t->expect, res, fmt);	      \
-    check_int (t->line, #pfx "tod" #wid " quantum exponent",		      \
-	       llquantexpd ## wid (res), t->qexp);			      \
-    check_int (t->line, #pfx "tod" #wid " sign", !!signbit (res),	      \
-	       !!signbit ((_Decimal ## wid) t->expect));		      \
+    if (isfinite (t->expect))						      \
+      check_int (t->line, #pfx "tod" #wid " quantum exponent",		      \
+		 llquantexpd ## wid (res), t->qexp);			      \
+    if (!isnan (t->expect))						      \
+      check_int (t->line, #pfx "tod" #wid " sign", !!signbit (res),	      \
+		 !!signbit ((_Decimal ## wid) t->expect));		      \
     check_int (t->line, #pfx "tod" #wid " endptr offset",		      \
 	       (int) (ep - (in)), (int) (want));			      \
     if (fail != fail0)							      \
