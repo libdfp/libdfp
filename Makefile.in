@@ -284,6 +284,7 @@ libdfp_tests = $(libdfp_c_tests) $(libdfp_cxx_tests) check-abi-libdfp check-loca
 
 test-printf.os: $(top_builddir)/printf_dfp.os
 test-strtod.os: $(top_builddir)/strtod32.os $(top_builddir)/strtod64.os $(top_builddir)/strtod128.os
+test-strtod-locale.os: $(top_builddir)/strtod32.os $(top_builddir)/strtod64.os $(top_builddir)/strtod128.os
 
 # Empty rule which simply makes the libdfp_tests .so's dependent on
 # tests/libdfp-test.c so that when the libdfp-test file changes all of the test .so

@@ -1,5 +1,6 @@
 libdfp_c_tests = test-printf test-amort test-decode test-inexact-exception \
-		 test-strtod test-cast-to-overflow test-numdigits test-get_digits \
+		 test-strtod test-strtod-locale test-cast-to-overflow \
+		 test-numdigits test-get_digits \
 		 test-fenv test-bfp-conversions test-type-conversions test-wchar \
 		 test-getexp test-setexp test-left_justify test-cast-to-underflow \
 		 test-fpclassify-d32 test-fpclassify-d64 test-fpclassify-d128 \
