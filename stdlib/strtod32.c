@@ -270,8 +270,8 @@ FUNCTION_L_INTERNAL (const STRING_TYPE * nptr, STRING_TYPE ** endptr,
 
       if (TOLOWER_C (c) == L_('n') && STRNCASECMP (cp, L_("nan"), 3) == 0)
 	{
-	  /* Return NaN.  */
-	  FLOAT retval = DEC_NAN;
+	  /* Return NaN.  Cast before negating, otherwise the compiler ignores the sign.  */
+	  FLOAT retval = negative ? -(FLOAT) DEC_NAN : DEC_NAN;
 
 	  cp += 3;
 
