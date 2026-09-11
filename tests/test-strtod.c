@@ -709,6 +709,56 @@ endptr_test endptr_tests[] = {
   {0, NULL, 0, 0, NULL}
 };
 
+/* Sign of a parsed NaN.  A NaN carries a sign bit like any other value, and
+   strtodN()/wcstodN() have to honour the optional sign character in front of
+   the subject sequence, so "-nan" must come back negative just as "-inf" comes
+   back as -infinity.  Nothing else in this file can see that: _VC_P() treats
+   any two NaNs as equal whatever their signs, and the declet comparisons in
+   strtods_nan[] go through decoded32/64/128(), which bail out on every special
+   encoding (see the DECLET_HUGE_VAL_* note above).  These entries therefore
+   look at isnan() and signbit() directly.  */
+typedef struct {
+  int line;
+  const char *input;
+  int negative;			/* Expected signbit of the result.  */
+  size_t rem;			/* Characters left unparsed.  */
+  const char *description;
+} nan_sign_test;
+
+nan_sign_test nan_sign_tests[] = {
+  /* Unsigned and explicitly positive NaNs, in a few case spellings. */
+  {__LINE__, "nan", 0, 0, "Bare NaN is positive"},
+  {__LINE__, "NAN", 0, 0, "Upper case NaN is positive"},
+  {__LINE__, "NaN", 0, 0, "Mixed case NaN is positive"},
+  {__LINE__, "nAn", 0, 0, "Alternate mixed case NaN is positive"},
+  {__LINE__, "+nan", 0, 0, "Explicitly positive NaN"},
+  {__LINE__, "+NAN", 0, 0, "Explicitly positive upper case NaN"},
+
+  /* Negative NaNs. */
+  {__LINE__, "-nan", 1, 0, "Negative NaN"},
+  {__LINE__, "-NAN", 1, 0, "Negative upper case NaN"},
+  {__LINE__, "-NaN", 1, 0, "Negative mixed case NaN"},
+
+  /* The sign applies to a NaN carrying an n-char-sequence just the same. */
+  {__LINE__, "nan()", 0, 0, "Positive NaN with empty payload"},
+  {__LINE__, "-nan()", 1, 0, "Negative NaN with empty payload"},
+  {__LINE__, "nan(123)", 0, 0, "Positive NaN with digit payload"},
+  {__LINE__, "-nan(123)", 1, 0, "Negative NaN with digit payload"},
+  {__LINE__, "-nan(a_9)", 1, 0, "Negative NaN with alphanumeric payload"},
+
+  /* An unterminated payload is not part of the subject sequence, so only the
+     bare "-nan" is consumed -- but its sign still has to be right. */
+  {__LINE__, "-nan(123", 1, 4, "Negative NaN with unterminated payload"},
+
+  /* Leading whitespace before the sign, and trailing text after the subject
+     sequence, must not disturb the sign either. */
+  {__LINE__, "  -nan", 1, 0, "Negative NaN after whitespace"},
+  {__LINE__, "\t\n-nan", 1, 0, "Negative NaN after tab and newline"},
+  {__LINE__, "-nanxyz", 1, 3, "Negative NaN then text"},
+  {__LINE__, "-nan(123)xyz", 1, 3, "Negative NaN with payload then text"},
+  {0, NULL, 0, 0, NULL}
+};
+
 // Validate the pointer returned in endptr is as expected.
 static void check_endptr(const char *input, const char *endptr, size_t n, int line) {
     size_t l = strlen(input);
@@ -882,6 +932,53 @@ static void run_endptr_tests(void) {
   }
 }
 
+static void check_nan_sign(int line, const char *input, int width,
+			   const char *fn, int is_nan, int negative,
+			   int expected_negative, const char *description) {
+  ++testnum;
+  if (!is_nan || negative != expected_negative)
+    {
+      fprintf (stdout, "%-3d Error: %s (%stod%d) - expected %sNaN, got %s%s\n",
+	       testnum, description, fn, width,
+	       expected_negative ? "-" : "+", negative ? "-" : "+",
+	       is_nan ? "NaN" : "a non-NaN value");
+      fprintf (stdout, "    Input: \"%s\"\n", input);
+      fprintf (stdout, "    in: %s:%d\n\n", __FILE__, line);
+      ++fail;
+    }
+  else if (verbose)
+    fprintf (stdout, "%-3d Success: %s (%stod%d) == %sNaN\n\n",
+	     testnum, description, fn, width, expected_negative ? "-" : "+");
+}
+
+#define RUN_ONE_NAN_TEST(pfx,wid,inptr,eptr,checker) \
+      do { \
+	eptr = NULL; \
+	_Decimal ## wid result = pfx ## tod ## wid (inptr, &eptr); \
+	check_nan_sign (test->line, test->input, wid, #pfx, isnan (result), \
+			!!signbit (result), test->negative, \
+			test->description); \
+	checker (inptr, eptr, test->rem, test->line); \
+      } while (0)
+
+static void run_nan_sign_tests(void) {
+  nan_sign_test *test;
+  wchar_t winput[WCHAR_BUF_LEN];
+  char *endptr;
+  wchar_t *wendptr;
+
+  for (test = nan_sign_tests; test->input != NULL; test++) {
+    copy_to_wstr (winput, test->input, WCHAR_BUF_LEN);
+
+    RUN_ONE_NAN_TEST (str, 32, test->input, endptr, check_endptr);
+    RUN_ONE_NAN_TEST (wcs, 32, winput, wendptr, check_wendptr);
+    RUN_ONE_NAN_TEST (str, 64, test->input, endptr, check_endptr);
+    RUN_ONE_NAN_TEST (wcs, 64, winput, wendptr, check_wendptr);
+    RUN_ONE_NAN_TEST (str, 128, test->input, endptr, check_endptr);
+    RUN_ONE_NAN_TEST (wcs, 128, winput, wendptr, check_wendptr);
+  }
+}
+
 int main(int argc, char *argv[]) {
 
   d_type *dptr;
@@ -923,6 +1020,7 @@ int main(int argc, char *argv[]) {
 
   run_errno_tests();
   run_endptr_tests();
+  run_nan_sign_tests();
 
   _REPORT();
 
