@@ -568,39 +568,16 @@ __printf_dfp (FILE *fp,
 	  {
 	    int P = prec;
 
-	    /* When the C specification refers to X as the exponent it means the
-	     * exponent when the input value encoding is normalized to the form
-	     * d.dddd.  This means we have to do that before we can do the goof
-	     * check.
-	     *
-	     * e.g., 123.456E-5
-	     * right-justified -> 00123456E-9
-	     * normalized -> 1.23456E-4
-	     *
-	     * Normalize X to d.ddd... form by taking (exp) + (nd - 1)
-	     *
-	     * X == -4  */
-	    int X = exp + (nd -1);
-
 	    /* The C Specification also indicates how to compute P. */
 	    if (prec < 0)
 	      P = 6;
 	    else if (prec == 0)
 	      P = 1;
 
-	    /* Straight from the specification which assumes X is exponent normalized to
-	     * d.ddd... form.  */
-	    if (X >= -4 && P > X)
-	      {
-		prec = (P - (X + 1));
-		spec = 'f';
-	      }
-	    else
-	      {
-		prec = P - 1;
-		spec = 'e';
-	      }
-	    input_prec = nd - 1;
+	    /* The choice of f or e presentation is dependent on the value of
+	     * the rounded and normalized exponent, d.dddeX. */
+	    prec = P - 1;
+	    input_prec = nd;
 	  break;
 	  }
 	case 'e':
@@ -699,6 +676,21 @@ __printf_dfp (FILE *fp,
 	  }
       } while (0);
     } /* Done rounding.  */
+
+  /* If spec == 'g', determine which presentation format to use now
+   * that we can determine X as if using the e presentation. */
+  if (spec == 'g')
+    {
+      int X = nd + exp - 1;
+      int P = prec + 1;
+      if (X >= -4 && P > X)
+	{
+	  prec = P - (X + 1);
+	  spec = 'f';
+	}
+      else
+	spec = 'e';
+    }
 
   /* If spec == 'a' at this point it means that prec was set by the user
    * and rounding had to be considered.  The spec now requires that the
