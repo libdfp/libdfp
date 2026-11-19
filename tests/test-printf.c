@@ -305,6 +305,20 @@ d32_type printf_d32s[] =
   {__LINE__, 1.5DF, "2", "%.1Hg", "%.1g"},
   {__LINE__, 1.25DF, "1.2", "%.2Hg", "%.2g"},
 
+  /* %f with precision zero has no decimal point unless '#' is given, even
+   * when the decimal point lies left of every stored digit.  */
+  {__LINE__, 1E-40DF, "0", "%.0Hf", "%.0f"},
+  {__LINE__, 1E-40DF, "0.", "%#.0Hf", NULL},
+  {__LINE__, -1E-40DF, "-0", "%.0Hf", "%.0f"},
+
+  /* %g of zero: a style 'e' conversion of zero has exponent zero, so with
+   * '#' the 'f' presentation has precision P - 1, independent of the zero's
+   * stored quantum.  */
+  {__LINE__, 0.0DF, "0.00000", "%#Hg", NULL},
+  {__LINE__, 0.0DF, "0.", "%#.0Hg", NULL},
+  {__LINE__, 0.0DF, "0.00", "%#.3Hg", NULL},
+  {__LINE__, -0.0DF, "-0.00000", "%#Hg", NULL},
+
   {0,0,0,0,0 }
 };
 
@@ -585,6 +599,20 @@ d64_type printf_d64s[] =
   {__LINE__, 0.9995DD, "1.00", "%#.3Dg", NULL},
   {__LINE__, 1.5DD, "2", "%.1Dg", "%.1g"},
   {__LINE__, 1.25DD, "1.2", "%.2Dg", "%.2g"},
+
+  /* %f with precision zero has no decimal point unless '#' is given, even
+   * when the decimal point lies left of every stored digit.  */
+  {__LINE__, 1E-40DD, "0", "%.0Df", "%.0f"},
+  {__LINE__, 1E-40DD, "0.", "%#.0Df", NULL},
+  {__LINE__, -1E-40DD, "-0", "%.0Df", "%.0f"},
+
+  /* %g of zero: a style 'e' conversion of zero has exponent zero, so with
+   * '#' the 'f' presentation has precision P - 1, independent of the zero's
+   * stored quantum.  */
+  {__LINE__, 0.0DD, "0.00000", "%#Dg", NULL},
+  {__LINE__, 0.0DD, "0.", "%#.0Dg", NULL},
+  {__LINE__, 0.0DD, "0.00", "%#.3Dg", NULL},
+  {__LINE__, -0.0DD, "-0.00000", "%#Dg", NULL},
 
   {0,0,0,0,0 }
 };
@@ -869,6 +897,20 @@ d128_type printf_d128s[] =
   {__LINE__, 1.5DL, "2", "%.1DDg", "%.1g"},
   {__LINE__, 1.25DL, "1.2", "%.2DDg", "%.2g"},
 
+  /* %f with precision zero has no decimal point unless '#' is given, even
+   * when the decimal point lies left of every stored digit.  */
+  {__LINE__, 1E-40DL, "0", "%.0DDf", "%.0f"},
+  {__LINE__, 1E-40DL, "0.", "%#.0DDf", NULL},
+  {__LINE__, -1E-40DL, "-0", "%.0DDf", "%.0f"},
+
+  /* %g of zero: a style 'e' conversion of zero has exponent zero, so with
+   * '#' the 'f' presentation has precision P - 1, independent of the zero's
+   * stored quantum.  */
+  {__LINE__, 0.0DL, "0.00000", "%#DDg", NULL},
+  {__LINE__, 0.0DL, "0.", "%#.0DDg", NULL},
+  {__LINE__, 0.0DL, "0.00", "%#.3DDg", NULL},
+  {__LINE__, -0.0DL, "-0.00000", "%#DDg", NULL},
+
   {0,0,0,0,0 }
 };
 
@@ -887,12 +929,20 @@ m32_type printf_m32s[] =
   {0,0,0,0,0 }
 };
 
-int main (void)
+int main (int argc, char *argv[])
 {
   d32_type *d32ptr;
   d64_type *d64ptr;
   d128_type *d128ptr;
   m32_type *m32ptr;
+  int i;
+
+  /* Make passing results quiet by default.  */
+  verbose = 0;
+
+  for (i = 1; i < argc; i++)
+    if (strcmp (argv[i], "-v") == 0 || strcmp (argv[i], "--verbose") == 0)
+      verbose = 1;
 
   for (d32ptr = printf_d32s; d32ptr->line; d32ptr++)
     {

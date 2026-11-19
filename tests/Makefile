@@ -1,4 +1,5 @@
-libdfp_c_tests = test-printf test-amort test-decode test-inexact-exception \
+libdfp_c_tests = test-printf test-printf-locale \
+		 test-amort test-decode test-inexact-exception \
 		 test-strtod test-strtod-locale test-cast-to-overflow \
 		 test-numdigits test-get_digits \
 		 test-fenv test-bfp-conversions test-type-conversions test-wchar \

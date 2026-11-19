@@ -578,13 +578,19 @@ __printf_dfp (FILE *fp,
 	     * the rounded and normalized exponent, d.dddeX. */
 	    prec = P - 1;
 	    input_prec = nd;
+	    if (is_zero)
+              exp = 0;
 	  break;
 	  }
 	case 'e':
 	  input_prec = nd - 1;
+	  if (is_zero)
+            exp = 0;
 	  break;
 	case 'f':
-	  if(exp < 0 && (-exp) > default_prec)
+	  if (is_zero)
+            exp = 0;
+	  if (exp < 0 && (-exp) > default_prec)
 	    /*  00123456E-7 has an input_prec of 7. */
 	    input_prec = (-exp);
 	  else
@@ -766,7 +772,12 @@ __printf_dfp (FILE *fp,
   if (n < decpt)
     {
       width -= decpt - n;
-      if (grouping) width -= (decpt-n)/3;
+      if (grouping)
+        {
+	   /* Round up to count the number of groups */
+	   int groups = (decpt - n + 2) / 3;
+	   width -= groups - 1;
+	}
     }
   else width--;  /* none to the left of the decimal point */
 
@@ -802,7 +813,7 @@ __printf_dfp (FILE *fp,
     {
       n = decpt;
       outchar ('0');
-      if (n < 0)
+      if (n < 0 && n < decpt + prec)
 	{
 	  outchar (wide ? decimalwc.wc : *decimal);
 	  while (n < 0 && n < decpt + prec)
@@ -815,16 +826,18 @@ __printf_dfp (FILE *fp,
 
   /* Print the digits.  If decpt exceeds mw then we know that
    * they're simply trailing zeros and we don't need to display them.  */
+  int n_printed = 0;
   while (n < mw && n < decpt + prec)
     {
       if (n == decpt)
       {
 	outchar (wide ? decimalwc.wc : *decimal);
       }
-      else if (grouping && n < decpt && (decpt-n)%3 == 0)
+      else if (grouping && n_printed && n < decpt && (decpt-n)%3 == 0)
 	outchar (wide ? thousands_sepwc : *thousands_sep);
       outchar (digits[n]);
       n++;
+      n_printed++;
     }
 
   /* print trailing zeroes */
