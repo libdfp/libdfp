@@ -568,46 +568,29 @@ __printf_dfp (FILE *fp,
 	  {
 	    int P = prec;
 
-	    /* When the C specification refers to X as the exponent it means the
-	     * exponent when the input value encoding is normalized to the form
-	     * d.dddd.  This means we have to do that before we can do the goof
-	     * check.
-	     *
-	     * e.g., 123.456E-5
-	     * right-justified -> 00123456E-9
-	     * normalized -> 1.23456E-4
-	     *
-	     * Normalize X to d.ddd... form by taking (exp) + (nd - 1)
-	     *
-	     * X == -4  */
-	    int X = exp + (nd -1);
-
 	    /* The C Specification also indicates how to compute P. */
 	    if (prec < 0)
 	      P = 6;
 	    else if (prec == 0)
 	      P = 1;
 
-	    /* Straight from the specification which assumes X is exponent normalized to
-	     * d.ddd... form.  */
-	    if (X >= -4 && P > X)
-	      {
-		prec = (P - (X + 1));
-		spec = 'f';
-	      }
-	    else
-	      {
-		prec = P - 1;
-		spec = 'e';
-	      }
-	    input_prec = nd - 1;
+	    /* The choice of f or e presentation is dependent on the value of
+	     * the rounded and normalized exponent, d.dddeX. */
+	    prec = P - 1;
+	    input_prec = nd;
+	    if (is_zero)
+              exp = 0;
 	  break;
 	  }
 	case 'e':
 	  input_prec = nd - 1;
+	  if (is_zero)
+            exp = 0;
 	  break;
 	case 'f':
-	  if(exp < 0 && (-exp) > default_prec)
+	  if (is_zero)
+            exp = 0;
+	  if (exp < 0 && (-exp) > default_prec)
 	    /*  00123456E-7 has an input_prec of 7. */
 	    input_prec = (-exp);
 	  else
@@ -700,6 +683,21 @@ __printf_dfp (FILE *fp,
       } while (0);
     } /* Done rounding.  */
 
+  /* If spec == 'g', determine which presentation format to use now
+   * that we can determine X as if using the e presentation. */
+  if (spec == 'g')
+    {
+      int X = nd + exp - 1;
+      int P = prec + 1;
+      if (X >= -4 && P > X)
+	{
+	  prec = P - (X + 1);
+	  spec = 'f';
+	}
+      else
+	spec = 'e';
+    }
+
   /* If spec == 'a' at this point it means that prec was set by the user
    * and rounding had to be considered.  The spec now requires that the
    * 'a' format presentation algorithm be calculated again.  If prec
@@ -774,7 +772,12 @@ __printf_dfp (FILE *fp,
   if (n < decpt)
     {
       width -= decpt - n;
-      if (grouping) width -= (decpt-n)/3;
+      if (grouping)
+        {
+	   /* Round up to count the number of groups */
+	   int groups = (decpt - n + 2) / 3;
+	   width -= groups - 1;
+	}
     }
   else width--;  /* none to the left of the decimal point */
 
@@ -810,7 +813,7 @@ __printf_dfp (FILE *fp,
     {
       n = decpt;
       outchar ('0');
-      if (n < 0)
+      if (n < 0 && n < decpt + prec)
 	{
 	  outchar (wide ? decimalwc.wc : *decimal);
 	  while (n < 0 && n < decpt + prec)
@@ -823,16 +826,18 @@ __printf_dfp (FILE *fp,
 
   /* Print the digits.  If decpt exceeds mw then we know that
    * they're simply trailing zeros and we don't need to display them.  */
+  int n_printed = 0;
   while (n < mw && n < decpt + prec)
     {
       if (n == decpt)
       {
 	outchar (wide ? decimalwc.wc : *decimal);
       }
-      else if (grouping && n < decpt && (decpt-n)%3 == 0)
+      else if (grouping && n_printed && n < decpt && (decpt-n)%3 == 0)
 	outchar (wide ? thousands_sepwc : *thousands_sep);
       outchar (digits[n]);
       n++;
+      n_printed++;
     }
 
   /* print trailing zeroes */

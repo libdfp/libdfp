@@ -267,6 +267,58 @@ d32_type printf_d32s[] =
   {__LINE__, 0.0e2DF, "0e+1", "%Ha", "%a"},
   {__LINE__, 0.0e10DF, "0e+9", "%Ha", "%a"},
 
+  {__LINE__, 9.5DF, "1.e+01", "%#.1Hg", NULL},
+
+  /* %g rounding and presentation-style cases from issue #289, default
+   * (ties-to-even) rounding mode.  The value is rounded to P significant
+   * digits before the 'e' or 'f' presentation and its precision are chosen,
+   * so a carry such as 9.99 -> 10 can change both.  */
+  {__LINE__, 0.99DF, "1", "%.1Hg", "%.1g"},
+  {__LINE__, 0.999DF, "1", "%.1Hg", "%.1g"},
+  {__LINE__, 0.0159DF, "0.016", "%.2Hg", "%.2g"},
+  {__LINE__, 0.25DF, "0.2", "%.1Hg", "%.1g"},
+  {__LINE__, 9.99DF, "1e+01", "%.1Hg", "%.1g"},
+  {__LINE__, 0.000095DF, "0.0001", "%.1Hg", "%.1g"},
+  {__LINE__, 0.0000999996DF, "0.0001", "%.3Hg", "%.3g"},
+  {__LINE__, 9.99DF, "10.", "%#.2Hg", NULL},
+  {__LINE__, 9.99DF, "10", "%.2Hg", "%.2g"},
+  {__LINE__, 99999.95DF, "100000", "%.6Hg", "%.6g"},
+  {__LINE__, 0.99DF, "1.0", "%.1Hf", "%.1f"},
+  {__LINE__, 0.5DF, "0", "%.0Hf", "%.0f"},
+  {__LINE__, 2.5DF, "2", "%.1Hg", "%.1g"},
+  {__LINE__, 123.456DF, "123", "%.3Hg", "%.3g"},
+  {__LINE__, 123.456DF, "123.46", "%.5Hg", "%.5g"},
+  {__LINE__, 123456789.DF, "1.23457e+08", "%Hg", "%g"},
+  {__LINE__, 0.0001234DF, "0.0001234", "%Hg", "%g"},
+  {__LINE__, 0.5DF, "0.5", "%Hg", "%g"},
+  {__LINE__, 100.DF, "100", "%Hg", "%g"},
+  {__LINE__, 123400.DF, "1.23e+05", "%.3Hg", "%.3g"},
+
+  /* Also test interesting cases which might expose double rounding. */
+  {__LINE__, 0.444501DF, "0.445", "%.3Hg", "%.3g"},
+  {__LINE__, 0.4349DF, "0.43", "%.2Hg", "%.2g"},
+  {__LINE__, 0.9999495DF, "0.9999", "%.4Hg", "%.4g"},
+  {__LINE__, 0.000099949DF, "9.99e-05", "%.3Hg", "%.3g"},
+  {__LINE__, 999.49DF, "999", "%.3Hg", "%.3g"},
+  {__LINE__, 0.1250DF, "0.12", "%.2Hg", "%.2g"},
+  {__LINE__, 0.9995DF, "1.00", "%#.3Hg", NULL},
+  {__LINE__, 1.5DF, "2", "%.1Hg", "%.1g"},
+  {__LINE__, 1.25DF, "1.2", "%.2Hg", "%.2g"},
+
+  /* %f with precision zero has no decimal point unless '#' is given, even
+   * when the decimal point lies left of every stored digit.  */
+  {__LINE__, 1E-40DF, "0", "%.0Hf", "%.0f"},
+  {__LINE__, 1E-40DF, "0.", "%#.0Hf", NULL},
+  {__LINE__, -1E-40DF, "-0", "%.0Hf", "%.0f"},
+
+  /* %g of zero: a style 'e' conversion of zero has exponent zero, so with
+   * '#' the 'f' presentation has precision P - 1, independent of the zero's
+   * stored quantum.  */
+  {__LINE__, 0.0DF, "0.00000", "%#Hg", NULL},
+  {__LINE__, 0.0DF, "0.", "%#.0Hg", NULL},
+  {__LINE__, 0.0DF, "0.00", "%#.3Hg", NULL},
+  {__LINE__, -0.0DF, "-0.00000", "%#Hg", NULL},
+
   {0,0,0,0,0 }
 };
 
@@ -510,6 +562,57 @@ d64_type printf_d64s[] =
   {__LINE__, 4E384DD, "4e+384", "%Dg", "%g" },
   {__LINE__, 4E384DD, "4e+384", "%.Dg", "%.g" },
 
+  {__LINE__, 9.5DD, "1.e+01", "%#.1Dg", NULL},
+
+  /* %g rounding and presentation-style cases from issue #289, default
+   * (ties-to-even) rounding mode.  The value is rounded to P significant
+   * digits before the 'e' or 'f' presentation and its precision are chosen,
+   * so a carry such as 9.99 -> 10 can change both.  */
+  {__LINE__, 0.99DD, "1", "%.1Dg", "%.1g"},
+  {__LINE__, 0.999DD, "1", "%.1Dg", "%.1g"},
+  {__LINE__, 0.0159DD, "0.016", "%.2Dg", "%.2g"},
+  {__LINE__, 0.25DD, "0.2", "%.1Dg", "%.1g"},
+  {__LINE__, 9.99DD, "1e+01", "%.1Dg", "%.1g"},
+  {__LINE__, 0.000095DD, "0.0001", "%.1Dg", "%.1g"},
+  {__LINE__, 0.0000999996DD, "0.0001", "%.3Dg", "%.3g"},
+  {__LINE__, 9.99DD, "10.", "%#.2Dg", NULL},
+  {__LINE__, 9.99DD, "10", "%.2Dg", "%.2g"},
+  {__LINE__, 99999.95DD, "100000", "%.6Dg", "%.6g"},
+  {__LINE__, 0.99DD, "1.0", "%.1Df", "%.1f"},
+  {__LINE__, 0.5DD, "0", "%.0Df", "%.0f"},
+  {__LINE__, 2.5DD, "2", "%.1Dg", "%.1g"},
+  {__LINE__, 123.456DD, "123", "%.3Dg", "%.3g"},
+  {__LINE__, 123.456DD, "123.46", "%.5Dg", "%.5g"},
+  {__LINE__, 123456789.DD, "1.23457e+08", "%Dg", "%g"},
+  {__LINE__, 0.0001234DD, "0.0001234", "%Dg", "%g"},
+  {__LINE__, 0.5DD, "0.5", "%Dg", "%g"},
+  {__LINE__, 100.DD, "100", "%Dg", "%g"},
+  {__LINE__, 123400.DD, "1.23e+05", "%.3Dg", "%.3g"},
+
+  /* Also test interesting cases which might expose double rounding. */
+  {__LINE__, 0.444501DD, "0.445", "%.3Dg", "%.3g"},
+  {__LINE__, 0.4349DD, "0.43", "%.2Dg", "%.2g"},
+  {__LINE__, 0.9999495DD, "0.9999", "%.4Dg", "%.4g"},
+  {__LINE__, 0.000099949DD, "9.99e-05", "%.3Dg", "%.3g"},
+  {__LINE__, 999.49DD, "999", "%.3Dg", "%.3g"},
+  {__LINE__, 0.1250DD, "0.12", "%.2Dg", "%.2g"},
+  {__LINE__, 0.9995DD, "1.00", "%#.3Dg", NULL},
+  {__LINE__, 1.5DD, "2", "%.1Dg", "%.1g"},
+  {__LINE__, 1.25DD, "1.2", "%.2Dg", "%.2g"},
+
+  /* %f with precision zero has no decimal point unless '#' is given, even
+   * when the decimal point lies left of every stored digit.  */
+  {__LINE__, 1E-40DD, "0", "%.0Df", "%.0f"},
+  {__LINE__, 1E-40DD, "0.", "%#.0Df", NULL},
+  {__LINE__, -1E-40DD, "-0", "%.0Df", "%.0f"},
+
+  /* %g of zero: a style 'e' conversion of zero has exponent zero, so with
+   * '#' the 'f' presentation has precision P - 1, independent of the zero's
+   * stored quantum.  */
+  {__LINE__, 0.0DD, "0.00000", "%#Dg", NULL},
+  {__LINE__, 0.0DD, "0.", "%#.0Dg", NULL},
+  {__LINE__, 0.0DD, "0.00", "%#.3Dg", NULL},
+  {__LINE__, -0.0DD, "-0.00000", "%#Dg", NULL},
 
   {0,0,0,0,0 }
 };
@@ -755,6 +858,59 @@ d128_type printf_d128s[] =
   {__LINE__, -1234.56789123456789123455678DL, "-1234.5679", "%.8DDa", "%.8a"},
   {__LINE__, -1234.56789123456789123455678DL, "-1.234568e+03", "%.6DDe", "%.6e"},
   {__LINE__, -1234.56789123456789123455678DL, "-1.23456789e+03", "%.8DDe", "%.8e"},
+
+  {__LINE__, 9.5DF, "1.e+01", "%#.1DDg", NULL},
+
+  /* %g rounding and presentation-style cases from issue #289, default
+   * (ties-to-even) rounding mode.  The value is rounded to P significant
+   * digits before the 'e' or 'f' presentation and its precision are chosen,
+   * so a carry such as 9.99 -> 10 can change both.  */
+  {__LINE__, 0.99DL, "1", "%.1DDg", "%.1g"},
+  {__LINE__, 0.999DL, "1", "%.1DDg", "%.1g"},
+  {__LINE__, 0.0159DL, "0.016", "%.2DDg", "%.2g"},
+  {__LINE__, 0.25DL, "0.2", "%.1DDg", "%.1g"},
+  {__LINE__, 9.99DL, "1e+01", "%.1DDg", "%.1g"},
+  {__LINE__, 0.000095DL, "0.0001", "%.1DDg", "%.1g"},
+  {__LINE__, 0.0000999996DL, "0.0001", "%.3DDg", "%.3g"},
+  {__LINE__, 9.99DL, "10.", "%#.2DDg", NULL},
+  {__LINE__, 9.99DL, "10", "%.2DDg", "%.2g"},
+  {__LINE__, 99999.95DL, "100000", "%.6DDg", "%.6g"},
+  {__LINE__, 0.99DL, "1.0", "%.1DDf", "%.1f"},
+  {__LINE__, 0.5DL, "0", "%.0DDf", "%.0f"},
+  {__LINE__, 2.5DL, "2", "%.1DDg", "%.1g"},
+  {__LINE__, 123.456DL, "123", "%.3DDg", "%.3g"},
+  {__LINE__, 123.456DL, "123.46", "%.5DDg", "%.5g"},
+  {__LINE__, 123456789.DL, "1.23457e+08", "%DDg", "%g"},
+  {__LINE__, 0.0001234DL, "0.0001234", "%DDg", "%g"},
+  {__LINE__, 0.5DL, "0.5", "%DDg", "%g"},
+  {__LINE__, 100.DL, "100", "%DDg", "%g"},
+  {__LINE__, 123400.DL, "1.23e+05", "%.3DDg", "%.3g"},
+
+  /* Also test interesting cases which might expose double rounding. */
+  {__LINE__, 0.444501DL, "0.445", "%.3DDg", "%.3g"},
+  {__LINE__, 0.4349DL, "0.43", "%.2DDg", "%.2g"},
+  {__LINE__, 0.9999495DL, "0.9999", "%.4DDg", "%.4g"},
+  {__LINE__, 0.000099949DL, "9.99e-05", "%.3DDg", "%.3g"},
+  {__LINE__, 999.49DL, "999", "%.3DDg", "%.3g"},
+  {__LINE__, 0.1250DL, "0.12", "%.2DDg", "%.2g"},
+  {__LINE__, 0.9995DL, "1.00", "%#.3DDg", NULL},
+  {__LINE__, 1.5DL, "2", "%.1DDg", "%.1g"},
+  {__LINE__, 1.25DL, "1.2", "%.2DDg", "%.2g"},
+
+  /* %f with precision zero has no decimal point unless '#' is given, even
+   * when the decimal point lies left of every stored digit.  */
+  {__LINE__, 1E-40DL, "0", "%.0DDf", "%.0f"},
+  {__LINE__, 1E-40DL, "0.", "%#.0DDf", NULL},
+  {__LINE__, -1E-40DL, "-0", "%.0DDf", "%.0f"},
+
+  /* %g of zero: a style 'e' conversion of zero has exponent zero, so with
+   * '#' the 'f' presentation has precision P - 1, independent of the zero's
+   * stored quantum.  */
+  {__LINE__, 0.0DL, "0.00000", "%#DDg", NULL},
+  {__LINE__, 0.0DL, "0.", "%#.0DDg", NULL},
+  {__LINE__, 0.0DL, "0.00", "%#.3DDg", NULL},
+  {__LINE__, -0.0DL, "-0.00000", "%#DDg", NULL},
+
   {0,0,0,0,0 }
 };
 
@@ -773,12 +929,20 @@ m32_type printf_m32s[] =
   {0,0,0,0,0 }
 };
 
-int main (void)
+int main (int argc, char *argv[])
 {
   d32_type *d32ptr;
   d64_type *d64ptr;
   d128_type *d128ptr;
   m32_type *m32ptr;
+  int i;
+
+  /* Make passing results quiet by default.  */
+  verbose = 0;
+
+  for (i = 1; i < argc; i++)
+    if (strcmp (argv[i], "-v") == 0 || strcmp (argv[i], "--verbose") == 0)
+      verbose = 1;
 
   for (d32ptr = printf_d32s; d32ptr->line; d32ptr++)
     {
